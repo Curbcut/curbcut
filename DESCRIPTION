@@ -2,11 +2,17 @@ Package: curbcut
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    c(person("Curbcut-MSSI", email = "contact@curbcut.ca", role = "aut"),
+    person("Maxime", "Bélanger De Blois", email = "maxime.belangerdeblois@mcgill.ca", role = "cre"),
+    person("David", "Wachsmuth", email = "david.wachsmuth@mcgill.ca", role  = "ctb"))
+Description: The purpose of the package is to centralise the functions used by all instances of Curbcut. 
+Imports:
+    shiny,
+    scales,
+    glue,
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+URL: https://github.com/MSSI-urban/curbcut
+BugReports: https://github.com/MSSI-urban/curbcut/issues

@@ -1,0 +1,122 @@
+#' Translate names of elements in a nested list
+#'
+#' This function translates the names of elements in a nested list using a
+#' translation data.frame
+#'
+#' @param x <`list`> A nested list where the names of elements will be translated.
+#' @param translation <`data.frame`> A data.frame with two columns: en and fr.
+#' It contains the original names in English and the corresponding translated
+#' names in French.
+#'
+#' @return The same nested list with the names of elements translated.
+#'
+#' @examples
+#' translation <- data.frame(en = c("apple", "banana", "cherry", "fruits", "vegetables"),
+#' fr = c("pomme", "banane", "cerise", "fruits", "légumes"))
+#'
+#' x <- list(fruits = list(apple = 1, banana = 2),
+#' vegetables = list(carrot = 3, lettuce = 4))
+#'
+#' cc_t_list(x, translation)
+#' @export
+cc_t_list <- function(x, translation) {
+
+  # translate name of lists
+  names(x) <- sapply(names(x), \(y) {
+    if (is.null(y)) NULL else {
+      out <- translation$fr[translation$en == y]
+
+      if (length(out) == 0 || is.na(out)) {
+        warning("No translation text found for `", y, "`.", call. = FALSE)
+        out <- y
+      }
+
+      out
+    }})
+
+  # Re-iterate in list depth to translate every name
+  if (vec_dep(x) > 2) {
+    x <- lapply(x, \(y) if (vec_dep(y) > 1) cc_t_list(y, translation) else (y))
+  }
+
+  x
+
+}
+
+#' Translate an object between French and English
+#'
+#' Translate input object from English to French depending on the provided
+#' language and whether the function is running in a Shiny environment.
+#'
+#' @param ... Any objects, including lists or atomic vectors
+#' @param .envir The parent environment for evaluating the expressions in
+#' \code{...}. Defaults to `parent.frame()`
+#' @param lang <`character`> Language to use for translation. Must be one of
+#' en' or 'fr'.
+#' @param translation <`data.frame`> Data frame containing translation data.
+#'
+#' @return If running in a Shiny context (UI), then return spans in both languages.
+#' If in a Shiny context and in server side, returns translation depending on
+#' `lang`. Outside a Shiny context, returns the input as is.
+#'
+#' @seealso \code{\link[curbcut]{cc_t_list}} for translating lists of input
+#' objects
+#'
+#' @export
+cc_t <- function(..., .envir = parent.frame(), lang, translation) {
+
+  cc_glue <- function(x) {
+    glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)
+  }
+
+  # Error if we provide lists + character vectors unintentionally
+  args <- list(...)
+  error_check <- sapply(args, inherits, "list")
+  stopifnot(length(error_check) == sum(error_check) || sum(error_check) == 0)
+
+  x <- c(...)
+  if (!is.list(x)) x <- paste0(..., collapse = "")
+
+  # Return input if we're not in a Shiny context
+  if (!shiny::isRunning()) return({
+    if (is.list(x)) return(x)
+    # x <- sub("<<.>>", "", x)
+    cc_glue(x)})
+
+  # If not in a reactive shiny context, return 2 spans.
+  if (is.null(shiny::getDefaultReactiveDomain())) return(
+    shiny::tagList(shiny::tags$span(class = "lang-en", x),
+            shiny::tags$span(class = "lang-fr", {
+              translated <- translation[translation$en == x, ]$fr
+              if (length(translated) != 0 && !is.na(translated)) translated else {
+                warning("No translation text found for `", x, "`.",
+                        call. = FALSE)
+                x
+              }
+            }))
+  )
+
+  if (all(x == "")) return("")
+
+  # English
+  if (lang == "en") return({
+    if (is.list(x)) return(x)
+    x <- sub("<<.>>", "", x)
+    cc_glue(x)})
+
+  # French
+  if (is.list(x)) return(cc_t_list(x, translation))
+
+  # Character
+  translated <- translation[translation$en == x, ]$fr
+  # In case there is no translations:
+  if (length(translated) == 0 || is.na(translated)) return({
+    warning("No translation text found for `", x, "`.", call. = FALSE)
+    # x <- sub("<<.>>", "", x)
+    cc_glue(x)})
+
+  # For vectors with names (such as used for x axis of some modules' graph)
+  if (!is.null(names(x))) names(translated) <- names(x)
+
+  cc_glue(translated)
+}
