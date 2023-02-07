@@ -3,5 +3,7 @@
 export(cc_t)
 export(cc_t_list)
 export(ordinal_form)
+export(placeex_main_card)
 export(placeex_prep_title_card)
+export(rev_geocode)
 export(vec_dep)

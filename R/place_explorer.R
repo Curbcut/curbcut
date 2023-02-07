@@ -49,19 +49,19 @@ placeex_prep_title_card <- function(data, dict, lang, translation, region, df,
 
   # pretty_data_var ------------------------------------------------------------
 
-  info$var <- if (dict$percent) {
+  info$pretty_data_var <- if (dict$percent) {
     scales::percent(data_s$var)
   } else round(data_s$var, digits = dict$val_digit)
 
 
   # Data date ------------------------------------------------------------------
 
-  info$date <- dict$date
+  info$data_date <- dict$date
 
 
   # Data rank ------------------------------------------------------------------
 
-  info$data <-
+  info$data_rank <-
     # If the dataset is small
     if (nrow(data) < 40) {
 
@@ -155,52 +155,69 @@ placeex_prep_title_card <- function(data, dict, lang, translation, region, df,
 }
 
 
-# placeex_main_card <- function(lang, translation, geo, df) {
-#
-# }
-#
-#
-#   ## Generate output grid ------------------------------------------------------
-#
-#   to_grid <- lapply(seq_along(indicators_table$name), \(x) {
-#
-#     z <- prep_title_card(r = r,
-#                          geo = geo,
-#                          df = df,
-#                          select_id = select_id,
-#                          ind = indicators_table$name[x],
-#                          percent = indicators_table$percent[x],
-#                          high_is_good = indicators_table$high_is_good[x],
-#                          val_digits = indicators_table$val_digits[x],
-#                          link_module = indicators_table$link_module[x],
-#                          link_var_left = indicators_table$link_var_left[x],
-#                          link_outside = indicators_table$link_outside[x])
-#
-#     if (is.null(z)) return(NULL)
-#
-#     if (indicators_table$name[x] == "air_quality_no2") higher_than_threshold <-
-#         if (z$pretty_data_var > 53) {
-#           curbcut::cc_t(lang = r$lang(), translation = translation,
-#                         "Its value is higher than the WHO's guideline value of 53. ")
-#         } else ""
-#
-#     list(row_title = indicators_table$title[x],
-#          percentile = z$percentile,
-#          text = if (is.na(z$pretty_data_var)) curbcut::cc_t(lang = r$lang(), translation = translation, "No data.") else
-#            curbcut::cc_t(lang = r$lang(), translation = translation, indicators_table$text[x]),
-#          link = z$link,
-#          link_module = z$link_module,
-#          link_var_left = z$link_var_left,
-#          hex_cat = z$hex_cat)
-#   })
-#
-#   names(to_grid) <- indicators_table$name
-#
-#   to_grid[sapply(to_grid, is.null)] <- NULL
-#
-#   to_grid
-#
-# }
-#
-#
-# }
+#' Final function for the place explorer main card
+#'
+#' @param pe_main_card <`list`> Place explorer data for the maincard. Usually
+#' the output of \code{\link[cc.buildr]{placeex_main_card}} saved in the
+#' data folder.
+#' @param region <`character`> Region under study, e.g. `CMA`.
+#' @param df <`character`> Scale under study, e.g. `DA`.
+#' @param select_id <`character`> Selected identifier for the selected combinasion
+#' of `region` and `df`.
+#' @param lang <`character`> Language to use for translation. Must be one of
+#' en' or 'fr'.
+#' @param translation <`data.frame`> Data frame containing translation data.
+#'
+#' @return Returns a list of all the main card variables and how the selected
+#' id compares in its dataset.
+#' @export
+placeex_main_card <- function(pe_main_card, region, df, select_id, lang,
+                              translation) {
+
+  ## Generate output grid ------------------------------------------------------
+
+  to_grid <- lapply(pe_main_card$main_card_dict$name, \(x) {
+
+    data <- pe_main_card$main_card_data[[x]][[region]][[df]]
+    dict <- pe_main_card$main_card_dict[pe_main_card$main_card_dict$name == x, ]
+
+    z <- curbcut::placeex_prep_title_card(
+      data = data,
+      dict = dict,
+      lang = lang,
+      translation = translation,
+      region = region,
+      df = df,
+      select_id = select_id,
+      scales_dictionary = scales_dictionary,
+      regions_dictionary = regions_dictionary
+    )
+
+    if (is.null(z)) return(cc_t(lang = lang,
+                                translation = translation,
+                                "No data."))
+
+    # Exception - additional text for no2 if over the threshold of 53 ppm
+    if (x == "no2") higher_than_threshold <-
+      if (z$pretty_data_var > 53) {
+        cc_t(lang = lang, translation = translation,
+             "Its value is higher than the WHO's guideline value of 53. ")
+      } else ""
+
+    list(row_title = dict$title,
+         percentile = z$percentile,
+         text = cc_t(lang = lang,
+                     translation = translation,
+                     dict$text),
+         hex_cat = z$hex_cat,
+         bs_icon = dict$bs_icon,
+         data = data)
+  })
+
+  names(to_grid) <- pe_main_card$main_card_dict$name
+
+  to_grid[sapply(to_grid, is.null)] <- NULL
+
+  to_grid
+
+}
