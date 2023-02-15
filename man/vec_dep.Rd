@@ -15,7 +15,7 @@ An integer indicating the depth of the data structure.
 \description{
 This function returns the depth of a nested data structure. The depth of a
 vector is the number of lists it is nested within. Atomic vectors have a
-depth of 1, and NULL has a depth of 0. It is a reimplemntation of
+depth of 1, and NULL has a depth of 0. It is a reimplementation of
 \code{\link[purrr]{vec_depth}} in base R.
 }
 \examples{

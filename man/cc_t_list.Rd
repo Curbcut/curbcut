@@ -4,12 +4,12 @@
 \alias{cc_t_list}
 \title{Translate names of elements in a nested list}
 \usage{
-cc_t_list(x, translation)
+cc_t_list(x, translation_df)
 }
 \arguments{
 \item{x}{<\code{list}> A nested list where the names of elements will be translated.}
 
-\item{translation}{<\code{data.frame}> A data.frame with two columns: en and fr.
+\item{translation_df}{<\code{data.frame}> A data.frame with two columns: en and fr.
 It contains the original names in English and the corresponding translated
 names in French.}
 }
@@ -21,11 +21,11 @@ This function translates the names of elements in a nested list using a
 translation data.frame
 }
 \examples{
-translation <- data.frame(en = c("apple", "banana", "cherry", "fruits", "vegetables"),
+translation_df <- data.frame(en = c("apple", "banana", "cherry", "fruits", "vegetables"),
 fr = c("pomme", "banane", "cerise", "fruits", "légumes"))
 
 x <- list(fruits = list(apple = 1, banana = 2),
 vegetables = list(carrot = 3, lettuce = 4))
 
-cc_t_list(x, translation)
+cc_t_list(x, translation_df)
 }

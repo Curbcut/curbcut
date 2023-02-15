@@ -4,7 +4,7 @@
 \alias{cc_t}
 \title{Translate an object between French and English}
 \usage{
-cc_t(..., .envir = parent.frame(), lang, translation)
+cc_t(..., .envir = parent.frame(), lang)
 }
 \arguments{
 \item{...}{Any objects, including lists or atomic vectors}
@@ -14,8 +14,6 @@ cc_t(..., .envir = parent.frame(), lang, translation)
 
 \item{lang}{<\code{character}> Language to use for translation. Must be one of
 en' or 'fr'.}
-
-\item{translation}{<\code{data.frame}> Data frame containing translation data.}
 }
 \value{
 If running in a Shiny context (UI), then return spans in both languages.
