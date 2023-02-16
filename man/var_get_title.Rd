@@ -7,7 +7,7 @@
 var_get_title(var, short_treshold = NULL, translate = FALSE, lang = NULL)
 }
 \arguments{
-\item{var}{<\verb{character string}> String representing the code of the variable
+\item{var}{<\code{character}> String representing the code of the variable
 to retrieve the title for.}
 
 \item{short_treshold}{<\code{numeric}> An optional threshold for the title length,
@@ -16,7 +16,8 @@ above which the short title will be returned.}
 \item{translate}{<\code{logical}> Indicates whether to translate the title to a
 different language.}
 
-\item{lang}{<\code{character}> String indicating the language to translate the title to.}
+\item{lang}{<\code{character}> String indicating the language to translate the title
+to. Defaults to \code{NULL}, which is no translation.}
 }
 \value{
 A character string representing the variable title.

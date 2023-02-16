@@ -50,6 +50,98 @@ ordinal_form <- function(lang, x, en_first = "first") {
 
 }
 
+#' Compact big marks
+#'
+#' This function takes a numeric value and returns a compact representation of
+#' the value in millions (M), thousands (K), or billions (B) based on its
+#' magnitude, depending on the magnitude of the smallest significant digit.
+#' The scale function used to format the output can be customized.
+#' It is a helper function for the \code{\link[curbcut]{convert_unit}} function
+#' and so needs pre-calculated `min_dig`.
+#'
+#' @param x <`numeric vector`> Numeric values.
+#' @param min_dig <`integer`> An integer indicating the minimum number of
+#' significant digits. It is used to determine the scale factor for the input
+#' vector.
+#' @param scale_fun <`function`> The scale function to be used to format the
+#' output. The default is `scales::comma`.
+#'
+#' @return A string representation of the input value with a suffix of M, K,
+#' or B as appropriate.
+compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
+  if (min_dig >= 10)
+    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+09, suffix = "B")))
+  if (min_dig >= 7)
+    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+06, suffix = "M")))
+  if (min_dig >= 4)
+    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+03, suffix = "K")))
+
+  return(do.call(scale_fun, list(x, 1)))
+}
+
+#' Convert a numeric vector to appropriate display units
+#'
+#' This function takes a vector of numbers and returns a character vector that
+#' represents the numbers in an appropriate format for display. If the \code{var}
+#' argument is supplied, the function looks up the variable type and returns the
+#' numbers in the appropriate format (e.g., as percentages or dollars).
+#'
+#' @param x <`numeric vector`> Numeric values.
+#' @param var A variable code present in the `variables` table. If supplied, the
+#' function looks up the variable type and returns the numbers in the appropriate
+#' format. This argument is optional.
+#' @param compact A logical value indicating whether to use compact notation for
+#' large numbers. If \code{TRUE} and a number has at least 4 significant digits,
+#' the function will use compact notation (e.g., 1.2M instead of 1200000). This
+#' argument is optional and defaults to \code{FALSE}.
+#'
+#' @return A character vector of the same length as \code{x} representing the
+#' numbers in an appropriate format for display.
+#'
+#' @details The function uses the \code{scales} package to format the numbers.
+#' By default, it formats numbers with commas and a varying number of decimal
+#' places depending on the magnitude of the numbers. If the \code{var} argument
+#' is supplied and the variable type is \code{"pct"} or \code{"dollar"}, the
+#' function uses the corresponding function from the \code{scales} package to
+#' format the numbers.
+#' @export
+convert_unit <- function(x, var = NULL, compact = FALSE) {
+
+  if (length(x) == 0) return(x)
+  if (length(x) == 1 && is.na(x)) return(x)
+
+  # Get the minimum number of significant digit
+  min_dig <- setdiff(x, 0)
+  min_dig <- min(abs(min_dig), na.rm = TRUE)
+  min_dig <- ceiling(log10(min_dig))
+
+  # Function used to return when no `var` is supplied or type is outside of
+  # `pct` and `dollar`
+  basic_return <- \(x, min_dig) {
+    if (compact && min_dig >= 4) return(compact_big_marks(x, min_dig))
+    if (max(abs(x)) >= 100 || all(round(x) == x)) return(scales::comma(x, 1))
+    if (max(abs(x)) >= 10) return(scales::comma(x, 0.1))
+    return(scales::comma(x, 0.01))
+  }
+
+  # If no `var` supplied
+  if (is.null(var)) return(basic_return(x, min_dig))
+
+  # If `var` supplied, search for types and return what is appropriate
+  types <- unlist(var_get_info(var, what = "type"))
+  if ("pct" %in% types)
+    return(paste0(round(x * 100, 1), "%"))
+  if ("dollar" %in% types) {
+    if (compact && min_dig >= 4)
+      return(compact_big_marks(x, min_dig, scales::dollar))
+
+    return(scales::dollar(x, 1))
+  }
+
+  # Return normal formatting
+  return(basic_return(x, min_dig))
+}
+
 #' Compute the depth of a nested data structure
 #'
 #' This function returns the depth of a nested data structure. The depth of a
@@ -183,7 +275,12 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
   if (!what %in% names(variables))
     stop(glue::glue("`{what}` is not a column of the `variables` table."))
 
-  out <- variables[[what]][variables$var_code == var_remove_time(var)]
+  subset_vector <- variables$var_code == var_remove_time(var)
+  if (sum(subset_vector) == 0)
+    stop(glue::glue("`{var_remove_time(var)}` is not a variable code in the ",
+                    "`variables` table."))
+
+  out <- variables[[what]][subset_vector]
   if (translate) out <- cc_t(lang = lang, out)
 
   return(out)
@@ -196,13 +293,14 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 #' exceeds the treshold. The returned title can be translated to a different
 #' language using the 'lang' argument.
 #'
-#' @param var <`character string`> String representing the code of the variable
+#' @param var <`character`> String representing the code of the variable
 #' to retrieve the title for.
 #' @param short_treshold <`numeric`> An optional threshold for the title length,
 #' above which the short title will be returned.
 #' @param translate <`logical`> Indicates whether to translate the title to a
 #' different language.
-#' @param lang <`character`> String indicating the language to translate the title to.
+#' @param lang <`character`> String indicating the language to translate the title
+#' to. Defaults to `NULL`, which is no translation.
 #'
 #' @return A character string representing the variable title.
 #' @export
@@ -211,10 +309,74 @@ var_get_title <- function(var, short_treshold = NULL,
   title_left <-
     var_get_info(var = var, what = "var_title",
                  translate = TRUE, lang = lang)
-  if (!is.null(short_treshold) & nchar(title_left) > short_treshold)
+  if (!is.null(short_treshold) && nchar(title_left) > short_treshold)
     title_left <-
       var_get_info(var = var, what = "var_short",
                    translate = TRUE, lang = lang)
 
   return(title_left)
+}
+
+#' Get pretty or raw variable breaks
+#'
+#' This function returns the breaks for a given variable, region, scale and date
+#' for q3 (directly extracted from `var`) as either raw or pretty. Raw breaks are
+#' always given in the base unit of the variable. Pretty breaks are returned in an
+#' appropriate format for display using \code{\link[curbcut]{convert_unit}}, i.e.,
+#' with the appropriate unit prefix and separator depending on their magnitude.
+#' The pretty formatting is optional, and the function defaults to returning pretty
+#' breaks.
+#'
+#' @param var <`character`> String representing the code of the variable
+#' to retrieve the breaks for.
+#' @param region <`character`> Indicates the region of interest, e.g. `"CMA"`
+#' @param scale <`character`> Indicates the scale of interest, e.g. `"CSD"`
+#' @param q3_q5 <`character`> String indicating whether to return Q3 or Q5 breaks.
+#' Defaults to "q5".
+#' @param break_col <`character`> Which column in the breaks_qx column of the
+#' `variables` table should the break be taken from. Defaults to `var` which
+#' is the numeric breaks for any numeric variable. Other possibility is
+#' `var_name` or `var_name_short` for qualitative variables.
+#' @param pretty <`logical`> Indicates whether to return pretty-formatted breaks
+#' using the \code{\link[curbcut]{convert_unit}} function. Defaults to `TRUE`.
+#' @param compact <`logical`> Indicates whether to compact the number representation
+#' of breaks. Only applies when pretty is `TRUE`. Defaults to `TRUE`.
+#' @param lang <`character`> String indicating the language to translate the
+#' breaks to. Defaults to `NULL`, which is no translation.
+#'
+#' @return A vector of breaks for the specified variable, region, and scale.
+#' If pretty is TRUE, the breaks are returned as characters and formatted in an
+#' appropriate format for display.
+#'
+#' @export
+var_get_breaks <- function(var, region, scale, q3_q5 = "q5", break_col = "var",
+                           pretty = TRUE, compact = TRUE, lang = NULL) {
+
+  # Grab the breaks
+  breaks <- var_get_info(var = var, what = paste0("breaks_", q3_q5))[[1]]
+  breaks <-
+    if (q3_q5 == "q5") {
+      breaks[[break_col]][breaks$geo == region & breaks$scale == scale]
+    } else if (q3_q5 == "q3") {
+      date <- var_get_time(var)
+      if (is.na(date)) {
+        breaks[[break_col]][
+          breaks$geo == region & breaks$scale == scale]
+      } else {
+        breaks[[break_col]][
+          breaks$geo == region & breaks$scale == scale & breaks$date == date]
+      }
+
+    }
+
+  # Translate if necessary
+  if (is.character(breaks) && !is.null(lang))
+    breaks <- sapply(breaks, cc_t, lang = lang, USE.NAMES = FALSE)
+
+  # Get pretty breaks
+  if (pretty & break_col == "var")
+    breaks <- convert_unit(breaks, var, compact)
+
+  # Return
+  return(breaks)
 }

@@ -7,7 +7,7 @@
 \method{legend_labels}{bivar}(vars, lang, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class delta. The necessary
+\item{vars}{<\verb{named list}> A list object of class \code{bivar}. The necessary
 named objects in the list are \code{var_left} and \code{var_right}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to

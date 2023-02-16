@@ -7,7 +7,7 @@
 \method{legend_labels}{delta}(vars, lang, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class delta. The only necessary
+\item{vars}{<\verb{named list}> A list object of class \code{delta}. The only necessary
 named object in the list is var_left.}
 
 \item{lang}{<\code{character}> A character string indicating the language to

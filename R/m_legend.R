@@ -6,10 +6,10 @@
 #' @return The legend Shiny UI object
 #' @export
 legend_UI <- function(id) {
-  shiny::div(id = NS(id, "legend_div"),
+  shiny::div(id = shiny::NS(id, "legend_div"),
              shiny::h5(cc_t("Legend"),
                        style = "font-size: 12px;"),
-             shiny::uiOutput(NS(id, "legend_render")))
+             shiny::uiOutput(shiny::NS(id, "legend_render")))
 }
 
 #' Create the server logic for the legend module
@@ -26,6 +26,8 @@ legend_UI <- function(id) {
 #' compared variable, e.g. `housing_tenant_2016`.
 #' @param region <`reactive character`> The region under study, e.g. `CMA`.
 #' Normally `r$region`, reactive created in the `server.R` file.
+#' @param scale <`reactive character`> The scale under study, e.g. `DA`.
+#' Normally `input$zoom_slider`, created in the every page server.
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
 #' @param hide <`reactive logical`> Should the legend be hidden? Defaults to
@@ -37,14 +39,13 @@ legend_UI <- function(id) {
 #'
 #' @return The legend Shiny server function
 #' @export
-legend_server <- function(id, r, data, var_left, var_right, region,
+legend_server <- function(id, r, data, vars, region, scale,
                           df, hide = shiny::reactive(FALSE),
                           build_str_as_DA = shiny::reactive(TRUE),
                           breaks = shiny::reactive(NULL)) {
 
   stopifnot(shiny::is.reactive(data))
-  stopifnot(shiny::is.reactive(var_left))
-  stopifnot(shiny::is.reactive(var_right))
+  stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(build_str_as_DA))
@@ -60,25 +61,15 @@ legend_server <- function(id, r, data, var_left, var_right, region,
           (length(var_left()) == 2 && var_right()[1] == " ")) 60 else 150
     }
 
-    # Get data type
-    data_type <- shiny::reactive(tryCatch(
-      get_data_type(
-        df = df(),
-        var_left = var_left(),
-        var_right = var_right(),
-        build_str_as_DA = build_str_as_DA()),
-      error = function(e) NULL))
-
     # Make legend
     legend <- shiny::reactive(tryCatch(
-      render_legend(
+      legend_render(
         r = r,
         data = data(),
-        var_left = var_left(),
-        var_right = var_right(),
+        vars = vars(),
         df = df(),
         region = region(),
-        data_type = data_type(),
+        scale = scale(),
         build_str_as_DA = build_str_as_DA(),
         breaks = breaks()),
       error = function(e) NULL)
