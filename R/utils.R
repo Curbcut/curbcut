@@ -19,35 +19,51 @@
 #' ordinal_form("en", 23) # "23rd"
 #' @export
 ordinal_form <- function(lang, x, en_first = "first") {
-
-  if (!lang %in% c("en", "fr"))
+  if (!lang %in% c("en", "fr")) {
     stop("Only languages supported are `en` and `fr`")
-  if (!is.numeric(x))
+  }
+  if (!is.numeric(x)) {
     stop("`x` must be numeric")
+  }
 
   # French
   if (lang == "fr") {
-    return(switch(as.character(x), "1" = "", "2" = "deuxième",
-                  "3" = "troisième", paste0(as.character(x), "ième")))
+    return(switch(as.character(x),
+      "1" = "",
+      "2" = "deuxième",
+      "3" = "troisième",
+      paste0(as.character(x), "ième")
+    ))
   }
 
   # English
   if (x > 20) {
-    if (x %% 100 %in% c(11 , 12, 13)) {
+    if (x %% 100 %in% c(11, 12, 13)) {
       form <- "th "
     } else {
-      form <- switch(as.character(x %% 10), "1" = "st", "2" = "nd",
-                     "3" = "rd", "th")
+      form <- switch(as.character(x %% 10),
+        "1" = "st",
+        "2" = "nd",
+        "3" = "rd",
+        "th"
+      )
     }
     paste0(x, form)
   } else {
-    switch(as.character(x), "1" = en_first, "2" = "second",
-           "3" = "third", "4" = "fourth", "5" = "fifth",
-           "6" = "sixth",  "7" = "seventh", "8" = "eighth",
-           "9" = "ninth", "10" = "tenth",
-           paste0(as.character(x), "th"))
+    switch(as.character(x),
+      "1" = en_first,
+      "2" = "second",
+      "3" = "third",
+      "4" = "fourth",
+      "5" = "fifth",
+      "6" = "sixth",
+      "7" = "seventh",
+      "8" = "eighth",
+      "9" = "ninth",
+      "10" = "tenth",
+      paste0(as.character(x), "th")
+    )
   }
-
 }
 
 #' Compact big marks
@@ -69,12 +85,15 @@ ordinal_form <- function(lang, x, en_first = "first") {
 #' @return A string representation of the input value with a suffix of M, K,
 #' or B as appropriate.
 compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
-  if (min_dig >= 10)
+  if (min_dig >= 10) {
     return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+09, suffix = "B")))
-  if (min_dig >= 7)
+  }
+  if (min_dig >= 7) {
     return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+06, suffix = "M")))
-  if (min_dig >= 4)
+  }
+  if (min_dig >= 4) {
     return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+03, suffix = "K")))
+  }
 
   return(do.call(scale_fun, list(x, 1)))
 }
@@ -106,9 +125,12 @@ compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' format the numbers.
 #' @export
 convert_unit <- function(x, var = NULL, compact = FALSE) {
-
-  if (length(x) == 0) return(x)
-  if (length(x) == 1 && is.na(x)) return(x)
+  if (length(x) == 0) {
+    return(x)
+  }
+  if (length(x) == 1 && is.na(x)) {
+    return(x)
+  }
 
   # Get the minimum number of significant digit
   min_dig <- setdiff(x, 0)
@@ -118,22 +140,32 @@ convert_unit <- function(x, var = NULL, compact = FALSE) {
   # Function used to return when no `var` is supplied or type is outside of
   # `pct` and `dollar`
   basic_return <- \(x, min_dig) {
-    if (compact && min_dig >= 4) return(compact_big_marks(x, min_dig))
-    if (max(abs(x)) >= 100 || all(round(x) == x)) return(scales::comma(x, 1))
-    if (max(abs(x)) >= 10) return(scales::comma(x, 0.1))
+    if (compact && min_dig >= 4) {
+      return(compact_big_marks(x, min_dig))
+    }
+    if (max(abs(x)) >= 100 || all(round(x) == x)) {
+      return(scales::comma(x, 1))
+    }
+    if (max(abs(x)) >= 10) {
+      return(scales::comma(x, 0.1))
+    }
     return(scales::comma(x, 0.01))
   }
 
   # If no `var` supplied
-  if (is.null(var)) return(basic_return(x, min_dig))
+  if (is.null(var)) {
+    return(basic_return(x, min_dig))
+  }
 
   # If `var` supplied, search for types and return what is appropriate
   types <- unlist(var_get_info(var, what = "type"))
-  if ("pct" %in% types)
+  if ("pct" %in% types) {
     return(paste0(round(x * 100, 1), "%"))
+  }
   if ("dollar" %in% types) {
-    if (compact && min_dig >= 4)
+    if (compact && min_dig >= 4) {
       return(compact_big_marks(x, min_dig, scales::dollar))
+    }
 
     return(scales::dollar(x, 1))
   }
@@ -269,16 +301,21 @@ var_remove_time <- function(var) {
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL) {
   variables <- get0("variables", envir = .GlobalEnv)
-  if (is.null(variables))
+  if (is.null(variables)) {
     stop("`variables` table not found in the global environment.")
+  }
 
-  if (!what %in% names(variables))
+  if (!what %in% names(variables)) {
     stop(glue::glue("`{what}` is not a column of the `variables` table."))
+  }
 
   subset_vector <- variables$var_code == var_remove_time(var)
-  if (sum(subset_vector) == 0)
-    stop(glue::glue("`{var_remove_time(var)}` is not a variable code in the ",
-                    "`variables` table."))
+  if (sum(subset_vector) == 0) {
+    stop(glue::glue(
+      "`{var_remove_time(var)}` is not a variable code in the ",
+      "`variables` table."
+    ))
+  }
 
   out <- variables[[what]][subset_vector]
   if (translate) out <- cc_t(lang = lang, out)
@@ -307,12 +344,17 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 var_get_title <- function(var, short_treshold = NULL,
                           translate = FALSE, lang = NULL) {
   title_left <-
-    var_get_info(var = var, what = "var_title",
-                 translate = TRUE, lang = lang)
-  if (!is.null(short_treshold) && nchar(title_left) > short_treshold)
+    var_get_info(
+      var = var, what = "var_title",
+      translate = TRUE, lang = lang
+    )
+  if (!is.null(short_treshold) && nchar(title_left) > short_treshold) {
     title_left <-
-      var_get_info(var = var, what = "var_short",
-                   translate = TRUE, lang = lang)
+      var_get_info(
+        var = var, what = "var_short",
+        translate = TRUE, lang = lang
+      )
+  }
 
   return(title_left)
 }
@@ -329,8 +371,8 @@ var_get_title <- function(var, short_treshold = NULL,
 #'
 #' @param var <`character`> String representing the code of the variable
 #' to retrieve the breaks for.
-#' @param region <`character`> Indicates the region of interest, e.g. `"CMA"`
-#' @param scale <`character`> Indicates the scale of interest, e.g. `"CSD"`
+#' @param df <`character`> Indicates the combination of the region and scale
+#' of interest, e.g. `"CMA_DA"`
 #' @param q3_q5 <`character`> String indicating whether to return Q3 or Q5 breaks.
 #' Defaults to "q5".
 #' @param break_col <`character`> Which column in the breaks_qx column of the
@@ -349,33 +391,33 @@ var_get_title <- function(var, short_treshold = NULL,
 #' appropriate format for display.
 #'
 #' @export
-var_get_breaks <- function(var, region, scale, q3_q5 = "q5", break_col = "var",
+var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
                            pretty = TRUE, compact = TRUE, lang = NULL) {
-
   # Grab the breaks
   breaks <- var_get_info(var = var, what = paste0("breaks_", q3_q5))[[1]]
   breaks <-
     if (q3_q5 == "q5") {
-      breaks[[break_col]][breaks$geo == region & breaks$scale == scale]
+      breaks[[break_col]][breaks$df == df]
     } else if (q3_q5 == "q3") {
       date <- var_get_time(var)
       if (is.na(date)) {
-        breaks[[break_col]][
-          breaks$geo == region & breaks$scale == scale]
+        breaks[[break_col]][breaks$df == df
+        ]
       } else {
-        breaks[[break_col]][
-          breaks$geo == region & breaks$scale == scale & breaks$date == date]
+        breaks[[break_col]][breaks$df == df & breaks$date == date
+        ]
       }
-
     }
 
   # Translate if necessary
-  if (is.character(breaks) && !is.null(lang))
+  if (is.character(breaks) && !is.null(lang)) {
     breaks <- sapply(breaks, cc_t, lang = lang, USE.NAMES = FALSE)
+  }
 
   # Get pretty breaks
-  if (pretty & break_col == "var")
+  if (pretty & break_col == "var") {
     breaks <- convert_unit(breaks, var, compact)
+  }
 
   # Return
   return(breaks)

@@ -12,7 +12,8 @@ Imports:
     shinyjs,
     httr,
     ggplot2,
-    scales
+    scales,
+    stats
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

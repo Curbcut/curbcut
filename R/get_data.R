@@ -15,51 +15,68 @@
 #'
 #' @export
 build_vars <- function(var_left, var_right, df, build_str_as_DA = TRUE) {
-
   # Check errors
   choropleths <- get0("all_choropleths", envir = .GlobalEnv)
-  if (is.null(choropleths))
-    stop(paste0("`all_choropleths` is not initiated in `global.R`. It needs to ",
-                "be a character vector of all possible choropleth scales, e.g. ",
-                "c('CSD', 'CT', 'DA', 'cmhczone', ...)"))
+  if (is.null(choropleths)) {
+    stop(paste0(
+      "`all_choropleths` is not initiated in `global.R`. It needs to ",
+      "be a character vector of all possible choropleth scales, e.g. ",
+      "c('CSD', 'CT', 'DA', 'cmhczone', ...)"
+    ))
+  }
 
   # Switch building to DA if necessary
   if (build_str_as_DA && is_scale_df("building", df)) df <- "DA"
 
   # Grab the class
   z <- (\(x) {
-
     # General cases
-    if (is_scale_df("raster", df)) return("q100")
-    if (is_scale_df(c("heatmap", "point"), df)) return("point")
-    if (is_scale_df("qual", var_left[1])) return("qual")
+    if (is_scale_df("raster", df)) {
+      return("q100")
+    }
+    if (is_scale_df(c("heatmap", "point"), df)) {
+      return("point")
+    }
+    if (is_scale_df("qual", var_left[1])) {
+      return("qual")
+    }
 
     # If not part of the normal `choropleths` map
-    if (!is_scale_df(choropleths, df)) return(df)
+    if (!is_scale_df(choropleths, df)) {
+      return(df)
+    }
 
     # Impossible cases
-    if (length(var_left) == 2 && var_left[1] == var_left[2])
+    if (length(var_left) == 2 && var_left[1] == var_left[2]) {
       return("NA")
+    }
 
     # Normal choropleth possible classes
-    if (length(var_right) == 2 && var_right[1] == var_right[2])
+    if (length(var_right) == 2 && var_right[1] == var_right[2]) {
       return("bivar_ldelta_rq3")
+    }
     if (length(var_left) == 2 && length(unique(var_right)) == 1 &&
-        var_right[1] != " ")
+      var_right[1] != " ") {
       return("bivar_ldelta_rq3")
-    if (length(var_left) == 1 && var_right[1] == " ")
+    }
+    if (length(var_left) == 1 && var_right[1] == " ") {
       return("q5")
-    if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ")
+    }
+    if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ") {
       return("bivar")
-    if (length(var_left) == 2 && length(var_right) == 2)
+    }
+    if (length(var_left) == 2 && length(var_right) == 2) {
       return("delta_bivar")
-    if (length(var_left) == 2 && var_right[1] == " ")
+    }
+    if (length(var_left) == 2 && var_right[1] == " ") {
       return("delta")
+    }
 
     # Return `df` if nothing found
     return(df)
   })()
 
   return(structure(list(var_left = var_left, var_right = var_right),
-                   class = z))
+    class = z
+  ))
 }

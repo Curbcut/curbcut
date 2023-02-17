@@ -30,10 +30,12 @@ legend_labels <- function(vars, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.q5 <- function(vars, lang, ...) {
+legend_labels.q5 <- function(vars, lang = NULL, ...) {
   title_left <-
-    var_get_title(var = vars$var_left, short_treshold = 25,
-                  translate = TRUE, lang = lang)
+    var_get_title(
+      var = vars$var_left, short_treshold = 25,
+      translate = TRUE, lang = lang
+    )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
 }
 
@@ -53,10 +55,12 @@ legend_labels.q5 <- function(vars, lang, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.q100 <- function(vars, lang, ...) {
+legend_labels.q100 <- function(vars, lang = NULL, ...) {
   title_left <-
-    var_get_title(var = vars$var_left, short_treshold = 25,
-                  translate = TRUE, lang = lang)
+    var_get_title(
+      var = vars$var_left, short_treshold = 25,
+      translate = TRUE, lang = lang
+    )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
 }
 
@@ -77,10 +81,12 @@ legend_labels.q100 <- function(vars, lang, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.qual <- function(vars, lang, ...) {
+legend_labels.qual <- function(vars, lang = NULL, ...) {
   title_left <-
-    var_get_title(var = vars$var_left, short_treshold = 25,
-                  translate = TRUE, lang = lang)
+    var_get_title(
+      var = vars$var_left, short_treshold = 25,
+      translate = TRUE, lang = lang
+    )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
 }
 
@@ -108,7 +114,7 @@ legend_labels.qual <- function(vars, lang, ...) {
 #' The list contains the x-axis label, the y-axis label, and the short titles for
 #' both axes.
 #' @export
-legend_labels.bivar_ldelta_rq3 <- function(vars, lang, ...) {
+legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 12,
@@ -159,7 +165,7 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.delta <- function(vars, lang, ...) {
+legend_labels.delta <- function(vars, lang = NULL, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 25,
@@ -190,7 +196,7 @@ legend_labels.delta <- function(vars, lang, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.bivar <- function(vars, lang, ...) {
+legend_labels.bivar <- function(vars, lang = NULL, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 16,
@@ -246,7 +252,7 @@ legend_labels.bivar <- function(vars, lang, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.delta_bivar <- function(vars, lang, ...) {
+legend_labels.delta_bivar <- function(vars, lang = NULL, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 12,

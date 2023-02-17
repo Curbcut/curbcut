@@ -7,10 +7,8 @@
 legend_server(
   id,
   r,
+  vars,
   data,
-  var_left,
-  var_right,
-  region,
   df,
   hide = shiny::reactive(FALSE),
   build_str_as_DA = shiny::reactive(TRUE),
@@ -24,17 +22,11 @@ e.g. \code{canale}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file.}
 
+\item{vars}{<\verb{named list}> Named list with a class. Object build using the
+\code{\link[curbcut]{build_vars}} function.}
+
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link[curbcut]{get_data}}.}
-
-\item{var_left}{<\verb{reactive character}> Character string of the selected
-variable, e.g. \code{canale_2016}.}
-
-\item{var_right}{<\verb{reactive character}> Character string of the selected
-compared variable, e.g. \code{housing_tenant_2016}.}
-
-\item{region}{<\verb{reactive character}> The region under study, e.g. \code{CMA}.
-Normally \code{r$region}, reactive created in the \code{server.R} file.}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}.}

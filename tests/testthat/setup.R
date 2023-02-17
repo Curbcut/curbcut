@@ -1,10 +1,18 @@
 ### CURBCUT PACKAGE TEST SETUP #################################################
 
-# Create a minimalist variables table
-assign("variables", value = qs::qread("resources/variables.qs"),
-       envir = .GlobalEnv)
+# Get a minimalist variables table in the global env
+assign("variables",
+  value = qs::qread("resources/variables.qs"),
+  envir = .GlobalEnv
+)
+
+assign("colours",
+  value = qs::qread("resources/colours.qs"),
+  envir = .GlobalEnv
+)
 
 # Variables present in the .GlobalEnv
-assign("all_choropleths", value = c("CSD", "CT", "DA", "building"),
-       envir = .GlobalEnv)
-
+assign("all_choropleths",
+  value = c("CSD", "CT", "DA", "building", "grid"),
+  envir = .GlobalEnv
+)

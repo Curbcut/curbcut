@@ -11,19 +11,24 @@
 #' @return The same nested list with the names of elements translated.
 #'
 #' @examples
-#' translation_df <- data.frame(en = c("apple", "banana", "cherry", "fruits", "vegetables"),
-#' fr = c("pomme", "banane", "cerise", "fruits", "légumes"))
+#' translation_df <- data.frame(
+#'   en = c("apple", "banana", "cherry", "fruits", "vegetables"),
+#'   fr = c("pomme", "banane", "cerise", "fruits", "légumes")
+#' )
 #'
-#' x <- list(fruits = list(apple = 1, banana = 2),
-#' vegetables = list(carrot = 3, lettuce = 4))
+#' x <- list(
+#'   fruits = list(apple = 1, banana = 2),
+#'   vegetables = list(carrot = 3, lettuce = 4)
+#' )
 #'
 #' cc_t_list(x, translation_df)
 #' @export
 cc_t_list <- function(x, translation_df) {
-
   # translate name of lists
   names(x) <- sapply(names(x), \(y) {
-    if (is.null(y)) NULL else {
+    if (is.null(y)) {
+      NULL
+    } else {
       out <- translation_df$fr[translation_df$en == y]
 
       if (length(out) == 0 || is.na(out)) {
@@ -32,7 +37,8 @@ cc_t_list <- function(x, translation_df) {
       }
 
       out
-    }})
+    }
+  })
 
   # Re-iterate in list depth to translate every name
   if (vec_dep(x) > 2) {
@@ -40,7 +46,6 @@ cc_t_list <- function(x, translation_df) {
   }
 
   x
-
 }
 
 #' Translate an object between French and English
@@ -63,7 +68,6 @@ cc_t_list <- function(x, translation_df) {
 #'
 #' @export
 cc_t <- function(..., .envir = parent.frame(), lang) {
-
   cc_glue <- function(x) {
     glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)
   }
@@ -77,53 +81,81 @@ cc_t <- function(..., .envir = parent.frame(), lang) {
   if (!is.list(x)) x <- paste0(..., collapse = "")
 
   # Return input if we're not in a Shiny context
-  if (!shiny::isRunning()) return({
-    if (is.list(x)) return(x)
-    cc_glue(x)})
+  if (!shiny::isRunning()) {
+    return({
+      if (is.list(x)) {
+        return(x)
+      }
+      cc_glue(x)
+    })
+  }
 
   # Grab translation and return input if missing
   translation_df <- get0("translation_df", .GlobalEnv)
-  if (is.null(translation_df)) return({
-    if (is.null(shiny::getDefaultReactiveDomain())) {
-      # UI side
-      shiny::tagList(shiny::tags$span(class = "lang-en", x))
-    } else {
-      # Server side
-      if (is.list(x)) return(x)
-      cc_glue(x)
-    }
+  if (is.null(translation_df)) {
+    return({
+      if (is.null(shiny::getDefaultReactiveDomain())) {
+        # UI side
+        shiny::tagList(shiny::tags$span(class = "lang-en", x))
+      } else {
+        # Server side
+        if (is.list(x)) {
+          return(x)
+        }
+        cc_glue(x)
+      }
     })
+  }
 
   # If not in a reactive shiny context, return 2 spans.
-  if (is.null(shiny::getDefaultReactiveDomain())) return(
-    shiny::tagList(shiny::tags$span(class = "lang-en", x),
-            shiny::tags$span(class = "lang-fr", {
-              translated <- translation_df[translation_df$en == x, ]$fr
-              if (length(translated) != 0 && !is.na(translated)) translated else {
-                warning("No translation text found for `", x, "`.",
-                        call. = FALSE)
-                x
-              }
-            }))
-  )
+  if (is.null(shiny::getDefaultReactiveDomain())) {
+    return(
+      shiny::tagList(
+        shiny::tags$span(class = "lang-en", x),
+        shiny::tags$span(class = "lang-fr", {
+          translated <- translation_df[translation_df$en == x, ]$fr
+          if (length(translated) != 0 && !is.na(translated)) {
+            translated
+          } else {
+            warning("No translation text found for `", x, "`.",
+              call. = FALSE
+            )
+            x
+          }
+        })
+      )
+    )
+  }
 
-  if (all(x == "")) return("")
+  if (all(x == "")) {
+    return("")
+  }
 
   # English
-  if (lang == "en") return({
-    if (is.list(x)) return(x)
-    cc_glue(x)})
+  if (lang == "en") {
+    return({
+      if (is.list(x)) {
+        return(x)
+      }
+      cc_glue(x)
+    })
+  }
 
   # French
-  if (is.list(x)) return(cc_t_list(x, translation_df))
+  if (is.list(x)) {
+    return(cc_t_list(x, translation_df))
+  }
 
   # Character
   translated <- translation_df[translation_df$en == x, ]$fr
   # In case there is no translations:
-  if (length(translated) == 0 || is.na(translated)) return({
-    warning("No translation text found for `", x, "`.", call. = FALSE)
-    # x <- sub("<<.>>", "", x)
-    cc_glue(x)})
+  if (length(translated) == 0 || is.na(translated)) {
+    return({
+      warning("No translation text found for `", x, "`.", call. = FALSE)
+      # x <- sub("<<.>>", "", x)
+      cc_glue(x)
+    })
+  }
 
   # For vectors with names (such as used for x axis of some modules' graph)
   if (!is.null(names(x))) names(translated) <- names(x)
