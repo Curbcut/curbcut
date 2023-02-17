@@ -21,11 +21,15 @@ This function translates the names of elements in a nested list using a
 translation data.frame
 }
 \examples{
-translation_df <- data.frame(en = c("apple", "banana", "cherry", "fruits", "vegetables"),
-fr = c("pomme", "banane", "cerise", "fruits", "légumes"))
+translation_df <- data.frame(
+  en = c("apple", "banana", "cherry", "fruits", "vegetables"),
+  fr = c("pomme", "banane", "cerise", "fruits", "légumes")
+)
 
-x <- list(fruits = list(apple = 1, banana = 2),
-vegetables = list(carrot = 3, lettuce = 4))
+x <- list(
+  fruits = list(apple = 1, banana = 2),
+  vegetables = list(carrot = 3, lettuce = 4)
+)
 
 cc_t_list(x, translation_df)
 }

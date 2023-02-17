@@ -401,11 +401,9 @@ var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
     } else if (q3_q5 == "q3") {
       date <- var_get_time(var)
       if (is.na(date)) {
-        breaks[[break_col]][breaks$df == df
-        ]
+        breaks[[break_col]][breaks$df == df]
       } else {
-        breaks[[break_col]][breaks$df == df & breaks$date == date
-        ]
+        breaks[[break_col]][breaks$df == df & breaks$date == date]
       }
     }
 
@@ -421,4 +419,23 @@ var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
 
   # Return
   return(breaks)
+}
+
+#' Retrieve the `colours` object
+#'
+#' This function retrieves the `colours` object from the global environment. The
+#' `colours` object contains pre-defined color schemes that can be used in
+#' various plots across the package.
+#'
+#' @return The `colours` object from the global environment
+colours_get <- function() {
+  colours <- get0("colours", envir = .GlobalEnv)
+  if (is.null(colours)) {
+    stop(paste0(
+      "Object `colours` must live in the global environment. Run ",
+      "`cc.buildr::build_colours()` and save it in the data/ ",
+      "folder."
+    ))
+  }
+  return(colours)
 }

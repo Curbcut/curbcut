@@ -4,7 +4,7 @@
 \alias{legend_breaks.q100}
 \title{Compute legend breaks for a variable displaying 100 breaks}
 \usage{
-\method{legend_breaks}{q100}(vars, lang, ...)
+\method{legend_breaks}{q100}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{q100}.}

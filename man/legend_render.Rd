@@ -4,11 +4,15 @@
 \alias{legend_render}
 \title{Generic legend render function for Curbcut legends}
 \usage{
-legend_render(vars, ...)
+legend_render(vars, font_family = "SourceSansPro", ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. Named
 objects in the list are \code{var_left} and \code{var_right}.}
+
+\item{font_family}{<\code{character}> Which font family should be used to render
+the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
+the default font family og ggplot2, use \code{NULL}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
 }

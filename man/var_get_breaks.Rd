@@ -6,8 +6,7 @@
 \usage{
 var_get_breaks(
   var,
-  region,
-  scale,
+  df,
   q3_q5 = "q5",
   break_col = "var",
   pretty = TRUE,
@@ -19,9 +18,8 @@ var_get_breaks(
 \item{var}{<\code{character}> String representing the code of the variable
 to retrieve the breaks for.}
 
-\item{region}{<\code{character}> Indicates the region of interest, e.g. \code{"CMA"}}
-
-\item{scale}{<\code{character}> Indicates the scale of interest, e.g. \code{"CSD"}}
+\item{df}{<\code{character}> Indicates the combination of the region and scale
+of interest, e.g. \code{"CMA_DA"}}
 
 \item{q3_q5}{<\code{character}> String indicating whether to return Q3 or Q5 breaks.
 Defaults to "q5".}

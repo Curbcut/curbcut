@@ -4,7 +4,8 @@
 #' @param var_left <`reactive character`> Character string of the selected
 #' variable, e.g. `canale_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
 #' @param var_right <`reactive character`> Character string of the selected
-#' compared variable, e.g. `housing_value_2016`.
+#' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
+#' variable is represented by (" ").
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
 #' @param build_str_as_DA <`logical`> If TRUE, the function assumes that the
@@ -14,7 +15,7 @@
 #' a class attached.
 #'
 #' @export
-build_vars <- function(var_left, var_right, df, build_str_as_DA = TRUE) {
+build_vars <- function(var_left, var_right = " ", df, build_str_as_DA = TRUE) {
   # Check errors
   choropleths <- get0("all_choropleths", envir = .GlobalEnv)
   if (is.null(choropleths)) {

@@ -13,7 +13,8 @@ Imports:
     httr,
     ggplot2,
     scales,
-    stats
+    stats,
+    tibble
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -22,5 +23,6 @@ URL: https://github.com/MSSI-urban/curbcut
 BugReports: https://github.com/MSSI-urban/curbcut/issues
 Suggests: 
     testthat (>= 3.0.0),
-    qs
+    qs,
+    systemfonts
 Config/testthat/edition: 3

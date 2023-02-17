@@ -138,4 +138,9 @@ test_that("build_vars works", {
       class = "q5"
     )
   )
+
+  expect_equal(
+    build_vars(var_left = "c_flood", var_right = " ", df = "raster"),
+    structure(list(var_left = "c_flood", var_right = " "), class = "q100")
+  )
 })

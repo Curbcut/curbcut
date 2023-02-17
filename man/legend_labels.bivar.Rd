@@ -4,7 +4,7 @@
 \alias{legend_labels.bivar}
 \title{Get a list of label titles for bivariate Curbcut legends}
 \usage{
-\method{legend_labels}{bivar}(vars, lang, ...)
+\method{legend_labels}{bivar}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivar}. The necessary

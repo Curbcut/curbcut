@@ -4,15 +4,17 @@
 \alias{legend_breaks.q5}
 \title{Compute legend breaks for a single \code{var_left}}
 \usage{
-\method{legend_breaks}{q5}(vars, region, scale, ...)
+\method{legend_breaks}{q5}(vars, df, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{q5}. The only necessary
 named object in the list is var_left.}
 
-\item{region}{<\code{character}> Indicates the region of interest, e.g. \code{"CMA"}}
+\item{df}{<\code{character}> Indicates the combination of the region and scale
+of interest, e.g. \code{"CMA_DA"}}
 
-\item{scale}{<\code{character}> Indicates the scale of interest, e.g. \code{"CSD"}}
+\item{lang}{<\code{character}> String indicating the language to translate the
+breaks to. Defaults to \code{NULL}, which is no translation.}
 
 \item{...}{Additional arguments passed to methods.}
 }

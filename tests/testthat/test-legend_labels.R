@@ -15,9 +15,16 @@ test_that("legend_labels.q5 works", {
   )
 })
 
-# test_that("legend_labels.q100 works", {
-#
-# })
+test_that("legend_labels.q100 works", {
+  vars <- build_vars(var_left = "c_flood", var_right = " ", df = "raster")
+
+  expect_equal(
+    legend_labels(vars),
+    list(structure(list(x = structure("Flood prev.", class = c(
+      "glue", "character"
+    )), y = NULL), class = "labels"))
+  )
+})
 
 test_that("legend_labels.qual works", {
   vars <- structure(list(var_left = "climate_flood", var_right = " "),
@@ -113,4 +120,3 @@ test_that("legend_labels.delta_bivar works", {
     )
   )
 })
-

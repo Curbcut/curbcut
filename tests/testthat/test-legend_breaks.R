@@ -6,15 +6,15 @@ test_that("legend_breaks.q5 works", {
     class = "q5"
   )
   vars3 <- structure(list(var_left = "climate_drought", var_right = " "),
-                    class = "q5")
+    class = "q5"
+  )
   expect_equal(
     legend_breaks(vars1, df = "CMA_CSD"),
     structure(c("0%", "20%", "40%", "60%", "80%", "100%"), chr_breaks = FALSE)
   )
   expect_equal(
     legend_breaks(vars2, df = "CMA_DA"),
-    structure(c("$0K", "$200K", "$400K", "$600K", "$800K", "$1,000K"
-    ), chr_breaks = FALSE)
+    structure(c("$0K", "$200K", "$400K", "$600K", "$800K", "$1,000K"), chr_breaks = FALSE)
   )
   expect_equal(
     legend_breaks(vars3, df = "grid_grid"),
@@ -39,7 +39,6 @@ test_that("legend_breaks.qual works", {
   vars <- structure(list(var_left = "climate_flood", var_right = " "),
     class = "qual"
   )
-  # SHOULD CHANGE IN FUTURE VARIABLES.QS -> THE FIRST IS NA, NOT INSIG.
   expect_equal(
     legend_breaks(vars, df = "grid_grid"),
     c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major")

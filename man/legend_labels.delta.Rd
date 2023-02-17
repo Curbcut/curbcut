@@ -4,7 +4,7 @@
 \alias{legend_labels.delta}
 \title{Get a list of label titles for delta Curbcut legends}
 \usage{
-\method{legend_labels}{delta}(vars, lang, ...)
+\method{legend_labels}{delta}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{delta}. The only necessary

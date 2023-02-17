@@ -4,7 +4,7 @@
 \alias{legend_labels.delta_bivar}
 \title{Get a list of label titles for delta bivariate Curbcut legends}
 \usage{
-\method{legend_labels}{delta_bivar}(vars, lang, ...)
+\method{legend_labels}{delta_bivar}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{delta_bivar}. The necessary

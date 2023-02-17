@@ -4,7 +4,7 @@
 \alias{legend_labels.bivar_ldelta_rq3}
 \title{Get a list of label titles for bivariate xdelta yq3 Curbcut legends}
 \usage{
-\method{legend_labels}{bivar_ldelta_rq3}(vars, lang, ...)
+\method{legend_labels}{bivar_ldelta_rq3}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivar_ldelta_rq3}. The

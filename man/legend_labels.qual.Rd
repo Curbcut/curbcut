@@ -4,7 +4,7 @@
 \alias{legend_labels.qual}
 \title{Get a list of label titles for qualitative Curbcut legends}
 \usage{
-\method{legend_labels}{qual}(vars, lang, ...)
+\method{legend_labels}{qual}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A named list object of class \code{qual}. The

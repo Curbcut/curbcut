@@ -5,28 +5,33 @@
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. Named
 #' objects in the list are `var_left` and `var_right`.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... Additional arguments to be passed to \code{\link[curbcut]{legend_labels}}
-#' and \code{\code{\link[curbcut]{legend_breaks}}}, such as `lang`, `df`, ...
+#' and \code{\link[curbcut]{legend_breaks}}, such as `lang`, `df`, ...
 #'
 #' @return A list with the legend labels and breaks computed by
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
 #' @export
-legend_get_info <- function(vars, ...) {
+legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
   labs_xy <- legend_labels(vars, ...)
   break_labs <- legend_breaks(vars, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
-      text = ggplot2::element_text(family = "SourceSansPro", size = 11),
+      text = ggplot2::element_text(family = font_family, size = 11),
       legend.position = "none",
       panel.grid = ggplot2::element_blank()
     )
   )
+  colours <- colours_get()
 
   return(list(
     labs_xy = labs_xy, break_labs = break_labs,
-    theme_default = theme_default
+    theme_default = theme_default,
+    colours = colours
   ))
 }
 
@@ -38,11 +43,14 @@ legend_get_info <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. Named
 #' objects in the list are `var_left` and `var_right`.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns a ggplot object
 #' @export
-legend_render <- function(vars, ...) {
+legend_render <- function(vars, font_family = "SourceSansPro", ...) {
   UseMethod("legend_render", vars)
 }
 
@@ -59,16 +67,25 @@ legend_render <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object with a `q5` class. The only
 #' necessary named object is `var_left`.
+#' @param df <`character`> Indicates the combination of the region and scale
+#' of interest, e.g. `"CMA_DA"`
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.q5 <- function(vars, ...) {
+legend_render.q5 <- function(vars, font_family = "SourceSansPro", df, ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, df = df, font_family = font_family, ...)
 
   # Adapt breaks to add the `NA` bar
-  leg <- colours$left_5[1:6, ]
+  leg <- leg_info$colours$left_5[1:6, ]
   leg$group <- suppressWarnings(as.double(leg$group))
   leg[1, ]$group <- 0.5
   leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
@@ -82,6 +99,7 @@ legend_render.q5 <- function(vars, ...) {
   }
 
   # Grab labels to check length
+  leg_info$break_labs <- leg_info$break_labs[!is.na(leg_info$break_labs)]
   breaks_label <- c("NA", leg_info$break_labs)
   if (length(breaks_placement) != length(breaks_label)) {
     if (attr(leg_info$break_labs, "chr_breaks")) {
@@ -130,23 +148,30 @@ legend_render.q5 <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object with a `qual` class. The only
 #' necessary named object is `var_left`.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... Additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.qual <- function(vars, ...) {
+legend_render.qual <- function(vars, font_family = "SourceSansPro", ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Cut for the number of breaks
   leg_info$break_labs <- leg_info$break_labs[!is.na(leg_info$break_labs)]
-  if (length(leg_info$break_labs) < nrow(colours$qual)) {
+  if (length(leg_info$break_labs) < nrow(leg_info$colours$qual)) {
     stop(paste0(
       "There are not enough colours in the qualitative colours ",
       "table `colours$qual`."
     ))
   }
-  colours_qual <- colours$qual[1:length(leg_info$break_labs), ]
+  colours_qual <- leg_info$colours$qual[1:length(leg_info$break_labs), ]
 
   # Switch the `group` character vector to a numeric
   colours_qual$group <- suppressWarnings(as.double(colours_qual$group))
@@ -179,17 +204,26 @@ legend_render.qual <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object with a `bivar` class. The
 #' necessary named objects are `var_left` and `var_right`.
-#' @param lang The language to use for the text labels.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
+#' @param lang <`character`> The language to use for the text labels. Defaults
+#' to NULL for no translation.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the bivariate legend.
 #' @export
-legend_render.bivar <- function(vars, lang = NULL, ...) {
+legend_render.bivar <- function(vars, font_family = "SourceSansPro",
+                                lang = NULL, ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  x <- y <- fill <- label <- label_colour <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- colours$bivar[1:9, ]
+  leg <- leg_info$colours$bivar[1:9, ]
   leg$label <-
     c(
       curbcut::cc_t(lang = lang, "Both low"), " ",
@@ -212,7 +246,7 @@ legend_render.bivar <- function(vars, lang = NULL, ...) {
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      colours$bivar$fill[1:9], colours$bivar$fill[1:9]
+      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +
@@ -229,16 +263,24 @@ legend_render.bivar <- function(vars, lang = NULL, ...) {
 #'
 #' @param vars <`named list`> A list object with a `delta` class. The only
 #' necessary named object is `var_left`.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
-legend_render.delta <- function(vars, ...) {
+legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Adapt breaks to add the `NA` bar
-  leg <- rbind(tibble::tibble(group = 0, y = 1, fill = "#B3B3BB"), colours$delta[1:5, ])
+  leg <- rbind(tibble::tibble(group = 0, y = 1, fill = "#B3B3BB"),
+               leg_info$colours$delta[1:5, ])
   leg$group <- suppressWarnings(as.double(leg$group))
   leg[1, ]$group <- 0.5
   leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
@@ -273,16 +315,23 @@ legend_render.delta <- function(vars, ...) {
 #' scales with labels going from `Low` to `High`.
 #'
 #' @param vars <`named list`> A list object with a `q100` class.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `q100` legend.
 #' @export
-legend_render.q100 <- function(vars, ...) {
+legend_render.q100 <- function(vars, font_family = "SourceSansPro", ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Adapt breaks
-  leg <- colours$viridis
+  leg <- leg_info$colours$viridis
   leg$group <- as.double(leg$group)
 
   # Make the plot
@@ -313,16 +362,26 @@ legend_render.q100 <- function(vars, ...) {
 #' @param vars <`named list`> A list object with a `delta_bivar` class. The
 #' necessary objects in the list are `var_left` and `var_right`, both of length
 #' 2 (two years each)
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
+#' @param lang <`character`> The language to use for the text labels. Defaults
+#' to NULL for no translation.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta_bivar` legend.
 #' @export
-legend_render.delta_bivar <- function(vars, ...) {
+legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
+                                      lang = NULL, ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  x <- y <- fill <- label <- label_colour <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- colours$bivar[1:9, ]
+  leg <- leg_info$colours$bivar[1:9, ]
   leg$label <- c(
     curbcut::cc_t(lang = lang, "Both low"), " ",
     paste0(leg_info$labs_xy$y_short, "\n", cc_t(lang = lang, "high only")),
@@ -344,7 +403,7 @@ legend_render.delta_bivar <- function(vars, ...) {
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      colours$bivar$fill[1:9], colours$bivar$fill[1:9]
+      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +
@@ -363,16 +422,27 @@ legend_render.delta_bivar <- function(vars, ...) {
 #' necessary objects in the list are `var_left` and `var_right`, with the first
 #' of length 2 (two years) and the second of length 1 (one year).
 #' 2 (two years each)
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
+#' @param lang <`character`> The language to use for the text labels. Defaults
+#' to NULL for no translation.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `bivar_ldelta_rq3` legend.
 #' @export
-legend_render.delta_bivar <- function(vars, ...) {
+legend_render.bivar_ldelta_rq3 <- function(vars,
+                                           font_family = "SourceSansPro",
+                                           lang = NULL, ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  x <- y <- fill <- label <- label_colour <- NULL
+
   # Get all necessary information
-  leg_info <- legend_get_info(vars, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- colours$bivar[1:9, ]
+  leg <- leg_info$colours$bivar[1:9, ]
   leg$label <- c(
     curbcut::cc_t(lang = lang, "Both low"), " ",
     paste0(leg_info$labs_xy$y_short, "\n", cc_t(lang = lang, "high only")),
@@ -394,7 +464,7 @@ legend_render.delta_bivar <- function(vars, ...) {
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      colours$bivar$fill[1:9], colours$bivar$fill[1:9]
+      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +

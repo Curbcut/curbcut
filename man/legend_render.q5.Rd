@@ -2,21 +2,33 @@
 % Please edit documentation in R/legend_render.R
 \name{legend_render.q5}
 \alias{legend_render.q5}
-\title{Generic legend render function for Curbcut legends}
+\title{Render the legend for the q5 class}
 \usage{
-\method{legend_render}{q5}(vars, labs_xy, break_labs, theme_default, ...)
+\method{legend_render}{q5}(vars, font_family = "SourceSansPro", df, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object with a pre-determined class. Named
-objects in the list are \code{var_left} and \code{var_right}.}
+\item{vars}{<\verb{named list}> A list object with a \code{q5} class. The only
+necessary named object is \code{var_left}.}
 
-\item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
+\item{font_family}{<\code{character}> Which font family should be used to render
+the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
+the default font family og ggplot2, use \code{NULL}.}
+
+\item{df}{<\code{character}> Indicates the combination of the region and scale
+of interest, e.g. \code{"CMA_DA"}}
+
+\item{...}{additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.}
 }
 \value{
-It returns a ggplot object
+A plot generated using ggplot2.
 }
 \description{
-\code{legend_render} is a generic function used to produce the legend for the
-Curbcut map pages. The function invokes particular methods which depend on
-the class of the \code{vars} argument.
+This function generates a plot which includes the NA category. It uses the
+\code{\link[curbcut]{legend_get_info}} function to obtain the necessary
+information about the legend, and then modifies the
+breaks to add the NA category to the legend. It looks at the variable \code{type}
+to detect wether the variable has character breaks with the \code{qual} type in
+the variables table. If so, breaks appear in the middle of the lines.
+Finally, it creates the plot using the ggplot2 package and the obtained
+information.
 }

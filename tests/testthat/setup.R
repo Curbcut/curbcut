@@ -6,6 +6,7 @@ assign("variables",
   envir = .GlobalEnv
 )
 
+# Assign the colours list in the global environment
 assign("colours",
   value = qs::qread("resources/colours.qs"),
   envir = .GlobalEnv

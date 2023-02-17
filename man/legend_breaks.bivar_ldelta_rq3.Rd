@@ -5,7 +5,7 @@
 \title{Compute legend breaks for a comparison of a single variable of two date times
 with another single year variable.}
 \usage{
-\method{legend_breaks}{bivar_ldelta_rq3}(vars, data, region, scale, ...)
+\method{legend_breaks}{bivar_ldelta_rq3}(vars, data, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivariate_xdelta_yq3}. The
@@ -15,9 +15,8 @@ only necessary named object in the list is var_left.}
 columns, which are used to extract the \code{q3} breaks (variation) for the single
 variable of two date times.}
 
-\item{region}{<\code{character}> Indicates the region of interest, e.g. \code{"CMA"}}
-
-\item{scale}{<\code{character}> Indicates the scale of interest, e.g. \code{"CSD"}}
+\item{df}{<\code{character}> Indicates the combination of the region and scale
+of interest, e.g. \code{"CMA_DA"}}
 
 \item{...}{Additional arguments passed to methods.}
 }

@@ -5,14 +5,15 @@
 \title{Determine the data type (class) of different \code{var_left}, \code{var_right} and \code{df}
 combinations}
 \usage{
-build_vars(var_left, var_right, df, build_str_as_DA = TRUE)
+build_vars(var_left, var_right = " ", df, build_str_as_DA = TRUE)
 }
 \arguments{
 \item{var_left}{<\verb{reactive character}> Character string of the selected
 variable, e.g. \code{canale_2016} or \code{c("housing_tenant_2006", "housing_tenant_2016")}.}
 
 \item{var_right}{<\verb{reactive character}> Character string of the selected
-compared variable, e.g. \code{housing_value_2016}.}
+compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
+variable is represented by (" ").}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}.}

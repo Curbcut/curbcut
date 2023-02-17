@@ -4,7 +4,7 @@
 \alias{legend_labels.q100}
 \title{Get a list of label titles for Curbcut legends containing 100 breaks}
 \usage{
-\method{legend_labels}{q100}(vars, lang, ...)
+\method{legend_labels}{q100}(vars, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A named list object of class \code{q100}. The
