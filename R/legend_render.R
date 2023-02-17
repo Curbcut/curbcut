@@ -26,12 +26,12 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
       panel.grid = ggplot2::element_blank()
     )
   )
-  colours <- colours_get()
+  colours_dfs <- colours_get()
 
   return(list(
     labs_xy = labs_xy, break_labs = break_labs,
     theme_default = theme_default,
-    colours = colours
+    colours_dfs = colours_dfs
   ))
 }
 
@@ -85,7 +85,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro", df, ...) {
   leg_info <- legend_get_info(vars, df = df, font_family = font_family, ...)
 
   # Adapt breaks to add the `NA` bar
-  leg <- leg_info$colours$left_5[1:6, ]
+  leg <- leg_info$colours_dfs$left_5[1:6, ]
   leg$group <- suppressWarnings(as.double(leg$group))
   leg[1, ]$group <- 0.5
   leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
@@ -165,13 +165,13 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro", ...) {
 
   # Cut for the number of breaks
   leg_info$break_labs <- leg_info$break_labs[!is.na(leg_info$break_labs)]
-  if (length(leg_info$break_labs) < nrow(leg_info$colours$qual)) {
+  if (length(leg_info$break_labs) < nrow(leg_info$colours_dfs$qual)) {
     stop(paste0(
       "There are not enough colours in the qualitative colours ",
       "table `colours$qual`."
     ))
   }
-  colours_qual <- leg_info$colours$qual[1:length(leg_info$break_labs), ]
+  colours_qual <- leg_info$colours_dfs$qual[1:length(leg_info$break_labs), ]
 
   # Switch the `group` character vector to a numeric
   colours_qual$group <- suppressWarnings(as.double(colours_qual$group))
@@ -220,18 +220,18 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- leg_info$colours$bivar[1:9, ]
+  leg <- leg_info$colours_dfs$bivar[1:9, ]
   leg$label <-
     c(
-      curbcut::cc_t(lang = lang, "Both low"), " ",
+      cc_t(lang = lang, "Both low"), " ",
       paste0(leg_info$labs_xy$y_short, "\n", cc_t(lang = lang, "high only")),
       " ", " ", " ",
       paste0(leg_info$labs_xy$x_short, "\n", cc_t(lang = lang, "high only")),
       " ",
-      curbcut::cc_t(lang = lang, "Both high")
+      cc_t(lang = lang, "Both high")
     )
   leg$label_colour <- c(rep("black", 8), "white")
   leg$x <- leg$x - 0.5
@@ -246,7 +246,7 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
+      leg_info$colours_dfs$bivar$fill[1:9], leg_info$colours_dfs$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +
@@ -279,8 +279,10 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
   leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Adapt breaks to add the `NA` bar
-  leg <- rbind(tibble::tibble(group = 0, y = 1, fill = "#B3B3BB"),
-               leg_info$colours$delta[1:5, ])
+  leg <- rbind(
+    tibble::tibble(group = 0, y = 1, fill = "#B3B3BB"),
+    leg_info$colours_dfs$delta[1:5, ]
+  )
   leg$group <- suppressWarnings(as.double(leg$group))
   leg[1, ]$group <- 0.5
   leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
@@ -331,7 +333,7 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro", ...) {
   leg_info <- legend_get_info(vars, font_family = font_family, ...)
 
   # Adapt breaks
-  leg <- leg_info$colours$viridis
+  leg <- leg_info$colours_dfs$viridis
   leg$group <- as.double(leg$group)
 
   # Make the plot
@@ -378,17 +380,17 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- leg_info$colours$bivar[1:9, ]
+  leg <- leg_info$colours_dfs$bivar[1:9, ]
   leg$label <- c(
-    curbcut::cc_t(lang = lang, "Both low"), " ",
+    cc_t(lang = lang, "Both low"), " ",
     paste0(leg_info$labs_xy$y_short, "\n", cc_t(lang = lang, "high only")),
     " ", " ", " ",
     paste0(leg_info$labs_xy$x_short, "\n", cc_t(lang = lang, "high only")),
     " ",
-    curbcut::cc_t(lang = lang, "Both high")
+    cc_t(lang = lang, "Both high")
   )
   leg$label_colour <- c(rep("black", 8), "white")
   leg$x <- leg$x - 0.5
@@ -403,7 +405,7 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
+      leg_info$colours_dfs$bivar$fill[1:9], leg_info$colours_dfs$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +
@@ -439,17 +441,17 @@ legend_render.bivar_ldelta_rq3 <- function(vars,
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
 
   # Prepare the grid's labels location and the colours
-  leg <- leg_info$colours$bivar[1:9, ]
+  leg <- leg_info$colours_dfs$bivar[1:9, ]
   leg$label <- c(
-    curbcut::cc_t(lang = lang, "Both low"), " ",
+    cc_t(lang = lang, "Both low"), " ",
     paste0(leg_info$labs_xy$y_short, "\n", cc_t(lang = lang, "high only")),
     " ", " ", " ",
     paste0(leg_info$labs_xy$x_short, "\n", cc_t(lang = lang, "high only")),
     " ",
-    curbcut::cc_t(lang = lang, "Both high")
+    cc_t(lang = lang, "Both high")
   )
   leg$label_colour <- c(rep("black", 8), "white")
   leg$x <- leg$x - 0.5
@@ -464,7 +466,7 @@ legend_render.bivar_ldelta_rq3 <- function(vars,
     ggplot2::scale_x_continuous(breaks = 0:3, labels = leg_info$break_labs$x) +
     ggplot2::scale_y_continuous(breaks = 0:3, labels = leg_info$break_labs$y) +
     ggplot2::scale_fill_manual(values = stats::setNames(
-      leg_info$colours$bivar$fill[1:9], leg_info$colours$bivar$fill[1:9]
+      leg_info$colours_dfs$bivar$fill[1:9], leg_info$colours_dfs$bivar$fill[1:9]
     )) +
     ggplot2::scale_colour_manual(values = c("black" = "black", "white" = "white")) +
     leg_info$labs_xy[[1]] +

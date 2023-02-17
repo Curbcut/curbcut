@@ -49,9 +49,8 @@ legend_server <- function(id, r, vars, data, df, hide = shiny::reactive(FALSE),
   shiny::moduleServer(id, function(input, output, session) {
     # Define plot height
     plot_height <- function() {
-      # if (length(var_left()) == 1 && var_right()[1] == " ") 1 else 2.5
-      if ((length(var_left()) == 1 && var_right()[1] == " ") ||
-        (length(var_left()) == 2 && var_right()[1] == " ")) {
+      if ((length(vars()$var_left) == 1 && vars()$var_right[1] == " ") ||
+        (length(vars()$var_left) == 2 && vars()$var_right[1] == " ")) {
         60
       } else {
         150
@@ -59,17 +58,16 @@ legend_server <- function(id, r, vars, data, df, hide = shiny::reactive(FALSE),
     }
 
     # Make legend
-    legend <- shiny::reactive(tryCatch(
+    legend <- shiny::reactive(
       legend_render(
+        vars = vars(),
         lang = r$lang(),
         data = data(),
-        vars = vars(),
         df = df(),
         build_str_as_DA = build_str_as_DA(),
         breaks = breaks()
-      ),
-      error = function(e) NULL
-    ))
+      )
+    )
 
     # Output legend
     output$legend_render <- shiny::renderUI({

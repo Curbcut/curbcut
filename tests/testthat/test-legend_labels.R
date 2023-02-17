@@ -120,3 +120,15 @@ test_that("legend_labels.delta_bivar works", {
     )
   )
 })
+
+test_that("legend_labels translation works", {
+  vars <- structure(list(var_left = "housing_tenant_2016", var_right = "canale_2016"),
+    class = "bivar"
+  )
+  expect_equal(
+    legend_labels(vars, lang = "fr"),
+    list(structure(list(x = "Indice AVA-Can (2016)", y = "Locataire (2016)"), class = "labels"),
+      x_short = structure("AVA-Can", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
+    )
+  )
+})

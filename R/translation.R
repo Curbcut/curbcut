@@ -48,16 +48,16 @@ cc_t_list <- function(x, translation_df) {
   x
 }
 
-#' Translate an object between French and English
+#' Translate an object between English and French
 #'
 #' Translate input object from English to French depending on the provided
 #' language and whether the function is running in a Shiny environment.
 #'
-#' @param ... Any objects, including lists or atomic vectors
+#' @param ... <`character objects`> Any objects, including lists or atomic vectors
 #' @param .envir The parent environment for evaluating the expressions in
 #' \code{...}. Defaults to `parent.frame()`
 #' @param lang <`character`> Language to use for translation. Must be one of
-#' en' or 'fr'.
+#' en' or 'fr'. Defaults to NULL which is no translation.
 #'
 #' @return If running in a Shiny context (UI), then return spans in both languages.
 #' If in a Shiny context and in server side, returns translation depending on
@@ -67,9 +67,38 @@ cc_t_list <- function(x, translation_df) {
 #' objects
 #'
 #' @export
-cc_t <- function(..., .envir = parent.frame(), lang) {
+cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
+  # Helper functions only used for translation
   cc_glue <- function(x) {
     glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)
+  }
+  return_raw <- function(x) {
+    if (is.list(x)) {
+      return(x)
+    }
+    cc_glue(x)
+  }
+  french_translation <- function(x) {
+    # French
+    if (is.list(x)) {
+      return(cc_t_list(x, translation_df))
+    }
+
+    # Character
+    translated <- translation_df[translation_df$en == x, ]$fr
+    # In case there is no translations:
+    if (length(translated) == 0 || is.na(translated)) {
+      return({
+        warning("No translation text found for `", x, "`.", call. = FALSE)
+        # x <- sub("<<.>>", "", x)
+        cc_glue(x)
+      })
+    }
+
+    # For vectors with names (such as used for x axis of some modules' graph)
+    if (!is.null(names(x))) names(translated) <- names(x)
+
+    return(cc_glue(translated))
   }
 
   # Error if we provide lists + character vectors unintentionally
@@ -77,20 +106,16 @@ cc_t <- function(..., .envir = parent.frame(), lang) {
   error_check <- sapply(args, inherits, "list")
   stopifnot(length(error_check) == sum(error_check) || sum(error_check) == 0)
 
+  # Collapse the vectors together
   x <- c(...)
   if (!is.list(x)) x <- paste0(..., collapse = "")
 
-  # Return input if we're not in a Shiny context
-  if (!shiny::isRunning()) {
-    return({
-      if (is.list(x)) {
-        return(x)
-      }
-      cc_glue(x)
-    })
+  # Return input if there lang is NULL
+  if (is.null(lang)) {
+    return(return_raw(x))
   }
 
-  # Grab translation and return input if missing
+  # Grab translation_df and return input if missing
   translation_df <- get0("translation_df", .GlobalEnv)
   if (is.null(translation_df)) {
     return({
@@ -99,15 +124,21 @@ cc_t <- function(..., .envir = parent.frame(), lang) {
         shiny::tagList(shiny::tags$span(class = "lang-en", x))
       } else {
         # Server side
-        if (is.list(x)) {
-          return(x)
-        }
-        cc_glue(x)
+        return_raw(x)
       }
     })
   }
 
-  # If not in a reactive shiny context, return 2 spans.
+  # If Shiny isn't running, still return depending on translation language given
+  if (!shiny::isRunning()) {
+    if (is.null(lang) || lang == "en") {
+      return(return_raw(x))
+    } else {
+      return(french_translation(x))
+    }
+  }
+
+  # If not in a reactive shiny context (is in UI), return 2 spans.
   if (is.null(shiny::getDefaultReactiveDomain())) {
     return(
       shiny::tagList(
@@ -133,32 +164,9 @@ cc_t <- function(..., .envir = parent.frame(), lang) {
 
   # English
   if (lang == "en") {
-    return({
-      if (is.list(x)) {
-        return(x)
-      }
-      cc_glue(x)
-    })
+    return(return_raw(x))
   }
 
-  # French
-  if (is.list(x)) {
-    return(cc_t_list(x, translation_df))
-  }
-
-  # Character
-  translated <- translation_df[translation_df$en == x, ]$fr
-  # In case there is no translations:
-  if (length(translated) == 0 || is.na(translated)) {
-    return({
-      warning("No translation text found for `", x, "`.", call. = FALSE)
-      # x <- sub("<<.>>", "", x)
-      cc_glue(x)
-    })
-  }
-
-  # For vectors with names (such as used for x axis of some modules' graph)
-  if (!is.null(names(x))) names(translated) <- names(x)
-
-  cc_glue(translated)
+  # Return french
+  return(french_translation(x))
 }

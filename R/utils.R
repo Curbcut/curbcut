@@ -421,21 +421,21 @@ var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
   return(breaks)
 }
 
-#' Retrieve the `colours` object
+#' Retrieve the `colours_dfs` object
 #'
-#' This function retrieves the `colours` object from the global environment. The
-#' `colours` object contains pre-defined color schemes that can be used in
-#' various plots across the package.
+#' This function retrieves the `colours_dfs` object from the global environment.
+#' The `colours_dfs` object contains pre-defined color schemes that can be used
+#' in various plots across the package.
 #'
 #' @return The `colours` object from the global environment
 colours_get <- function() {
-  colours <- get0("colours", envir = .GlobalEnv)
-  if (is.null(colours)) {
+  colours_dfs <- get0("colours_dfs", envir = .GlobalEnv)
+  if (is.null(colours_dfs)) {
     stop(paste0(
-      "Object `colours` must live in the global environment. Run ",
+      "Object `colours_dfs` must live in the global environment. Run ",
       "`cc.buildr::build_colours()` and save it in the data/ ",
       "folder."
     ))
   }
-  return(colours)
+  return(colours_dfs)
 }

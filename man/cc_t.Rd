@@ -2,18 +2,18 @@
 % Please edit documentation in R/translation.R
 \name{cc_t}
 \alias{cc_t}
-\title{Translate an object between French and English}
+\title{Translate an object between English and French}
 \usage{
-cc_t(..., .envir = parent.frame(), lang)
+cc_t(..., .envir = parent.frame(), lang = NULL)
 }
 \arguments{
-\item{...}{Any objects, including lists or atomic vectors}
+\item{...}{<\verb{character objects}> Any objects, including lists or atomic vectors}
 
 \item{.envir}{The parent environment for evaluating the expressions in
 \code{...}. Defaults to \code{parent.frame()}}
 
 \item{lang}{<\code{character}> Language to use for translation. Must be one of
-en' or 'fr'.}
+en' or 'fr'. Defaults to NULL which is no translation.}
 }
 \value{
 If running in a Shiny context (UI), then return spans in both languages.

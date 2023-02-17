@@ -7,13 +7,19 @@ assign("variables",
 )
 
 # Assign the colours list in the global environment
-assign("colours",
-  value = qs::qread("resources/colours.qs"),
+assign("colours_dfs",
+  value = qs::qread("resources/colours_dfs.qs"),
   envir = .GlobalEnv
 )
 
 # Variables present in the .GlobalEnv
 assign("all_choropleths",
   value = c("CSD", "CT", "DA", "building", "grid"),
+  envir = .GlobalEnv
+)
+
+# Variables present in the .GlobalEnv
+assign("translation_df",
+  value = qs::qread("resources/translation_df.qs"),
   envir = .GlobalEnv
 )

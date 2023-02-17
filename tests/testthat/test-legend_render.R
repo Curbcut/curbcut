@@ -63,3 +63,12 @@ test_that("legend_render.q100  works", {
 #   p <- legend_render(vars)
 #   expect_error(print(p), NA)
 # })
+
+structure(
+  list(
+    var_left = "canale_2016",
+    var_right = "housing_tenant_2016"
+  ),
+  class = "bivar"
+) |>
+  legend_render(df = "CMA_CSD")

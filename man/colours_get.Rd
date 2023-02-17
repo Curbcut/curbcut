@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{colours_get}
 \alias{colours_get}
-\title{Retrieve the \code{colours} object}
+\title{Retrieve the \code{colours_dfs} object}
 \usage{
 colours_get()
 }
@@ -10,7 +10,7 @@ colours_get()
 The \code{colours} object from the global environment
 }
 \description{
-This function retrieves the \code{colours} object from the global environment. The
-\code{colours} object contains pre-defined color schemes that can be used in
-various plots across the package.
+This function retrieves the \code{colours_dfs} object from the global environment.
+The \code{colours_dfs} object contains pre-defined color schemes that can be used
+in various plots across the package.
 }
