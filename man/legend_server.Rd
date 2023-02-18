@@ -2,6 +2,7 @@
 % Please edit documentation in R/legend_module.R
 \name{legend_server}
 \alias{legend_server}
+\alias{legend_UI}
 \title{Create the server logic for the legend module}
 \usage{
 legend_server(
@@ -14,6 +15,8 @@ legend_server(
   build_str_as_DA = shiny::reactive(TRUE),
   breaks = shiny::reactive(NULL)
 )
+
+legend_UI(id)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the legend will appear,
@@ -41,8 +44,22 @@ be treated as DAs? Defaults to \code{shiny::reactive(TRUE)}.}
 supplied to the legend module.}
 }
 \value{
-The legend Shiny server function
+The legend Shiny UI and server functions
 }
 \description{
-Create the server logic for the legend module
+The height of the legend plot is determined based on the the class of the
+\code{vars} object. If the \code{bivar} string is detected in in the class, then the
+height is set to 150 pixels. In all other cases, the height is 60 pixels.
+This ensures that the plot legend is sized appropriately for the content
+of the plot (\code{bivar} plot is displayed as a 3x3 blocks square). Around the
+\code{\link[curbcut]legend_render} function, there is a tryCatch used to
+catch any errors that occur when rendering the legend. If an error occurs,
+the error message is printed to the console and the function returns
+\code{NULL}. This ensures that the Shiny application continues to function
+even if there is an error with the legend module.
 }
+\section{Functions}{
+\itemize{
+\item \code{legend_UI()}: Create the UI for the legend module
+
+}}
