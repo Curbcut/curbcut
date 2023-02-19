@@ -14,7 +14,10 @@ Imports:
     ggplot2,
     scales,
     stats,
-    tibble
+    tibble,
+    rdeck,
+    DBI,
+    rlang
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -24,5 +27,5 @@ BugReports: https://github.com/MSSI-urban/curbcut/issues
 Suggests: 
     testthat (>= 3.0.0),
     qs,
-    systemfonts
+    RSQLite
 Config/testthat/edition: 3

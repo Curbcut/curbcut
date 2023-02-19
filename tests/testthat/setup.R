@@ -18,8 +18,14 @@ assign("all_choropleths",
   envir = .GlobalEnv
 )
 
-# Variables present in the .GlobalEnv
+# Translation dataframe present in the .GlobalEnv
 assign("translation_df",
   value = qs::qread("resources/translation_df.qs"),
+  envir = .GlobalEnv
+)
+
+# Connection to the sqlite db present in the .GlobalEnv
+assign("city_CSD_conn",
+  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CSD.sqlite"),
   envir = .GlobalEnv
 )

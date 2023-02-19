@@ -16,7 +16,7 @@ test_that("legend_labels.q5 works", {
 })
 
 test_that("legend_labels.q100 works", {
-  vars <- build_vars(var_left = "c_flood", var_right = " ", df = "raster")
+  vars <- vars_build(var_left = "c_flood", var_right = " ", df = "raster")
 
   expect_equal(
     legend_labels(vars),

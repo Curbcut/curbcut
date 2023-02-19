@@ -4,14 +4,11 @@
 \alias{legend_breaks.bivar}
 \title{Compute legend breaks for a comparison of two variables}
 \usage{
-\method{legend_breaks}{bivar}(vars, df, ...)
+\method{legend_breaks}{bivar}(vars, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{delta}. The necessary
-named objects in the list are \code{var_left} and \code{var_right}.}
-
-\item{df}{<\code{character}> Indicates the combination of the region and scale
-of interest, e.g. \code{"CMA_DA"}}
+\item{vars}{<\verb{named list}> A list object of class \code{delta}. The output of
+\code{\link[curbcut]{vars_build}}.}
 
 \item{...}{Additional arguments passed to methods.}
 }

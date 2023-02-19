@@ -4,8 +4,8 @@
 #' labels for the Curbcut legends. The function invokes
 #' particular methods which depend on the class of the `vars` argument.
 #'
-#' @param vars <`named list`> A list object with a pre-determined class. Named
-#' objects in the list are `var_left` and `var_right`.
+#' @param vars <`named list`> A list object with a pre-determined class. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns an output of \code{\link[ggplot2]{labs}}.
@@ -16,30 +16,28 @@ legend_breaks <- function(vars, ...) {
 
 #' Compute legend breaks for a single `var_left`
 #'
-#' @param vars <`named list`> A list object of class `q5`. The only necessary
-#' named object in the list is var_left.
-#' @param df <`character`> Indicates the combination of the region and scale
-#' of interest, e.g. `"CMA_DA"`
+#' @param vars <`named list`> A list object of class `q5`. The output of
+#' \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
+legend_breaks.q5 <- function(vars, lang = NULL, ...) {
   # Are the breaks qualitative
   is_character_breaks <- "qual" %in% unlist(var_get_info(vars$var_left, "type"))
 
   # Grab the breaks from the variables table
   breaks <- if (is_character_breaks) {
     var_get_breaks(
-      var = vars$var_left, df = df,
+      var = vars$var_left, df = vars$df,
       break_col = "var_name_short", q3_q5 = "q5",
       pretty = TRUE, compact = TRUE, lang = lang
     )
   } else {
     var_get_breaks(
-      var = vars$var_left, df = df,
+      var = vars$var_left, df = vars$df,
       q3_q5 = "q5", pretty = TRUE, compact = TRUE
     )
   }
@@ -53,7 +51,8 @@ legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
 
 #' Compute legend breaks for a variable displaying 100 breaks
 #'
-#' @param vars <`named list`> A list object of class `q100`.
+#' @param vars <`named list`> A list object of class `q100`. The output of
+#' \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' `Low` and `High` breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -70,19 +69,17 @@ legend_breaks.q100 <- function(vars, lang = NULL, ...) {
 
 #' Compute legend breaks for a qualitative variable
 #'
-#' @param vars <`named list`> A list object of class `qual`. The only necessary
-#' named object in the list is var_left.
-#' @param df <`character`> Indicates the combination of the region and scale
-#' of interest, e.g. `"CMA_DA"`
+#' @param vars <`named list`> A list object of class `qual`. The output of
+#' \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.qual <- function(vars, df, lang = NULL, ...) {
+legend_breaks.qual <- function(vars, lang = NULL, ...) {
   var_get_breaks(
-    var = vars$var_left, df = df,
+    var = vars$var_left, df = vars$df,
     break_col = "var_name_short", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE, lang = lang
   )
@@ -108,32 +105,31 @@ legend_breaks.delta <- function(vars, ...) {
 #' year score on the right-hand.
 #'
 #' @param vars <`named list`> A list object of class `bivariate_xdelta_yq3`. The
-#' only necessary named object in the list is var_left.
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param data <`data.frame`> Must contains the `var_left` and `var_left_q3`
 #' columns, which are used to extract the `q3` breaks (variation) for the single
 #' variable of two date times.
-#' @param df <`character`> Indicates the combination of the region and scale
-#' of interest, e.g. `"CMA_DA"`
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.bivar_ldelta_rq3 <- function(vars, data, df, ...) {
+legend_breaks.bivar_ldelta_rq3 <- function(vars, data, ...) {
   break_labs_y <- c(
     min(data$var_left, na.rm = TRUE),
     max(data$var_left[data$var_left_q3 == 1], na.rm = TRUE),
     max(data$var_left[data$var_left_q3 == 2], na.rm = TRUE),
     max(data$var_left, na.rm = TRUE)
   )
+  break_labs_y <- convert_unit(break_labs_y,
+    compact = TRUE,
+    scale_fun = scales::percent
+  )
 
   break_labs_x <- var_get_breaks(
-    var = vars$var_right, df = df,
+    var = vars$var_right, df = vars$df,
     q3_q5 = "q3", pretty = TRUE,
     compact = TRUE
   )
-
-  break_labs_y <- convert_unit(break_labs_y, compact = TRUE)
-  break_labs_x <- convert_unit(break_labs_x, compact = TRUE)
 
   return(list(x = break_labs_x, y = break_labs_y))
 }
@@ -144,21 +140,19 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, data, df, ...) {
 #' variables but in different years, e.g. "housing_tenant_2016" and
 #' "housing_tenant_2021".
 #'
-#' @param vars <`named list`> A list object of class `delta`. The necessary
-#' named objects in the list are `var_left` and `var_right`.
-#' @param df <`character`> Indicates the combination of the region and scale
-#' of interest, e.g. `"CMA_DA"`
+#' @param vars <`named list`> A list object of class `delta`. The output of
+#' \code{\link[curbcut]{vars_build}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.bivar <- function(vars, df, ...) {
+legend_breaks.bivar <- function(vars, ...) {
   break_labs_y <- var_get_breaks(
-    var = vars$var_left, df = df, q3_q5 = "q3", pretty = TRUE,
+    var = vars$var_left, df = vars$df, q3_q5 = "q3", pretty = TRUE,
     compact = TRUE
   )
   break_labs_x <- var_get_breaks(
-    var = vars$var_right, df = df, q3_q5 = "q3", pretty = TRUE,
+    var = vars$var_right, df = vars$df, q3_q5 = "q3", pretty = TRUE,
     compact = TRUE
   )
   return(list(x = break_labs_x, y = break_labs_y))
@@ -192,8 +186,14 @@ legend_breaks.delta_bivar <- function(vars, data, ...) {
     max(data$var_right, na.rm = TRUE)
   )
 
-  break_labs_y <- convert_unit(break_labs_y, compact = TRUE)
-  break_labs_x <- convert_unit(break_labs_x, compact = TRUE)
+  break_labs_y <- convert_unit(break_labs_y,
+    compact = TRUE,
+    scale_fun = scales::percent
+  )
+  break_labs_x <- convert_unit(break_labs_x,
+    compact = TRUE,
+    scale_fun = scales::percent
+  )
 
   return(list(x = break_labs_x, y = break_labs_y))
 }

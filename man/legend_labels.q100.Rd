@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A named list object of class \code{q100}. The
-only necessary named object in the list is \code{var_left}.}
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

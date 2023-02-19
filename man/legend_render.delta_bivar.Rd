@@ -8,8 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a \code{delta_bivar} class. The
-necessary objects in the list are \code{var_left} and \code{var_right}, both of length
-2 (two years each)}
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use

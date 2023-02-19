@@ -4,18 +4,15 @@
 \alias{legend_render.q5}
 \title{Render the legend for the q5 class}
 \usage{
-\method{legend_render}{q5}(vars, font_family = "SourceSansPro", df, ...)
+\method{legend_render}{q5}(vars, font_family = "SourceSansPro", ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object with a \code{q5} class. The only
-necessary named object is \code{var_left}.}
+\item{vars}{<\verb{named list}> A list object with a \code{q5} class. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
 the default font family og ggplot2, use \code{NULL}.}
-
-\item{df}{<\code{character}> Indicates the combination of the region and scale
-of interest, e.g. \code{"CMA_DA"}}
 
 \item{...}{additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.}
 }

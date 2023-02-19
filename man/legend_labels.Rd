@@ -7,8 +7,8 @@
 legend_labels(vars, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object with a pre-determined class. Named
-objects in the list are \code{var_left} and \code{var_right}.}
+\item{vars}{<\verb{named list}> A list object with a pre-determined class. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
 }

@@ -7,8 +7,8 @@
 \method{legend_labels}{q5}(vars, lang = NULL, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{q5}. The only necessary
-named objects in the list is \code{var_left}.}
+\item{vars}{<\verb{named list}> A list object of class \code{q5}. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

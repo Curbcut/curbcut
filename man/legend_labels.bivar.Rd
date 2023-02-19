@@ -7,8 +7,8 @@
 \method{legend_labels}{bivar}(vars, lang = NULL, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{bivar}. The necessary
-named objects in the list are \code{var_left} and \code{var_right}.}
+\item{vars}{<\verb{named list}> A list object of class \code{bivar}. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

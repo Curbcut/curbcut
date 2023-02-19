@@ -21,7 +21,7 @@ shiny::shinyApp(
     )
 
     df <- shiny::reactive("CMA_CSD")
-    vars <- shiny::reactive(build_vars(
+    vars <- shiny::reactive(vars_build(
       var_left = "canale_2016",
       var_right = "housing_tenant_2016",
       df = df()
@@ -32,7 +32,6 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      df = df,
       data = data
     )
   }
@@ -62,7 +61,7 @@ shiny::shinyApp(
     )
 
     df <- shiny::reactive("CMA_CSD")
-    vars <- shiny::reactive(build_vars(
+    vars <- shiny::reactive(vars_build(
       var_left = "canale_2016",
       var_right = " ",
       df = df()
@@ -73,7 +72,6 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      df = df,
       data = data
     )
   }
@@ -103,7 +101,7 @@ shiny::shinyApp(
     )
 
     df <- shiny::reactive("CMA_CSD")
-    vars <- shiny::reactive(build_vars(
+    vars <- shiny::reactive(vars_build(
       var_left = c("inc_limat_2006", "inc_limat_2016"),
       var_right = c(
         "housing_tenant_2006",
@@ -117,7 +115,6 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      df = df,
       data = data
     )
   }
@@ -147,7 +144,7 @@ shiny::shinyApp(
     )
 
     df <- shiny::reactive("CMA_CSD")
-    vars <- shiny::reactive(build_vars(
+    vars <- shiny::reactive(vars_build(
       var_left = c("inc_limat_2006", "inc_limat_2016"),
       var_right = c(" "),
       df = df()
@@ -158,7 +155,6 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      df = df,
       data = data
     )
   }
@@ -187,7 +183,7 @@ shiny::shinyApp(
     )
 
     df <- shiny::reactive("raster")
-    vars <- shiny::reactive(build_vars(
+    vars <- shiny::reactive(vars_build(
       var_left = c("c_flood"),
       var_right = c(" "),
       df = df()
@@ -198,7 +194,6 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      df = df,
       data = data
     )
   }

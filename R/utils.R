@@ -113,6 +113,8 @@ compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' large numbers. If \code{TRUE} and a number has at least 4 significant digits,
 #' the function will use compact notation (e.g., 1.2M instead of 1200000). This
 #' argument is optional and defaults to \code{FALSE}.
+#' @param scale_fun <`function`> The scale function to be used to format the
+#' output (in the case `var` is NULL). The default is `scales::comma`.
 #'
 #' @return A character vector of the same length as \code{x} representing the
 #' numbers in an appropriate format for display.
@@ -124,7 +126,8 @@ compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' function uses the corresponding function from the \code{scales} package to
 #' format the numbers.
 #' @export
-convert_unit <- function(x, var = NULL, compact = FALSE) {
+convert_unit <- function(x, var = NULL, compact = FALSE,
+                         scale_fun = scales::comma) {
   if (length(x) == 0) {
     return(x)
   }
@@ -141,15 +144,15 @@ convert_unit <- function(x, var = NULL, compact = FALSE) {
   # `pct` and `dollar`
   basic_return <- \(x, min_dig) {
     if (compact && min_dig >= 4) {
-      return(compact_big_marks(x, min_dig))
+      return(compact_big_marks(x, min_dig, scale_fun))
     }
     if (max(abs(x)) >= 100 || all(round(x) == x)) {
-      return(scales::comma(x, 1))
+      return(scale_fun(x, 1))
     }
     if (max(abs(x)) >= 10) {
-      return(scales::comma(x, 0.1))
+      return(scale_fun(x, 0.1))
     }
-    return(scales::comma(x, 0.01))
+    return(scale_fun(x, 0.01))
   }
 
   # If no `var` supplied
@@ -204,6 +207,44 @@ vec_dep <- function(x) {
     1L + max(depths, 0L)
   } else {
     stop("`x` must be a vector")
+  }
+}
+
+#' Calculate the ntile for a given vector of values
+#'
+#' This function divides a vector into n bins of equal size and returns the
+#' bin number for each element in the vector. It is a reimplementation of
+#' \code{\link[dplyr]{ntile}} in base R.
+#'
+#' @param x <`numeric vector`> Vector of numeric values
+#' @param n <`integer`> An integer specifying the number of quantiles to
+#' calculate
+#'
+#' @return An integer vector indicating the bin number for each element in x
+#'
+#' @seealso The dplyr package provides a ntile function with similar
+#' functionality.
+#'
+#' @export
+ntile <- function(x, n) {
+  x <- rank(x, ties.method = "first", na.last = "keep")
+  len <- length(x) - sum(is.na(x))
+  if (len == 0L) {
+    rep(NA_integer_, length(x))
+  } else {
+    n <- as.integer(floor(n))
+    n_larger <- as.integer(len %% n)
+    n_smaller <- as.integer(n - n_larger)
+    size <- len / n
+    larger_size <- as.integer(ceiling(size))
+    smaller_size <- as.integer(floor(size))
+    larger_threshold <- larger_size * n_larger
+    bins <- ifelse(x <= larger_threshold,
+      (x + (larger_size - 1L)) / larger_size,
+      (x + (-larger_threshold + smaller_size - 1L)) /
+        smaller_size + n_larger
+    )
+    as.integer(floor(bins))
   }
 }
 

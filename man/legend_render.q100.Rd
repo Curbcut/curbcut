@@ -7,7 +7,8 @@
 \method{legend_render}{q100}(vars, font_family = "SourceSansPro", ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object with a \code{q100} class.}
+\item{vars}{<\verb{named list}> A list object with a \code{q100} class. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use

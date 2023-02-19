@@ -7,8 +7,8 @@
 \method{legend_labels}{delta}(vars, lang = NULL, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{delta}. The only necessary
-named object in the list is var_left.}
+\item{vars}{<\verb{named list}> A list object of class \code{delta}. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

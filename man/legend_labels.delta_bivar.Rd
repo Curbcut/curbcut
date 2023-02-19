@@ -7,9 +7,8 @@
 \method{legend_labels}{delta_bivar}(vars, lang = NULL, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{delta_bivar}. The necessary
-named objects in the list are \code{var_left} and \code{var_right}. They both need
-to be of length 2.}
+\item{vars}{<\verb{named list}> A list object of class \code{delta_bivar}. The
+output of \code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

@@ -4,7 +4,7 @@
 \alias{convert_unit}
 \title{Convert a numeric vector to appropriate display units}
 \usage{
-convert_unit(x, var = NULL, compact = FALSE)
+convert_unit(x, var = NULL, compact = FALSE, scale_fun = scales::comma)
 }
 \arguments{
 \item{x}{<\verb{numeric vector}> Numeric values.}
@@ -17,6 +17,9 @@ format. This argument is optional.}
 large numbers. If \code{TRUE} and a number has at least 4 significant digits,
 the function will use compact notation (e.g., 1.2M instead of 1200000). This
 argument is optional and defaults to \code{FALSE}.}
+
+\item{scale_fun}{<\code{function}> The scale function to be used to format the
+output (in the case \code{var} is NULL). The default is \code{scales::comma}.}
 }
 \value{
 A character vector of the same length as \code{x} representing the

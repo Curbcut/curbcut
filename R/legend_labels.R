@@ -4,8 +4,8 @@
 #' \code{\link[ggplot2]{labs}} for the Curbcut legends. The function invokes
 #' particular methods which depend on the class of the `vars` argument.
 #'
-#' @param vars <`named list`> A list object with a pre-determined class. Named
-#' objects in the list are `var_left` and `var_right`.
+#' @param vars <`named list`> A list object with a pre-determined class. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns an output of \code{\link[ggplot2]{labs}}.
@@ -22,8 +22,8 @@ legend_labels <- function(vars, ...) {
 #' to extract the title of the left variable. The resulting list contains a
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
-#' @param vars <`named list`> A list object of class `q5`. The only necessary
-#' named objects in the list is `var_left`.
+#' @param vars <`named list`> A list object of class `q5`. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -48,7 +48,7 @@ legend_labels.q5 <- function(vars, lang = NULL, ...) {
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
 #' @param vars <`named list`> A named list object of class \code{q100}. The
-#' only necessary named object in the list is \code{var_left}.
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -74,7 +74,7 @@ legend_labels.q100 <- function(vars, lang = NULL, ...) {
 #' the y-axis.
 #'
 #' @param vars <`named list`> A named list object of class \code{qual}. The
-#' necessary named object in the list is \code{var_left}.
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -105,7 +105,7 @@ legend_labels.qual <- function(vars, lang = NULL, ...) {
 #' for each axis.
 #'
 #' @param vars <`named list`> A list object of class `bivar_ldelta_rq3`. The
-#' necessary named objects in the list are var_left and var_right.
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -157,8 +157,8 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
 #' to extract the title of the left variable. The resulting list contains a
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
-#' @param vars <`named list`> A list object of class `delta`. The only necessary
-#' named object in the list is var_left.
+#' @param vars <`named list`> A list object of class `delta`. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -188,8 +188,8 @@ legend_labels.delta <- function(vars, lang = NULL, ...) {
 #' and a label for the y-axis with the title of the left variable along with the date of each
 #' variable.
 #'
-#' @param vars <`named list`> A list object of class `bivar`. The necessary
-#' named objects in the list are `var_left` and `var_right`.
+#' @param vars <`named list`> A list object of class `bivar`. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -243,9 +243,8 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
 #' and a label for the y-axis with the title of the left variable along with the date of each
 #' variable.
 #'
-#' @param vars <`named list`> A list object of class `delta_bivar`. The necessary
-#' named objects in the list are `var_left` and `var_right`. They both need
-#' to be of length 2.
+#' @param vars <`named list`> A list object of class `delta_bivar`. The
+#' output of \code{\link[curbcut]{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.

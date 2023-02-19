@@ -7,7 +7,8 @@
 \method{legend_breaks}{q100}(vars, lang = NULL, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object of class \code{q100}.}
+\item{vars}{<\verb{named list}> A list object of class \code{q100}. The output of
+\code{\link[curbcut]{vars_build}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 \code{Low} and \code{High} breaks to. Defaults to \code{NULL}, which is no translation.}
