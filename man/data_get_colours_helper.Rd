@@ -7,6 +7,7 @@
 data_get_colours_helper(
   vars,
   region,
+  zoom_levels,
   colours_table,
   scales_as_DA = c("building", "street"),
   ...
@@ -19,6 +20,10 @@ data_get_colours_helper(
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available
 in the \code{regions_dictionary}.}
+
+\item{zoom_levels}{<\verb{named vector}> Zoom levels under study. One of the
+map_zoom_levels_x in the global environment. It contains the zoom at which
+a scale should switch on an autozoom, e.g. \code{c(CMA = 0, CT = 10.5, DA = 12.5, ...)}.}
 
 \item{colours_table}{<\code{character}> Fromn which colour table should the colour
 be matched to the \code{group} column of the retrieved data. For \code{q5} class would be

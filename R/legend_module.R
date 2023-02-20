@@ -35,7 +35,7 @@
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
 #'
-#' @return The legend Shiny UI and server functions
+#' @return The legend Shiny UI and server module functions
 #' @export
 legend_server <- function(id, r, vars, df,  data, hide = shiny::reactive(FALSE),
                           breaks = shiny::reactive(NULL),
@@ -57,14 +57,15 @@ legend_server <- function(id, r, vars, df,  data, hide = shiny::reactive(FALSE),
     }
 
     # Switch scales to DA if necessary
-    df <- shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
+    treated_df <-
+      shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
 
     # Make legend
     legend <- shiny::reactive(
       tryCatch(legend_render(
         vars = vars(),
         lang = r$lang(),
-        df = df(),
+        df = treated_df(),
         data = data(),
         breaks = breaks()
       ), error = function(e) {

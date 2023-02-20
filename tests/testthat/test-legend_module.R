@@ -32,7 +32,8 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      data = data
+      data = data,
+      df = df
     )
   }
 )
@@ -72,7 +73,8 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      data = data
+      data = data,
+      df = df
     )
   }
 )
@@ -115,7 +117,8 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      data = data
+      data = data,
+      df = df
     )
   }
 )
@@ -155,7 +158,8 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      data = data
+      data = data,
+      df = df
     )
   }
 )
@@ -194,7 +198,8 @@ shiny::shinyApp(
       id = "legend",
       r = r,
       vars = vars,
-      data = data
+      data = data,
+      df = df
     )
   }
 )

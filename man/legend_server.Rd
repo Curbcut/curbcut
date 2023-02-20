@@ -47,7 +47,7 @@ should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By de
 their colour will be the one of their DA.}
 }
 \value{
-The legend Shiny UI and server functions
+The legend Shiny UI and server module functions
 }
 \description{
 The height of the legend plot is determined based on the class of the \code{vars}

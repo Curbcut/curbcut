@@ -13,7 +13,7 @@
 data_get_colours(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -21,7 +21,7 @@ data_get_colours(
 \method{data_get_colours}{q5}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -29,7 +29,7 @@ data_get_colours(
 \method{data_get_colours}{bivar}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -37,7 +37,7 @@ data_get_colours(
 \method{data_get_colours}{delta}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -45,7 +45,7 @@ data_get_colours(
 \method{data_get_colours}{delta_bivar}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -53,7 +53,7 @@ data_get_colours(
 \method{data_get_colours}{bivar_ldelta_rq3}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -61,7 +61,7 @@ data_get_colours(
 \method{data_get_colours}{default}(
   vars,
   region,
-  colours_table,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   ...
 )
@@ -74,10 +74,9 @@ data_get_colours(
 retrieve all the according colours of all the IDs. One of the regions available
 in the \code{regions_dictionary}.}
 
-\item{colours_table}{<\code{character}> Fromn which colour table should the colour
-be matched to the \code{group} column of the retrieved data. For \code{q5} class would be
-\code{left_5}, for \code{bivar} class would be \code{bivar}, etc. One of the names of the
-\code{colours_dfs} list present in the global environment.}
+\item{zoom_levels}{<\verb{named vector}> Zoom levels under study. One of the
+map_zoom_levels_x in the global environment. It contains the zoom at which
+a scale should switch on an autozoom, e.g. \code{c(CMA = 0, CT = 10.5, DA = 12.5, ...)}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
