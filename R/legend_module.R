@@ -57,7 +57,7 @@ legend_server <- function(id, r, vars, df,  data, hide = shiny::reactive(FALSE),
     }
 
     # Switch scales to DA if necessary
-    df <- reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
+    df <- shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
 
     # Make legend
     legend <- shiny::reactive(

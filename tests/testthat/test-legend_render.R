@@ -56,7 +56,7 @@ test_that("legend_render.delta_bivar  works", {
     var_right = c("inc_50_2006", "inc_50_2016"), df = "city_CSD"
   )
   data <- data_get(vars, df = "city_CSD")
-  p <- legend_render(vars, df = "city_CSD", data = data)
+  p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
   expect_error(print(p), NA)
 })
 
@@ -66,6 +66,6 @@ test_that("legend_render.bivar_ldelta_rq3  works", {
     var_right = "inc_limat_2016", df = "city_CSD"
   )
   data <- data_get(vars, df = "city_CSD")
-  p <- legend_render(vars, df = "city_CSD", data = data)
+  p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
   expect_error(print(p), NA)
 })

@@ -5,21 +5,21 @@
 \title{Compute legend breaks for a comparison of a single variable of two date times
 with another single year variable.}
 \usage{
-\method{legend_breaks}{bivar_ldelta_rq3}(vars, data, ...)
+\method{legend_breaks}{bivar_ldelta_rq3}(vars, df, data, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivariate_xdelta_yq3}. The
 output of \code{\link[curbcut]{vars_build}}.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
 
 \item{data}{<\code{data.frame}> Must contains the \code{var_left} and \code{var_left_q3}
 columns, which are used to extract the \code{q3} breaks (variation) for the single
 variable of two date times.}
 
 \item{...}{Additional arguments passed to methods.}
-
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
 }
 \value{
 A vector of legend breaks with pretty labels.

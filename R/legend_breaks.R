@@ -6,15 +6,12 @@
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
 #' output of \code{\link[curbcut]{vars_build}}.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
 #' @param ... Arguments to be passed to the methods, e.g. `df`, `data`, or
 #' optionally `lang`.
 #'
 #' @return It returns an output of \code{\link[ggplot2]{labs}}.
 #' @export
-legend_breaks <- function(vars, df, ...) {
+legend_breaks <- function(vars, ...) {
   UseMethod("legend_breaks", vars)
 }
 
@@ -129,7 +126,7 @@ legend_breaks.delta <- function(vars, ...) {
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.bivar_ldelta_rq3 <- function(vars, data, ...) {
+legend_breaks.bivar_ldelta_rq3 <- function(vars, df, data, ...) {
   break_labs_y <- c(
     min(data$var_left, na.rm = TRUE),
     max(data$var_left[data$var_left_q3 == 1], na.rm = TRUE),

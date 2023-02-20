@@ -4,15 +4,11 @@
 \alias{legend_breaks}
 \title{Generic legend breaks function for Curbcut legends}
 \usage{
-legend_breaks(vars, df, ...)
+legend_breaks(vars, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
 output of \code{\link[curbcut]{vars_build}}.}
-
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. \code{df}, \code{data}, or
 optionally \code{lang}.}
