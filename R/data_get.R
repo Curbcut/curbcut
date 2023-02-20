@@ -79,12 +79,15 @@ data_get_delta <- function(var_two_years, df) {
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function. The class of the vars object is
 #' used to determine how to grab de data and output it.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`
 #' along with a `group` column for map colouring.
 #' @export
-data_get <- function(vars, ...) {
+data_get <- function(vars, df, ...) {
   UseMethod("data_get", vars)
 }
 
@@ -92,15 +95,23 @@ data_get <- function(vars, ...) {
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
 #' added `group` column for map colouring.
 #' @export
-data_get.q5 <- function(vars, ...) {
-  data <- data_get_sql(vars$var_left, vars$df)
+data_get.q5 <- function(vars, df, ...) {
+  # Get var_left and rename
+  data <- data_get_sql(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+
+  # Add the `group` for the map colouring
   data$group <- data$var_left_q5
+
+  # Return
   return(data)
 }
 
@@ -108,18 +119,21 @@ data_get.q5 <- function(vars, ...) {
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
 #' binded in the same dataframe with an added `group` column for map colouring.
 #' @export
-data_get.bivar <- function(vars, ...) {
+data_get.bivar <- function(vars, df, ...) {
   # Get var_left and rename
-  data <- data_get_sql(vars$var_left, vars$df)
+  data <- data_get_sql(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
 
   # Get var_right and rename
-  vr <- data_get_sql(vars$var_right, vars$df)
+  vr <- data_get_sql(vars$var_right, df)
   names(vr) <- c("ID", "var_right", "var_right_q3", "var_right_q5")
 
   # Error check before binding
@@ -143,15 +157,18 @@ data_get.bivar <- function(vars, ...) {
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
 #' years of the same variable. `q5` is calculated on the spot with and doubled
 #' to the `group` column for map colouring.
 #' @export
-data_get.delta <- function(vars, ...) {
+data_get.delta <- function(vars, df, ...) {
   # Retrieve
-  data <- data_get_delta(var_two_years = vars$var_left, df = vars$df)
+  data <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
 
   # Add the `group` for the map colouring
@@ -171,17 +188,20 @@ data_get.delta <- function(vars, ...) {
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
 #' years of two variables. `q3`s are calculated on the spot along with the
 #' `group` column for the map colouring.
 #' @export
-data_get.delta_bivar <- function(vars, ...) {
+data_get.delta_bivar <- function(vars, df, ...) {
   # Retrieve
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = vars$df)
+  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
-  data_vr <- data_get_delta(var_two_years = vars$var_right, df = vars$df)[-1]
+  data_vr <- data_get_delta(var_two_years = vars$var_right, df = df)[-1]
   names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
   data <- cbind(data_vl, data_vr)
 
@@ -198,6 +218,9 @@ data_get.delta_bivar <- function(vars, ...) {
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -206,14 +229,14 @@ data_get.delta_bivar <- function(vars, ...) {
 #' to regroup with the `q3` column of the second value to create the `group`
 #' column for map colouring.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, ...) {
+data_get.bivar_ldelta_rq3 <- function(vars, df, ...) {
   # Retrieve var_left and add a `q3 column`
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = vars$df)
+  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
   # Normal retrieval for var_right (single value)
-  data_vr <- data_get_sql(vars$var_right, vars$df)[2:3]
+  data_vr <- data_get_sql(vars$var_right, df)[2:3]
   names(data_vr) <- c("var_right", "var_right_q3")
 
   # Bind vl and vr

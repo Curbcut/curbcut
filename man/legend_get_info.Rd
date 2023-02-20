@@ -4,7 +4,7 @@
 \alias{legend_get_info}
 \title{Get information (labels, breaks, themes, ...) for legend creation}
 \usage{
-legend_get_info(vars, font_family = "SourceSansPro", ...)
+legend_get_info(vars, font_family = "SourceSansPro", df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The

@@ -4,7 +4,7 @@ test_that("vars_build works", {
       var_left = "housing_tenant_2016", var_right = " ",
       df = "CMA_CSD"
     ),
-    structure(list(var_left = "housing_tenant_2016", var_right = " ", df = "CMA_CSD"),
+    structure(list(var_left = "housing_tenant_2016", var_right = " "),
       class = "q5"
     )
   )
@@ -14,7 +14,7 @@ test_that("vars_build works", {
       var_left = "housing_tenant_2016", var_right = " ",
       df = "CMA_building"
     ),
-    structure(list(var_left = "housing_tenant_2016", var_right = " ", df = "CMA_DA"),
+    structure(list(var_left = "housing_tenant_2016", var_right = " "),
       class = "q5"
     )
   )
@@ -26,8 +26,7 @@ test_that("vars_build works", {
     ),
     structure(
       list(
-        var_left = "housing_tenant_2016", var_right = "inc_limat_2016",
-        df = "CMA_CSD"
+        var_left = "housing_tenant_2016", var_right = "inc_limat_2016"
       ),
       class = "bivar"
     )
@@ -54,8 +53,7 @@ test_that("vars_build works", {
         var_right = c(
           "inc_limat_2006",
           "inc_limat_2016"
-        ),
-        df = "CMA_DA"
+        )
       ),
       class = "delta_bivar"
     )
@@ -76,8 +74,7 @@ test_that("vars_build works", {
           "housing_tenant_2006",
           "housing_tenant_2016"
         ),
-        var_right = c(" "),
-        df = "CMA_DA"
+        var_right = c(" ")
       ),
       class = "delta"
     )
@@ -98,8 +95,7 @@ test_that("vars_build works", {
           "housing_tenant_2006",
           "housing_tenant_2016"
         ),
-        var_right = c("inc_limat_2006"),
-        df = "CMA_DA"
+        var_right = c("inc_limat_2006")
       ),
       class = "bivar_ldelta_rq3"
     )
@@ -112,8 +108,7 @@ test_that("vars_build works", {
     ),
     structure(
       list(
-        var_left = "housing_tenant_2016", var_right = " ",
-        df = "unknown_df"
+        var_left = "housing_tenant_2016", var_right = " "
       ),
       class = "unknown_df"
     )
@@ -134,8 +129,7 @@ test_that("vars_build works", {
           "housing_tenant_2016",
           "housing_tenant_2016"
         ),
-        var_right = c(" "),
-        df = "CMA_DA"
+        var_right = c(" ")
       ),
       class = "NA"
     )
@@ -148,8 +142,7 @@ test_that("vars_build works", {
     ),
     structure(
       list(
-        var_left = "climate_drought_2016", var_right = " ",
-        df = "grid_grid"
+        var_left = "climate_drought_2016", var_right = " "
       ),
       class = "q5"
     )
@@ -157,6 +150,6 @@ test_that("vars_build works", {
 
   expect_equal(
     vars_build(var_left = "c_flood", var_right = " ", df = "raster"),
-    structure(list(var_left = "c_flood", var_right = " ", df = "raster"), class = "q100")
+    structure(list(var_left = "c_flood", var_right = " "), class = "q100")
   )
 })

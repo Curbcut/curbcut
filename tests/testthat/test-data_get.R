@@ -1,7 +1,7 @@
 test_that("data_get.q5  works", {
   vars <- vars_build(var_left = "housing_tenant_2016", df = "city_CSD")
   expect_equal(
-    data_get(vars = vars),
+    data_get(vars = vars, df = "city_CSD"),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -31,7 +31,6 @@ test_that("data_get.q5  works", {
   )
 })
 
-
 test_that("data_get.bivar works", {
   vars <- vars_build(
     var_left = c("canale_2016"),
@@ -39,7 +38,8 @@ test_that("data_get.bivar works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars),
+    data_get(vars = vars,
+             df = "city_CSD"),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -81,6 +81,7 @@ test_that("data_get.bivar works", {
     )), row.names = c(NA, -19L), class = "data.frame")
   )
 })
+
 test_that("data_get.delta works", {
   vars <- vars_build(
     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
@@ -88,7 +89,8 @@ test_that("data_get.delta works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars),
+    data_get(vars = vars,
+             df = "city_CSD"),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -127,6 +129,7 @@ test_that("data_get.delta works", {
     )), row.names = c(NA, -19L), class = "data.frame")
   )
 })
+
 test_that("data_get.delta_bivar works", {
   vars <- vars_build(
     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
@@ -134,7 +137,8 @@ test_that("data_get.delta_bivar works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars),
+    data_get(vars = vars,
+             df = "city_CSD"),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -199,6 +203,7 @@ test_that("data_get.delta_bivar works", {
     )), row.names = c(NA, -19L), class = "data.frame")
   )
 })
+
 test_that("data_get.bivar_ldelta_rq3 works", {
   vars <- vars_build(
     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
@@ -206,7 +211,8 @@ test_that("data_get.bivar_ldelta_rq3 works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars),
+    data_get(vars = vars,
+             df = "city_CSD"),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",

@@ -4,11 +4,15 @@
 \alias{data_get.delta}
 \title{Get data from the SQLite database for a \code{delta} class}
 \usage{
-\method{data_get}{delta}(vars, ...)
+\method{data_get}{delta}(vars, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link[curbcut]{vars_build}} function.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
 
 \item{...}{Additional arguments passed to methods.}
 }

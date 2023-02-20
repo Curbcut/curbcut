@@ -480,3 +480,24 @@ colours_get <- function() {
   }
   return(colours_dfs)
 }
+
+#' Treat data frames as a DA (DA) scale
+#'
+#' This function takes a list of scales that should be treated like DAs.
+#' If they should, the function appends "_DA" to the `df` string instead of the
+#' current scale, and returns the new name. If not, the original `df` is returned.
+#'
+#' @param scales_as_DA <`character vector`> dfs to check if they should be
+#' treated like a DA scale
+#' @param df <`character`> The `df` to check if it is a DA scale
+#'
+#' @return If the current `df` is part of the scales that should be treated
+#' as a DA, thye function appends "_DA" to the `df` string instead of the
+#' current scale, and returns the new name. If not, the original `df` is returned.
+#' @export
+treat_to_DA <- function(scales_as_DA, df) {
+  if (is_scale_df(scales_as_DA, df)) {
+    return(paste0(s_extract(".*(?=_)", df), "_DA"))
+  }
+  return(df)
+}

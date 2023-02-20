@@ -4,11 +4,15 @@
 \alias{data_get.bivar_ldelta_rq3}
 \title{Get data from the SQLite database for a \code{bivar_ldelta_rq3} class}
 \usage{
-\method{data_get}{bivar_ldelta_rq3}(vars, ...)
+\method{data_get}{bivar_ldelta_rq3}(vars, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link[curbcut]{vars_build}} function.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
 
 \item{...}{Additional arguments passed to methods.}
 }

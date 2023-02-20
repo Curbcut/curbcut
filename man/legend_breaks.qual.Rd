@@ -4,11 +4,15 @@
 \alias{legend_breaks.qual}
 \title{Compute legend breaks for a qualitative variable}
 \usage{
-\method{legend_breaks}{qual}(vars, lang = NULL, ...)
+\method{legend_breaks}{qual}(vars, df, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{qual}. The output of
 \code{\link[curbcut]{vars_build}}.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 breaks to. Defaults to \code{NULL}, which is no translation.}

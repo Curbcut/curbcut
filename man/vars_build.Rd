@@ -5,7 +5,12 @@
 \title{Determine the data type (class) of different \code{var_left}, \code{var_right} and \code{df}
 combinations}
 \usage{
-vars_build(var_left, var_right = " ", df, build_str_as_DA = TRUE)
+vars_build(
+  var_left,
+  var_right = " ",
+  df,
+  scales_as_DA = c("building", "street")
+)
 }
 \arguments{
 \item{var_left}{<\verb{reactive character}> Character string of the selected
@@ -15,11 +20,12 @@ variable, e.g. \code{canale_2016} or \code{c("housing_tenant_2006", "housing_ten
 compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
 variable is represented by (" ").}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
+\item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 
-\item{build_str_as_DA}{<\code{logical}> If TRUE, the function assumes that the
-"building" scale should be treated as a "DA" scale.}
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
+should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 }
 \value{
 A named list containing both \code{var_left} and \code{var_right} variables with

@@ -55,7 +55,8 @@ cc_t_list <- function(x, translation_df) {
 #'
 #' @param ... <`character objects`> Any objects, including lists or atomic vectors
 #' @param .envir The parent environment for evaluating the expressions in
-#' \code{...}. Defaults to `parent.frame()`
+#' \code{...}. Necessary to grab the correct value of variables handled by
+#' \code{\link[glue]{glue}}. Defaults to `parent.frame()`
 #' @param lang <`character`> Language to use for translation. Must be one of
 #' en' or 'fr'. Defaults to NULL which is no translation.
 #'

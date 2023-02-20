@@ -6,16 +6,18 @@
 #' @param var_right <`reactive character`> Character string of the selected
 #' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
 #' variable is represented by (" ").
-#' @param df <`reactive character`> The combination of the region under study
+#' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
-#' @param build_str_as_DA <`logical`> If TRUE, the function assumes that the
-#' "building" scale should be treated as a "DA" scale.
+#' @param scales_as_DA <`character vector`> A character vector of `scales` that
+#' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #'
 #' @return A named list containing both `var_left` and `var_right` variables with
 #' a class attached.
 #'
 #' @export
-vars_build <- function(var_left, var_right = " ", df, build_str_as_DA = TRUE) {
+vars_build <- function(var_left, var_right = " ", df,
+                       scales_as_DA = c("building", "street")) {
   # Check errors
   choropleths <- get0("all_choropleths", envir = .GlobalEnv)
   if (is.null(choropleths)) {
@@ -26,10 +28,8 @@ vars_build <- function(var_left, var_right = " ", df, build_str_as_DA = TRUE) {
     ))
   }
 
-  # Switch building to DA if necessary
-  if (build_str_as_DA && is_scale_df("building", df)) {
-    df <- paste0(s_extract(".*(?=_)", df), "_DA")
-  }
+  # Switch scales to DA if necessary
+  df <- treat_to_DA(scales_as_DA, df)
 
   # Grab the class
   z <- (\(x) {
@@ -79,7 +79,7 @@ vars_build <- function(var_left, var_right = " ", df, build_str_as_DA = TRUE) {
     return(df)
   })()
 
-  return(structure(list(var_left = var_left, var_right = var_right, df = df),
+  return(structure(list(var_left = var_left, var_right = var_right),
     class = z
   ))
 }

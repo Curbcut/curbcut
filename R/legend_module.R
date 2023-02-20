@@ -22,18 +22,26 @@
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link[curbcut]{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link[curbcut]{df_get}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link[curbcut]{data_get}}.
 #' @param hide <`reactive logical`> Should the legend be hidden? Defaults to
 #' `shiny::reactive(FALSE)`
 #' @param breaks <`reactive numeric vector`> Breaks if they need to be manually
 #' supplied to the legend module.
+#' @param scales_as_DA <`character vector`> A character vector of `scales` that
+#' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #'
 #' @return The legend Shiny UI and server functions
 #' @export
-legend_server <- function(id, r, vars, data, hide = shiny::reactive(FALSE),
-                          breaks = shiny::reactive(NULL)) {
-  # stopifnot(shiny::is.reactive(r))
+legend_server <- function(id, r, vars, df,  data, hide = shiny::reactive(FALSE),
+                          breaks = shiny::reactive(NULL),
+                          scales_as_DA = shiny::reactive(c("building", "street"))) {
+
+  stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(hide))
@@ -48,11 +56,15 @@ legend_server <- function(id, r, vars, data, hide = shiny::reactive(FALSE),
       return(60)
     }
 
+    # Switch scales to DA if necessary
+    df <- reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
+
     # Make legend
     legend <- shiny::reactive(
       tryCatch(legend_render(
         vars = vars(),
         lang = r$lang(),
+        df = df(),
         data = data(),
         breaks = breaks()
       ), error = function(e) {

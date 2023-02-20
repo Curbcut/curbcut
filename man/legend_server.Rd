@@ -9,9 +9,11 @@ legend_server(
   id,
   r,
   vars,
+  df,
   data,
   hide = shiny::reactive(FALSE),
-  breaks = shiny::reactive(NULL)
+  breaks = shiny::reactive(NULL),
+  scales_as_DA = shiny::reactive(c("building", "street"))
 )
 
 legend_UI(id)
@@ -27,6 +29,10 @@ pages. Created in the \code{server.R} file.}
 \code{\link[curbcut]{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
 
+\item{df}{<\verb{reactive character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
+
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link[curbcut]{data_get}}.}
 
@@ -35,6 +41,10 @@ the \code{var_left} and \code{var_right}. The output of \code{\link[curbcut]{dat
 
 \item{breaks}{<\verb{reactive numeric vector}> Breaks if they need to be manually
 supplied to the legend module.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
+should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 }
 \value{
 The legend Shiny UI and server functions

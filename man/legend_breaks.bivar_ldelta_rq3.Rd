@@ -16,6 +16,10 @@ columns, which are used to extract the \code{q3} breaks (variation) for the sing
 variable of two date times.}
 
 \item{...}{Additional arguments passed to methods.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link[curbcut]{df_get}}.}
 }
 \value{
 A vector of legend breaks with pretty labels.

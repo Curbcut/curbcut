@@ -10,7 +10,8 @@ cc_t(..., .envir = parent.frame(), lang = NULL)
 \item{...}{<\verb{character objects}> Any objects, including lists or atomic vectors}
 
 \item{.envir}{The parent environment for evaluating the expressions in
-\code{...}. Defaults to \code{parent.frame()}}
+\code{...}. Necessary to grab the correct value of variables handled by
+\code{\link[glue]{glue}}. Defaults to \code{parent.frame()}}
 
 \item{lang}{<\code{character}> Language to use for translation. Must be one of
 en' or 'fr'. Defaults to NULL which is no translation.}

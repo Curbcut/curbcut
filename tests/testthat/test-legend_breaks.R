@@ -3,15 +3,15 @@ test_that("legend_breaks.q5 works", {
   vars2 <- vars_build(var_left = "housing_value_2011", df = "CMA_DA")
   vars3 <- vars_build(var_left = "climate_drought", df = "grid_grid")
   expect_equal(
-    legend_breaks(vars1),
+    legend_breaks(vars1, df = "CMA_CSD"),
     structure(c("0%", "20%", "40%", "60%", "80%", "100%"), chr_breaks = FALSE)
   )
   expect_equal(
-    legend_breaks(vars2),
+    legend_breaks(vars2, df = "CMA_DA"),
     structure(c("$0K", "$200K", "$400K", "$600K", "$800K", "$1,000K"), chr_breaks = FALSE)
   )
   expect_equal(
-    legend_breaks(vars3),
+    legend_breaks(vars3, df = "grid_grid"),
     structure(c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major"), chr_breaks = TRUE)
   )
 })
@@ -19,7 +19,7 @@ test_that("legend_breaks.q5 works", {
 test_that("legend_breaks.q100 works", {
   vars <- vars_build(var_left = "climate_flood", df = "raster")
   expect_equal(
-    legend_breaks(vars),
+    legend_breaks(vars, df = "raster"),
     list(
       "Low", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
       "High"
@@ -32,17 +32,6 @@ test_that("legend_breaks.q100 works", {
 # })
 
 test_that("legend_breaks.bivar_ldelta_rq3 works", {
-  vars <- structure(
-    list(
-      var_left = c(
-        "housing_tenant_2006",
-        "housing_tenant_2016"
-      ),
-      var_right = "climate_drought_2016"
-    ),
-    class = "bivar_ldelta_rq3"
-  )
-
   vars <- vars_build(
     var_left = c(
       "housing_tenant_2006",
@@ -51,9 +40,11 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
     var_right = "canale_2016",
     df = "city_CSD"
   )
-  data <- data_get(vars = vars)
+  data <- data_get(vars = vars,
+                   df = "city_CSD")
   expect_equal(
-    legend_breaks(vars, data = data),
+    legend_breaks(vars, data = data,
+                  df = "city_CSD"),
     list(x = c("-0.6", "1.8", "4.1", "10.6"), y = c(
       "-8.27%", "-4.77%",
       "-1.51%", "4.24%"
@@ -67,7 +58,7 @@ test_that("legend_breaks.delta works", {
     "housing_tenant_2016"
   ), df = "CMA_CT")
   expect_equal(
-    legend_breaks(vars),
+    legend_breaks(vars, df = "CMA_CT"),
     c("-10%", "-2%", "+2%", "+10%")
   )
 })
@@ -96,7 +87,8 @@ test_that("legend_breaks.delta_bivar works", {
     ),
     df = "city_CSD"
   )
-  data <- data_get(vars = vars)
+  data <- data_get(vars = vars,
+                   df = "city_CSD")
   expect_equal(
     legend_breaks(vars, data = data),
     list(x = c("-8.27%", "-4.77%", "-1.51%", "4.24%"), y = c(
