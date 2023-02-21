@@ -86,7 +86,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     }
 
     # Character
-    translated <- translation_df[translation_df$en == x, ]$fr
+    translated <- translation_df$fr[translation_df$en == x]
     # In case there is no translations:
     if (length(translated) == 0 || is.na(translated)) {
       return({
@@ -111,10 +111,10 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   x <- c(...)
   if (!is.list(x)) x <- paste0(..., collapse = "")
 
-  # Return input if there lang is NULL
-  if (is.null(lang)) {
-    return(return_raw(x))
-  }
+  # # Return input if there lang is NULL
+  # if (is.null(lang)) {
+  #   return(return_raw(x))
+  # }
 
   # Grab translation_df and return input if missing
   translation_df <- get0("translation_df", .GlobalEnv)
@@ -122,7 +122,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     return({
       if (is.null(shiny::getDefaultReactiveDomain())) {
         # UI side
-        shiny::tagList(shiny::tags$span(class = "lang-en", x))
+        shiny::tagList(shiny::span(class = "lang-en", x))
       } else {
         # Server side
         return_raw(x)
@@ -143,8 +143,8 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   if (is.null(shiny::getDefaultReactiveDomain())) {
     return(
       shiny::tagList(
-        shiny::tags$span(class = "lang-en", x),
-        shiny::tags$span(class = "lang-fr", {
+        shiny::span(class = "lang-en", x),
+        shiny::span(class = "lang-fr", {
           translated <- translation_df[translation_df$en == x, ]$fr
           if (length(translated) != 0 && !is.na(translated)) {
             translated

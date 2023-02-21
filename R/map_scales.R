@@ -19,7 +19,8 @@ map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
     palette = data_colours$fill,
     unmapped_color = "#B3B3BB",
     levels = data_colours$ID,
-    legend = FALSE)
+    legend = FALSE
+  )
 }
 
 #' Map scale colour
@@ -51,7 +52,6 @@ map_scale_colour <- function(...) {
 #' @export
 map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
                           zoom_levels = NULL) {
-
   lwd <- 1
 
   if (all(!sapply(list(tile, zoom, zoom_levels), is.null))) {
@@ -70,5 +70,6 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
     range = c(5, lwd),
     unmapped_value = lwd,
     levels = c(select_id, "NA"),
-    legend = FALSE)
+    legend = FALSE
+  )
 }

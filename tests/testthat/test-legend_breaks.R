@@ -40,11 +40,15 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
     var_right = "canale_2016",
     df = "city_CSD"
   )
-  data <- data_get(vars = vars,
-                   df = "city_CSD")
+  data <- data_get(
+    vars = vars,
+    df = "city_CSD"
+  )
   expect_equal(
-    legend_breaks(vars, data = data,
-                  df = "city_CSD"),
+    legend_breaks(vars,
+      data = data,
+      df = "city_CSD"
+    ),
     list(x = c("-0.6", "1.8", "4.1", "10.6"), y = c(
       "-8.27%", "-4.77%",
       "-1.51%", "4.24%"
@@ -87,8 +91,10 @@ test_that("legend_breaks.delta_bivar works", {
     ),
     df = "city_CSD"
   )
-  data <- data_get(vars = vars,
-                   df = "city_CSD")
+  data <- data_get(
+    vars = vars,
+    df = "city_CSD"
+  )
   expect_equal(
     legend_breaks(vars, data = data),
     list(x = c("-8.27%", "-4.77%", "-1.51%", "4.24%"), y = c(

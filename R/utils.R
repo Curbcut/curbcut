@@ -341,10 +341,7 @@ var_remove_time <- function(var) {
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL) {
-  variables <- get0("variables", envir = .GlobalEnv)
-  if (is.null(variables)) {
-    stop("`variables` table not found in the global environment.")
-  }
+  variables <- get_from_globalenv("variables")
 
   if (!what %in% names(variables)) {
     stop(glue::glue("`{what}` is not a column of the `variables` table."))
@@ -500,4 +497,22 @@ treat_to_DA <- function(scales_as_DA, df) {
     return(paste0(s_extract(".*(?=_)", df), "_DA"))
   }
   return(df)
+}
+
+#' Get object from global environment
+#'
+#' This function retrieves an object from the global environment by the name of
+#' the object. If the object is not found in the global environment, an error is
+#' thrown.
+#'
+#' @param x <`character`> The name of the object to retrieve from the global
+#' environment.
+#'
+#' @return The requested object from the global environment.
+get_from_globalenv <- function(x) {
+  out <- get0(x, envir = .GlobalEnv)
+  if (is.null(out)) {
+    stop(glue::glue("`{x}` object not found in the global environment."))
+  }
+  return(out)
 }

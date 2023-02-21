@@ -32,15 +32,20 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
   dfs <- paste(region, dfs, sep = "_")
 
   # Get all the data
-  data <- sapply(dfs, \(x) data_get(vars, x), simplify = FALSE,
-                 USE.NAMES = TRUE)
+  data <- sapply(dfs, \(x) data_get(vars, x),
+    simplify = FALSE,
+    USE.NAMES = TRUE
+  )
   data <- Reduce(rbind, data)
 
   # Deal with colours
   colours <- colours_get()
-  if (!colours_table %in% names(colours))
-    stop(glue::glue("{colours_table} is not a table part of the `colours_dfs` ",
-                    "list."))
+  if (!colours_table %in% names(colours)) {
+    stop(glue::glue(
+      "{colours_table} is not a table part of the `colours_dfs` ",
+      "list."
+    ))
+  }
   colour_table <- colours[[colours_table]]
   mapping <- match(data$group, colour_table$group)
   data$fill <- colour_table$fill[mapping]
@@ -86,9 +91,11 @@ data_get_colours <- function(vars, region, zoom_levels,
 #' @seealso \code{\link[curbcut]{data_get_colours}}
 data_get_colours.q5 <- function(vars, region, zoom_levels,
                                 scales_as_DA = c("building", "street"), ...) {
-  data_get_colours_helper(vars = vars, region = region,
-                          zoom_levels = zoom_levels, colours_table = "left_5",
-                          scales_as_DA = scales_as_DA)
+  data_get_colours_helper(
+    vars = vars, region = region,
+    zoom_levels = zoom_levels, colours_table = "left_5",
+    scales_as_DA = scales_as_DA
+  )
 }
 
 #' @rdname data_get_colours
@@ -96,9 +103,11 @@ data_get_colours.q5 <- function(vars, region, zoom_levels,
 #' @seealso \code{\link[curbcut]{data_get_colours}}
 data_get_colours.bivar <- function(vars, region, zoom_levels,
                                    scales_as_DA = c("building", "street"), ...) {
-  data_get_colours_helper(vars = vars, region = region,
-                          zoom_levels = zoom_levels, colours_table = "bivar",
-                          scales_as_DA = scales_as_DA)
+  data_get_colours_helper(
+    vars = vars, region = region,
+    zoom_levels = zoom_levels, colours_table = "bivar",
+    scales_as_DA = scales_as_DA
+  )
 }
 
 #' @rdname data_get_colours
@@ -106,9 +115,11 @@ data_get_colours.bivar <- function(vars, region, zoom_levels,
 #' @seealso \code{\link[curbcut]{data_get_colours}}
 data_get_colours.delta <- function(vars, region, zoom_levels,
                                    scales_as_DA = c("building", "street"), ...) {
-  data_get_colours_helper(vars = vars, region = region,
-                          zoom_levels = zoom_levels, colours_table = "delta",
-                          scales_as_DA = scales_as_DA)
+  data_get_colours_helper(
+    vars = vars, region = region,
+    zoom_levels = zoom_levels, colours_table = "delta",
+    scales_as_DA = scales_as_DA
+  )
 }
 
 #' @rdname data_get_colours
@@ -116,9 +127,11 @@ data_get_colours.delta <- function(vars, region, zoom_levels,
 #' @seealso \code{\link[curbcut]{data_get_colours}}
 data_get_colours.delta_bivar <- function(vars, region, zoom_levels,
                                          scales_as_DA = c("building", "street"), ...) {
-  data_get_colours_helper(vars = vars, region = region,
-                          zoom_levels = zoom_levels, colours_table = "bivar",
-                          scales_as_DA = scales_as_DA)
+  data_get_colours_helper(
+    vars = vars, region = region,
+    zoom_levels = zoom_levels, colours_table = "bivar",
+    scales_as_DA = scales_as_DA
+  )
 }
 
 #' @rdname data_get_colours
@@ -126,9 +139,11 @@ data_get_colours.delta_bivar <- function(vars, region, zoom_levels,
 #' @seealso \code{\link[curbcut]{data_get_colours}}
 data_get_colours.bivar_ldelta_rq3 <- function(vars, region, zoom_levels,
                                               scales_as_DA = c("building", "street"), ...) {
-  data_get_colours_helper(vars = vars, region = region,
-                          zoom_levels = zoom_levels, colours_table = "bivar",
-                          scales_as_DA = scales_as_DA)
+  data_get_colours_helper(
+    vars = vars, region = region,
+    zoom_levels = zoom_levels, colours_table = "bivar",
+    scales_as_DA = scales_as_DA
+  )
 }
 
 #' @rdname data_get_colours

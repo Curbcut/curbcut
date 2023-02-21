@@ -56,15 +56,16 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        colour_fun = map_scale_colour,
                        colour_args = shiny::reactive(list(NULL)),
                        lwd_fun = map_scale_lwd,
-                       lwd_args = shiny::reactive(list(select_id(), tile(), zoom(),
-                                                       zoom_levels())),
+                       lwd_args = shiny::reactive(list(
+                         select_id(), tile(), zoom(),
+                         zoom_levels()
+                       )),
                        auto_highlight = TRUE,
                        pickable = TRUE,
                        mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
                        tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv),
                        map_base_style = get0("map_base_style", envir = .GlobalEnv),
                        map_loc = get0("map_loc", envir = .GlobalEnv)) {
-
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
   stopifnot(shiny::is.reactive(select_id))
@@ -74,23 +75,30 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(lwd_args))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Check for missing arguments
     if (is.null(mapbox_username)) {
-      stop(paste0("`mapbox_username` must be present in the global ",
-                  "environment or supplied to the `map_server` function."))
+      stop(paste0(
+        "`mapbox_username` must be present in the global ",
+        "environment or supplied to the `map_server` function."
+      ))
     }
     if (is.null(tileset_prefix)) {
-      stop(paste0("`tileset_prefix` must be present in the global ",
-                  "environment or supplied to the `map_server` function."))
+      stop(paste0(
+        "`tileset_prefix` must be present in the global ",
+        "environment or supplied to the `map_server` function."
+      ))
     }
     if (is.null(map_base_style)) {
-      stop(paste0("`map_base_style` must be present in the global ",
-                  "environment or supplied to the `map_server` function."))
+      stop(paste0(
+        "`map_base_style` must be present in the global ",
+        "environment or supplied to the `map_server` function."
+      ))
     }
     if (is.null(map_loc)) {
-      stop(paste0("`map_loc` must be present in the global ",
-                  "environment or supplied to the `map_server` function."))
+      stop(paste0(
+        "`map_loc` must be present in the global ",
+        "environment or supplied to the `map_server` function."
+      ))
     }
 
     # Map
@@ -105,16 +113,19 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
 
     # Helper variables
     extrude <- shiny::reactive((grepl("auto_zoom$", tile()) && zoom() >= 15.5) |
-                                 grepl("building", tile()))
+      grepl("building", tile()))
 
     # Update data layer source on tile change
     shiny::observeEvent(tile(), {
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(
           id = id,
-          data = rdeck::tile_json(paste0(mapbox_username, ".",
-                                         tileset_prefix, "_",
-                                         tile())))
+          data = rdeck::tile_json(paste0(
+            mapbox_username, ".",
+            tileset_prefix, "_",
+            tile()
+          ))
+        )
     })
 
     # Update data layer on variable change
@@ -131,14 +142,17 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           line_width_units = "pixels",
           extruded = extrude(),
           material = FALSE,
-          get_elevation = 5))
-
+          get_elevation = 5
+        )
+    )
   })
 }
 
 #' @describeIn map_server Create the UI for the map module
 #' @export
 map_UI <- function(id) {
-  shiny::div(class = "map_div",
-      rdeck::rdeckOutput(shiny::NS(id, "map"), height = "100%"))
+  shiny::div(
+    class = "map_div",
+    rdeck::rdeckOutput(shiny::NS(id, "map"), height = "100%")
+  )
 }

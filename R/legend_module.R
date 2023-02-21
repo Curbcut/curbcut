@@ -37,10 +37,9 @@
 #'
 #' @return The legend Shiny UI and server module functions
 #' @export
-legend_server <- function(id, r, vars, df,  data, hide = shiny::reactive(FALSE),
+legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
                           breaks = shiny::reactive(NULL),
                           scales_as_DA = shiny::reactive(c("building", "street"))) {
-
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))

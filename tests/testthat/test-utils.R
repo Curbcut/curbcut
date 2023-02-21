@@ -191,3 +191,41 @@ test_that("var_get_breaks works", {
     c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major")
   )
 })
+
+test_that("treat_to_DA works", {
+  expect_equal(treat_to_DA(scales_as_DA = c("building", "street"),
+                           df = "CMA_building"),
+               "CMA_DA"
+  )
+
+  expect_equal(treat_to_DA(scales_as_DA = c("building", "street"),
+                           df = "CMA_DA"),
+               "CMA_DA"
+  )
+
+  expect_equal(treat_to_DA(scales_as_DA = c("building", "street"),
+                           df = "CMA_CSD"),
+               "CMA_CSD"
+  )
+})
+
+test_that("get_from_globalenv works", {
+  expect_equal(get_from_globalenv("scales_dictionary"),
+               structure(list(scale = c("CSD", "CT", "DA", "DB", "building",
+                                        "cmhczone", "centraide", "grid"), sing = c("borough/city", "census tract",
+                                                                                   "dissemination area", "dissemination block", "dissemination area",
+                                                                                   "CMHC zone", "centraide zone", "250-m grid cell"), plur = c("boroughs or cities",
+                                                                                                                                               "census tracts", "dissemination areas", "dissemination blocks",
+                                                                                                                                               "dissemination areas", "CMHC zones", "centraide zones", "250-m grid cells"
+                                                                                   ), slider_title = c("Borough/City", "Census tract", "Dissemination area",
+                                                                                                       "Dissemination block", "Building", "CMHC zone", "Centraide zone",
+                                                                                                       "250-m"), place_heading = c("{name_2} of {name}", "Census tract {name} ({name_2})",
+                                                                                                                                   "Dissemination area {name} ({name_2})", "Dissemination block {name} ({name_2})",
+                                                                                                                                   "{name}", "CMHC zone of {name}", "Centraide zone of {name}",
+                                                                                                                                   "{name}"), place_name = c("{name}", "Census tract {name}", "Dissemination area {name}",
+                                                                                                                                                             "Dissemination block {name}", "The dissemination area around {name}",
+                                                                                                                                                             "{name}", "{name}", "250-m grid cell around {name}")), row.names = c(NA,
+                                                                                                                                                                                                                                  -8L), class = c("tbl_df", "tbl", "data.frame"))
+  )
+  expect_error(get_from_globalenv("eso"))
+})

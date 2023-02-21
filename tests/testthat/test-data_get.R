@@ -38,8 +38,10 @@ test_that("data_get.bivar works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars,
-             df = "city_CSD"),
+    data_get(
+      vars = vars,
+      df = "city_CSD"
+    ),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -89,8 +91,10 @@ test_that("data_get.delta works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars,
-             df = "city_CSD"),
+    data_get(
+      vars = vars,
+      df = "city_CSD"
+    ),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -137,8 +141,10 @@ test_that("data_get.delta_bivar works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars,
-             df = "city_CSD"),
+    data_get(
+      vars = vars,
+      df = "city_CSD"
+    ),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",
@@ -211,8 +217,10 @@ test_that("data_get.bivar_ldelta_rq3 works", {
     df = "city_CSD"
   )
   expect_equal(
-    data_get(vars = vars,
-             df = "city_CSD"),
+    data_get(
+      vars = vars,
+      df = "city_CSD"
+    ),
     structure(list(ID = c(
       "2466023_1", "2466023_10", "2466023_11",
       "2466023_12", "2466023_13", "2466023_14", "2466023_15", "2466023_16",

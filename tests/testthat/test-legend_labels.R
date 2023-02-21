@@ -57,6 +57,13 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
       x_short = "Drought", y_short = "Tenant"
     )
   )
+  expect_equal(
+    legend_labels(vars, lang = "fr"),
+    list(structure(list(x = "Sécheresses (2016)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
+         x_short = structure("Sécheresses", class = c("glue", "character"
+         )), y_short = structure("Locataire", class = c("glue", "character"
+         )))
+  )
 })
 
 test_that("legend_labels.delta works", {
@@ -73,6 +80,11 @@ test_that("legend_labels.delta works", {
       x = "Tenant-occupied (%) (\u0394 2006 - 2016)",
       y = NULL
     ))
+  )
+
+  expect_equal(
+    legend_labels(vars, lang = "fr"),
+    list(structure(list(x = "Locataire (Δ 2006 - 2016)", y = NULL), class = "labels"))
   )
 })
 
