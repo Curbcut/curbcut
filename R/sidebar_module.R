@@ -83,7 +83,7 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
                 )
               )),
               shinyjs::hidden(shiny::uiOutput(outputId = shiny::NS(id, "title_extra"))),
-              ...
+              shiny::div(class = "sus-sidebar-widgets", ...)
             )
           )
         ),

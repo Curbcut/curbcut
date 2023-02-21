@@ -516,3 +516,38 @@ get_from_globalenv <- function(x) {
   }
   return(out)
 }
+
+#' Calculate the distance between two points on the Earth's surface using the
+#' Haversine formula
+#'
+#' The function calculates the distance between two points on the Earth's
+#' surface using the Haversine formula. If \code{x} is a matrix or data frame,
+#' the function extracts the longitude and latitude vectors for each point.
+#' The latitude values are converted from degrees to radians, and the function
+#' calculates the central angle between the two points using the Haversine formula.
+#' The distance between the points in meters is then calculated and returned.
+#'
+#' @param x A vector or matrix/data frame containing the longitude and latitude
+#' of one or more points
+#' @param y A vector containing the longitude and latitude of a single point
+#'
+#' @return The distance between the two points in meters
+#' @export
+get_dist <- function(x, y) {
+
+  # For consistent indexing
+  if (!is.null(dim(x))) x <- as.matrix(x)
+  # If x is matrix or df, take lon/lat vectors
+  lon_1 <- if (!is.null(dim(x))) x[,1] else x[1]
+  lat_1 <- if (!is.null(dim(x))) x[,2] else x[2]
+  lon_2 <- y[1]
+  lat_1_r <- lat_1 * pi / 180
+  lat_2 <- y[2]
+  lat_2_r <- lat_2 * pi / 180
+  delta_lat <- (lat_2 - lat_1) * pi / 180
+  delta_lon <- (lon_2 - lon_1) * pi / 180
+  a_dist <- sin(delta_lat / 2) * sin(delta_lat / 2) + cos(lat_1_r) *
+    cos(lat_2_r) * sin(delta_lon / 2) * sin(delta_lon / 2)
+  c_dist <- 2 * atan2(sqrt(a_dist), sqrt(1 - a_dist))
+  6371e3 * c_dist
+}

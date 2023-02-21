@@ -43,8 +43,14 @@ qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)
 
 # Scales dictionary
 assign("scales_dictionary",
-  value = qs::qread("resources/scales_dictionary.qs"),
-  envir = .GlobalEnv
+       value = qs::qread("resources/scales_dictionary.qs"),
+       envir = .GlobalEnv
+)
+
+# Regions dictionary
+assign("regions_dictionary",
+       value = qs::qread("resources/regions_dictionary.qs"),
+       envir = .GlobalEnv
 )
 
 # Modules

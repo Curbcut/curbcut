@@ -1,3 +1,15 @@
+#' Rounds down a zoom level to the nearest half-integer
+#'
+#' This function takes a zoom level as input and returns the zoom level rounded
+#' down to the nearest half-integer. For example, a zoom level of 2.3 would be
+#' rounded down to 2, while a zoom level of 3.7 would be rounded down to 3.5.
+#'
+#' @param zoom <`numeric`> a numeric value representing the map zoom state
+#'
+#' @return A numeric value representing the rounded-down zoom level
+#' @export
+zoom_get <- function(zoom) floor(zoom * 2) / 2
+
 #' Generate zoom string based on given zoom level and region name
 #'
 #' Given a named numeric vector of zoom levels, a numeric value representing the current
