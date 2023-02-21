@@ -15,7 +15,6 @@
 #' @export
 sidebar_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
-
     modules <- get_from_globalenv("modules")
 
     # Get the right row

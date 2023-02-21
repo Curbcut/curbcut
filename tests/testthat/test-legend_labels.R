@@ -60,9 +60,8 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
   expect_equal(
     legend_labels(vars, lang = "fr"),
     list(structure(list(x = "Sécheresses (2016)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
-         x_short = structure("Sécheresses", class = c("glue", "character"
-         )), y_short = structure("Locataire", class = c("glue", "character"
-         )))
+      x_short = structure("Sécheresses", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
+    )
   )
 })
 

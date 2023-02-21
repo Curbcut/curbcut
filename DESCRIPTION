@@ -17,7 +17,8 @@ Imports:
     tibble,
     rdeck,
     DBI,
-    rlang
+    rlang,
+    shinyWidgets
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -1,6 +1,20 @@
+test_that("zoom_get_string returns the correct zoom string for a given zoom level", {
+  expect_equal(zoom_get_string(10, map_zoom_levels_CMA, "CMA"), "CMA_CSD")
+})
+
+test_that("zoom_get_string returns the correct zoom string for a given zoom level", {
+  expect_equal(zoom_get_string(14, map_zoom_levels_city, "city"), "city_DA")
+})
+
+test_that("zoom_get_string returns the correct zoom string for a zoom level below the minimum zoom level", {
+  expect_equal(zoom_get_string(0, map_zoom_levels_CMA, "CMA"), "CMA_CSD")
+})
+
 test_that("zoom_get_name returns correct output for specific input", {
-  expect_equal(zoom_get_name(c("city_CT", "city_DA")),
-               c("Census tract", "Dissemination area"))
+  expect_equal(
+    zoom_get_name(c("city_CT", "city_DA")),
+    c("Census tract", "Dissemination area")
+  )
 })
 
 test_that("zoom_get_name throws error for invalid input", {
@@ -8,8 +22,10 @@ test_that("zoom_get_name throws error for invalid input", {
 })
 
 test_that("zoom_get_name returns correct output for `fr`", {
-  expect_equal(zoom_get_name("centraide_centraide", lang = "fr"),
-               c("Quartier Centraide"))
+  expect_equal(
+    zoom_get_name("centraide_centraide", lang = "fr"),
+    c("Quartier Centraide")
+  )
 })
 
 test_that("zoom_get_name returns the expected output for a single input", {
@@ -98,24 +114,24 @@ test_that("zoom_get_levels returns error if missing id", {
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region", {
   result <- zoom_get_levels(id = "canale", region = "city")
-  expect_equal(result,
-               list(zoom_levels = c(CSD = 0, CT = 10.5, DA = 12.5, building = 15.5
-               ), region = "city"))
+  expect_equal(
+    result,
+    list(zoom_levels = c(CSD = 0, CT = 10.5, DA = 12.5, building = 15.5), region = "city")
+  )
 })
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region with a suffix", {
   result <- zoom_get_levels(id = "canale", region = "city", "_max_CT")
-  expect_equal(result,
-               list(zoom_levels = c(CSD = 0, CT = 10.5
-               ), region = "city"))
+  expect_equal(
+    result,
+    list(zoom_levels = c(CSD = 0, CT = 10.5), region = "city")
+  )
 })
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region when region is different from the one supplied", {
   result <- zoom_get_levels(id = "vac_rate", region = "city")
-  expect_equal(result,
-               list(zoom_levels = c(cmhczone = 0), region = "cmhc"))
+  expect_equal(
+    result,
+    list(zoom_levels = c(cmhczone = 0), region = "cmhc")
+  )
 })
-
-
-
-

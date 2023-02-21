@@ -1,82 +1,113 @@
-# zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
-#
-#   stopifnot(is.reactive(zoom_string))
-#   stopifnot(is.reactive(zoom_levels))
-#
-#   moduleServer(id, function(input, output, session) {
-#
-#     # Disable the slider if in auto mode
-#     observeEvent(input$zoom_auto, {
-#       toggleState(id = "zoom_slider", condition = !input$zoom_auto)
-#     })
-#
-#     # Update the slider if zoom_levels changes
-#     observeEvent({zoom_levels()
-#       r$lang()}, {
-#         updateSliderTextInput(session, "zoom_slider",
-#                               selected = curbcut::cc_t(lang = r$lang(),
-#
-#                                                        zoom_get_name(zoom_string())),
-#                               choices = zoom_get_label_t({
-#                                 # If the module isn't impacted by a change of r$region()
-#                                 if (is.list(zoom_levels())) {
-#                                   zoom_levels()$levels
-#                                 } else zoom_levels()},
-#                                 r = r))
-#       })
-#
-#     # Update the slider when zomo changes, only on auto_zoom
-#     observeEvent(zoom_string(), {
-#       if (input$zoom_auto)
-#         updateSliderTextInput(session, "zoom_slider",
-#                               selected = curbcut::cc_t(lang = r$lang(),
-#
-#                                                        zoom_get_name(zoom_string())))
-#     }, priority = -1)
-#
-#     # Update the slider if in auto mode
-#     observeEvent(zoom_string(), {
-#       if (input$zoom_auto) updateSliderTextInput(
-#         session, "zoom_slider",
-#         selected = zoom_get_name(zoom_string()))
-#     })
-#
-#     zoom_out <- reactive({
-#       out <-
-#         if (input$zoom_auto) "auto_zoom" else zoom_get_code(input$zoom_slider)
-#
-#       # If the module isn't impacted by a change of r$region()
-#       if (!is.list(zoom_levels())) return(out)
-#
-#       # If the module IS impacted by a change of r$region()
-#       # Go back to auto_zoom if the constructed df() does not exist, which
-#       # happen when r$region() is changed on a manual auto-zoom. The output will
-#       # be changed for a split second.
-#       if (is.null(get0(paste(zoom_levels()$region, out, sep = "_"))) &&
-#           !grepl("building", paste(zoom_levels()$region, out, sep = "_")))
-#         out <- "auto_zoom"
-#       return(paste(zoom_levels()$region, out, sep = "_"))
-#     })
-#
-#     # Return value
-#     return(zoom_out)
-#   })
-# }
-#
-#
-# zoom_UI <- function(id, zoom_levels) {
-#
-#   shiny::tagList(
-#     shiny::div(class = "sus-sidebar-control", shiny::checkboxInput(
-#       inputId = shiny::NS(id, "zoom_auto"),
-#       label = "Auto-zoom",
-#       value = TRUE)),
-#     shiny::div(class = "sus-sidebar-control", shiny::sliderTextInput(
-#       inputId = shiny::NS(id, "zoom_slider"),
-#       label = NULL,
-#       choices = zoom_get_label(zoom_levels),
-#       hide_min_max = TRUE,
-#       force_edges = TRUE))
-#   )
-#
-# }
+#' zoom_server Function
+#'
+#' This function creates a module for Curbcut that allows users to control
+#' the zoom level of a map using a slider input. The function disables the slider
+#' if the user selects auto-zoom. The slider is updated if the available
+#' zoom levels change. If on auto-zoom, the slider gets updated when the zoom
+#' levels threshold are attained. When there is a change in the `r$region()`,
+#' the auto-zoom gets activated to provide better transition between regions.
+#' The function then creates a reactive tile that returns the appropriate tile
+#' based on the user's selection. If auto-zoom is selected, the function returns
+#' the auto-zoom tile. If a specific scale is selected, the function checks to
+#' see if the scale is available for the current region. If it is not
+#' available, the function defaults back to auto-zoom.
+#'
+#' @param id <`character`> The ID of the page in which the legend will appear,
+#' e.g. `canale`.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file.
+#' @param zoom_string <`reactive character`> A reactive object representing the
+#' current zoom level, e.g. `CSD`.
+#' @param zoom_levels <`reactive list`> A reactive object representing the
+#' available zoom levels and region under study. The output of
+#' \code{\link[curbcut]{zoom_get_levels}} as a reactive.
+#'
+#' @return A reactive object representing the current tile that should be
+#' displayed on the map.
+#' @export
+zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
+  stopifnot(shiny::is.reactive(zoom_string))
+  stopifnot(shiny::is.reactive(zoom_levels))
+
+  shiny::moduleServer(id, function(input, output, session) {
+    # Disable the slider if in auto mode
+    shiny::observe({
+      shinyjs::toggleState(id = "zoom_slider", condition = !input$zoom_auto)
+    })
+
+    # Update the slider if zoom_levels() changes
+    shiny::observe({
+      shinyWidgets::updateSliderTextInput(
+        session = session,
+        inputId = "zoom_slider",
+        selected = zoom_get_name(shiny::isolate(zoom_string()), lang = r$lang()),
+        choices = zoom_get_label(zoom_levels()$zoom_levels, lang = r$lang())
+      )
+    })
+
+    # Update the slider when zoom changes, only on auto_zoom
+    shiny::observe({
+      if (input$zoom_auto) {
+        shinyWidgets::updateSliderTextInput(
+          session = session,
+          inputId = "zoom_slider",
+          selected = zoom_get_name(zoom_string(), lang = r$lang())
+        )
+      }
+    })
+
+    # A change in region should switch it back to auto-zoom to get a better
+    # transition
+    shiny::observeEvent(zoom_levels()$region, {
+      shiny::updateCheckboxInput(
+        session = session,
+        inputId = "zoom_auto",
+        value = TRUE
+      )
+    })
+
+    # Return the tile() reactive, indicating if the map should show an
+    # auto-zoom or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
+    tile <- shiny::reactive({
+      # On auto-zoom, return the auto_zoom
+      if (input$zoom_auto) {
+        return(paste(zoom_levels()$region, "auto_zoom", sep = "_"))
+      }
+
+      scale <- zoom_get_code(input$zoom_slider, lang = r$lang())
+
+      # A change in region should switch the tile back to auto-zoom to deal with
+      # the fact that some scales are not available in some regions
+      get_mzl <- paste0("map_zoom_levels_", zoom_levels()$region)
+      mzl <- tryCatch(get_from_globalenv(get_mzl),
+        error = function(e) c(missing = "missing")
+      )
+      if (!scale %in% names(mzl)) scale <- "auto_zoom"
+
+      return(paste(zoom_levels()$region, scale, sep = "_"))
+    })
+
+    # Return the tile
+    return(tile)
+  })
+}
+
+
+#' @describeIn zoom_server Create the UI for the zoom module
+#' @export
+zoom_UI <- function(id, zoom_levels) {
+  shiny::tagList(
+    shiny::div(class = "sus-sidebar-control", shiny::checkboxInput(
+      inputId = shiny::NS(id, "zoom_auto"),
+      label = "Auto-zoom",
+      value = TRUE
+    )),
+    shiny::div(class = "sus-sidebar-control", shinyWidgets::sliderTextInput(
+      inputId = shiny::NS(id, "zoom_slider"),
+      label = NULL,
+      choices = zoom_get_label(zoom_levels),
+      hide_min_max = TRUE,
+      force_edges = TRUE
+    ))
+  )
+}

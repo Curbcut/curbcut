@@ -115,7 +115,8 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     extrude <- shiny::reactive((grepl("auto_zoom$", tile()) && zoom() >= 15.5) |
       grepl("building", tile()))
 
-    # Update data layer source on tile change
+    # Update data layer source on tile() change only. Make sure once the tile
+    # gets updated that all the argument follow to.
     shiny::observeEvent(tile(), {
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(
@@ -124,11 +125,24 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
             mapbox_username, ".",
             tileset_prefix, "_",
             tile()
-          ))
+          )),
+          pickable = pickable,
+          auto_highlight = auto_highlight,
+          highlight_color = "#FFFFFF50",
+          get_fill_color = do.call(fill_fun, fill_args()),
+          get_line_color = do.call(colour_fun, colour_args()),
+          get_line_width = do.call(lwd_fun, lwd_args()),
+          line_width_units = "pixels",
+          extruded = extrude(),
+          material = FALSE,
+          get_elevation = 5
         )
     })
 
-    # Update data layer on variable change
+    # Update layer aesthetics on change of any aesthetic
+    ## TKTK find ways so that ALL reactives doesn't necessarily trigger this.
+    ## Should every change in zoom trigger this? Or only the threshold where
+    ## the zoom actually has an impact on the aesthetics.
     shiny::observe(
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(

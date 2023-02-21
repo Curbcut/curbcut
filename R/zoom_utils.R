@@ -1,3 +1,29 @@
+#' Generate zoom string based on given zoom level and region name
+#'
+#' Given a named numeric vector of zoom levels, a numeric value representing the current
+#' zoom level, and a character string representing the name of the region, this
+#' function returns a string representing the zoom level and region name,
+#' separated by an underscore. The zoom level is determined by finding the
+#' highest value in the zoom levels vector that is less than or equal to the
+#' current zoom level.
+#'
+#' @param zoom <`numeric`> A numeric value representing the current zoom level
+#' @param zoom_levels <`named numeric vector`>A numeric vector representing the
+#' available zoom levels for the region under study.
+#' @param region <`character`> A character string representing the name of the
+#' region
+#'
+#' @return A character string representing the zoom level and region name,
+#' separated by an underscore
+#' @export
+zoom_get_string <- function(zoom, zoom_levels, region) {
+  zoom_levels <- sort(zoom_levels)
+  out <- names(zoom_levels)[zoom >= zoom_levels]
+  out <- out[length(out)]
+  out <- paste(region, out, sep = "_")
+  return(out)
+}
+
 #' Get the zoom name for a set of scale codes
 #'
 #' This function takes a set of scale codes ("CMA", "CT", "DA") and returns the
@@ -11,7 +37,6 @@
 #' @return A character vector of slider titles.
 #' @export
 zoom_get_name <- function(dfs, lang = NULL) {
-
   # Get the scales dictionary
   scales_dictionary <- get_from_globalenv("scales_dictionary")
 
@@ -20,8 +45,10 @@ zoom_get_name <- function(dfs, lang = NULL) {
 
   # Error check
   if (sum(!scales %in% scales_dictionary$scale) > 0) {
-    stop(glue::glue("One ore multiple of `{paste0(scales, collapse = ',  ')}` ",
-                    "is not present in the `scales_dictionary$scale`."))
+    stop(glue::glue(
+      "One ore multiple of `{paste0(scales, collapse = ',  ')}` ",
+      "is not present in the `scales_dictionary$scale`."
+    ))
   }
 
   # Get matching indices in desired order
@@ -32,7 +59,6 @@ zoom_get_name <- function(dfs, lang = NULL) {
 
   # Return the translation
   return(sapply(out, cc_t, lang = lang, USE.NAMES = FALSE))
-
 }
 
 #' Get the zoom labels for a set of zoom levels
@@ -49,6 +75,7 @@ zoom_get_name <- function(dfs, lang = NULL) {
 #' slider titles to. Defaults to `NULL`, which is no translation.
 #'
 #' @return A character vector of slider titles.
+#' @export
 zoom_get_label <- function(zoom_levels, lang = NULL) {
   zl <- names(sort(zoom_levels))
   zl <- zoom_get_name(zl, lang)
@@ -69,7 +96,6 @@ zoom_get_label <- function(zoom_levels, lang = NULL) {
 #' @return The corresponding scale code(s).
 #' @export
 zoom_get_code <- function(scales_name, lang = NULL) {
-
   # Get the scales dictionary
   scales_dictionary <- get_from_globalenv("scales_dictionary")
 
@@ -85,7 +111,8 @@ zoom_get_code <- function(scales_name, lang = NULL) {
   translation_df <- get_from_globalenv("translation_df")
   translated <-
     sapply(scales_name, \(x) translation_df$en[translation_df[[lang]] == x],
-           USE.NAMES = FALSE)
+      USE.NAMES = FALSE
+    )
 
   # Get matching indices in desired order
   match_idx <- match(translated, scales_dictionary$slider_title)
@@ -116,7 +143,6 @@ zoom_get_code <- function(scales_name, lang = NULL) {
 #' region itself.
 #' @export
 zoom_get_levels <- function(id, region, suffix_zoom_levels = "") {
-
   # Get the modules df
   modules <- get_from_globalenv("modules")
 
