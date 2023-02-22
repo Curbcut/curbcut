@@ -7,6 +7,8 @@
 #' `pickable` if the user can select them in the advance options, the `name`
 #' column, and the `region` code.
 #'
+#' @param id <`character`> The ID of the module, in which this UI bit will
+#' be used. Necessary for namespacing reasons.
 #' @param region <`character`> A character string specifying the currently
 #' selected region.
 #' @param lang <`character`> A character string specifying the language in
@@ -15,7 +17,7 @@
 #'
 #' @return A shiny radio button input object.
 #' @export
-adv_opt_region <- function(region, lang = NULL) {
+adv_opt_region <- function(id, region, lang = NULL) {
 
   # Get the regions dictionary from the global environment
   regions_dictionary <- get_from_globalenv("regions_dictionary")
@@ -27,7 +29,7 @@ adv_opt_region <- function(region, lang = NULL) {
   choices_values <- pickable_regions$region
 
   # Get the shiny input
-  shiny::radioButtons("region_change",
+  shiny::radioButtons(inputId = shiny::NS(id, "region_change"),
                       label = cc_t(lang = lang, "Change default geometry"),
                       inline = TRUE,
                       selected = region,
@@ -43,12 +45,14 @@ adv_opt_region <- function(region, lang = NULL) {
 #' a map the location will be automatically, as a default, the zone in which
 #' the locked location falls in.
 #'
+#' @param id <`character`> The ID of the module, in which this UI bit will
+#' be used. Necessary for namespacing reasons.
 #' @param lang A string indicating the language of the UI element. Defaults to
 #' `NULL` which means no translation.
 #'
 #' @return A Shiny UI element for selecting and locking a default location.
 #' @export
-adv_opt_lock_selection_UI <- function(lang = NULL) {
+adv_opt_lock_selection_UI <- function(id, lang = NULL) {
 
   # Get the default location from the global environment
   default_random_address <- get_from_globalenv("default_random_address")
@@ -64,17 +68,17 @@ adv_opt_lock_selection_UI <- function(lang = NULL) {
                        '<div style="width: 80%; margin-top: var(--padding-v-md); ',
                        'width:auto;">',
                        shiny::textInput(
-                         inputId = "lock_address_searched",
+                         inputId = shiny::NS(id, "lock_address_searched"),
                          label = NULL,
                          placeholder = default_random_address),
                        '</div><div style="width: 20%">',
                        shiny::actionButton(
-                         inputId = "lock_search_button",
+                         inputId = shiny::NS(id, "lock_search_button"),
                          label = shiny::icon("check", verify_fa = FALSE),
                          style = "margin-top: var(--padding-v-md);"),
                        '</div></div>',
                        shiny::actionButton(
-                         inputId = "cancel_lock_location",
+                         inputId = shiny::NS(id, "cancel_lock_location"),
                          label = cc_t(lang = lang, "Clear default location"),
                          icon = shiny::icon("xmark", verify_fa = FALSE),
                          style = "margin-top: var(--padding-v-md);")))
@@ -139,7 +143,11 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
         unlist(dat[grepl("_ID$", names(dat))])
       }, simplify = FALSE, USE.NAMES = TRUE)
 
-      # Save them all in the default_select_id reactive value
+      # Return all the IDs
+      if (!is.null(shiny::getDefaultReactiveDomain()))
+        shiny::showNotification(
+          cc_t(lang = lang, "Postal code `{postal_c}` saved as default."),
+          type = "default")
       return(unique(unlist(all_ids)))
     }
   }
@@ -203,6 +211,10 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
         )
         return(NULL)
       } else {
+        if (!is.null(shiny::getDefaultReactiveDomain()))
+          shiny::showNotification(
+            cc_t(lang = lang, "Address `{address}` saved as default."),
+            type = "default")
         return(unique(unlist(sapply(all_ids, `[`, "IDs"))))
       }
 

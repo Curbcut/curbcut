@@ -12,7 +12,7 @@
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{df_get}}.}
+\code{\link{update_df}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 \code{Low} and \code{High} breaks to. Defaults to \code{NULL}, which is no translation.}

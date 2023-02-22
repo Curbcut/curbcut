@@ -23,10 +23,10 @@ settings_server <- function(id = "settings", r) {
     shinyjs::onclick("advanced_options", {
       shiny::showModal(shiny::modalDialog(
         # Change the region
-        adv_opt_region(region = r$region(), lang = r$lang()),
+        adv_opt_region(id = id, region = r$region(), lang = r$lang()),
         shiny::hr(),
-        adv_opt_lock_selection_UI(lang = r$lang()),
-        title = cc_t(lang = r$lang(), "Advanced options"),
+        adv_opt_lock_selection_UI(id = id, lang = r$lang()),
+        title = cc_t(id = id, lang = r$lang(), "Advanced options"),
         footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss"))
       ))
     })
@@ -49,12 +49,12 @@ settings_server <- function(id = "settings", r) {
     shiny::observeEvent(input$lock_search_button, {
       IDs <- adv_opt_lock_selection(address = input$lock_address_searched,
                                     lang = r$lang())
-      r$default_select_id(IDs)
+      r$default_select_ids(IDs)
     })
 
     # Clear default location on the button click
     shiny::observeEvent(input$cancel_lock_location, {
-      r$default_select_id(NULL)
+      r$default_select_ids(NULL)
       shiny::showNotification(
         cc_t(lang = r$lang(), paste0("Default location successfully cleared")),
         type = "default")
@@ -78,7 +78,7 @@ settings_server <- function(id = "settings", r) {
 #' @return A dropdown button object from the shinyWidgets package representing
 #' the settings menu UI.
 #'
-#' @seealso \code{\link{settings_legend}}
+#' @seealso \code{\link{settings_server}}
 #'
 #' @export
 settings_UI <- function(id = "settings", contact_email = "contact@curbcut.ca") {

@@ -21,7 +21,7 @@ legend_breaks <- function(vars, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -59,7 +59,7 @@ legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' `Low` and `High` breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -80,7 +80,7 @@ legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -118,7 +118,7 @@ legend_breaks.delta <- function(vars, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param data <`data.frame`> Must contains the `var_left` and `var_left_q3`
 #' columns, which are used to extract the `q3` breaks (variation) for the single
 #' variable of two date times.
@@ -157,7 +157,7 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, df, data, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.

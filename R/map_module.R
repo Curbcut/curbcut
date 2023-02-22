@@ -115,17 +115,24 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     extrude <- shiny::reactive((grepl("auto_zoom$", tile()) && zoom() >= 15.5) |
       grepl("building", tile()))
 
+    # Grab the tile json and if fail, return NULL so that the app doesn't crash.
+    tilejson <- shiny::reactive({
+      tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile())
+      out <- tryCatch(rdeck::tile_json(tile_link),
+                      error = function(e) {
+                        warning(glue::glue("Tile `{tile_link}` not found."))
+                        NULL
+                      })
+      return(out)
+    })
+
     # Update data layer source on tile() change only. Make sure once the tile
     # gets updated that all the argument follow to.
-    shiny::observeEvent(tile(), {
+    shiny::observeEvent(tilejson(), {
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(
           id = id,
-          data = rdeck::tile_json(paste0(
-            mapbox_username, ".",
-            tileset_prefix, "_",
-            tile()
-          )),
+          data = tilejson(),
           pickable = pickable,
           auto_highlight = auto_highlight,
           highlight_color = "#FFFFFF50",

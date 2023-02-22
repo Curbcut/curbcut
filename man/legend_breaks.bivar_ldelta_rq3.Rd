@@ -13,7 +13,7 @@ output of \code{\link{vars_build}}.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{df_get}}.}
+\code{\link{update_df}}.}
 
 \item{data}{<\code{data.frame}> Must contains the \code{var_left} and \code{var_left_q3}
 columns, which are used to extract the \code{q3} breaks (variation) for the single

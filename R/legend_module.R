@@ -24,7 +24,7 @@
 #' used to determine which type of legend to draw.
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param hide <`reactive logical`> Should the legend be hidden? Defaults to

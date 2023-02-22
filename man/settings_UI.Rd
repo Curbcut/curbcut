@@ -24,5 +24,5 @@ newsletter, and accessing advanced options. The UI is returned as a dropdown
 button object from the shinyWidgets package.
 }
 \seealso{
-\code{\link{settings_legend}}
+\code{\link{settings_server}}
 }

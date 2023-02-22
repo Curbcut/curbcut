@@ -4,9 +4,12 @@
 \alias{adv_opt_region}
 \title{Create a shiny radio button input for selecting a geographical region.}
 \usage{
-adv_opt_region(region, lang = NULL)
+adv_opt_region(id, region, lang = NULL)
 }
 \arguments{
+\item{id}{<\code{character}> The ID of the module, in which this UI bit will
+be used. Necessary for namespacing reasons.}
+
 \item{region}{<\code{character}> A character string specifying the currently
 selected region.}
 

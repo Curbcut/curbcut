@@ -87,3 +87,82 @@ update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
   # If they are different, return the new points of interests
   return(new_pois)
 }
+
+#' Update selected ID based on clicked object
+#'
+#' This function updates the currently selected ID in a Shiny app based on the
+#' ID of the object that was clicked on on an `rdeck` map.
+#'
+#' @param id <`character`> The ID of the page in which the legend will appear,
+#' e.g. `canale`.
+#' @param select_id <`character`> A character string representing the currently
+#' selected ID
+#' @param id_map <`character`> The ID of the map. By default, it is
+#' set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
+#' module assigns the `map` id to the maps.
+#'
+#' @return A character string representing the new selected ID, or \code{NA} if
+#' the same ID gets selected twice
+#' @export
+update_select_id <- function(id, select_id, id_map = paste0(id, "-map")) {
+
+  # Get the new selected ID
+  new <- rdeck::get_clicked_object(id_map)$ID
+
+  # If the same ID gets selected twice, deactivate selection
+  if (!is.na(select_id) && new == select_id)
+    return(NA)
+
+  # Return new ID
+  return(new)
+}
+
+#' Update Select ID Based on the default ID (Location lock in advanced settings)
+#'
+#' This function updates the selected ID based on the provided default IDs
+#' created through \code{\link{adv_opt_lock_selection}} present in the advanced
+#' options, if any. If the provided default IDs are not present in the data,
+#' the original select ID is returned.
+#'
+#' @param data <`data.frame`> A data frame containing the `ID` columnb to be
+#' checked for any match with the `default_select_ids`
+#' @param default_select_ids <`character vector`> Vector of default IDs created
+#' through  \code{\link{adv_opt_lock_selection}} present in the advanced
+#' options, usually `r$default_select_ids()`
+#' @param select_id <`character`> the current selected ID, usually `r[[id]]$select_id()`
+#'
+#' @return The updated selected ID based on the provided default IDs
+#' @export
+update_select_id_from_default <- function(data, default_select_ids, select_id) {
+
+  if (is.null(default_select_ids)) return(select_id)
+
+  which_row <- which(data$ID %in% default_select_ids)
+  if (length(which_row) == 0) return(select_id)
+
+  return(data$ID[which_row][[1]])
+}
+
+#' Get or update the `df` rv output
+#'
+#' The \code{update_df} function returns the zoom string if the tile is on auto-zoom,
+#' otherwise it returns the tile.
+#'
+#' @param tile <`character`> a character string indicating the tile, the output
+#' of the \code{\link{zoom_server}}
+#' @param zoom_string <`character`> a character string indicating the zoom string,
+#' the output of \code{\link{zoom_get_string}}
+#'
+#' @return a character string indicating the string of the data the user is
+#' looking at. The combination of the region and the scale, e.g. `CMA_CSD`
+#'
+#' @export
+update_df <- function(tile, zoom_string) {
+
+  # If on auto-zoom, simply return the zoom_string
+  if (grepl("auto_zoom", tile)) return(zoom_string)
+
+  # Outside of auto_zoom, return the tile
+  return(tile)
+}
+

@@ -81,7 +81,7 @@ data_get_delta <- function(var_two_years, df) {
 #' used to determine how to grab de data and output it.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`
@@ -97,7 +97,7 @@ data_get <- function(vars, df, ...) {
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
@@ -121,7 +121,7 @@ data_get.q5 <- function(vars, df, ...) {
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
@@ -159,7 +159,7 @@ data_get.bivar <- function(vars, df, ...) {
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -190,7 +190,7 @@ data_get.delta <- function(vars, df, ...) {
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -220,7 +220,7 @@ data_get.delta_bivar <- function(vars, df, ...) {
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{df_get}}.
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two

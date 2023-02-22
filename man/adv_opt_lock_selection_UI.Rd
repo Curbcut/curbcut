@@ -4,9 +4,12 @@
 \alias{adv_opt_lock_selection_UI}
 \title{Create a UI element for selecting and locking a default location}
 \usage{
-adv_opt_lock_selection_UI(lang = NULL)
+adv_opt_lock_selection_UI(id, lang = NULL)
 }
 \arguments{
+\item{id}{<\code{character}> The ID of the module, in which this UI bit will
+be used. Necessary for namespacing reasons.}
+
 \item{lang}{A string indicating the language of the UI element. Defaults to
 \code{NULL} which means no translation.}
 }
