@@ -11,7 +11,7 @@ zoom_get_levels(id, region, suffix_zoom_levels = "")
 e.g. \code{canale}.}
 
 \item{region}{<\code{character}> The region to retrieve the zoom levels for,
-usually \code{r$region()}.}
+usually one of the output of \code{\link{zoom_get_levels}}.}
 
 \item{suffix_zoom_levels}{<\code{character}> A suffix to the zoom level to determine
 if there are additional or fewer levels beyond or under the desired level. If

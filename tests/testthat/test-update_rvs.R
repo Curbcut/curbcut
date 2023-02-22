@@ -1,4 +1,3 @@
-
 test_that("update_zoom_string returns new zoom string when it is different from the old one", {
   rv_zoom_string <- "CMA_CSD"
   zoom_levels <- map_zoom_levels_CMA

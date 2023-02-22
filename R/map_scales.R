@@ -15,7 +15,7 @@
 #' @export
 map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
   rdeck::scale_color_category(
-    col = !!rlang::sym(tileset_ID_color),
+    col = !!as.name(tileset_ID_color),
     palette = data_colours$fill,
     unmapped_color = "#B3B3BB",
     levels = data_colours$ID,
@@ -44,9 +44,11 @@ map_scale_colour <- function(...) {
 #' The selected polygon will have an increased in the width of its border.
 #' @param tile <`character`> The name of the tileset currently present on the map.
 #' @param zoom <`numeric`> The current zoom level of the map.
-#' @param zoom_levels <`named vector`> Zoom levels under study. One of the
-#' map_zoom_levels_x in the global environment. It contains the zoom at which
-#' a scale should switch on an autozoom, e.g. `c(CMA = 0, CT = 10.5, DA = 12.5, ...)`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
 #'
 #' @return A line width scale for polygons in an rdeck map.
 #' @export
@@ -66,7 +68,7 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
 
   # Return the categorical scale
   rdeck::scale_category(
-    col = !!rlang::sym("ID"),
+    col = !!as.name("ID"),
     range = c(5, lwd),
     unmapped_value = lwd,
     levels = c(select_id, "NA"),

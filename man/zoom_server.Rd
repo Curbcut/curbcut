@@ -19,9 +19,11 @@ pages. Created in the \code{server.R} file.}
 \item{zoom_string}{<\verb{reactive character}> A reactive object representing the
 current zoom level, e.g. \code{CSD}.}
 
-\item{zoom_levels}{<\verb{reactive list}> A reactive object representing the
-available zoom levels and region under study. The output of
-\code{\link{zoom_get_levels}} as a reactive.}
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+will sort them to make sure the lower zoom level is first, and the highest
+is last (so it makes sense on an auto-zoom).}
 }
 \value{
 A reactive object representing the current tile that should be

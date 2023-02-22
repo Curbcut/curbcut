@@ -20,10 +20,13 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #' current zoom level.
 #'
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
-#' @param zoom_levels <`named numeric vector`>A numeric vector representing the
-#' available zoom levels for the region under study.
-#' @param region <`character`> A character string representing the name of the
-#' region
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
+#' @param region <`character`> The region to retrieve the zoom levels for,
+#' usually one of the output of \code{\link{zoom_get_levels}}.
 #'
 #' @return A character string representing the zoom level and region name,
 #' separated by an underscore
@@ -144,7 +147,7 @@ zoom_get_code <- function(scales_name, lang = NULL) {
 #' @param id <`character`> The id of the module to retrieve the zoom levels for,
 #' e.g. `canale`.
 #' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually `r$region()`.
+#' usually one of the output of \code{\link{zoom_get_levels}}.
 #' @param suffix_zoom_levels <`character`> A suffix to the zoom level to determine
 #' if there are additional or fewer levels beyond or under the desired level. If
 #' the levels should stop at `CT`, then `_max_CT` would be a valid `suffi_zoom_levels`.

@@ -9,10 +9,12 @@
 #' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
-#' in the `regions_dictionary`.
-#' @param zoom_levels <`named vector`> Zoom levels under study. One of the
-#' map_zoom_levels_x in the global environment. It contains the zoom at which
-#' a scale should switch on an autozoom, e.g. `c(CMA = 0, CT = 10.5, DA = 12.5, ...)`.
+#' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
 #' @param colours_table <`character`> Fromn which colour table should the colour
 #' be matched to the `group` column of the retrieved data. For `q5` class would be
 #' `left_5`, for `bivar` class would be `bivar`, etc. One of the names of the
@@ -69,10 +71,12 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
-#' in the `regions_dictionary`.
-#' @param zoom_levels <`named vector`> Zoom levels under study. One of the
-#' map_zoom_levels_x in the global environment. It contains the zoom at which
-#' a scale should switch on an autozoom, e.g. `c(CMA = 0, CT = 10.5, DA = 12.5, ...)`.
+#' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.

@@ -21,8 +21,10 @@ test_that("adv_opt_lock_selection returns NULL if address isn't within any regio
 
 test_that("adv_opt_lock_selection returns correct IDs for a postal code in one region", {
   result <- adv_opt_lock_selection("H3A 0G4", NULL)
-  expect_equal(all(c("2466023_3", "4620129.02", "24663358") %in% result),
-               TRUE)
+  expect_equal(
+    all(c("2466023_3", "4620129.02", "24663358") %in% result),
+    TRUE
+  )
 })
 
 test_that("adv_opt_lock_selection returns correct IDs for an address in one region", {

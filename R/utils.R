@@ -534,12 +534,11 @@ get_from_globalenv <- function(x) {
 #' @return The distance between the two points in meters
 #' @export
 get_dist <- function(x, y) {
-
   # For consistent indexing
   if (!is.null(dim(x))) x <- as.matrix(x)
   # If x is matrix or df, take lon/lat vectors
-  lon_1 <- if (!is.null(dim(x))) x[,1] else x[1]
-  lat_1 <- if (!is.null(dim(x))) x[,2] else x[2]
+  lon_1 <- if (!is.null(dim(x))) x[, 1] else x[1]
+  lat_1 <- if (!is.null(dim(x))) x[, 2] else x[2]
   lon_2 <- y[1]
   lat_1_r <- lat_1 * pi / 180
   lat_2 <- y[2]
@@ -550,4 +549,30 @@ get_dist <- function(x, y) {
     cos(lat_2_r) * sin(delta_lon / 2) * sin(delta_lon / 2)
   c_dist <- 2 * atan2(sqrt(a_dist), sqrt(1 - a_dist))
   6371e3 * c_dist
+}
+
+#' Generate a Mapbox Tile JSON
+#'
+#' Given a Mapbox username, tileset prefix, and tile name, this function
+#' generates a Mapbox Tile JSON using \code{\link[rdeck]{tile_json}}. If the
+#' specified tile is not found, a warning message is displayed and NULL is
+#' returned. This prevents the app from crashing.
+#'
+#' @param mapbox_username <`character`> string representing the Mapbox username.
+#' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
+#' correspond to the Curbcut city, e.g. `mtl`.
+#' @param tile <`character`> The tile name to be fetched.
+#'
+#' @return A JSON list if succesfull. If missing tile, returns NULL preventing
+#' the app from crashing.
+#' @export
+tilejson <- function(mapbox_username, tileset_prefix, tile) {
+  tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
+  out <- tryCatch(rdeck::tile_json(tile_link),
+    error = function(e) {
+      warning(glue::glue("Tile `{tile_link}` not found."))
+      NULL
+    }
+  )
+  return(out)
 }

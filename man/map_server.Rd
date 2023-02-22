@@ -34,7 +34,8 @@ e.g. \code{canale}.}
 
 \item{tile}{<\verb{reactive character}> A reactive string with the map tile to
 be used. Either a combination of a region with auto-zoom (e.g. \code{city_auto_zoom})
-or a combination of a region and a scale (e.g. \code{city_DA}).}
+or a combination of a region and a scale (e.g. \code{city_DA}). The output of
+\code{\link{zoom_server}}.}
 
 \item{data_colours}{<\verb{reactive data.frame}> The output of
 \code{\link{data_get_colours}}. Used for the fill colour of the
@@ -42,9 +43,11 @@ polygons.}
 
 \item{select_id}{<\verb{reactive character}> The ID of the selected polygon.}
 
-\item{zoom_levels}{<\verb{reactive named vector}> Zoom levels under study. One of the
-map_zoom_levels_x in the global environment. It contains the zoom at which
-a scale should switch on an autozoom, e.g. \code{c(CMA = 0, CT = 10.5, DA = 12.5, ...)}.}
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+will sort them to make sure the lower zoom level is first, and the highest
+is last (so it makes sense on an auto-zoom).}
 
 \item{zoom}{<\verb{reactive numeric}> The current zoom level of the map.}
 

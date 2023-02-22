@@ -14,17 +14,20 @@
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
 #' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually `r$region()`.
+#' usually one of the output of \code{\link{zoom_get_levels}}.
 #'
 #' @return A character string representing the updated zoom level for the given region
 update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
-
   # Get the zoom string that would fit in the zoom level
-  new <- zoom_get_string(zoom = zoom, region = region,
-                         zoom_levels = zoom_levels)
+  new <- zoom_get_string(
+    zoom = zoom, region = region,
+    zoom_levels = zoom_levels
+  )
 
   # If the new zoom string is different, return it.
-  if (new != rv_zoom_string) return(new)
+  if (new != rv_zoom_string) {
+    return(new)
+  }
 
   # If the same, return the old
   return(rv_zoom_string)
@@ -49,7 +52,6 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' returns the input POI vector.
 #' @export
 update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
-
   # Get the map view state
   map_input <- rdeck::get_view_state(map_id)
 
@@ -60,12 +62,16 @@ update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
   lon <- map_input$longitude
 
   # Exit early if the map isn't sufficiently zoomed in
-  if (zoom < 13) return(NULL)
+  if (zoom < 13) {
+    return(NULL)
+  }
 
   # Get POIs; currently just Stories. Return nothing if the `stories` df is
   # missing.
   stories <- get0("stories", envir = .GlobalEnv)
-  if (is.null(stories)) return(NULL)
+  if (is.null(stories)) {
+    return(NULL)
+  }
 
   points <- stories[c("name_id", "lon", "lat")]
 
@@ -74,7 +80,9 @@ update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
 
   # If any POI is within 2000 m of centre, filter it. If not, return NULL
   new_pois <- points$name_id[dist < 2000]
-  if (length(new_pois) == 0) return(NULL)
+  if (length(new_pois) == 0) {
+    return(NULL)
+  }
 
   # If the new pois are the same as the ones currently showing, do not update
   # them.
@@ -105,13 +113,13 @@ update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
 #' the same ID gets selected twice
 #' @export
 update_select_id <- function(id, select_id, id_map = paste0(id, "-map")) {
-
   # Get the new selected ID
   new <- rdeck::get_clicked_object(id_map)$ID
 
   # If the same ID gets selected twice, deactivate selection
-  if (!is.na(select_id) && new == select_id)
+  if (!is.na(select_id) && new == select_id) {
     return(NA)
+  }
 
   # Return new ID
   return(new)
@@ -134,11 +142,14 @@ update_select_id <- function(id, select_id, id_map = paste0(id, "-map")) {
 #' @return The updated selected ID based on the provided default IDs
 #' @export
 update_select_id_from_default <- function(data, default_select_ids, select_id) {
-
-  if (is.null(default_select_ids)) return(select_id)
+  if (is.null(default_select_ids)) {
+    return(select_id)
+  }
 
   which_row <- which(data$ID %in% default_select_ids)
-  if (length(which_row) == 0) return(select_id)
+  if (length(which_row) == 0) {
+    return(select_id)
+  }
 
   return(data$ID[which_row][[1]])
 }
@@ -158,11 +169,11 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #'
 #' @export
 update_df <- function(tile, zoom_string) {
-
   # If on auto-zoom, simply return the zoom_string
-  if (grepl("auto_zoom", tile)) return(zoom_string)
+  if (grepl("auto_zoom", tile)) {
+    return(zoom_string)
+  }
 
   # Outside of auto_zoom, return the tile
   return(tile)
 }
-

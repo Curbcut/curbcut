@@ -12,9 +12,12 @@
 use_curbut_cookie <- function() {
   shiny::tagList(
     shiny::tags$head(shiny::tags$script(src = system.file("js_scripts/cookie.js",
-                                                          package = "curbcut"))),
-    shiny::tags$script(src = paste0("https://cdn.jsdelivr.net/npm/js-cookie@rc/",
-                                    "dist/js.cookie.min.js"))
+      package = "curbcut"
+    ))),
+    shiny::tags$script(src = paste0(
+      "https://cdn.jsdelivr.net/npm/js-cookie@rc/",
+      "dist/js.cookie.min.js"
+    ))
   )
 }
 
@@ -82,10 +85,14 @@ cookie_update_value <- function(input, name, current_value) {
   cookie <- cookie_retrieve(input, name)
 
   # If there is no cookie for that name, return the current value
-  if (is.null(cookie)) return(current_value)
+  if (is.null(cookie)) {
+    return(current_value)
+  }
 
   # If there's a cookie and it's different from the current value
-  if (cookie != current_value) return(cookie)
+  if (cookie != current_value) {
+    return(cookie)
+  }
 
   # Return current value if the cookie is the same
   return(current_value)

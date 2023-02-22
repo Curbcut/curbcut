@@ -79,28 +79,35 @@ rev_geocode <- function(lon, lat) {
 #' geocoded address.
 #' @export
 geocode <- function(address) {
-
   # Return NULL if address isn't a character
-  if (!is.character(address)) return(NULL)
+  if (!is.character(address)) {
+    return(NULL)
+  }
 
   # Convert the string to raw bytes
   add <- paste0("%", charToRaw(address), collapse = "")
 
   # Make the address
-  add <- paste0("http://geogratis.gc.ca/services/geolocation/en/locate?q=",
-                add)
+  add <- paste0(
+    "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+    add
+  )
 
   # Get and grab content
   get <- httr::GET(add)
   val <- httr::content(get)
 
   # If nothing is found, return NULL
-  if (length(val) == 0) return(NULL)
+  if (length(val) == 0) {
+    return(NULL)
+  }
 
   # If something is found, grab the coordinates of the first element
   val <- val[[1]]
 
   # Return the coordinates
-  return(c(lat = val$geometry$coordinates[[1]],
-           lon = val$geometry$coordinates[[2]]))
+  return(c(
+    lat = val$geometry$coordinates[[1]],
+    lon = val$geometry$coordinates[[2]]
+  ))
 }

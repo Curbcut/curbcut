@@ -12,9 +12,9 @@ checked for any match with the \code{default_select_ids}}
 
 \item{default_select_ids}{<\verb{character vector}> Vector of default IDs created
 through  \code{\link{adv_opt_lock_selection}} present in the advanced
-options}
+options, usually \code{r$default_select_ids()}}
 
-\item{select_id}{<\code{character}> the current selected ID, usually \code{r[[id]]$select_id}}
+\item{select_id}{<\code{character}> the current selected ID, usually \code{r[[id]]$select_id()}}
 }
 \value{
 The updated selected ID based on the provided default IDs

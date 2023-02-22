@@ -8,11 +8,14 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-                                            package = "curbcut"))
+    package = "curbcut"
+  ))
   shiny::tagList(
     shiny::tags$head(shinyjs::extendShinyjs(
       text = copy_current_url,
-      functions = c("copy_current_url"))))
+      functions = c("copy_current_url")
+    ))
+  )
 }
 
 #' Helper to use JS functions
@@ -31,10 +34,11 @@ use_curbcut_js <- function() {
 #' tag as the `onclick` argument). Inside a reactive context, it returns the
 #' `shinyjs` framework.
 js_function_helper <- function(js_fun) {
-
   # If outside of a reactive context, use the raw JS fonction.
   session <- shiny::getDefaultReactiveDomain()
-  if (is.null(session)) return(paste0(js_fun, "()"))
+  if (is.null(session)) {
+    return(paste0(js_fun, "()"))
+  }
 
   # If inside a reactive context, use shinyjs
   return(shinyjs::js[[js_fun]]())

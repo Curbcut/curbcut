@@ -16,9 +16,7 @@
 #' @seealso \code{\link{settings_UI}}
 #' @export
 settings_server <- function(id = "settings", r) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     # Advanced options UI - Opens a modal.
     shinyjs::onclick("advanced_options", {
       shiny::showModal(shiny::modalDialog(
@@ -33,10 +31,15 @@ settings_server <- function(id = "settings", r) {
 
     # If the region cookie is already in and it differs from default. Intended
     # to run only once at startup.
-    shiny::observeEvent(cookie_retrieve(input, "region"), {
-      r$region(cookie_update_value(input = input, name = "region",
-                                   current_value = r$region()))
-    }, once = TRUE)
+    shiny::observeEvent(cookie_retrieve(input, "region"),
+      {
+        r$region(cookie_update_value(
+          input = input, name = "region",
+          current_value = r$region()
+        ))
+      },
+      once = TRUE
+    )
 
     # Change the default region and save the cookie at a change of the region.
     shiny::observeEvent(input$region_change, {
@@ -47,8 +50,10 @@ settings_server <- function(id = "settings", r) {
     # When the button is clicked, grab the content of the search box,
     # get the IDs for that location and save it in the reactive value.
     shiny::observeEvent(input$lock_search_button, {
-      IDs <- adv_opt_lock_selection(address = input$lock_address_searched,
-                                    lang = r$lang())
+      IDs <- adv_opt_lock_selection(
+        address = input$lock_address_searched,
+        lang = r$lang()
+      )
       r$default_select_ids(IDs)
     })
 
@@ -57,9 +62,9 @@ settings_server <- function(id = "settings", r) {
       r$default_select_ids(NULL)
       shiny::showNotification(
         cc_t(lang = r$lang(), paste0("Default location successfully cleared")),
-        type = "default")
+        type = "default"
+      )
     })
-
   })
 }
 
@@ -82,7 +87,6 @@ settings_server <- function(id = "settings", r) {
 #'
 #' @export
 settings_UI <- function(id = "settings", contact_email = "contact@curbcut.ca") {
-
   # Put together the contact email in an action
   contact <- glue::glue("window.open('mailto:{contact_email}', '_blank')")
 
@@ -90,25 +94,36 @@ settings_UI <- function(id = "settings", contact_email = "contact@curbcut.ca") {
   icon_material_button(
     shinyWidgets::dropdownButton(
       inputId = "settings",
-      shiny::a(id = "bookmark",
-               class = "action-button shiny-bound-input",
-               role = "menuitem",
-               href = "#",
-               shiny::icon("link", verify_fa = FALSE),
-               cc_t("Bookmark"),
-               onclick = copy_current_url()),
-      shiny::actionLink(inputId = shiny::NS(id, "contact"),
-                        label = cc_t("Contact/feedback"),
-                        shiny::icon("comment", verify_fa = FALSE),
-                        onclick = contact),
-      shiny::actionLink(inputId = shiny::NS(id, "download_data"),
-                        label = cc_t("Export data"),
-                        shiny::icon("download", verify_fa = FALSE)),
-      shiny::actionLink(inputId = shiny::NS(id, "subscribe"),
-                        label = cc_t("Newsletter"),
-                        shiny::icon("rectangle-list", verify_fa = FALSE)),
-      shiny::actionLink(inputId = shiny::NS(id, "advanced_options"),
-                        label = cc_t("Advanced options"),
-                        shiny::icon("gear", verify_fa = FALSE))
-    ), "summarize")
+      shiny::a(
+        id = "bookmark",
+        class = "action-button shiny-bound-input",
+        role = "menuitem",
+        href = "#",
+        shiny::icon("link", verify_fa = FALSE),
+        cc_t("Bookmark"),
+        onclick = copy_current_url()
+      ),
+      shiny::actionLink(
+        inputId = shiny::NS(id, "contact"),
+        label = cc_t("Contact/feedback"),
+        shiny::icon("comment", verify_fa = FALSE),
+        onclick = contact
+      ),
+      shiny::actionLink(
+        inputId = shiny::NS(id, "download_data"),
+        label = cc_t("Export data"),
+        shiny::icon("download", verify_fa = FALSE)
+      ),
+      shiny::actionLink(
+        inputId = shiny::NS(id, "subscribe"),
+        label = cc_t("Newsletter"),
+        shiny::icon("rectangle-list", verify_fa = FALSE)
+      ),
+      shiny::actionLink(
+        inputId = shiny::NS(id, "advanced_options"),
+        label = cc_t("Advanced options"),
+        shiny::icon("gear", verify_fa = FALSE)
+      )
+    ), "summarize"
+  )
 }

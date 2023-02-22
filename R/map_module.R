@@ -10,14 +10,17 @@
 #' e.g. `canale`.
 #' @param tile <`reactive character`> A reactive string with the map tile to
 #' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)
-#' or a combination of a region and a scale (e.g. `city_DA`).
+#' or a combination of a region and a scale (e.g. `city_DA`). The output of
+#' \code{\link{zoom_server}}.
 #' @param data_colours <`reactive data.frame`> The output of
 #' \code{\link{data_get_colours}}. Used for the fill colour of the
 #' polygons.
 #' @param select_id <`reactive character`> The ID of the selected polygon.
-#' @param zoom_levels <`reactive named vector`> Zoom levels under study. One of the
-#' map_zoom_levels_x in the global environment. It contains the zoom at which
-#' a scale should switch on an autozoom, e.g. `c(CMA = 0, CT = 10.5, DA = 12.5, ...)`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
 #' @param zoom <`reactive numeric`> The current zoom level of the map.
 #' @param fill_fun <`function`> A function used to calculate the fill color of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
@@ -116,23 +119,19 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
       grepl("building", tile()))
 
     # Grab the tile json and if fail, return NULL so that the app doesn't crash.
-    tilejson <- shiny::reactive({
-      tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile())
-      out <- tryCatch(rdeck::tile_json(tile_link),
-                      error = function(e) {
-                        warning(glue::glue("Tile `{tile_link}` not found."))
-                        NULL
-                      })
-      return(out)
-    })
+    map_tilejson <- shiny::reactive(tilejson(
+      mapbox_username = mapbox_username,
+      tileset_prefix = tileset_prefix,
+      tile = tile()
+    ))
 
     # Update data layer source on tile() change only. Make sure once the tile
     # gets updated that all the argument follow to.
-    shiny::observeEvent(tilejson(), {
+    shiny::observeEvent(map_tilejson(), {
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(
           id = id,
-          data = tilejson(),
+          data = map_tilejson(),
           pickable = pickable,
           auto_highlight = auto_highlight,
           highlight_color = "#FFFFFF50",

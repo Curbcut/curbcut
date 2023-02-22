@@ -19,7 +19,7 @@ will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-zoom).}
 
 \item{region}{<\code{character}> The region to retrieve the zoom levels for,
-usually \code{r$region()}.}
+usually one of the output of \code{\link{zoom_get_levels}}.}
 }
 \value{
 A character string representing the updated zoom level for the given region

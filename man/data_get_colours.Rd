@@ -72,11 +72,13 @@ data_get_colours(
 
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available
-in the \code{regions_dictionary}.}
+in the \code{regions_dictionary}. Usually one of the output of \code{\link{zoom_get_levels}}.}
 
-\item{zoom_levels}{<\verb{named vector}> Zoom levels under study. One of the
-map_zoom_levels_x in the global environment. It contains the zoom at which
-a scale should switch on an autozoom, e.g. \code{c(CMA = 0, CT = 10.5, DA = 12.5, ...)}.}
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+will sort them to make sure the lower zoom level is first, and the highest
+is last (so it makes sense on an auto-zoom).}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

@@ -18,7 +18,6 @@
 #' @return A shiny radio button input object.
 #' @export
 adv_opt_region <- function(id, region, lang = NULL) {
-
   # Get the regions dictionary from the global environment
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   pickable_regions <- regions_dictionary[regions_dictionary$pickable, ]
@@ -29,12 +28,14 @@ adv_opt_region <- function(id, region, lang = NULL) {
   choices_values <- pickable_regions$region
 
   # Get the shiny input
-  shiny::radioButtons(inputId = shiny::NS(id, "region_change"),
-                      label = cc_t(lang = lang, "Change default geometry"),
-                      inline = TRUE,
-                      selected = region,
-                      choiceNames = choices_txt,
-                      choiceValues = choices_values)
+  shiny::radioButtons(
+    inputId = shiny::NS(id, "region_change"),
+    label = cc_t(lang = lang, "Change default geometry"),
+    inline = TRUE,
+    selected = region,
+    choiceNames = choices_txt,
+    choiceValues = choices_values
+  )
 }
 
 #' Create a UI element for selecting and locking a default location
@@ -53,35 +54,43 @@ adv_opt_region <- function(id, region, lang = NULL) {
 #' @return A Shiny UI element for selecting and locking a default location.
 #' @export
 adv_opt_lock_selection_UI <- function(id, lang = NULL) {
-
   # Get the default location from the global environment
   default_random_address <- get_from_globalenv("default_random_address")
 
   shiny::tagList(
     # Lock in address of zone for select_ids
-    shiny::strong(cc_t(lang = lang, "Enter and save a default location (postal ",
-                       "code or address)")),
-    shiny::HTML("<br><i>", cc_t(lang = lang,
-                                "Default location will be saved until ",
-                                "manually cleared from advanced options"), "</i>"),
-    shiny::HTML(paste0('<div class="shiny-split-layout">',
-                       '<div style="width: 80%; margin-top: var(--padding-v-md); ',
-                       'width:auto;">',
-                       shiny::textInput(
-                         inputId = shiny::NS(id, "lock_address_searched"),
-                         label = NULL,
-                         placeholder = default_random_address),
-                       '</div><div style="width: 20%">',
-                       shiny::actionButton(
-                         inputId = shiny::NS(id, "lock_search_button"),
-                         label = shiny::icon("check", verify_fa = FALSE),
-                         style = "margin-top: var(--padding-v-md);"),
-                       '</div></div>',
-                       shiny::actionButton(
-                         inputId = shiny::NS(id, "cancel_lock_location"),
-                         label = cc_t(lang = lang, "Clear default location"),
-                         icon = shiny::icon("xmark", verify_fa = FALSE),
-                         style = "margin-top: var(--padding-v-md);")))
+    shiny::strong(cc_t(
+      lang = lang, "Enter and save a default location (postal ",
+      "code or address)"
+    )),
+    shiny::HTML("<br><i>", cc_t(
+      lang = lang,
+      "Default location will be saved until ",
+      "manually cleared from advanced options"
+    ), "</i>"),
+    shiny::HTML(paste0(
+      '<div class="shiny-split-layout">',
+      '<div style="width: 80%; margin-top: var(--padding-v-md); ',
+      'width:auto;">',
+      shiny::textInput(
+        inputId = shiny::NS(id, "lock_address_searched"),
+        label = NULL,
+        placeholder = default_random_address
+      ),
+      '</div><div style="width: 20%">',
+      shiny::actionButton(
+        inputId = shiny::NS(id, "lock_search_button"),
+        label = shiny::icon("check", verify_fa = FALSE),
+        style = "margin-top: var(--padding-v-md);"
+      ),
+      "</div></div>",
+      shiny::actionButton(
+        inputId = shiny::NS(id, "cancel_lock_location"),
+        label = cc_t(lang = lang, "Clear default location"),
+        icon = shiny::icon("xmark", verify_fa = FALSE),
+        style = "margin-top: var(--padding-v-md);"
+      )
+    ))
   )
 }
 
@@ -110,7 +119,6 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
 #'
 #' @export
 adv_opt_lock_selection <- function(address, lang = NULL) {
-
   # Grab the postal codes df from the global environment
   postal_codes <- get_from_globalenv("postal_codes")
   regions_dictionary <- get_from_globalenv("regions_dictionary")
@@ -125,12 +133,15 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
     subset_vec <- postal_codes$postal_code == postal_c
     # If no postal code is found, return a notification and NULL
     if (sum(subset_vec) == 0) {
-      if (!is.null(shiny::getDefaultReactiveDomain()))
-      shiny::showNotification(
-        cc_t(lang = lang,
-             "Postal code `{postal_c}` isn't within an available region."),
-        type = "error"
-      )
+      if (!is.null(shiny::getDefaultReactiveDomain())) {
+        shiny::showNotification(
+          cc_t(
+            lang = lang,
+            "Postal code `{postal_c}` isn't within an available region."
+          ),
+          type = "error"
+        )
+      }
       return(NULL)
     } else {
       DA_ID <- postal_codes$DA_ID[subset_vec]
@@ -138,16 +149,20 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       # Check all IDs that fit with the DA around the postal code
       all_ids <- sapply(regions_dictionary$region, \(x) {
         dat <- get0(paste0(x, "_DA"), envir = .GlobalEnv)
-        if (is.null(dat)) return("")
+        if (is.null(dat)) {
+          return("")
+        }
         dat <- dat[dat$ID == DA_ID, ]
         unlist(dat[grepl("_ID$", names(dat))])
       }, simplify = FALSE, USE.NAMES = TRUE)
 
       # Return all the IDs
-      if (!is.null(shiny::getDefaultReactiveDomain()))
+      if (!is.null(shiny::getDefaultReactiveDomain())) {
         shiny::showNotification(
           cc_t(lang = lang, "Postal code `{postal_c}` saved as default."),
-          type = "default")
+          type = "default"
+        )
+      }
       return(unique(unlist(all_ids)))
     }
   }
@@ -157,18 +172,24 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
     # Geocode the address
     lat_lon <- geocode(address)
     if (is.null(lat_lon)) {
-      if (!is.null(shiny::getDefaultReactiveDomain()))
-      shiny::showNotification(
-        cc_t(lang = lang,
-             "Search `{address}` wasn't found within an available region."),
-        type = "error")
+      if (!is.null(shiny::getDefaultReactiveDomain())) {
+        shiny::showNotification(
+          cc_t(
+            lang = lang,
+            "Search `{address}` wasn't found within an available region."
+          ),
+          type = "error"
+        )
+      }
       return(NULL)
     }
 
     # Grab all the DA df and get their distance to the point
     all_ids <- sapply(regions_dictionary$region, \(x) {
       dat <- get0(paste0(x, "_DA"), envir = .GlobalEnv)
-      if (is.null(dat)) return("")
+      if (is.null(dat)) {
+        return("")
+      }
 
       # Get the distance from the selected location to all DAs
       dat$lat <- sapply(dat$centroid, `[`, 1)
@@ -180,8 +201,10 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       dat <- dat[which(dist_vec == min_dist), ]
 
       # Grab all the IDs
-      list(IDs = unlist(dat[grepl("_ID$", names(dat))]),
-           min_dist = min_dist)
+      list(
+        IDs = unlist(dat[grepl("_ID$", names(dat))]),
+        min_dist = min_dist
+      )
     }, simplify = FALSE, USE.NAMES = TRUE)
 
     # Grab only the regions that have IDs
@@ -189,35 +212,41 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
 
     # If no region has IDs, return a notification and NULL
     if (length(all_ids) == 0) {
-      if (!is.null(shiny::getDefaultReactiveDomain()))
-      shiny::showNotification(
-        cc_t(lang = lang,
-             "Address `{address}` isn't within an available region."),
-        type = "error")
+      if (!is.null(shiny::getDefaultReactiveDomain())) {
+        shiny::showNotification(
+          cc_t(
+            lang = lang,
+            "Address `{address}` isn't within an available region."
+          ),
+          type = "error"
+        )
+      }
       return(NULL)
-
     } else {
-
       # Grab the minimum of all minimum distance
       min_of_min_dist <- min(unlist(sapply(all_ids, `[`, "min_dist")))
 
       # If no DA has been found in a 1km radius, return a notification and NULL
       if (min_of_min_dist > 1000) {
-        if (!is.null(shiny::getDefaultReactiveDomain()))
-        shiny::showNotification(
-          cc_t(lang = lang,
-               "No zone has been found in a 1km radius of the provided address."),
-          type = "error"
-        )
+        if (!is.null(shiny::getDefaultReactiveDomain())) {
+          shiny::showNotification(
+            cc_t(
+              lang = lang,
+              "No zone has been found in a 1km radius of the provided address."
+            ),
+            type = "error"
+          )
+        }
         return(NULL)
       } else {
-        if (!is.null(shiny::getDefaultReactiveDomain()))
+        if (!is.null(shiny::getDefaultReactiveDomain())) {
           shiny::showNotification(
             cc_t(lang = lang, "Address `{address}` saved as default."),
-            type = "default")
+            type = "default"
+          )
+        }
         return(unique(unlist(sapply(all_ids, `[`, "IDs"))))
       }
-
     }
   }
 }

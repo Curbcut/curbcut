@@ -9,11 +9,14 @@ zoom_get_string(zoom, zoom_levels, region)
 \arguments{
 \item{zoom}{<\code{numeric}> A numeric value representing the current zoom level}
 
-\item{zoom_levels}{<\verb{named numeric vector}>A numeric vector representing the
-available zoom levels for the region under study.}
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+will sort them to make sure the lower zoom level is first, and the highest
+is last (so it makes sense on an auto-zoom).}
 
-\item{region}{<\code{character}> A character string representing the name of the
-region}
+\item{region}{<\code{character}> The region to retrieve the zoom levels for,
+usually one of the output of \code{\link{zoom_get_levels}}.}
 }
 \value{
 A character string representing the zoom level and region name,

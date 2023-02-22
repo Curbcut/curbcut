@@ -32,7 +32,7 @@ data_get_sql <- function(var, df, select = "*") {
 
   # Get from the sqlite connection
   do.call(DBI::dbGetQuery, list(
-    rlang::sym(conn),
+    as.name(conn),
     glue::glue("SELECT {select} FROM {var} ORDER BY ID")
   ))
 }

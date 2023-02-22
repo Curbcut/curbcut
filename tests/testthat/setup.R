@@ -43,14 +43,14 @@ qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)
 
 # Scales dictionary
 assign("scales_dictionary",
-       value = qs::qread("resources/scales_dictionary.qs"),
-       envir = .GlobalEnv
+  value = qs::qread("resources/scales_dictionary.qs"),
+  envir = .GlobalEnv
 )
 
 # Regions dictionary
 assign("regions_dictionary",
-       value = qs::qread("resources/regions_dictionary.qs"),
-       envir = .GlobalEnv
+  value = qs::qread("resources/regions_dictionary.qs"),
+  envir = .GlobalEnv
 )
 
 # Modules
@@ -61,13 +61,15 @@ assign("modules",
 
 # Default random address
 assign("default_random_address",
-       value = "845 Sherbrooke",
-       envir = .GlobalEnv)
+  value = "845 Sherbrooke",
+  envir = .GlobalEnv
+)
 
 # Postal codes
 assign("postal_codes",
-       value = qs::qread("resources/postal_codes.qs"),
-       envir = .GlobalEnv)
+  value = qs::qread("resources/postal_codes.qs"),
+  envir = .GlobalEnv
+)
 
 # Few regions
 qs::qload("resources/city.qsm", env = .GlobalEnv)
