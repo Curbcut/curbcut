@@ -48,16 +48,16 @@ sidebar_server <- function(id, r) {
 #' This function creates a Shiny module server for the sidebar component of
 #' Curbcut. The sidebar component provides title and explanation on the page,
 #' and other widgets are included in the `...` of the UI. in the `bottom`
-#' argument of the `sidebar_UI` are the \code{\link[curbcut]{zoom_server}} and the
-#' \code{\link[curbcut]{legend_server}}.
+#' argument of the `sidebar_UI` are the \code{\link{zoom_server}} and the
+#' \code{\link{legend_server}}.
 #'
 #' @param id <`character`> The ID of the page in which the legend will appear,
 #' e.g. `canale`.
 #' @param ... Additional UI elements to be included in the sidebar (widgets), like
 #' select_var_server, TKTK, etc.
 #' @param bottom A list of UI elements to be included at the bottom of the sidebar,
-#' normally the UI of \code{\link[curbcut]{zoom_server}} and the
-#' \code{\link[curbcut]{legend_server}}.
+#' normally the UI of \code{\link{zoom_server}} and the
+#' \code{\link{legend_server}}.
 #'
 #' @return A tag list containing the UI elements for the sidebar component of
 #' Curbcut.

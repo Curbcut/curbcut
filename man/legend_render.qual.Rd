@@ -8,20 +8,20 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a \code{qual} class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{...}{Additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.}
+\item{...}{Additional arguments to be passed to \code{\link{legend_get_info}}.}
 }
 \value{
 A plot generated using ggplot2.
 }
 \description{
 This function generates a plot with a qualitative color legend using the
-ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+ggplot2 package. It uses the \code{\link{legend_get_info}} function
 to obtain the necessary information about the legend and cuts the qualitative
 color table (\code{colours$qual}) to the number of breaks. The function then
 generates the plot using the obtained information.

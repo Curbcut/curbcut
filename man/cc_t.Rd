@@ -26,6 +26,6 @@ Translate input object from English to French depending on the provided
 language and whether the function is running in a Shiny environment.
 }
 \seealso{
-\code{\link[curbcut]{cc_t_list}} for translating lists of input
+\code{\link{cc_t_list}} for translating lists of input
 objects
 }

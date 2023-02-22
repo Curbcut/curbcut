@@ -8,12 +8,12 @@ data_get(vars, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link[curbcut]{vars_build}} function. The class of the vars object is
+\code{\link{vars_build}} function. The class of the vars object is
 used to determine how to grab de data and output it.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
+\code{\link{df_get}}.}
 
 \item{...}{Additional arguments passed to methods.}
 }
@@ -24,7 +24,7 @@ along with a \code{group} column for map colouring.
 \description{
 This function retrieves data from an SQLite database using the appropriate
 method based on the class of the input vars object. vars should be a named
-list with a class, built using the \code{\link[curbcut]{vars_build}} function.
+list with a class, built using the \code{\link{vars_build}} function.
 Depending on the class of vars, different methods will be used to retrieve
 and process the data.
 }

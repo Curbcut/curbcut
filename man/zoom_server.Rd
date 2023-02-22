@@ -21,7 +21,7 @@ current zoom level, e.g. \code{CSD}.}
 
 \item{zoom_levels}{<\verb{reactive list}> A reactive object representing the
 available zoom levels and region under study. The output of
-\code{\link[curbcut]{zoom_get_levels}} as a reactive.}
+\code{\link{zoom_get_levels}} as a reactive.}
 }
 \value{
 A reactive object representing the current tile that should be

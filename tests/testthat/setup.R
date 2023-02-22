@@ -58,3 +58,17 @@ assign("modules",
   value = qs::qread("resources/modules.qs"),
   envir = .GlobalEnv
 )
+
+# Default random address
+assign("default_random_address",
+       value = "845 Sherbrooke",
+       envir = .GlobalEnv)
+
+# Postal codes
+assign("postal_codes",
+       value = qs::qread("resources/postal_codes.qs"),
+       envir = .GlobalEnv)
+
+# Few regions
+qs::qload("resources/city.qsm", env = .GlobalEnv)
+qs::qload("resources/island.qsm", env = .GlobalEnv)

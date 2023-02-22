@@ -64,7 +64,7 @@ cc_t_list <- function(x, translation_df) {
 #' If in a Shiny context and in server side, returns translation depending on
 #' `lang`. Outside a Shiny context, returns the input as is.
 #'
-#' @seealso \code{\link[curbcut]{cc_t_list}} for translating lists of input
+#' @seealso \code{\link{cc_t_list}} for translating lists of input
 #' objects
 #'
 #' @export

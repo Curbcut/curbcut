@@ -5,7 +5,7 @@
 #' particular methods which depend on the class of the `vars` argument.
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns an output of \code{\link[ggplot2]{labs}}.
@@ -16,14 +16,14 @@ legend_labels <- function(vars, ...) {
 
 #' Get a list of label titles for Curbcut legends containing 5 breaks
 #'
-#' \code{legend_labels.q5} is a method for \code{\link[curbcut]{legend_labels}},
+#' \code{legend_labels.q5} is a method for \code{\link{legend_labels}},
 #' which takes a named list of variables and an optional language argument, which
-#' it passes to a helper function \code{\link[curbcut]{var_get_info}}
+#' it passes to a helper function \code{\link{var_get_info}}
 #' to extract the title of the left variable. The resulting list contains a
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
 #' @param vars <`named list`> A list object of class `q5`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -41,14 +41,14 @@ legend_labels.q5 <- function(vars, lang = NULL, ...) {
 
 #' Get a list of label titles for Curbcut legends containing 100 breaks
 #'
-#' \code{legend_labels.q100} is a method for \code{\link[curbcut]{legend_labels}}
+#' \code{legend_labels.q100} is a method for \code{\link{legend_labels}}
 #' which takes a named list of variables and an optional language
-#' argument, which it passes to a helper function \code{\link[curbcut]{var_get_info}}
+#' argument, which it passes to a helper function \code{\link{var_get_info}}
 #' to extract the title of the left variable. The resulting list contains a
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
 #' @param vars <`named list`> A named list object of class \code{q100}. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -66,15 +66,15 @@ legend_labels.q100 <- function(vars, lang = NULL, ...) {
 
 #' Get a list of label titles for qualitative Curbcut legends
 #'
-#' \code{legend_labels.qual} is a method for \code{\link[curbcut]{legend_labels}},
+#' \code{legend_labels.qual} is a method for \code{\link{legend_labels}},
 #' which takes a named list of variables with class \code{qual} and an optional
 #' language argument. It passes the \code{var_left} object in \code{vars} to a helper
-#' function \code{\link[curbcut]{var_get_info}} to extract the title of the
+#' function \code{\link{var_get_info}} to extract the title of the
 #' variable, and returns a list containing a label for the x-axis and NULL for
 #' the y-axis.
 #'
 #' @param vars <`named list`> A named list object of class \code{qual}. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -97,7 +97,7 @@ legend_labels.qual <- function(vars, lang = NULL, ...) {
 #' right-hand variable. We show a variation on the left-hand, and a static
 #' year score on the right-hand.
 #'
-#' \code{legend_labels.bivar_ldelta_rq3}is a method for \code{\link[curbcut]{legend_labels}},
+#' \code{legend_labels.bivar_ldelta_rq3}is a method for \code{\link{legend_labels}},
 #' takes a named list of variables and an optional language argument, which it
 #' passes to helper functions to extract the titles of the left and right variables.
 #' It also retrieves the short titles of each variable. The resulting list
@@ -105,7 +105,7 @@ legend_labels.qual <- function(vars, lang = NULL, ...) {
 #' for each axis.
 #'
 #' @param vars <`named list`> A list object of class `bivar_ldelta_rq3`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -153,12 +153,12 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
 #' "housing_tenant_2021".
 #'
 #' \code{legend_labels.delta} takes a named list of variables and an optional language
-#' argument, which it passes to a helper function \code{\link[curbcut]{var_get_title}}
+#' argument, which it passes to a helper function \code{\link{var_get_title}}
 #' to extract the title of the left variable. The resulting list contains a
 #' label for the x-axis, with a NULL value for the y-axis.
 #'
 #' @param vars <`named list`> A list object of class `delta`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -182,14 +182,14 @@ legend_labels.delta <- function(vars, lang = NULL, ...) {
 #' The `bivar` class is used when we compare the two variables together.
 #'
 #' \code{legend_labels.bivar} takes a named list of variables and an optional
-#' language argument, which it passes to a helper function \code{\link[curbcut]{var_get_info}}
+#' language argument, which it passes to a helper function \code{\link{var_get_info}}
 #' to extract the title of the left and right variables, as well as their respective dates.
 #' The resulting list contains a label for the x-axis, with the title of the right variable
 #' and a label for the y-axis with the title of the left variable along with the date of each
 #' variable.
 #'
 #' @param vars <`named list`> A list object of class `bivar`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
@@ -237,14 +237,14 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
 #' The `delta_bivar` class is used when we compare two variations together.
 #'
 #' \code{legend_labels.delta_bivar} takes a named list of variables and an optional
-#' language argument, which it passes to a helper function \code{\link[curbcut]{var_get_info}}
+#' language argument, which it passes to a helper function \code{\link{var_get_info}}
 #' to extract the title of the left and right variables, as well as their respective dates.
 #' The resulting list contains a label for the x-axis, with the title of the right variable
 #' and a label for the y-axis with the title of the left variable along with the date of each
 #' variable.
 #'
 #' @param vars <`named list`> A list object of class `delta_bivar`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param ... Additional arguments passed to methods.

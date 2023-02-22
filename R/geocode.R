@@ -63,3 +63,44 @@ rev_geocode <- function(lon, lat) {
   }
   return(name)
 }
+
+#' Geocode an address using the Geogratis API
+#'
+#' This function takes an address as input and returns the corresponding
+#' geographic coordinates (latitude and longitude) using the
+#' \href{https://geogratis.gc.ca/}{Geogratis API}.
+#' The address is converted to raw bytes and used as a query to the Geogratis
+#' API to obtain the geographic coordinates. The result is returned as a named
+#' vector containing the latitude and longitude values.
+#'
+#' @param address <`character`> A character string specifying the address to geocode.
+#'
+#' @return A named vector containing the latitude and longitude values of the
+#' geocoded address.
+#' @export
+geocode <- function(address) {
+
+  # Return NULL if address isn't a character
+  if (!is.character(address)) return(NULL)
+
+  # Convert the string to raw bytes
+  add <- paste0("%", charToRaw(address), collapse = "")
+
+  # Make the address
+  add <- paste0("http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+                add)
+
+  # Get and grab content
+  get <- httr::GET(add)
+  val <- httr::content(get)
+
+  # If nothing is found, return NULL
+  if (length(val) == 0) return(NULL)
+
+  # If something is found, grab the coordinates of the first element
+  val <- val[[1]]
+
+  # Return the coordinates
+  return(c(lat = val$geometry$coordinates[[1]],
+           lon = val$geometry$coordinates[[2]]))
+}

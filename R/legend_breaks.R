@@ -5,7 +5,7 @@
 #' particular methods which depend on the class of the `vars` argument.
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param ... Arguments to be passed to the methods, e.g. `df`, `data`, or
 #' optionally `lang`.
 #'
@@ -18,10 +18,10 @@ legend_breaks <- function(vars, ...) {
 #' Compute legend breaks for a single `var_left`
 #'
 #' @param vars <`named list`> A list object of class `q5`. The output of
-#' \code{\link[curbcut]{vars_build}}.
+#' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -56,10 +56,10 @@ legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
 #' Compute legend breaks for a variable displaying 100 breaks
 #'
 #' @param vars <`named list`> A list object of class `q100`. The output of
-#' \code{\link[curbcut]{vars_build}}.
+#' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' `Low` and `High` breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -77,10 +77,10 @@ legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
 #' Compute legend breaks for a qualitative variable
 #'
 #' @param vars <`named list`> A list object of class `qual`. The output of
-#' \code{\link[curbcut]{vars_build}}.
+#' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -115,10 +115,10 @@ legend_breaks.delta <- function(vars, ...) {
 #' year score on the right-hand.
 #'
 #' @param vars <`named list`> A list object of class `bivariate_xdelta_yq3`. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param data <`data.frame`> Must contains the `var_left` and `var_left_q3`
 #' columns, which are used to extract the `q3` breaks (variation) for the single
 #' variable of two date times.
@@ -154,10 +154,10 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, df, data, ...) {
 #' "housing_tenant_2021".
 #'
 #' @param vars <`named list`> A list object of class `delta`. The output of
-#' \code{\link[curbcut]{vars_build}}.
+#' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.

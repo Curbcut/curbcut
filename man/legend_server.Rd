@@ -26,15 +26,15 @@ e.g. \code{canale}.}
 pages. Created in the \code{server.R} file.}
 
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link[curbcut]{vars_build}} function. The class of the vars object is
+\code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
+\code{\link{df_get}}.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
-the \code{var_left} and \code{var_right}. The output of \code{\link[curbcut]{data_get}}.}
+the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
 \item{hide}{<\verb{reactive logical}> Should the legend be hidden? Defaults to
 \code{shiny::reactive(FALSE)}}
@@ -56,7 +56,7 @@ object. If the string \code{bivar} is detected in the class, the height is set t
 (displayed as a 3x3 blocks square). In all other cases, the height is set to
 60 pixels, ensuring that the legend is sized appropriately for the content
 of the plot. The tryCatch function is used to catch any errors that occur
-when rendering the legend with the \code{\link[curbcut]{legend_render}}
+when rendering the legend with the \code{\link{legend_render}}
 function. If an error occurs, the error message is printed to the console
 and the function returns \code{NULL}. This ensures that the Shiny application
 continues to function even if there is an error with the legend module.

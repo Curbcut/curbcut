@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivar}. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}
@@ -23,7 +23,7 @@ The \code{bivar} class is used when we compare the two variables together.
 }
 \details{
 \code{legend_labels.bivar} takes a named list of variables and an optional
-language argument, which it passes to a helper function \code{\link[curbcut]{var_get_info}}
+language argument, which it passes to a helper function \code{\link{var_get_info}}
 to extract the title of the left and right variables, as well as their respective dates.
 The resulting list contains a label for the x-axis, with the title of the right variable
 and a label for the y-axis with the title of the left variable along with the date of each

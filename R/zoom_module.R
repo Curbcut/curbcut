@@ -20,7 +20,7 @@
 #' current zoom level, e.g. `CSD`.
 #' @param zoom_levels <`reactive list`> A reactive object representing the
 #' available zoom levels and region under study. The output of
-#' \code{\link[curbcut]{zoom_get_levels}} as a reactive.
+#' \code{\link{zoom_get_levels}} as a reactive.
 #'
 #' @return A reactive object representing the current tile that should be
 #' displayed on the map.

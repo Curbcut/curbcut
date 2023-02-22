@@ -1,10 +1,10 @@
 #' Map scale fill
 #'
 #' This function creates a color scale for the fill colours of the maps. It
-#' takes the output of \code{\link[curbcut]{data_get_colours}} and feeds it
+#' takes the output of \code{\link{data_get_colours}} and feeds it
 #' to the \code{\link[rdeck]{scale_color_category}} function.
 #'
-#' @param data_colours <`data.frame`> The output of \code{\link[curbcut]{data_get_colours}}.
+#' @param data_colours <`data.frame`> The output of \code{\link{data_get_colours}}.
 #' Two columns: `ID` and `fill`. Every `ID` will be coloured using its according
 #' `fill` colour.
 #' @param tileset_ID_color <`character`> The name of the column on the tileset

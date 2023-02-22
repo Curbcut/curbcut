@@ -4,12 +4,12 @@
 #' labels and breaks, and returns them with a default theme for the legend.
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param ... Additional arguments to be passed to \code{\link[curbcut]{legend_labels}}
-#' and \code{\link[curbcut]{legend_breaks}}, such as `lang`, `df`, ...
+#' @param ... Additional arguments to be passed to \code{\link{legend_labels}}
+#' and \code{\link{legend_breaks}}, such as `lang`, `df`, ...
 #'
 #' @return A list with the legend labels and breaks computed by
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
@@ -41,7 +41,7 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
 #' the class of the `vars` argument.
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
@@ -56,7 +56,7 @@ legend_render <- function(vars, font_family = "SourceSansPro", ...) {
 #' Render the legend for the q5 class
 #'
 #' This function generates a plot which includes the NA category. It uses the
-#' \code{\link[curbcut]{legend_get_info}} function to obtain the necessary
+#' \code{\link{legend_get_info}} function to obtain the necessary
 #' information about the legend, and then modifies the
 #' breaks to add the NA category to the legend. It looks at the variable `type`
 #' to detect wether the variable has character breaks with the `qual` type in
@@ -65,11 +65,11 @@ legend_render <- function(vars, font_family = "SourceSansPro", ...) {
 #' information.
 #'
 #' @param vars <`named list`> A list object with a `q5` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param ... additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.
+#' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
@@ -138,17 +138,17 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro", ...) {
 #' Render the legend for the qualitative class
 #'
 #' This function generates a plot with a qualitative color legend using the
-#' ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+#' ggplot2 package. It uses the \code{\link{legend_get_info}} function
 #' to obtain the necessary information about the legend and cuts the qualitative
 #' color table (\code{colours$qual}) to the number of breaks. The function then
 #' generates the plot using the obtained information.
 #'
 #' @param vars <`named list`> A list object with a `qual` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param ... Additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.
+#' @param ... Additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
@@ -195,12 +195,12 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro", ...) {
 #' Render the legend for the bivariate class
 #'
 #' This function generates a plot with a bivariate color legend using the
-#' ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+#' ggplot2 package. It uses the \code{\link{legend_get_info}} function
 #' to show the relationship between two variables. The legend consists of a grid
 #' of colored squares with text labels indicating the meaning of each square.
 #'
 #' @param vars <`named list`> A list object with a `bivar` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
@@ -259,7 +259,7 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
 #' a label indicating that it represents missing data.
 #'
 #' @param vars <`named list`> A list object with a `delta` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
@@ -277,7 +277,7 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
 
   # Adapt breaks to add the `NA` bar
   leg <- rbind(
-    tibble::tibble(group = 0, y = 1, fill = "#B3B3BB"),
+    data.frame(group = 0, y = 1, fill = "#B3B3BB"),
     leg_info$colours_dfs$delta[1:5, ]
   )
   leg$group <- suppressWarnings(as.double(leg$group))
@@ -314,7 +314,7 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
 #' scales with labels going from `Low` to `High`.
 #'
 #' @param vars <`named list`> A list object with a `q100` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
@@ -354,13 +354,13 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro", ...) {
 #' Render the legend for a `delta_bivar` class
 #'
 #' This function generates a plot with a bivariate color legend using the
-#' ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+#' ggplot2 package. It uses the \code{\link{legend_get_info}} function
 #' to show the relationship between the variations of two variables. The legend
 #' consists of a grid of colored squares with text labels indicating the meaning
 #' of each square.
 #'
 #' @param vars <`named list`> A list object with a `delta_bivar` class. The
-#' output of \code{\link[curbcut]{vars_build}}.
+#' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
@@ -412,7 +412,7 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #' Render the legend for a `bivar_ldelta_rq3` class
 #'
 #' This function generates a plot with a bivariate color legend using the
-#' ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+#' ggplot2 package. It uses the \code{\link{legend_get_info}} function
 #' to show the relationship between the variations of the first variable with the
 #' value of a static year of the second variable. The legend consists of a grid
 #' of colored squares with text labels indicating the meaning of each square.
@@ -420,7 +420,7 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `bivar_ldelta_rq3` class. The
 #' necessary objects in the list are `var_left` and `var_right`, with the first
 #' of length 2 (two years) and the second of length 1 (one year).
-#' 2 (two years each) The output of \code{\link[curbcut]{vars_build}}.
+#' 2 (two years each) The output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.

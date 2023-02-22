@@ -10,7 +10,7 @@
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link[curbcut]{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
 #' @param region <`character`> The region to retrieve the zoom levels for,
@@ -41,7 +41,7 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' @param id <`character`> The ID of the page in which the legend will appear,
 #' e.g. `canale`.
 #' @param map_id <`character`> The ID of the map. By default, it is
-#' set to the value of \code{paste0(id, "-map")} as the \code{\link[curbcut]{map_server}}
+#' set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
 #' module assigns the `map` id to the maps.
 #' @param poi <`character vector`> The current POIs showing on the map.
 #'

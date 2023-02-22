@@ -14,20 +14,20 @@ to retrieve information for.}
 \code{variables} table to retrieve information from. Defaults to \code{"var_title"}.}
 
 \item{translate}{<\code{logical}> Indicating whether or not to translate the retrieved
-information using the \code{\link[curbcut]{cc_t}} function. Defaults to \code{FALSE}.}
+information using the \code{\link{cc_t}} function. Defaults to \code{FALSE}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate to, if
 \code{translate} is TRUE. If not specified, the function will not attempt to translate.}
 }
 \value{
 The requested information about the variable, with optional translation
-using the \code{\link[curbcut]{cc_t}} function.
+using the \code{\link{cc_t}} function.
 }
 \description{
 This function retrieves information about a given variable from the \code{variables}
 table in the global environment. The \code{variables} table must have columns for
 \code{var_code} and the requested information specified by \code{what}. The function
 first removes the time component from the variable name using
-\code{\link[curbcut]{var_remove_time}}, hen looks up the variable code in
+\code{\link{var_remove_time}}, hen looks up the variable code in
 the \code{variables} table and returns the requested information for the variable.
 }

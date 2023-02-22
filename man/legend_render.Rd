@@ -8,7 +8,7 @@ legend_render(vars, font_family = "SourceSansPro", ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use

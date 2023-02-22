@@ -15,7 +15,7 @@ data_get_colours_helper(
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link[curbcut]{vars_build}} function.}
+\code{\link{vars_build}} function.}
 
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available

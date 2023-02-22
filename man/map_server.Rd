@@ -37,7 +37,7 @@ be used. Either a combination of a region with auto-zoom (e.g. \code{city_auto_z
 or a combination of a region and a scale (e.g. \code{city_DA}).}
 
 \item{data_colours}{<\verb{reactive data.frame}> The output of
-\code{\link[curbcut]{data_get_colours}}. Used for the fill colour of the
+\code{\link{data_get_colours}}. Used for the fill colour of the
 polygons.}
 
 \item{select_id}{<\verb{reactive character}> The ID of the selected polygon.}
@@ -50,20 +50,20 @@ a scale should switch on an autozoom, e.g. \code{c(CMA = 0, CT = 10.5, DA = 12.5
 
 \item{fill_fun}{<\code{function}> A function used to calculate the fill color of
 the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
-Defaults to \code{\link[curbcut]{map_scale_fill}}.}
+Defaults to \code{\link{map_scale_fill}}.}
 
 \item{fill_args}{<\verb{reactive list}> List of arguments to be passed to the
 \code{fill_fun} argument.}
 
 \item{colour_fun}{<\code{function}> A function used to calculate the line color of
-the polygons. \code{\link[curbcut]{map_scale_colour}}.}
+the polygons. \code{\link{map_scale_colour}}.}
 
 \item{colour_args}{<\verb{reactive list}> List of arguments to be passed to the
 \code{colour_fun} argument.}
 
 \item{lwd_fun}{<\code{function}> A function used to calculate the border width of
 the polygons. It needs to be created using \code{\link[rdeck]{scale_category}}.
-\code{\link[curbcut]{map_scale_lwd}}.}
+\code{\link{map_scale_lwd}}.}
 
 \item{lwd_args}{<\verb{reactive list}> List of arguments to be passed to the
 \code{lwd_fun} argument.}

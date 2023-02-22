@@ -8,7 +8,7 @@ legend_breaks(vars, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. \code{df}, \code{data}, or
 optionally \code{lang}.}

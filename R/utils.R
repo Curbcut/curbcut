@@ -72,7 +72,7 @@ ordinal_form <- function(lang, x, en_first = "first") {
 #' the value in millions (M), thousands (K), or billions (B) based on its
 #' magnitude, depending on the magnitude of the smallest significant digit.
 #' The scale function used to format the output can be customized.
-#' It is a helper function for the \code{\link[curbcut]{convert_unit}} function
+#' It is a helper function for the \code{\link{convert_unit}} function
 #' and so needs pre-calculated `min_dig`.
 #'
 #' @param x <`numeric vector`> Numeric values.
@@ -324,7 +324,7 @@ var_remove_time <- function(var) {
 #' table in the global environment. The `variables` table must have columns for
 #' `var_code` and the requested information specified by `what`. The function
 #' first removes the time component from the variable name using
-#' \code{\link[curbcut]{var_remove_time}}, hen looks up the variable code in
+#' \code{\link{var_remove_time}}, hen looks up the variable code in
 #' the `variables` table and returns the requested information for the variable.
 #'
 #' @param var <`character vector`> String representing the code of the variable
@@ -332,12 +332,12 @@ var_remove_time <- function(var) {
 #' @param what <`character`> String indicating the column name in the
 #' `variables` table to retrieve information from. Defaults to `"var_title"`.
 #' @param translate <`logical`> Indicating whether or not to translate the retrieved
-#' information using the \code{\link[curbcut]{cc_t}} function. Defaults to `FALSE`.
+#' information using the \code{\link{cc_t}} function. Defaults to `FALSE`.
 #' @param lang <`character`> String indicating the language to translate to, if
 #' `translate` is TRUE. If not specified, the function will not attempt to translate.
 #'
 #' @return The requested information about the variable, with optional translation
-#' using the \code{\link[curbcut]{cc_t}} function.
+#' using the \code{\link{cc_t}} function.
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL) {
@@ -402,7 +402,7 @@ var_get_title <- function(var, short_treshold = NULL,
 #' This function returns the breaks for a given variable, region, scale and date
 #' for q3 (directly extracted from `var`) as either raw or pretty. Raw breaks are
 #' always given in the base unit of the variable. Pretty breaks are returned in an
-#' appropriate format for display using \code{\link[curbcut]{convert_unit}}, i.e.,
+#' appropriate format for display using \code{\link{convert_unit}}, i.e.,
 #' with the appropriate unit prefix and separator depending on their magnitude.
 #' The pretty formatting is optional, and the function defaults to returning pretty
 #' breaks.
@@ -418,7 +418,7 @@ var_get_title <- function(var, short_treshold = NULL,
 #' is the numeric breaks for any numeric variable. Other possibility is
 #' `var_name` or `var_name_short` for qualitative variables.
 #' @param pretty <`logical`> Indicates whether to return pretty-formatted breaks
-#' using the \code{\link[curbcut]{convert_unit}} function. Defaults to `TRUE`.
+#' using the \code{\link{convert_unit}} function. Defaults to `TRUE`.
 #' @param compact <`logical`> Indicates whether to compact the number representation
 #' of breaks. Only applies when pretty is `TRUE`. Defaults to `TRUE`.
 #' @param lang <`character`> String indicating the language to translate the

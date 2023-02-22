@@ -8,14 +8,14 @@ legend_get_info(vars, font_family = "SourceSansPro", ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{...}{Additional arguments to be passed to \code{\link[curbcut]{legend_labels}}
-and \code{\link[curbcut]{legend_breaks}}, such as \code{lang}, \code{df}, ...}
+\item{...}{Additional arguments to be passed to \code{\link{legend_labels}}
+and \code{\link{legend_breaks}}, such as \code{lang}, \code{df}, ...}
 }
 \value{
 A list with the legend labels and breaks computed by

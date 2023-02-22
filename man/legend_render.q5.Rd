@@ -8,20 +8,20 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a \code{q5} class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{...}{additional arguments to be passed to \code{\link[curbcut]{legend_get_info}}.}
+\item{...}{additional arguments to be passed to \code{\link{legend_get_info}}.}
 }
 \value{
 A plot generated using ggplot2.
 }
 \description{
 This function generates a plot which includes the NA category. It uses the
-\code{\link[curbcut]{legend_get_info}} function to obtain the necessary
+\code{\link{legend_get_info}} function to obtain the necessary
 information about the legend, and then modifies the
 breaks to add the NA category to the legend. It looks at the variable \code{type}
 to detect wether the variable has character breaks with the \code{qual} type in

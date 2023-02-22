@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivar_ldelta_rq3}. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}
@@ -27,7 +27,7 @@ right-hand variable. We show a variation on the left-hand, and a static
 year score on the right-hand.
 }
 \details{
-\code{legend_labels.bivar_ldelta_rq3}is a method for \code{\link[curbcut]{legend_labels}},
+\code{legend_labels.bivar_ldelta_rq3}is a method for \code{\link{legend_labels}},
 takes a named list of variables and an optional language argument, which it
 passes to helper functions to extract the titles of the left and right variables.
 It also retrieves the short titles of each variable. The resulting list

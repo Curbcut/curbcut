@@ -14,7 +14,6 @@ Imports:
     ggplot2,
     scales,
     stats,
-    tibble,
     rdeck,
     DBI,
     rlang,

@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A named list object of class \code{qual}. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}
@@ -19,10 +19,10 @@ translate variable titles to.}
 A list of label titles returned from \code{\link[ggplot2]{labs}}.
 }
 \description{
-\code{legend_labels.qual} is a method for \code{\link[curbcut]{legend_labels}},
+\code{legend_labels.qual} is a method for \code{\link{legend_labels}},
 which takes a named list of variables with class \code{qual} and an optional
 language argument. It passes the \code{var_left} object in \code{vars} to a helper
-function \code{\link[curbcut]{var_get_info}} to extract the title of the
+function \code{\link{var_get_info}} to extract the title of the
 variable, and returns a list containing a label for the x-axis and NULL for
 the y-axis.
 }

@@ -6,7 +6,7 @@
 #' columns, to use in an `rdeck` scale function.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
 #' in the `regions_dictionary`.
@@ -66,7 +66,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' columns, to use in an `rdeck` scale function.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
 #' in the `regions_dictionary`.
@@ -88,7 +88,7 @@ data_get_colours <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.q5 <- function(vars, region, zoom_levels,
                                 scales_as_DA = c("building", "street"), ...) {
   data_get_colours_helper(
@@ -100,7 +100,7 @@ data_get_colours.q5 <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar <- function(vars, region, zoom_levels,
                                    scales_as_DA = c("building", "street"), ...) {
   data_get_colours_helper(
@@ -112,7 +112,7 @@ data_get_colours.bivar <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta <- function(vars, region, zoom_levels,
                                    scales_as_DA = c("building", "street"), ...) {
   data_get_colours_helper(
@@ -124,7 +124,7 @@ data_get_colours.delta <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta_bivar <- function(vars, region, zoom_levels,
                                          scales_as_DA = c("building", "street"), ...) {
   data_get_colours_helper(
@@ -136,7 +136,7 @@ data_get_colours.delta_bivar <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar_ldelta_rq3 <- function(vars, region, zoom_levels,
                                               scales_as_DA = c("building", "street"), ...) {
   data_get_colours_helper(
@@ -148,7 +148,7 @@ data_get_colours.bivar_ldelta_rq3 <- function(vars, region, zoom_levels,
 
 #' @rdname data_get_colours
 #' @export
-#' @seealso \code{\link[curbcut]{data_get_colours}}
+#' @seealso \code{\link{data_get_colours}}
 data_get_colours.default <- function(vars, region, zoom_levels,
                                      scales_as_DA = c("building", "street"), ...) {
   data <- data.frame(ID = NA)

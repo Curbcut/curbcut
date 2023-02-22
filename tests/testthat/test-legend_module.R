@@ -26,7 +26,7 @@ shiny::shinyApp(
       var_right = "housing_tenant_2016",
       df = df()
     ))
-    data <- shiny::reactive(tibble::tibble())
+    data <- shiny::reactive(data.frame())
 
     legend_server(
       id = "legend",
@@ -67,7 +67,7 @@ shiny::shinyApp(
       var_right = " ",
       df = df()
     ))
-    data <- shiny::reactive(tibble::tibble())
+    data <- shiny::reactive(data.frame())
 
     legend_server(
       id = "legend",
@@ -111,7 +111,7 @@ shiny::shinyApp(
       ),
       df = df()
     ))
-    data <- shiny::reactive(tibble::tibble())
+    data <- shiny::reactive(data.frame())
 
     legend_server(
       id = "legend",
@@ -152,7 +152,7 @@ shiny::shinyApp(
       var_right = c(" "),
       df = df()
     ))
-    data <- shiny::reactive(tibble::tibble())
+    data <- shiny::reactive(data.frame())
 
     legend_server(
       id = "legend",
@@ -192,7 +192,7 @@ shiny::shinyApp(
       var_right = c(" "),
       df = df()
     ))
-    data <- shiny::reactive(tibble::tibble())
+    data <- shiny::reactive(data.frame())
 
     legend_server(
       id = "legend",

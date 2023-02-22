@@ -14,8 +14,8 @@ e.g. \code{canale}.}
 select_var_server, TKTK, etc.}
 
 \item{bottom}{A list of UI elements to be included at the bottom of the sidebar,
-normally the UI of \code{\link[curbcut]{zoom_server}} and the
-\code{\link[curbcut]{legend_server}}.}
+normally the UI of \code{\link{zoom_server}} and the
+\code{\link{legend_server}}.}
 }
 \value{
 A tag list containing the UI elements for the sidebar component of
@@ -25,6 +25,6 @@ Curbcut.
 This function creates a Shiny module server for the sidebar component of
 Curbcut. The sidebar component provides title and explanation on the page,
 and other widgets are included in the \code{...} of the UI. in the \code{bottom}
-argument of the \code{sidebar_UI} are the \code{\link[curbcut]{zoom_server}} and the
-\code{\link[curbcut]{legend_server}}.
+argument of the \code{sidebar_UI} are the \code{\link{zoom_server}} and the
+\code{\link{legend_server}}.
 }

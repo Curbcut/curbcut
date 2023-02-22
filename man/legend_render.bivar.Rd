@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a \code{bivar} class. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
@@ -24,7 +24,7 @@ A ggplot object that represents the bivariate legend.
 }
 \description{
 This function generates a plot with a bivariate color legend using the
-ggplot2 package. It uses the \code{\link[curbcut]{legend_get_info}} function
+ggplot2 package. It uses the \code{\link{legend_get_info}} function
 to show the relationship between two variables. The legend consists of a grid
 of colored squares with text labels indicating the meaning of each square.
 }

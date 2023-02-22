@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{delta}. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}
@@ -25,7 +25,7 @@ variables but in different years, e.g. "housing_tenant_2016" and
 }
 \details{
 \code{legend_labels.delta} takes a named list of variables and an optional language
-argument, which it passes to a helper function \code{\link[curbcut]{var_get_title}}
+argument, which it passes to a helper function \code{\link{var_get_title}}
 to extract the title of the left variable. The resulting list contains a
 label for the x-axis, with a NULL value for the y-axis.
 }

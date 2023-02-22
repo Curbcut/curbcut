@@ -8,11 +8,11 @@
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{q5}. The output of
-\code{\link[curbcut]{vars_build}}.}
+\code{\link{vars_build}}.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
+\code{\link{df_get}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 breaks to. Defaults to \code{NULL}, which is no translation.}

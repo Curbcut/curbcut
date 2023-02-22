@@ -72,16 +72,16 @@ data_get_delta <- function(var_two_years, df) {
 #'
 #' This function retrieves data from an SQLite database using the appropriate
 #' method based on the class of the input vars object. vars should be a named
-#' list with a class, built using the \code{\link[curbcut]{vars_build}} function.
+#' list with a class, built using the \code{\link{vars_build}} function.
 #' Depending on the class of vars, different methods will be used to retrieve
 #' and process the data.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function. The class of the vars object is
+#' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine how to grab de data and output it.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`
@@ -94,10 +94,10 @@ data_get <- function(vars, df, ...) {
 #' Get data from the SQLite database for a `q5` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
@@ -118,10 +118,10 @@ data_get.q5 <- function(vars, df, ...) {
 #' Get data from the SQLite database for a `bivar` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
@@ -156,10 +156,10 @@ data_get.bivar <- function(vars, df, ...) {
 #' Get data from the SQLite database for a `delta` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -187,10 +187,10 @@ data_get.delta <- function(vars, df, ...) {
 #' Get data from the SQLite database for a `delta_bivar` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -217,10 +217,10 @@ data_get.delta_bivar <- function(vars, df, ...) {
 #' Get data from the SQLite database for a `bivar_ldelta_rq3` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link[curbcut]{vars_build}} function.
+#' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link[curbcut]{df_get}}.
+#' \code{\link{df_get}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two

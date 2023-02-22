@@ -9,11 +9,11 @@ with another single year variable.}
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{bivariate_xdelta_yq3}. The
-output of \code{\link[curbcut]{vars_build}}.}
+output of \code{\link{vars_build}}.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link[curbcut]{df_get}}.}
+\code{\link{df_get}}.}
 
 \item{data}{<\code{data.frame}> Must contains the \code{var_left} and \code{var_left_q3}
 columns, which are used to extract the \code{q3} breaks (variation) for the single

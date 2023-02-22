@@ -12,7 +12,7 @@
 #' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)
 #' or a combination of a region and a scale (e.g. `city_DA`).
 #' @param data_colours <`reactive data.frame`> The output of
-#' \code{\link[curbcut]{data_get_colours}}. Used for the fill colour of the
+#' \code{\link{data_get_colours}}. Used for the fill colour of the
 #' polygons.
 #' @param select_id <`reactive character`> The ID of the selected polygon.
 #' @param zoom_levels <`reactive named vector`> Zoom levels under study. One of the
@@ -21,16 +21,16 @@
 #' @param zoom <`reactive numeric`> The current zoom level of the map.
 #' @param fill_fun <`function`> A function used to calculate the fill color of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
-#' Defaults to \code{\link[curbcut]{map_scale_fill}}.
+#' Defaults to \code{\link{map_scale_fill}}.
 #' @param fill_args <`reactive list`> List of arguments to be passed to the
 #' `fill_fun` argument.
 #' @param colour_fun <`function`> A function used to calculate the line color of
-#' the polygons. \code{\link[curbcut]{map_scale_colour}}.
+#' the polygons. \code{\link{map_scale_colour}}.
 #' @param colour_args  <`reactive list`> List of arguments to be passed to the
 #' `colour_fun` argument.
 #' @param lwd_fun <`function`> A function used to calculate the border width of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_category}}.
-#' \code{\link[curbcut]{map_scale_lwd}}.
+#' \code{\link{map_scale_lwd}}.
 #' @param lwd_args  <`reactive list`> List of arguments to be passed to the
 #' `lwd_fun` argument.
 #' @param auto_highlight <`logical`> When TRUE, the current object hovered by

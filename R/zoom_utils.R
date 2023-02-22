@@ -80,7 +80,7 @@ zoom_get_name <- function(dfs, lang = NULL) {
 #'
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link[curbcut]{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
 #' @param lang <`character`> String indicating the language to translate the

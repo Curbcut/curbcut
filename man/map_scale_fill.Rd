@@ -7,7 +7,7 @@
 map_scale_fill(data_colours, tileset_ID_color = "ID_color")
 }
 \arguments{
-\item{data_colours}{<\code{data.frame}> The output of \code{\link[curbcut]{data_get_colours}}.
+\item{data_colours}{<\code{data.frame}> The output of \code{\link{data_get_colours}}.
 Two columns: \code{ID} and \code{fill}. Every \code{ID} will be coloured using its according
 \code{fill} colour.}
 
@@ -20,6 +20,6 @@ A color scale for polygons used in an rdeck map.
 }
 \description{
 This function creates a color scale for the fill colours of the maps. It
-takes the output of \code{\link[curbcut]{data_get_colours}} and feeds it
+takes the output of \code{\link{data_get_colours}} and feeds it
 to the \code{\link[rdeck]{scale_color_category}} function.
 }

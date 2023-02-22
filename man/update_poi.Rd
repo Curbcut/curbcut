@@ -11,7 +11,7 @@ update_poi(id, map_id = paste0(id, "-map"), poi)
 e.g. \code{canale}.}
 
 \item{map_id}{<\code{character}> The ID of the map. By default, it is
-set to the value of \code{paste0(id, "-map")} as the \code{\link[curbcut]{map_server}}
+set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
 module assigns the \code{map} id to the maps.}
 
 \item{poi}{<\verb{character vector}> The current POIs showing on the map.}

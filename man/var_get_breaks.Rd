@@ -30,7 +30,7 @@ is the numeric breaks for any numeric variable. Other possibility is
 \code{var_name} or \code{var_name_short} for qualitative variables.}
 
 \item{pretty}{<\code{logical}> Indicates whether to return pretty-formatted breaks
-using the \code{\link[curbcut]{convert_unit}} function. Defaults to \code{TRUE}.}
+using the \code{\link{convert_unit}} function. Defaults to \code{TRUE}.}
 
 \item{compact}{<\code{logical}> Indicates whether to compact the number representation
 of breaks. Only applies when pretty is \code{TRUE}. Defaults to \code{TRUE}.}
@@ -47,7 +47,7 @@ appropriate format for display.
 This function returns the breaks for a given variable, region, scale and date
 for q3 (directly extracted from \code{var}) as either raw or pretty. Raw breaks are
 always given in the base unit of the variable. Pretty breaks are returned in an
-appropriate format for display using \code{\link[curbcut]{convert_unit}}, i.e.,
+appropriate format for display using \code{\link{convert_unit}}, i.e.,
 with the appropriate unit prefix and separator depending on their magnitude.
 The pretty formatting is optional, and the function defaults to returning pretty
 breaks.
