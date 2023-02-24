@@ -42,29 +42,27 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
 
     # Disable the slider if in auto mode
     shiny::observe({
-      shinyjs::toggleState(id = "zoom_slider", condition = !zoom_auto())
+      shinyjs::toggleState(id = "zoom_slider-slider_text_sldt",
+                           condition = !zoom_auto())
     })
 
     # Update the slider if zoom_levels() changes
-    shiny::observe({
-      shinyWidgets::updateSliderTextInput(
-        session = session,
-        inputId = "zoom_slider",
-        selected = zoom_get_name(shiny::isolate(zoom_string()), lang = r$lang()),
-        choices = zoom_get_label(zoom_levels()$zoom_levels, lang = r$lang())
-      )
+    choices <- shiny::reactive({
+      zoom_get_label(zoom_levels()$zoom_levels, lang = r$lang())
     })
 
     # Update the slider when zoom changes, only on auto_zoom
-    shiny::observe({
-      if (zoom_auto()) {
-        shinyWidgets::updateSliderTextInput(
-          session = session,
-          inputId = "zoom_slider",
-          selected = zoom_get_name(zoom_string(), lang = r$lang())
-        )
-      }
+    selected <- shiny::reactive({
+      if (!zoom_auto()) return(NULL)
+      zoom_get_name(zoom_string(), lang = r$lang())
     })
+
+    observe(print(selected()))
+
+    zoom_slider <- slider_text_server(id = "zoom_slider",
+                                      r = r,
+                                      choices = choices,
+                                      selected = selected)
 
     # Return the tile() reactive, indicating if the map should show an
     # auto-zoom or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
@@ -74,7 +72,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
         return(paste(zoom_levels()$region, "auto_zoom", sep = "_"))
       }
 
-      scale <- zoom_get_code(input$zoom_slider, lang = r$lang())
+      scale <- zoom_get_code(zoom_slider(), lang = r$lang())
 
       # A change in region should switch the tile back to auto-zoom to deal with
       # the fact that some scales are not available in some regions
@@ -102,12 +100,12 @@ zoom_UI <- function(id, zoom_levels) {
                            label = "Auto-zoom",
                            value = TRUE)
     ),
-    shiny::div(class = "sus-sidebar-control", shinyWidgets::sliderTextInput(
-      inputId = shiny::NS(id, "zoom_slider"),
-      label = NULL,
-      choices = zoom_get_label(zoom_levels),
-      hide_min_max = TRUE,
-      force_edges = TRUE
-    ))
+    shiny::div(class = "sus-sidebar-control",
+               slider_text_UI(
+                 id = shiny::NS(id, "zoom_slider"),
+                 label = NULL,
+                 choices = zoom_get_label(zoom_levels),
+                 hide_min_max = TRUE
+               ))
   )
 }

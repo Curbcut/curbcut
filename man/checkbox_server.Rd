@@ -8,8 +8,8 @@ checkbox_server(
   id,
   r,
   checkbox_id = "cbox",
-  label = reactive(NULL),
-  event = reactive(NULL)
+  label = shiny::reactive(NULL),
+  event_reset = shiny::reactive(NULL)
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ It needs to be unique in the page. The default value is \code{"cbox"}.}
 \item{label}{<\code{character}> A text label to display next to the checkbox
 input. If NULL (default), no label will be displayed.}
 
-\item{event}{<\verb{reactive expression}> A change in this reactive will trigger
+\item{event_reset}{<\verb{reactive expression}> A change in this reactive will trigger
 the reset of the checkbox value to TRUE. If NULL (default), the checkbox value
 will never be reset.}
 }
