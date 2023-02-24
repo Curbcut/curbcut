@@ -381,20 +381,20 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 #' @export
 var_get_title <- function(var, short_treshold = NULL,
                           translate = FALSE, lang = NULL) {
-  title_left <-
+  title <-
     var_get_info(
       var = var, what = "var_title",
       translate = TRUE, lang = lang
     )
-  if (!is.null(short_treshold) && nchar(title_left) > short_treshold) {
-    title_left <-
+  if (!is.null(short_treshold) && nchar(title) > short_treshold) {
+    title <-
       var_get_info(
         var = var, what = "var_short",
         translate = TRUE, lang = lang
       )
   }
 
-  return(title_left)
+  return(title)
 }
 
 #' Get pretty or raw variable breaks

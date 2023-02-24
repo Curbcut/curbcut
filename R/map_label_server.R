@@ -95,17 +95,38 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
       rdeck::add_mvt_layer(
         id = paste0(id, "_street_1"),
         data = street_1,
-        visible = FALSE
+        visible = FALSE,
+        line_width_units = "meters",
+        line_width_min_pixels = 2,
+        line_joint_rounded = TRUE,
+        line_cap_rounded = TRUE,
+        get_line_width = 15,
+        get_line_color = "#FFFFFFBB",
+        get_fill_color = "#A9A9A94D"
       ) |>
       rdeck::add_mvt_layer(
         id = paste0(id, "_street_2"),
         data = street_2,
-        visible = FALSE
+        visible = FALSE,
+        line_width_units = "meters",
+        line_width_min_pixels = 1,
+        line_joint_rounded = TRUE,
+        line_cap_rounded = TRUE,
+        get_line_width = 8,
+        get_line_color = "#FFFFFFBB",
+        get_fill_color = "#A9A9A94D"
       ) |>
       rdeck::add_mvt_layer(
         id = paste0(id, "_street_3"),
         data = street_3,
-        visible = FALSE
+        visible = FALSE,
+        line_width_units = "meters",
+        line_width_min_pixels = 0.5,
+        line_joint_rounded = TRUE,
+        line_cap_rounded = TRUE,
+        get_line_width = 4,
+        get_line_color = "#FFFFFFBB",
+        get_fill_color = "#A9A9A94D"
       )
 
     # Reload the building layer depending on the region
@@ -136,49 +157,21 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
     shiny::observeEvent(
       show_texture(),
       rdeck::rdeck_proxy("map") |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = paste0(id, "_building"),
-          visible = show_texture(),
-          data = building(),
-          pickable = FALSE,
-          auto_highlight = FALSE,
-          get_fill_color = "#FFFFFF55",
-          extruded = TRUE,
-          material = FALSE,
-          get_elevation = 5
+          visible = show_texture()
         ) |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = paste0(id, "_street_1"),
-          visible = show_texture(),
-          line_width_units = "meters",
-          line_width_min_pixels = 2,
-          line_joint_rounded = TRUE,
-          line_cap_rounded = TRUE,
-          get_line_width = 15,
-          get_line_color = "#FFFFFFBB",
-          get_fill_color = "#A9A9A94D"
+          visible = show_texture()
         ) |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = paste0(id, "_street_2"),
-          visible = show_texture(),
-          line_width_units = "meters",
-          line_width_min_pixels = 1,
-          line_joint_rounded = TRUE,
-          line_cap_rounded = TRUE,
-          get_line_width = 8,
-          get_line_color = "#FFFFFFBB",
-          get_fill_color = "#A9A9A94D"
+          visible = show_texture()
         ) |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = paste0(id, "_street_3"),
-          visible = show_texture(),
-          line_width_units = "meters",
-          line_width_min_pixels = 0.5,
-          line_joint_rounded = TRUE,
-          line_cap_rounded = TRUE,
-          get_line_width = 4,
-          get_line_color = "#FFFFFFBB",
-          get_fill_color = "#A9A9A94D"
+          visible = show_texture()
         )
     )
   })

@@ -32,9 +32,17 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
   stopifnot(shiny::is.reactive(zoom_levels))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # Get the auto zoom checkbox server and add that a change in region means
+    # switching back the auto-zoom to get a better transition
+    zoom_auto <- checkbox_server(id = "zoom_auto",
+                                 r = r,
+                                 label = shiny::reactive("Auto-zoom"),
+                                 event_reset = shiny::reactive(zoom_levels()$region))
+
     # Disable the slider if in auto mode
     shiny::observe({
-      shinyjs::toggleState(id = "zoom_slider", condition = !input$zoom_auto)
+      shinyjs::toggleState(id = "zoom_slider", condition = !zoom_auto())
     })
 
     # Update the slider if zoom_levels() changes
@@ -49,7 +57,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
 
     # Update the slider when zoom changes, only on auto_zoom
     shiny::observe({
-      if (input$zoom_auto) {
+      if (zoom_auto()) {
         shinyWidgets::updateSliderTextInput(
           session = session,
           inputId = "zoom_slider",
@@ -58,21 +66,11 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
       }
     })
 
-    # A change in region should switch it back to auto-zoom to get a better
-    # transition
-    shiny::observeEvent(zoom_levels()$region, {
-      shiny::updateCheckboxInput(
-        session = session,
-        inputId = "zoom_auto",
-        value = TRUE
-      )
-    })
-
     # Return the tile() reactive, indicating if the map should show an
     # auto-zoom or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
     tile <- shiny::reactive({
       # On auto-zoom, return the auto_zoom
-      if (input$zoom_auto) {
+      if (zoom_auto()) {
         return(paste(zoom_levels()$region, "auto_zoom", sep = "_"))
       }
 
@@ -99,11 +97,11 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
 #' @export
 zoom_UI <- function(id, zoom_levels) {
   shiny::tagList(
-    shiny::div(class = "sus-sidebar-control", shiny::checkboxInput(
-      inputId = shiny::NS(id, "zoom_auto"),
-      label = "Auto-zoom",
-      value = TRUE
-    )),
+    shiny::div(class = "sus-sidebar-control",
+               checkbox_UI(id = shiny::NS(id, "zoom_auto"),
+                           label = "Auto-zoom",
+                           value = TRUE)
+    ),
     shiny::div(class = "sus-sidebar-control", shinyWidgets::sliderTextInput(
       inputId = shiny::NS(id, "zoom_slider"),
       label = NULL,

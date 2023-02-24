@@ -69,6 +69,7 @@ cc_t_list <- function(x, translation_df) {
 #'
 #' @export
 cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
+
   # Helper functions only used for translation
   cc_glue <- function(x) {
     glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)

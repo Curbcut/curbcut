@@ -24,7 +24,7 @@ settings_server <- function(id = "settings", r) {
         adv_opt_region(id = id, region = r$region(), lang = r$lang()),
         shiny::hr(),
         adv_opt_lock_selection_UI(id = id, lang = r$lang()),
-        title = cc_t(id = id, lang = r$lang(), "Advanced options"),
+        title = cc_t(lang = r$lang(), "Advanced options"),
         footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss"))
       ))
     })

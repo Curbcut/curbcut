@@ -21,10 +21,10 @@ test_that("zoom_get_name throws error for invalid input", {
   expect_error(zoom_get_name("invalid_scale"))
 })
 
-test_that("zoom_get_name returns correct output for `fr`", {
+test_that("zoom_get_name returns correct output for `fr` in a non-reactive context (en)", {
   expect_equal(
     zoom_get_name("centraide_centraide", lang = "fr"),
-    c("Quartier Centraide")
+    c("Centraide zone")
   )
 })
 
@@ -69,9 +69,9 @@ test_that("zoom_get_label returns the expected slider titles", {
   result <- zoom_get_label(zoom_levels, lang = NULL)
   expect_equal(result, expected)
 
-  # Test case 4: translation to a different language
+  # Test case 4: translation to a different language in a non-reactive context (same as input)
   zoom_levels <- c("CSD" = 1, "CT" = 2, "DA" = 3)
-  expected <- c("Arrondissement/ville", "Secteur de recensement", "Aire de diffusion")
+  expected <- c("Borough/City", "Census tract", "Dissemination area")
   result <- zoom_get_label(zoom_levels, lang = "fr")
   expect_equal(result, expected)
 })

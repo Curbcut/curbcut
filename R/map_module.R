@@ -131,17 +131,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
       rdeck::rdeck_proxy("map") |>
         rdeck::add_mvt_layer(
           id = id,
-          data = map_tilejson(),
-          pickable = pickable,
-          auto_highlight = auto_highlight,
-          highlight_color = "#FFFFFF50",
-          get_fill_color = do.call(fill_fun, fill_args()),
-          get_line_color = do.call(colour_fun, colour_args()),
-          get_line_width = do.call(lwd_fun, lwd_args()),
-          line_width_units = "pixels",
-          extruded = extrude(),
-          material = FALSE,
-          get_elevation = 5
+          data = map_tilejson()
         )
     })
 
@@ -151,7 +141,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     ## the zoom actually has an impact on the aesthetics.
     shiny::observe(
       rdeck::rdeck_proxy("map") |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = id,
           pickable = pickable,
           auto_highlight = auto_highlight,

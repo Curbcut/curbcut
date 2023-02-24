@@ -72,8 +72,13 @@ zoom_get_name <- function(dfs, lang = NULL) {
   # Subset slider_title in desired order
   out <- scales_dictionary$slider_title[match_idx]
 
-  # Return the translation
-  return(sapply(out, cc_t, lang = lang, USE.NAMES = FALSE))
+  # Translate only inside a reactive context (if not the slider titles start
+  # with spans, giving a weird user experience)
+  if (!is.null(shiny::getDefaultReactiveDomain()))
+    out <- sapply(out, cc_t, lang = lang, USE.NAMES = FALSE)
+
+  # Return
+  return(out)
 }
 
 #' Get the zoom labels for a set of zoom levels

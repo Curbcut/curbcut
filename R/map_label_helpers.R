@@ -22,13 +22,13 @@ map_label_show_texture <- function(zoom, tile, zoom_levels) {
 
   # In no case we show empty buildings on an auto_zoom after the building threshold
   building_zml <- zoom_levels[names(zoom_levels) == "building"]
-  if (length(building_zml) > 0 & zoom > building_zml) {
+  if (length(building_zml) > 0 & zoom > (building_zml - 0.5)) {
     return(FALSE)
   }
 
-  # We show empty building all the time on a choropleth map afterwards
+  # We show empty building all the time on a choropleth or autozoom map afterwards
   all_choropleths <- get_from_globalenv("all_choropleths")
-  if (is_scale_df(all_choropleths, tile)) {
+  if (is_scale_df(c(all_choropleths, "auto_zoom"), tile)) {
     return(TRUE)
   }
 

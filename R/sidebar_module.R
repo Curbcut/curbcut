@@ -53,8 +53,9 @@ sidebar_server <- function(id, r) {
 #'
 #' @param id <`character`> The ID of the page in which the legend will appear,
 #' e.g. `canale`.
-#' @param ... Additional UI elements to be included in the sidebar (widgets), like
-#' select_var_server, TKTK, etc.
+#' @param ... Additional UI elements to be included in the sidebar (widgets). To
+#' be connected to the bookmarking, these must be Curbcut widgets, e.g.
+#' \code{\link{picker_UI}}.
 #' @param bottom A list of UI elements to be included at the bottom of the sidebar,
 #' normally the UI of \code{\link{zoom_server}} and the
 #' \code{\link{legend_server}}.
