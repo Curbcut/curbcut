@@ -74,3 +74,6 @@ assign("postal_codes",
 # Few regions
 qs::qload("resources/city.qsm", env = .GlobalEnv)
 qs::qload("resources/island.qsm", env = .GlobalEnv)
+
+# Stories for poi test
+qs::qload("resources/stories.qsm", env = .GlobalEnv)

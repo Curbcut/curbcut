@@ -10,11 +10,16 @@
 #' will appear, e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file.
-#' @param select_id <`character`> the current selected ID, usually `r[[id]]$select_id()`
+#' @param select_id <`reactive character`> the current selected ID, usually
+#' `r[[id]]$select_id()`. Defaults to `NULL` for when it is not a map module.
+#' @param map_viewstate <`reactive list`> The map viewstate. Usually the output of the
+#' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}. Defaults
+#' to `NULL` for when it is not a map module.
 #'
 #' @return The module server function for creating bookmarkable URLs.
 #' @export
-bookmark_server <- function(id, r, select_id = shiny::reactive(NULL)) {
+bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
+                            map_viewstate = shiny::reactive(NULL)) {
   shiny::moduleServer(id, function(input, output, session) {
     # Grab all inputs built using Curbcut widgets
     widgets <- shiny::reactive({

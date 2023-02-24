@@ -4,17 +4,16 @@
 \alias{update_poi}
 \title{Get nearby points of interests (POIs) based on map view state}
 \usage{
-update_poi(id, map_id = paste0(id, "-map"), poi)
+update_poi(id, poi, map_viewstate)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this function will appear,
 e.g. \code{canale}.}
 
-\item{map_id}{<\code{character}> The ID of the map. By default, it is
-set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
-module assigns the \code{map} id to the maps.}
-
 \item{poi}{<\verb{character vector}> The current POIs showing on the map.}
+
+\item{map_viewstate}{<\code{list}> The map viewstate. Usually the output of the
+\code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}.}
 }
 \value{
 A character vector of nearby POIs if new POIs are found; otherwise,

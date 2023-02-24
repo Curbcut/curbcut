@@ -43,23 +43,20 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #'
 #' @param id <`character`> The ID of the page in which this function will appear,
 #' e.g. `canale`.
-#' @param map_id <`character`> The ID of the map. By default, it is
-#' set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
-#' module assigns the `map` id to the maps.
 #' @param poi <`character vector`> The current POIs showing on the map.
+#' @param map_viewstate <`list`> The map viewstate. Usually the output of the
+#' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}.
 #'
 #' @return A character vector of nearby POIs if new POIs are found; otherwise,
 #' returns the input POI vector.
 #' @export
-update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
-  # Get the map view state
-  map_input <- rdeck::get_view_state(map_id)
+update_poi <- function(id, poi, map_viewstate) {
 
   # Initialize objects
   out <- NULL
-  zoom <- map_input$zoom
-  lat <- map_input$latitude
-  lon <- map_input$longitude
+  zoom <- map_viewstate$zoom
+  lat <- map_viewstate$latitude
+  lon <- map_viewstate$longitude
 
   # Exit early if the map isn't sufficiently zoomed in
   if (zoom < 13) {

@@ -51,7 +51,8 @@
 #' It will be the center of the viewport on map. Defaults to grabbing the
 #' `map_loc` object from the global environment.
 #'
-#' @return The map Shiny UI and server module functions
+#' @return The server function returns the map viewstate coming from
+#' \code{\link[rdeck]{get_view_state}}.
 #' @export
 map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        fill_fun = map_scale_fill,
@@ -155,6 +156,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           get_elevation = 5
         )
     )
+
+    # Return the viewstate
+    return(shiny::reactive(rdeck::get_view_state("map")))
   })
 }
 

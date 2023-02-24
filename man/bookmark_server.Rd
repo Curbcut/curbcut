@@ -5,7 +5,12 @@
 \title{Server function for creating a bookmarkable URL with Curbcut widgets and an
 rdeck map}
 \usage{
-bookmark_server(id, r, select_id = shiny::reactive(NULL))
+bookmark_server(
+  id,
+  r,
+  select_id = shiny::reactive(NULL),
+  map_viewstate = shiny::reactive(NULL)
+)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the bookmark_server function
@@ -14,7 +19,12 @@ will appear, e.g. \code{canale}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file.}
 
-\item{select_id}{<\code{character}> the current selected ID, usually \code{r[[id]]$select_id()}}
+\item{select_id}{<\verb{reactive character}> the current selected ID, usually
+\code{r[[id]]$select_id()}. Defaults to \code{NULL} for when it is not a map module.}
+
+\item{map_viewstate}{<\verb{reactive list}> The map viewstate. Usually the output of the
+\code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}. Defaults
+to \code{NULL} for when it is not a map module.}
 }
 \value{
 The module server function for creating bookmarkable URLs.

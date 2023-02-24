@@ -92,7 +92,8 @@ It will be the center of the viewport on map. Defaults to grabbing the
 \code{map_loc} object from the global environment.}
 }
 \value{
-The map Shiny UI and server module functions
+The server function returns the map viewstate coming from
+\code{\link[rdeck]{get_view_state}}.
 }
 \description{
 This function is a Shiny module that generates an interactive map using the
