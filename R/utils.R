@@ -459,6 +459,35 @@ var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
   return(breaks)
 }
 
+#' Returns the row number of a given variable in the `variables` table.
+#'
+#' This function takes a variable code and returns the corresponding row number
+#' in the `variables` table. If the variable is not found in the `variables`
+#' table, it returns the original value of the input. It first removes any
+#' appended time values from the input, and then looks up the variable in
+#' the `variables` table.
+#'
+#' @param var <`character`> Representing the variable code to look up.
+#'
+#' @return If \code{var} is found in the `variables` table, returns its
+#' corresponding row number. If not found, returns the original value of
+#' \code{var}.
+var_row_index <- function(var) {
+
+  # Take out the appended time
+  var <- unique(var_remove_time(var = var))
+
+  # Grab the `variables` table
+  variables <- get_from_globalenv("variables")
+
+  # If var is not in the `variables` table, return its value
+  if (!var %in% variables$var_code) return(var)
+
+  # Get the row number of `var`
+  return(which(variables$var_code == var))
+
+}
+
 #' Retrieve the `colours_dfs` object
 #'
 #' This function retrieves the `colours_dfs` object from the global environment.

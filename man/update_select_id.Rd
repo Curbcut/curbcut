@@ -7,7 +7,7 @@
 update_select_id(id, select_id, id_map = paste0(id, "-map"))
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
+\item{id}{<\code{character}> The ID of the page in which this function will appear,
 e.g. \code{canale}.}
 
 \item{select_id}{<\code{character}> A character string representing the currently

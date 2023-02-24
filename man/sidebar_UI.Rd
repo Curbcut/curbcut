@@ -7,7 +7,7 @@
 sidebar_UI(id, ..., bottom = NULL)
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
+\item{id}{<\code{character}> The ID of the page in which this module will appear,
 e.g. \code{canale}.}
 
 \item{...}{Additional UI elements to be included in the sidebar (widgets). To

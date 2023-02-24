@@ -41,7 +41,7 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' that are within 2000 meters. Currently only returns the points of interests
 #' of the `stories` data.frame.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this function will appear,
 #' e.g. `canale`.
 #' @param map_id <`character`> The ID of the map. By default, it is
 #' set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
@@ -101,7 +101,7 @@ update_poi <- function(id, map_id = paste0(id, "-map"), poi) {
 #' This function updates the currently selected ID in a Shiny app based on the
 #' ID of the object that was clicked on on an `rdeck` map.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this function will appear,
 #' e.g. `canale`.
 #' @param select_id <`character`> A character string representing the currently
 #' selected ID

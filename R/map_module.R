@@ -6,7 +6,7 @@
 #' MVT and the aesthetic of the map. The function also requires several global
 #' environment variables to be set in order to work properly.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param tile <`reactive character`> A reactive string with the map tile to
 #' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)

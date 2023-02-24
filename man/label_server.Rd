@@ -15,7 +15,7 @@ label_server(
 )
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
+\item{id}{<\code{character}> The ID of the page in which this module will appear,
 e.g. \code{canale}.}
 
 \item{tile}{<\verb{reactive character}> A reactive string with the map tile to

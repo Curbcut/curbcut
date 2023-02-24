@@ -252,3 +252,12 @@ test_that("get_from_globalenv works", {
   )
   expect_error(get_from_globalenv("eso"))
 })
+
+test_that("var_row_index works", {
+  expect_equal(var_row_index("housing_tenant_2016"), 1)
+  expect_equal(var_row_index("housing_tenant"), 1)
+  expect_equal(var_row_index("not_there"), "not_there")
+  expect_equal(var_row_index(c("housing_rent_2001", "housing_rent_2016")), 2)
+  expect_equal(var_row_index(" "), " ")
+})
+

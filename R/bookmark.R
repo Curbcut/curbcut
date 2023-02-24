@@ -26,7 +26,7 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
       if (length(query) == 0) return(NULL)
 
       # Start by updating app-wide reactives
-      if ("region" %in% names(query)) r$region(query$region)
+      if ("reg" %in% names(query)) r$region(query$region)
       if ("lng" %in% names(query)) r$lang(query$lng)
 
       # The rest are tab dependent.

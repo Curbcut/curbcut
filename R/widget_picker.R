@@ -121,6 +121,10 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   # Reformat the picker_id to make it obvious it's a picker (for bookmark)
   picker_id <- paste0("picker_", picker_id)
 
+  # Non-numeric to not interfere with bookmark
+  if (is.numeric(var_list))
+    stop("A picker should not be numeric. It will interfere with bookmarking.")
+
   # Declare the input in an optionally styled div
   shiny::div(style = div_style,
              shinyWidgets::pickerInput(

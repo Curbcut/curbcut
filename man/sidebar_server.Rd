@@ -7,7 +7,7 @@
 sidebar_server(id, r)
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
+\item{id}{<\code{character}> The ID of the page in which this module will appear,
 e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and

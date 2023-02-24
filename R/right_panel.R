@@ -5,7 +5,7 @@
 #' div elements. The first div element has a custom class for styling purposes,
 #' and can contain multiple other Shiny widgets or HTML elements.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param ... Additional arguments to be passed to the \code{\link[shiny]{absolutePanel}}
 #' function. Would normally be the `compare_UI`, `explore_UI`, `dyk_UI`. TKTK LINK

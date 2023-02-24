@@ -7,7 +7,7 @@
 update_poi(id, map_id = paste0(id, "-map"), poi)
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
+\item{id}{<\code{character}> The ID of the page in which this function will appear,
 e.g. \code{canale}.}
 
 \item{map_id}{<\code{character}> The ID of the map. By default, it is

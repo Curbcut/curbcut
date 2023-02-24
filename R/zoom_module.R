@@ -12,7 +12,7 @@
 #' see if the scale is available for the current region. If it is not
 #' available, the function defaults back to auto-zoom.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file.
@@ -56,8 +56,6 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
       if (!zoom_auto()) return(NULL)
       zoom_get_name(zoom_string(), lang = r$lang())
     })
-
-    observe(print(selected()))
 
     zoom_slider <- slider_text_server(id = "zoom_slider",
                                       r = r,

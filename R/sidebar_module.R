@@ -6,7 +6,7 @@
 #' must live in the global environment, as it is from where the title texts
 #' are retrieved.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file.
@@ -51,7 +51,7 @@ sidebar_server <- function(id, r) {
 #' argument of the `sidebar_UI` are the \code{\link{zoom_server}} and the
 #' \code{\link{legend_server}}.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
+#' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param ... Additional UI elements to be included in the sidebar (widgets). To
 #' be connected to the bookmarking, these must be Curbcut widgets, e.g.
