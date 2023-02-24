@@ -1,8 +1,10 @@
 #### BOOKMARK SHORTER ##########################################################
-bookmark_codes <- c("compare-picker_var" = "cp",
-                    "picker_var" = "pv",
-                    "zoom_slider-slider_text_sldt" = "zs",
-                    "zoom_auto-checkbox_cbox" = "zc",
-                    "checkbox_cbox" = "cb")
+bookmark_codes <- c(
+  "compare-ccpicker_var" = "cp",
+  "ccpicker_var" = "pv",
+  "zoom_slider-ccslidertext_sldt" = "zs",
+  "zoom_auto-cccheckbox_cbox" = "zc",
+  "cccheckbox_cbox" = "cb"
+)
 
 usethis::use_data(bookmark_codes, overwrite = TRUE)

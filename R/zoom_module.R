@@ -32,18 +32,21 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
   stopifnot(shiny::is.reactive(zoom_levels))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Get the auto zoom checkbox server and add that a change in region means
     # switching back the auto-zoom to get a better transition
-    zoom_auto <- checkbox_server(id = "zoom_auto",
-                                 r = r,
-                                 label = shiny::reactive("Auto-zoom"),
-                                 event_reset = shiny::reactive(zoom_levels()$region))
+    zoom_auto <- checkbox_server(
+      id = "zoom_auto",
+      r = r,
+      label = shiny::reactive("Auto-zoom"),
+      event_reset = shiny::reactive(zoom_levels()$region)
+    )
 
     # Disable the slider if in auto mode
     shiny::observe({
-      shinyjs::toggleState(id = "zoom_slider-slider_text_sldt",
-                           condition = !zoom_auto())
+      shinyjs::toggleState(
+        id = "zoom_slider-ccslidertext_sldt",
+        condition = !zoom_auto()
+      )
     })
 
     # Update the slider if zoom_levels() changes
@@ -53,14 +56,18 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
 
     # Update the slider when zoom changes, only on auto_zoom
     selected <- shiny::reactive({
-      if (!zoom_auto()) return(NULL)
+      if (!zoom_auto()) {
+        return(NULL)
+      }
       zoom_get_name(zoom_string(), lang = r$lang())
     })
 
-    zoom_slider <- slider_text_server(id = "zoom_slider",
-                                      r = r,
-                                      choices = choices,
-                                      selected = selected)
+    zoom_slider <- slider_text_server(
+      id = "zoom_slider",
+      r = r,
+      choices = choices,
+      selected = selected
+    )
 
     # Return the tile() reactive, indicating if the map should show an
     # auto-zoom or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
@@ -93,17 +100,22 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
 #' @export
 zoom_UI <- function(id, zoom_levels) {
   shiny::tagList(
-    shiny::div(class = "sus-sidebar-control",
-               checkbox_UI(id = shiny::NS(id, "zoom_auto"),
-                           label = "Auto-zoom",
-                           value = TRUE)
+    shiny::div(
+      class = "sus-sidebar-control",
+      checkbox_UI(
+        id = shiny::NS(id, "zoom_auto"),
+        label = "Auto-zoom",
+        value = TRUE
+      )
     ),
-    shiny::div(class = "sus-sidebar-control",
-               slider_text_UI(
-                 id = shiny::NS(id, "zoom_slider"),
-                 label = NULL,
-                 choices = zoom_get_label(zoom_levels),
-                 hide_min_max = TRUE
-               ))
+    shiny::div(
+      class = "sus-sidebar-control",
+      slider_text_UI(
+        id = shiny::NS(id, "zoom_slider"),
+        label = NULL,
+        choices = zoom_get_label(zoom_levels),
+        hide_min_max = TRUE
+      )
+    )
   )
 }

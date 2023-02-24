@@ -15,43 +15,52 @@
 #' @return The module server function for creating bookmarkable URLs.
 #' @export
 bookmark_server <- function(id, r, select_id = shiny::reactive(NULL)) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     # Grab all inputs built using Curbcut widgets
     widgets <- shiny::reactive({
       # Grab all the available input in the page and subset the Curbcut widgets
       all_input <- names(input)
-      if (length(all_input) == 0) return(NULL)
-      all_widgets <- grep("picker_|slider_text_|checkbox_",
-                          all_input,
-                          value = TRUE)
+      if (length(all_input) == 0) {
+        return(NULL)
+      }
+      all_widgets <- grep("ccpicker_|ccslidertext_|cccheckbox_",
+        all_input,
+        value = TRUE
+      )
       # If there are no widgets, return null
-      if (length(all_widgets) == 0) return(NULL)
+      if (length(all_widgets) == 0) {
+        return(NULL)
+      }
 
       # Get the widget's value
-      sapply(all_widgets, \(x) {input[[x]]}, simplify = FALSE, USE.NAMES = TRUE)
+      sapply(all_widgets, \(x) {
+        input[[x]]
+      }, simplify = FALSE, USE.NAMES = TRUE)
     })
 
 
     # Grab the map's view state (if there is)
-    map_viewstate <- shiny::reactive({tryCatch(rdeck::get_view_state("map"),
-                                        error = function(e) NULL)})
+    map_viewstate <- shiny::reactive({
+      tryCatch(rdeck::get_view_state("map"),
+        error = function(e) NULL
+      )
+    })
 
 
     # Produce the URL
     url <- shiny::reactive({
-      bookmark_build_url(id = id,
-                         region = r$region(),
-                         lang = r$lang(),
-                         widgets = widgets(),
-                         map_viewstate = map_viewstate(),
-                         select_id = select_id())
+      bookmark_build_url(
+        id = id,
+        region = r$region(),
+        lang = r$lang(),
+        widgets = widgets(),
+        map_viewstate = map_viewstate(),
+        select_id = select_id()
+      )
     })
 
     # Update the URL
     shiny::observe(shiny::updateQueryString(url()))
-
   })
 }
 
@@ -77,20 +86,19 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL)) {
 #' state of the map view. Usually `rdeck::get_view_state("map")`.
 #' @param select_id <`character`> An optional string or numeric value representing
 #' the ID of the selected item.
-#' @param df <`character`> An optional string value representing the selected `df`.
 #'
 #' @return A character string representing the bookmarkable URL.
 bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
-                               select_id, df) {
-
+                               select_id) {
   # If the page is in the module's table, make it a numeric
   modules <- get_from_globalenv("modules")
   if (id %in% modules$id) id <- which(modules$id == id)
 
   # Make the region a numeric too
   regions_dictionary <- get_from_globalenv("regions_dictionary")
-  if (region %in% regions_dictionary$region)
+  if (region %in% regions_dictionary$region) {
     region <- which(regions_dictionary$region == region)
+  }
 
   # First string
   url <- sprintf("/?reg=%s&tb=%s", region, id)
@@ -106,20 +114,23 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
         if (isTRUE(value)) value <- "T"
         if (isFALSE(value)) value <- "F"
         # If from a picker, grab the row ID if available
-        if (grepl("picker_", name)) {
+        if (grepl("ccpicker_", name)) {
           # Throw warning if numeric, which won't work with bookmarking
-          if (is.numeric(value))
+          if (is.numeric(value)) {
             stop("A picker should not be numeric. It will interfere with bookmarking.")
+          }
           value <- var_row_index(value)
         }
         # Grab the code rather than the label for the zoom module
-        if (name == "zoom_slider-slider_text_sldt")
+        if (name == "zoom_slider-ccslidertext_sldt") {
           value <- zoom_get_code(value, lang = lang)
+        }
 
         bookmark_codes <- curbcut::bookmark_codes
         # If the name is part of a known code, switch it
-        if (name %in% names(bookmark_codes))
+        if (name %in% names(bookmark_codes)) {
           name <- bookmark_codes[which(names(bookmark_codes) == name)]
+        }
 
         # Return the widgets name with their value
         return(paste0(name, ":", value))
@@ -143,5 +154,4 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
 
   # Return the final URL
   return(url)
-
 }

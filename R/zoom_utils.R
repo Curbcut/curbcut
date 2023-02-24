@@ -74,8 +74,9 @@ zoom_get_name <- function(dfs, lang = NULL) {
 
   # Translate only inside a reactive context (if not the slider titles start
   # with spans, giving a weird user experience)
-  if (!is.null(shiny::getDefaultReactiveDomain()))
+  if (!is.null(shiny::getDefaultReactiveDomain())) {
     out <- sapply(out, cc_t, lang = lang, USE.NAMES = FALSE)
+  }
 
   # Return
   return(out)

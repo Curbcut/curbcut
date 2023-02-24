@@ -260,4 +260,3 @@ test_that("var_row_index works", {
   expect_equal(var_row_index(c("housing_rent_2001", "housing_rent_2016")), 2)
   expect_equal(var_row_index(" "), " ")
 })
-

@@ -14,9 +14,10 @@
 #' @return A list containing a single element named 'content'. The 'content' element is a
 #' character vector containing the HTML for the divs.
 picker_hover_divs <- function(var_list, lang = NULL) {
-
   # If var_list is empty, return NULL
-  if (length(var_list) == 0) return(NULL)
+  if (length(var_list) == 0) {
+    return(NULL)
+  }
 
   # Grab the variables table
   variables <- get_from_globalenv("variables")
@@ -26,7 +27,9 @@ picker_hover_divs <- function(var_list, lang = NULL) {
 
   # If at least one variable is not in the `variables` table, return the
   # `var_list` as is.
-  if (sum(!vars %in% variables$var_code) > 0) return(var_list)
+  if (sum(!vars %in% variables$var_code) > 0) {
+    return(var_list)
+  }
 
   # Grab the explanation
   text_hover <- sapply(vars, \(x) {
@@ -34,19 +37,21 @@ picker_hover_divs <- function(var_list, lang = NULL) {
     exp <- variables$explanation[variables$var_code == x]
 
     # If no explanation (unexistant variable), return an empty string
-    if (length(exp) == 0) return(" ")
+    if (length(exp) == 0) {
+      return(" ")
+    }
 
     # Return the explanation
     return(exp)
   }, USE.NAMES = FALSE)
 
   # In the case there is a language, translate
-  if (!is.null(lang))
+  if (!is.null(lang)) {
     text_hover <- sapply(text_hover, cc_t, lang = lang, USE.NAMES = FALSE)
+  }
 
   # Get the label
   var_list_label <- (\(x) {
-
     # Take the themes out before grabbing the labels
     unthemed <- unname(var_list)
     labels <- unlist(sapply(unthemed, names))
@@ -82,12 +87,15 @@ picker_hover_divs <- function(var_list, lang = NULL) {
 #' elements of the output vector indicate whether each variable should be
 #' disabled or not.
 picker_multi_year_disable <- function(var_list, disable) {
-
   # If var_list is empty, return NULL
-  if (length(var_list) == 0) return(NULL)
+  if (length(var_list) == 0) {
+    return(NULL)
+  }
 
   # If we don't disable anything, returns FALSE (no disabling)
-  if (!disable) return(rep(FALSE, sum(lengths(var_list))))
+  if (!disable) {
+    return(rep(FALSE, sum(lengths(var_list))))
+  }
 
   # Get all the years
   vars <- unname(unlist(var_list))
@@ -100,7 +108,6 @@ picker_multi_year_disable <- function(var_list, disable) {
 
   # Return the opposite as TRUE means disable
   return(!vec)
-
 }
 
 #' Return variable based on time and input
@@ -124,23 +131,29 @@ picker_multi_year_disable <- function(var_list, disable) {
 #' dates at which the variable is available, and then finds the closest year to
 #' the given \code{time} value.
 picker_return_var <- function(input, time) {
-
   # If `time` is NULL, return the input
-  if (is.null(time)) return(input)
+  if (is.null(time)) {
+    return(input)
+  }
 
   # If empty input (for a compare dropdown), return empty
-  if (input == " ") return(" ")
+  if (input == " ") {
+    return(" ")
+  }
 
   # Grab the dates at which the variable is available
   dates <- as.numeric(var_get_info(input, what = "dates")[[1]])
   # If no dates, return the input
-  if (all(is.na(dates))) return(input)
+  if (all(is.na(dates))) {
+    return(input)
+  }
   # Get time as numeric
   time <- as.numeric(time)
 
   # Get the closest years
   closest_year <- sapply(time, \(x) dates[which.min(abs(dates - x))],
-                         USE.NAMES = FALSE)
+    USE.NAMES = FALSE
+  )
 
   # Attach it to the variable code
   var <- paste(input, closest_year, sep = "_")
@@ -153,7 +166,4 @@ picker_return_var <- function(input, time) {
 
   # Return the var
   return(var)
-
 }
-
-

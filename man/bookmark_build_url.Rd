@@ -4,15 +4,7 @@
 \alias{bookmark_build_url}
 \title{Build a bookmarkable URL}
 \usage{
-bookmark_build_url(
-  id,
-  region,
-  lang = NULL,
-  widgets,
-  map_viewstate,
-  select_id,
-  df
-)
+bookmark_build_url(id, region, lang = NULL, widgets, map_viewstate, select_id)
 }
 \arguments{
 \item{id}{<\code{character}> A string or numeric value representing the ID of the
@@ -32,8 +24,6 @@ state of the map view. Usually \code{rdeck::get_view_state("map")}.}
 
 \item{select_id}{<\code{character}> An optional string or numeric value representing
 the ID of the selected item.}
-
-\item{df}{<\code{character}> An optional string value representing the selected \code{df}.}
 }
 \value{
 A character string representing the bookmarkable URL.

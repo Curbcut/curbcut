@@ -473,7 +473,6 @@ var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
 #' corresponding row number. If not found, returns the original value of
 #' \code{var}.
 var_row_index <- function(var) {
-
   # Take out the appended time
   var <- unique(var_remove_time(var = var))
 
@@ -481,11 +480,12 @@ var_row_index <- function(var) {
   variables <- get_from_globalenv("variables")
 
   # If var is not in the `variables` table, return its value
-  if (!var %in% variables$var_code) return(var)
+  if (!var %in% variables$var_code) {
+    return(var)
+  }
 
   # Get the row number of `var`
   return(which(variables$var_code == var))
-
 }
 
 #' Retrieve the `colours_dfs` object

@@ -13,7 +13,6 @@
 #' the dropdown.
 #' @export
 dropdown_make <- function(vars, compare = FALSE) {
-
   # Grab the `variables` table from the global environment
   variables <- get_from_globalenv("variables")
 
@@ -22,16 +21,21 @@ dropdown_make <- function(vars, compare = FALSE) {
 
   # Iterate over all the themes
   out <-
-    lapply(stats::setNames(unique(vars$theme),
-                    unique(vars$theme)),
-           \(cat) {
-               cat_vecs <-
-                 vars[vars$theme == cat, c("var_code", "var_title")]
+    lapply(
+      stats::setNames(
+        unique(vars$theme),
+        unique(vars$theme)
+      ),
+      \(cat) {
+        cat_vecs <-
+          vars[vars$theme == cat, c("var_code", "var_title")]
 
-               lapply(cat_vecs$var_title, \(name) {
-                 cat_vecs$var_code[cat_vecs$var_title == name]}) |>
-                 stats::setNames(cat_vecs$var_title)
-             })
+        lapply(cat_vecs$var_title, \(name) {
+          cat_vecs$var_code[cat_vecs$var_title == name]
+        }) |>
+          stats::setNames(cat_vecs$var_title)
+      }
+    )
 
   # In the case the dropdown is to be located in the compare dropdown,
   # add a 'No comparison' possibility
@@ -40,4 +44,3 @@ dropdown_make <- function(vars, compare = FALSE) {
   # Return
   return(out)
 }
-

@@ -18,21 +18,20 @@
 slider_text_server <- function(id, r, slider_text_id = "sldt",
                                choices = shiny::reactive(NULL),
                                selected = shiny::reactive(NULL)) {
-
   stopifnot(shiny::is.reactive(choices))
   stopifnot(shiny::is.reactive(selected))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Reformat the slider_text_id to make it obvious it's a slider_text (for bookmark)
-    slider_text_id <- paste0("slider_text_", slider_text_id)
+    slider_text_id <- paste0("ccslidertext_", slider_text_id)
 
     # Update choices if they change
     shiny::observeEvent(choices(), {
       shinyWidgets::updateSliderTextInput(
         session = session,
         inputId = slider_text_id,
-        choices = choices())
+        choices = choices()
+      )
     })
 
     # Update selected if it changes
@@ -40,14 +39,13 @@ slider_text_server <- function(id, r, slider_text_id = "sldt",
       shinyWidgets::updateSliderTextInput(
         session = session,
         inputId = slider_text_id,
-        selected = selected())
+        selected = selected()
+      )
     })
 
     # Return the selection as a reactive
     return(shiny::reactive(input[[slider_text_id]]))
-
   })
-
 }
 
 #' Create a slider text UI element for selecting a value from a list of choices.
@@ -72,14 +70,15 @@ slider_text_server <- function(id, r, slider_text_id = "sldt",
 #' @export
 slider_text_UI <- function(id, slider_text_id = "sldt", label = "Select a year",
                            choices, selected = NULL, force_edges = TRUE, ...) {
-
   # Reformat the slider_text_id to make it obvious it's a slider_text (for bookmark)
-  slider_text_id <- paste0("slider_text_", slider_text_id)
+  slider_text_id <- paste0("ccslidertext_", slider_text_id)
 
-  shinyWidgets::sliderTextInput(inputId = shiny::NS(id, slider_text_id),
-                                label = label,
-                                choices = choices,
-                                selected = selected,
-                                force_edges = force_edges,
-                                ...)
+  shinyWidgets::sliderTextInput(
+    inputId = shiny::NS(id, slider_text_id),
+    label = label,
+    choices = choices,
+    selected = selected,
+    force_edges = force_edges,
+    ...
+  )
 }

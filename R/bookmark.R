@@ -14,16 +14,15 @@
 #' @return handles updating the state of the app based on the URL query string.
 #' @export
 use_bookmark <- function(id = "parse_url", r, parent_session) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     shiny::observeEvent(shiny::parseQueryString(session$clientData$url_search), {
-
       # Get the URL search query
       query <- shiny::parseQueryString(session$clientData$url_search)
 
       # If no query, do no action
-      if (length(query) == 0) return(NULL)
+      if (length(query) == 0) {
+        return(NULL)
+      }
 
       # Start by updating app-wide reactives
       if ("reg" %in% names(query)) r$region(query$region)
@@ -31,17 +30,21 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
 
       # The rest are tab dependent.
       # Grab the tab
-      if (!"tb" %in% names(query)) return(NULL)
+      if (!"tb" %in% names(query)) {
+        return(NULL)
+      }
       tab <- query$tb
       # Update the current tab
-      shiny::updateTabsetPanel(session = parent_session,
-                               inputId = "cc_page",
-                               selected = tab)
+      shiny::updateTabsetPanel(
+        session = parent_session,
+        inputId = "cc_page",
+        selected = tab
+      )
 
       # Start by the reactive values
-      if ("df" %in% names(query)) r[[tab]]$df(query$df)
+      # if ("df" %in% names(query)) r[[tab]]$df(query$df)
       if ("zm" %in% names(query)) r[[tab]]$zoom(as.numeric(query$zm))
-      if ("s_id" %in% names(query)) {
+      if ("sid" %in% names(query)) {
         new_id <- if (query$s_id %in% c("", "NA")) NA else query$s_id
         r[[tab]]$select_id(new_id)
       }
@@ -52,8 +55,6 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
       # with character shortcuts. We can grab all inputs of a page
       # using names(input) and then just apply over the ones from widgets
       # lapply(all_inputs, \(x) input[[x]]) to get values.
-
     })
   })
 }
-
