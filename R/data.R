@@ -1,4 +1,4 @@
-#' Make shorter bookmarks using codes
+#' Make shorter often used widgets in bookmarks using codes
 #'
 #' @format ## `bookmark_codes`
 #' A named vector:
@@ -7,3 +7,13 @@
 #'   \item{value}{New widget code}
 #' }
 "bookmark_codes"
+
+#' Make shorter all widgets id using codes
+#'
+#' @format ## `bookmark_shorts`
+#' A named vector:
+#' \describe{
+#'   \item{name}{The start of the widget `id`}
+#'   \item{value}{`id` for which to switch to make bookmark URL smaller}
+#' }
+"bookmark_shorts"

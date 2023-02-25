@@ -24,8 +24,23 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
         return(NULL)
       }
 
+      # Create a function to test whether a value is numeric
+      is_numeric <- function(x) {
+        # Convert the input value to a numeric type using as.numeric()
+        # Check whether the conversion was successful using is.na()
+        # If the conversion was successful, the value is numeric
+        !is.na(suppressWarnings(as.numeric(x)))
+      }
+
       # Start by updating app-wide reactives
-      if ("reg" %in% names(query)) r$region(query$region)
+      if ("reg" %in% names(query)) {
+        reg <- r$region(query$region)
+        # As we convert an ID in the region table to a numeric for smaller URL
+        # bookmarking, retrieve the region string using its index.
+        regions_dictionary <- get_from_globalenv("regions_dictionary")
+        reg <- regions_dictionary$region[as.numeric(reg)]
+        r$region(reg)
+      }
       if ("lng" %in% names(query)) r$lang(query$lng)
 
       # The rest are tab dependent.
@@ -33,7 +48,14 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
       if (!"tb" %in% names(query)) {
         return(NULL)
       }
+
+      # As we convert an ID in the modules table to a numeric for smaller URL
+      # bookmarking, retrieve the page ID using its index.
       tab <- query$tb
+      if (is_numeric(tab)) {
+        modules <- get_from_globalenv("modules")
+        tab <- modules$id[as.numeric(tab)]
+      }
       # Update the current tab
       shiny::updateTabsetPanel(
         session = parent_session,
@@ -41,12 +63,12 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
         selected = tab
       )
 
-      # Start by the reactive values
-      # if ("df" %in% names(query)) r[[tab]]$df(query$df)
+      # Start by the map viewstate (if a map module)
       if ("zm" %in% names(query)) r[[tab]]$zoom(as.numeric(query$zm))
-      if ("sid" %in% names(query)) {
-        new_id <- if (query$s_id %in% c("", "NA")) NA else query$s_id
-        r[[tab]]$select_id(new_id)
+      if ("crds" %in% names(query)) {
+        coords <- query$crds
+        coords <- strsplit(coords, ";")[[1]]
+        r[[tab]]$coords(coords)
       }
 
       # Other updates that must have impacts on widgets
@@ -55,6 +77,13 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
       # with character shortcuts. We can grab all inputs of a page
       # using names(input) and then just apply over the ones from widgets
       # lapply(all_inputs, \(x) input[[x]]) to get values.
-    })
+
+      # Finish by the ID selection
+      if ("sid" %in% names(query)) {
+        new_id <- if (query$sid %in% c("", "NA")) NA else query$sid
+        r[[tab]]$select_id(new_id)
+      }
+
+    }, priority = -5)
   })
 }

@@ -12,6 +12,7 @@ map_server(
   select_id,
   zoom_levels,
   zoom,
+  coords,
   fill_fun = map_scale_fill,
   fill_args = shiny::reactive(list(data_colours())),
   colour_fun = map_scale_colour,
@@ -22,8 +23,7 @@ map_server(
   pickable = TRUE,
   mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
   tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv),
-  map_base_style = get0("map_base_style", envir = .GlobalEnv),
-  map_loc = get0("map_loc", envir = .GlobalEnv)
+  map_base_style = get0("map_base_style", envir = .GlobalEnv)
 )
 
 map_UI(id)
@@ -49,7 +49,11 @@ levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-zoom).}
 
-\item{zoom}{<\verb{reactive numeric}> The current zoom level of the map.}
+\item{zoom}{<\verb{reactive numeric}> The current zoom level of the map, also
+the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
+
+\item{coords}{<\verb{reactive numeric vector}> The current central map location
+of the map. Bookmark can have an input on it. Usually \code{r[[id]]$coords}.}
 
 \item{fill_fun}{<\code{function}> A function used to calculate the fill color of
 the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.

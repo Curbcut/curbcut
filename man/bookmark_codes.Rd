@@ -3,7 +3,7 @@
 \docType{data}
 \name{bookmark_codes}
 \alias{bookmark_codes}
-\title{Make shorter bookmarks using codes}
+\title{Make shorter often used widgets in bookmarks using codes}
 \format{
 \subsection{\code{bookmark_codes}}{
 
@@ -18,6 +18,6 @@ A named vector:
 bookmark_codes
 }
 \description{
-Make shorter bookmarks using codes
+Make shorter often used widgets in bookmarks using codes
 }
 \keyword{datasets}

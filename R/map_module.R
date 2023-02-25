@@ -21,7 +21,10 @@
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
-#' @param zoom <`reactive numeric`> The current zoom level of the map.
+#' @param zoom <`reactive numeric`> The current zoom level of the map, also
+#' the zoom at which the map will initiate. Usually `r[[id]]$zoom`
+#' @param coords <`reactive numeric vector`> The current central map location
+#' of the map. Bookmark can have an input on it. Usually `r[[id]]$coords`.
 #' @param fill_fun <`function`> A function used to calculate the fill color of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
 #' Defaults to \code{\link{map_scale_fill}}.
@@ -55,7 +58,7 @@
 #' \code{\link[rdeck]{get_view_state}}.
 #' @export
 map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
-                       fill_fun = map_scale_fill,
+                       coords, fill_fun = map_scale_fill,
                        fill_args = shiny::reactive(list(data_colours())),
                        colour_fun = map_scale_colour,
                        colour_args = shiny::reactive(list(NULL)),
@@ -68,8 +71,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        pickable = TRUE,
                        mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
                        tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv),
-                       map_base_style = get0("map_base_style", envir = .GlobalEnv),
-                       map_loc = get0("map_loc", envir = .GlobalEnv)) {
+                       map_base_style = get0("map_base_style", envir = .GlobalEnv)) {
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
   stopifnot(shiny::is.reactive(select_id))
@@ -77,6 +79,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(fill_args))
   stopifnot(shiny::is.reactive(colour_args))
   stopifnot(shiny::is.reactive(lwd_args))
+  stopifnot(shiny::is.reactive(coords))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Check for missing arguments
@@ -98,19 +101,14 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         "environment or supplied to the `map_server` function."
       ))
     }
-    if (is.null(map_loc)) {
-      stop(paste0(
-        "`map_loc` must be present in the global ",
-        "environment or supplied to the `map_server` function."
-      ))
-    }
 
     # Map
     output$map <- rdeck::renderRdeck({
       rdeck::rdeck(
         map_style = map_base_style, layer_selector = FALSE,
         initial_view_state = rdeck::view_state(
-          center = map_loc, zoom = shiny::isolate(zoom())
+          center = shiny::isolate(as.numeric(coords())),
+          zoom = shiny::isolate(zoom())
         )
       ) |> rdeck::add_mvt_layer(id = id)
     })
