@@ -112,7 +112,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         initial_view_state = rdeck::view_state(
           center = map_loc, zoom = shiny::isolate(zoom())
         )
-      )
+      ) |> rdeck::add_mvt_layer(id = id)
     })
 
     # Helper variables
@@ -126,11 +126,10 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
       tile = tile()
     ))
 
-    # Update data layer source on tile() change only. Make sure once the tile
-    # gets updated that all the argument follow to.
+    # Update data layer source on tile() change only.
     shiny::observeEvent(map_tilejson(), {
       rdeck::rdeck_proxy("map") |>
-        rdeck::add_mvt_layer(
+        rdeck::update_mvt_layer(
           id = id,
           data = map_tilejson()
         )
