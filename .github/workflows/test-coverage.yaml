@@ -21,16 +21,16 @@ jobs:
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::covr
-          needs: coverage
-
       - name: Download and install non-CRAN package
         run: |
           git clone https://github.com/qfes/rdeck
           R CMD INSTALL repo
         shell: bash
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
 
       - name: Test coverage
         run: |
