@@ -6,7 +6,7 @@
 \usage{
 slider_text_UI(
   id,
-  slider_text_id = "sldt",
+  slider_text_id = "slt",
   label = "Select a year",
   choices,
   selected = NULL,
@@ -20,7 +20,7 @@ e.g. \code{canale}.}
 
 \item{slider_text_id}{<\code{character}> string giving the identifier for the slider input
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.
-It needs to be unique in the page. The default value is \code{"sldt"}.}
+It needs to be unique in the page. The default value is \code{"slt"}.}
 
 \item{label}{<\code{character}> A text label to display next to the checkbox input.
 If NULL (default), no label will be displayed.}

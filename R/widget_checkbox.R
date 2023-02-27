@@ -10,7 +10,7 @@
 #' pages. Created in the `server.R` file.
 #' @param checkbox_id <`character`> string giving the identifier for the checkbox input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
-#' It needs to be unique in the page. The default value is `"cbox"`.
+#' It needs to be unique in the page. The default value is `"cbx"`.
 #' @param label <`character`> A text label to display next to the checkbox
 #' input. If NULL (default), no label will be displayed.
 #' @param event_reset <`reactive expression`> A change in this reactive will trigger
@@ -20,7 +20,7 @@
 #' @return A reactive object representing the value of the checkbox input control.
 #' @seealso \code{\link{checkbox_UI}}
 #' @export
-checkbox_server <- function(id, r, checkbox_id = "cbox",
+checkbox_server <- function(id, r, checkbox_id = "cbx",
                             label = shiny::reactive(NULL),
                             event_reset = shiny::reactive(NULL)) {
   stopifnot(shiny::is.reactive(label))
@@ -71,7 +71,7 @@ checkbox_server <- function(id, r, checkbox_id = "cbox",
 #' e.g. `canale`.
 #' @param checkbox_id <`character`> string giving the identifier for the checkbox input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
-#' It needs to be unique in the page. The default value is `"cbox"`.
+#' It needs to be unique in the page. The default value is `"cbx"`.
 #' @param label <`character`> A text label to display next to the checkbox input.
 #' If NULL (default), no label will be displayed.
 #' @param value <`logical`> The initial value of the checkbox input. Defaults to
@@ -81,8 +81,12 @@ checkbox_server <- function(id, r, checkbox_id = "cbox",
 #' @return A checkbox input control for use in Shiny UI.
 #' @seealso \code{\link{checkbox_server}}
 #' @export
-checkbox_UI <- function(id, checkbox_id = "cbox", label = NULL, value = TRUE,
+checkbox_UI <- function(id, checkbox_id = "cbx", label = NULL, value = TRUE,
                         ...) {
+
+  # Verify if the widget ID will interfere with bookmark
+  checkbox_id <- widget_id_verif(widget_id = checkbox_id)
+
   # Reformat the checkbox_id to make it obvious it's a checkbox (for bookmark)
   checkbox_id <- paste0("cccheckbox_", checkbox_id)
 

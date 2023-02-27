@@ -6,7 +6,7 @@
 #' pages. Created in the `server.R` file.
 #' @param slider_text_id <`character`> string giving the identifier for the slider input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
-#' It needs to be unique in the page. The default value is `"sldt"`.
+#' It needs to be unique in the page. The default value is `"slt"`.
 #' @param choices <`reactive character vector`> Choices that the user can
 #' select from.
 #' @param selected <`reactive character`> Represents the selected value to update
@@ -15,7 +15,7 @@
 #' @return A reactive value representing the user's selection.
 #' @seealso \code{\link{slider_text_UI}}
 #' @export
-slider_text_server <- function(id, r, slider_text_id = "sldt",
+slider_text_server <- function(id, r, slider_text_id = "slt",
                                choices = shiny::reactive(NULL),
                                selected = shiny::reactive(NULL)) {
   stopifnot(shiny::is.reactive(choices))
@@ -54,7 +54,7 @@ slider_text_server <- function(id, r, slider_text_id = "sldt",
 #' e.g. `canale`.
 #' @param slider_text_id <`character`> string giving the identifier for the slider input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
-#' It needs to be unique in the page. The default value is `"sldt"`.
+#' It needs to be unique in the page. The default value is `"slt"`.
 #' @param label <`character`> A text label to display next to the checkbox input.
 #' If NULL (default), no label will be displayed.
 #' @param choices <`character vector`> Choices that the user can select from.
@@ -68,8 +68,12 @@ slider_text_server <- function(id, r, slider_text_id = "sldt",
 #' in the app.
 #' @seealso \code{\link{slider_text_server}}
 #' @export
-slider_text_UI <- function(id, slider_text_id = "sldt", label = "Select a year",
+slider_text_UI <- function(id, slider_text_id = "slt", label = "Select a year",
                            choices, selected = NULL, force_edges = TRUE, ...) {
+
+  # Verify if the widget ID will interfere with bookmark
+  slider_text_id <- widget_id_verif(widget_id = slider_text_id)
+
   # Reformat the slider_text_id to make it obvious it's a slider_text (for bookmark)
   slider_text_id <- paste0("ccslidertext_", slider_text_id)
 

@@ -7,7 +7,7 @@
 slider_text_server(
   id,
   r,
-  slider_text_id = "sldt",
+  slider_text_id = "slt",
   choices = shiny::reactive(NULL),
   selected = shiny::reactive(NULL)
 )
@@ -21,7 +21,7 @@ pages. Created in the \code{server.R} file.}
 
 \item{slider_text_id}{<\code{character}> string giving the identifier for the slider input
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.
-It needs to be unique in the page. The default value is \code{"sldt"}.}
+It needs to be unique in the page. The default value is \code{"slt"}.}
 
 \item{choices}{<\verb{reactive character vector}> Choices that the user can
 select from.}

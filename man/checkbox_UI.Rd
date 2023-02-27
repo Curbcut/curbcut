@@ -4,7 +4,7 @@
 \alias{checkbox_UI}
 \title{Create a checkbox input control}
 \usage{
-checkbox_UI(id, checkbox_id = "cbox", label = NULL, value = TRUE, ...)
+checkbox_UI(id, checkbox_id = "cbx", label = NULL, value = TRUE, ...)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the widget will appear,
@@ -12,7 +12,7 @@ e.g. \code{canale}.}
 
 \item{checkbox_id}{<\code{character}> string giving the identifier for the checkbox input
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.
-It needs to be unique in the page. The default value is \code{"cbox"}.}
+It needs to be unique in the page. The default value is \code{"cbx"}.}
 
 \item{label}{<\code{character}> A text label to display next to the checkbox input.
 If NULL (default), no label will be displayed.}

@@ -21,6 +21,7 @@
 bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
                             map_viewstate = shiny::reactive(NULL)) {
   shiny::moduleServer(id, function(input, output, session) {
+
     # Grab all inputs built using Curbcut widgets
     widgets <- shiny::reactive({
       # Grab all the available input in the page and subset the Curbcut widgets
@@ -42,15 +43,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
         input[[x]]
       }, simplify = FALSE, USE.NAMES = TRUE)
     })
-
-
-    # Grab the map's view state (if there is)
-    map_viewstate <- shiny::reactive({
-      tryCatch(rdeck::get_view_state("map"),
-        error = function(e) NULL
-      )
-    })
-
 
     # Produce the URL
     url <- shiny::reactive({
@@ -127,14 +119,19 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
           value <- var_row_index(value)
         }
         # Grab the code rather than the label for the zoom module
-        if (name == "zoom_slider-ccslidertext_sldt") {
+        if (name == "zoom_slider-ccslidertext_slt") {
           value <- zoom_get_code(value, lang = lang)
         }
 
-        bookmark_codes <- curbcut::bookmark_codes
         # If the name is part of a known code, switch it
+        bookmark_codes <- curbcut::bookmark_codes
         if (name %in% names(bookmark_codes)) {
           name <- bookmark_codes[which(names(bookmark_codes) == name)]
+        } else {
+          # Switch the start of a Curbcut widget ID to its shorter code
+          bookmark_shorts <- curbcut::bookmark_shorts
+          short <- bookmark_shorts[which(sapply(names(bookmark_shorts), grepl, name))]
+          name <- gsub(names(short), short, name)
         }
 
         # Return the widgets name with their value

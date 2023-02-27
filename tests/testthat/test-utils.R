@@ -260,3 +260,21 @@ test_that("var_row_index works", {
   expect_equal(var_row_index(c("housing_rent_2001", "housing_rent_2016")), 2)
   expect_equal(var_row_index(" "), " ")
 })
+
+test_that("widget_id_verif returns the original widget ID for a valid widget ID", {
+  expect_equal(widget_id_verif("abc"), "abc")
+})
+
+test_that("widget_id_verif throws an error when the widget ID contains more than one underscore", {
+  expect_error(widget_id_verif("a_b_c"),
+               "No underscore can be used in a widget ID.")
+})
+
+test_that("widget_id_verif hrows an error when the widget ID has more than 3 characters", {
+  expect_error(widget_id_verif("abcd"),
+               "Widget ID can contain no more than 4 characters to reduce bookmark URL size.")
+})
+
+test_that("widget_id_verif throws an error when the widget ID interferes with known codes and short codes", {
+  expect_error(widget_id_verif("pi"), "Widget ID can not be the same as a value of `curbcut::bookmark_codes` or `curbcut::bookmark_shorts` to limit interference with bookmark codes.")
+})

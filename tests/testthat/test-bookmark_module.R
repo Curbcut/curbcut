@@ -1,8 +1,8 @@
 test_that("bookmark_build_url works", {
   widgets <- list(
     `compare-ccpicker_var` = " ",
-    `zoom_slider-ccslidertext_sldt` = "Secteur de recensement",
-    `zoom_auto-cccheckbox_cbox` = TRUE
+    `zoom_slider-ccslidertext_slt` = "Secteur de recensement",
+    `zoom_auto-cccheckbox_cbx` = TRUE
   )
 
   url <- bookmark_build_url(
@@ -21,8 +21,8 @@ test_that("bookmark_build_url works", {
 
   widgets <- list(
     `compare-ccpicker_var` = " ",
-    `zoom_slider-ccslidertext_sldt` = "Census tract",
-    `zoom_auto-cccheckbox_cbox` = TRUE
+    `zoom_slider-ccslidertext_slt` = "Census tract",
+    `zoom_auto-cccheckbox_cbx` = TRUE
   )
   url <- bookmark_build_url(
     id = "canale",
@@ -66,8 +66,8 @@ test_that("bookmark_build_url works", {
 
   widgets <- list(
     `compare-ccpicker_var` = 3,
-    `zoom_slider-ccslidertext_sldt` = "Secteur de recensement",
-    `zoom_auto-cccheckbox_cbox` = TRUE
+    `zoom_slider-ccslidertext_slt` = "Secteur de recensement",
+    `zoom_auto-cccheckbox_cbx` = TRUE
   )
   expect_error(bookmark_build_url(
     id = "something",

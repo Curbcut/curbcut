@@ -24,14 +24,6 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
         return(NULL)
       }
 
-      # Create a function to test whether a value is numeric
-      is_numeric <- function(x) {
-        # Convert the input value to a numeric type using as.numeric()
-        # Check whether the conversion was successful using is.na()
-        # If the conversion was successful, the value is numeric
-        !is.na(suppressWarnings(as.numeric(x)))
-      }
-
       # Start by updating app-wide reactives
       if ("reg" %in% names(query)) {
         reg <- r$region(query$region)
@@ -71,12 +63,50 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
         r[[tab]]$coords(coords)
       }
 
-      # Other updates that must have impacts on widgets
-      # Once we have widgets in, we can grab all the inputs of a page,
-      # detect the ones that are from our widgets, and throw them to the URL
-      # with character shortcuts. We can grab all inputs of a page
-      # using names(input) and then just apply over the ones from widgets
-      # lapply(all_inputs, \(x) input[[x]]) to get values.
+      # Update widgets
+      wgt <- query$wgt
+      # If no widgets, do nothing
+      if (is.null(wgt)) return(NULL)
+
+      # Make a NS minimal function
+      ns <- function(widget_id, tb = tab, double = T) {
+        if (double) return(paste(tb, tb, widget_id, sep = "-"))
+        return(paste(tb, widget_id, sep = "-"))
+      }
+
+      # Delay first, then update all the widgets
+      shinyjs::delay(500, {
+
+        widgets <- bookmark_widget_helper(wgt = wgt,
+                                          lang = r$lang())
+
+        # Start by the checkboxes
+        lapply(widgets$cbox, \(widget) {
+          shiny::updateCheckboxInput(
+            session = parent_session,
+            inputId = ns(widget[[1]]),
+            value = as.logical(widget[[2]])
+          )
+        })
+
+        # Followed by the sliders
+        lapply(widgets$s_text, \(widget) {
+          shinyWidgets::updateSliderTextInput(
+            session = parent_session,
+            inputId = ns(widget[[1]]),
+            selected = widget[[2]]
+          )
+        })
+
+        # Finish with the pickers
+        lapply(widgets$picker, \(widget) {
+          shinyWidgets::updatePickerInput(
+            session = parent_session,
+            inputId = ns(widget[[1]]),
+            selected = widget[[2]]
+          )
+        })
+      })
 
       # Finish by the ID selection
       if ("sid" %in% names(query)) {
@@ -86,4 +116,93 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
 
     }, priority = -5)
   })
+}
+
+
+#' Helper function to separate and process bookmarked Shiny widgets
+#'
+#' This function takes a bookmarked widget string and separates the widgets into
+#' two groups: those corresponding to \code{\link{bookmark_codes}} and those to
+#' \code{\link{bookmark_shorts}} It then processes the widget IDs and values as
+#' needed and returns them as a list to be used by the \code{\link{use_bookmark}}
+#' function.
+#'
+#' @param wgt <`character`> A character string representing the widget inputs
+#' (the `wgt` part of the bookmarked URL).
+#' @param lang <`character`> An optional character string specifying the language
+#' used on the app. Default is NULL.
+#'
+#' @return A list of processed bookmarked Curbcut widgets separated into three
+#' categories: "cbox" (checkboxes), "s_text" (slider text), and "picker" (pickers).
+#' @export
+bookmark_widget_helper <- function(wgt, lang = NULL) {
+
+  # Separate widgets between bookmark_codes and bookmark_shorts
+  widgets <- strsplit(wgt, ";")[[1]]
+  widgets <- sapply(widgets, strsplit, ":", USE.NAMES = FALSE)
+
+  n_char <- lapply(widgets, nchar)
+  n_char <- lapply(n_char, `[[`, 1)
+  from_codes <- widgets[n_char == 2]
+  from_short <- widgets[n_char > 2]
+
+  # Grab the real widget ID from bookmark_codes
+  from_codes <- lapply(from_codes, \(widget) {
+    code <- widget[[1]]
+    which_widget <- which(curbcut::bookmark_codes == code)
+    return(c(names(curbcut::bookmark_codes)[which_widget], widget[[2]]))
+  })
+
+  # Grab the real widget ID from bookmark_shorts
+  from_short <- lapply(from_short, \(widget) {
+    code <- widget[[1]]
+    short <- substr(code, start = 1, stop = 2)
+    id <- substr(code, start = 3, stop = nchar(code))
+
+    which_widget <- which(grepl(short, curbcut::bookmark_shorts))
+    code <- paste0(names(curbcut::bookmark_shorts)[which_widget], id)
+    return(c(code, widget[[2]]))
+  })
+
+  ## Start with the well known widgets (bookmark_codes)
+  cbox <- from_codes[grepl("cccheckbox_", lapply(from_codes, `[[`, 1))]
+  s_text <- from_codes[grepl("ccslidertext_", lapply(from_codes, `[[`, 1))]
+  picker <- from_codes[grepl("ccpicker_", lapply(from_codes, `[[`, 1))]
+
+  # Process the widget value as needed
+  scales_dictionary <- get_from_globalenv("scales_dictionary")
+  s_text <- lapply(s_text, \(widget) {
+    if (widget[[2]] %in% scales_dictionary$scale) {
+      widget[[2]] <- zoom_get_name(widget[[2]], lang = lang)
+    }
+    return(widget)
+  })
+  variables <- get_from_globalenv("variables")
+  picker <- lapply(picker, \(widget) {
+    if (is_numeric(widget[[2]])) {
+      widget[[2]] <- variables$var_code[as.numeric(widget[[2]])]
+    }
+    return(widget)
+  })
+  codes <- list(cbox = cbox, s_text = s_text, picker = picker)
+
+  ## Continue with the additional widgets
+  cbox <- from_short[grepl("cccheckbox_", lapply(from_short, `[[`, 1))]
+  s_text <- from_short[grepl("ccslidertext_", lapply(from_short, `[[`, 1))]
+  picker <- from_short[grepl("ccpicker_", lapply(from_short, `[[`, 1))]
+
+  # Process the widget value as needed
+  picker <- lapply(picker, \(widget) {
+    if (is_numeric(widget[[2]])) {
+      widget[[2]] <- variables$var_code[as.numeric(widget[[2]])]
+    }
+    return(widget)
+  })
+  shorts <- list(cbox = cbox, s_text = s_text, picker = picker)
+
+  # Return the list of widgets
+  return(list(cbox = c(codes$cbox, shorts$cbox),
+              s_text = c(codes$s_text, shorts$s_text),
+              picker = c(codes$picker, shorts$picker)))
+
 }

@@ -21,9 +21,9 @@ map_server(
   lwd_args = shiny::reactive(list(select_id(), tile(), zoom(), zoom_levels())),
   auto_highlight = TRUE,
   pickable = TRUE,
-  mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
-  tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv),
-  map_base_style = get0("map_base_style", envir = .GlobalEnv)
+  mapbox_username = get_from_globalenv("mapbox_username"),
+  tileset_prefix = get_from_globalenv("tileset_prefix"),
+  map_base_style = get_from_globalenv("map_base_style")
 )
 
 map_UI(id)

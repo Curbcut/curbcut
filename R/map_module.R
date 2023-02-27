@@ -69,9 +69,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        )),
                        auto_highlight = TRUE,
                        pickable = TRUE,
-                       mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
-                       tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv),
-                       map_base_style = get0("map_base_style", envir = .GlobalEnv)) {
+                       mapbox_username = get_from_globalenv("mapbox_username"),
+                       tileset_prefix = get_from_globalenv("tileset_prefix"),
+                       map_base_style = get_from_globalenv("map_base_style")) {
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
   stopifnot(shiny::is.reactive(select_id))
@@ -82,25 +82,6 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(coords))
 
   shiny::moduleServer(id, function(input, output, session) {
-    # Check for missing arguments
-    if (is.null(mapbox_username)) {
-      stop(paste0(
-        "`mapbox_username` must be present in the global ",
-        "environment or supplied to the `map_server` function."
-      ))
-    }
-    if (is.null(tileset_prefix)) {
-      stop(paste0(
-        "`tileset_prefix` must be present in the global ",
-        "environment or supplied to the `map_server` function."
-      ))
-    }
-    if (is.null(map_base_style)) {
-      stop(paste0(
-        "`map_base_style` must be present in the global ",
-        "environment or supplied to the `map_server` function."
-      ))
-    }
 
     # Map
     output$map <- rdeck::renderRdeck({
@@ -112,10 +93,6 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         )
       ) |> rdeck::add_mvt_layer(id = id)
     })
-
-    # Helper variables
-    extrude <- shiny::reactive((grepl("auto_zoom$", tile()) && zoom() >= 15.5) |
-      grepl("building", tile()))
 
     # Grab the tile json and if fail, return NULL so that the app doesn't crash.
     map_tilejson <- shiny::reactive(tilejson(
@@ -148,10 +125,25 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           get_line_color = do.call(colour_fun, colour_args()),
           get_line_width = do.call(lwd_fun, lwd_args()),
           line_width_units = "pixels",
-          extruded = extrude(),
           material = FALSE,
           get_elevation = 5
         )
+    )
+
+    # Show the buildings extrude at the same moment texture is off.
+    # A change in the extrude reactive only triggers the `extrude` change.
+    # Attempt to improve user experience between auto-zoom DA and building level.
+    extrude <- reactive({
+      !map_label_show_texture(zoom = zoom(),
+                              zoom_levels = zoom_levels(),
+                              tile = tile())
+    })
+    shiny::observeEvent(extrude(),
+                        rdeck::rdeck_proxy("map") |>
+                          rdeck::update_mvt_layer(
+                            id = id,
+                            extruded = extrude()
+                          )
     )
 
     # Return the viewstate

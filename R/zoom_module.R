@@ -44,7 +44,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
     # Disable the slider if in auto mode
     shiny::observe({
       shinyjs::toggleState(
-        id = "zoom_slider-ccslidertext_sldt",
+        id = "zoom_slider-ccslidertext_slt",
         condition = !zoom_auto()
       )
     })

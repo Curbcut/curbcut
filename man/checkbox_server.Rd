@@ -7,7 +7,7 @@
 checkbox_server(
   id,
   r,
-  checkbox_id = "cbox",
+  checkbox_id = "cbx",
   label = shiny::reactive(NULL),
   event_reset = shiny::reactive(NULL)
 )
@@ -21,7 +21,7 @@ pages. Created in the \code{server.R} file.}
 
 \item{checkbox_id}{<\code{character}> string giving the identifier for the checkbox input
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.
-It needs to be unique in the page. The default value is \code{"cbox"}.}
+It needs to be unique in the page. The default value is \code{"cbx"}.}
 
 \item{label}{<\code{character}> A text label to display next to the checkbox
 input. If NULL (default), no label will be displayed.}

@@ -605,3 +605,65 @@ tilejson <- function(mapbox_username, tileset_prefix, tile) {
   )
   return(out)
 }
+
+#' Verify widget ID validity
+#'
+#' This function checks the validity of a given widget ID by verifying if it
+#' meets the following criteria:
+#' \itemize{
+#' \item The widget ID cannot be an empty string
+#' \item The widget ID does not contain more than one underscore.
+#' \item The widget ID is no longer than 3 characters.
+#' \item The widget ID does not interfere with known codes and short codes.
+#' }
+#'
+#' @param widget_id <`character`>  the widget ID to be verified.
+#'
+#' @return The original widget ID if it passes all verification criteria.
+#' @export
+widget_id_verif <- function(widget_id) {
+
+  # Is it an empty string
+  if (widget_id == "" || is.null(widget_id)) {
+    stop("The widget ID can't be an empty string")
+  }
+
+  # Are there more than one underscore
+  if (length(strsplit(widget_id, split = "_")[[1]]) > 1) {
+    stop("No underscore can be used in a widget ID.")
+  }
+
+  # Widget ID must be as small as possible
+  if (nchar(widget_id) > 3) {
+    stop(paste0("Widget ID can contain no more than 4 characters to reduce ",
+                "bookmark URL size."))
+  }
+
+  # Can the ID interfere with known codes and short code
+  detect <- grepl(widget_id, c(curbcut::bookmark_codes, curbcut::bookmark_shorts))
+  if (sum(detect) > 0) {
+    stop(paste0("Widget ID can not be the same as a value of ",
+                "`curbcut::bookmark_codes` or `curbcut::bookmark_shorts` ",
+                "to limit interference with bookmark codes."))
+  }
+
+  return(widget_id)
+}
+
+#' Whether a value can be transformed to numeric
+#'
+#' Purpose mostly for the bookmark. To detect if "2" can be numeric.
+#'
+#' @param x <`character`> String to detect if a transformation to numeric
+#' is possible.
+#'
+#' @return Logical indicating whether the value can be numeric or not.
+#' @examples
+#' is_numeric("2") # TRUE
+#' is_numeric("a") # FALSE
+is_numeric <- function(x) {
+  # Convert the input value to a numeric type using as.numeric()
+  # Check whether the conversion was successful using is.na()
+  # If the conversion was successful, the value is numeric
+  !is.na(suppressWarnings(as.numeric(x)))
+}
