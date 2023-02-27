@@ -23,7 +23,8 @@ jobs:
 
       - name: Download and install non-CRAN package
         run: |
-          install.packages("remotes")
+          install.packages(c("remotes", "covr"), repos='http://cran.us.r-project.org')
+          remotes::install_deps(dependencies = TRUE)
           remotes::install_github("qfes/rdeck")
         shell: Rscript {0}
 
