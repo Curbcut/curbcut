@@ -24,7 +24,7 @@ jobs:
       - name: Download and install non-CRAN package
         run: |
           git clone https://github.com/qfes/rdeck
-          R CMD INSTALL repo
+          R CMD INSTALL rdeck
         shell: bash
 
       - uses: r-lib/actions/setup-r-dependencies@v2
