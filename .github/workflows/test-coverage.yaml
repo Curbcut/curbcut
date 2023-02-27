@@ -26,6 +26,12 @@ jobs:
           extra-packages: any::covr
           needs: coverage
 
+      - name: Download and install non-CRAN package
+        run: |
+          git clone https://github.com/qfes/rdeck
+          R CMD INSTALL repo
+        shell: bash
+
       - name: Test coverage
         run: |
           covr::codecov(
