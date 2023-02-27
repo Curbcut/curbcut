@@ -23,9 +23,9 @@ jobs:
 
       - name: Download and install non-CRAN package
         run: |
-          git clone https://github.com/qfes/rdeck
-          R CMD INSTALL rdeck
-        shell: bash
+          install.packages("remotes")
+          remotes::install_github("qfes/rdeck")
+        shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
