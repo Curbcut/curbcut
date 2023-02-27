@@ -9,7 +9,7 @@
 #' @param id <`character`> The ID of the page in which the bookmark_server function
 #' will appear, e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param select_id <`reactive character`> the current selected ID, usually
 #' `r[[id]]$select_id()`. Defaults to `NULL` for when it is not a map module.
 #' @param map_viewstate <`reactive list`> The map viewstate. Usually the output of the

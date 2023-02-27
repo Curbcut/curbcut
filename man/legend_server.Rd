@@ -23,7 +23,7 @@ legend_UI(id)
 e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function. The class of the vars object is

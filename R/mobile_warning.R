@@ -4,18 +4,16 @@
 #' from a mobile device. The message is displayed using the
 #' \code{\link[shinyjs]{info}} function.
 #'
-#' @param id <`character`> A unique id for the module. Default is "mobile_warning".
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
-#' @param parent_session <`session`> The session of the parent module that the
-#' warning is embedded in (`server.R`). Usually `parent_session = session`.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param session <`session`> The session/scope of the `server.R`.
+#' Usually `session = session`.
 #'
 #' @export
-mobile_warning <- function(id = "mobile_warning", r, parent_session) {
-  shiny::moduleServer(id, function(input, output, session) {
+mobile_warning <- function(r, session) {
 
     shiny::observe({
-      device <- parent_session$input$.shinybrowser$device
+      device <- session$input$.shinybrowser$device
       # Return nothing if device isn't detected
       if (is.null(device)) return(NULL)
       # If not desktop, return the error.
@@ -27,5 +25,4 @@ mobile_warning <- function(id = "mobile_warning", r, parent_session) {
       }
     })
 
-  })
 }

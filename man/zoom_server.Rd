@@ -14,7 +14,7 @@ zoom_UI(id, zoom_levels)
 e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{zoom_string}{<\verb{reactive character}> A reactive object representing the
 current zoom level, e.g. \code{CSD}.}

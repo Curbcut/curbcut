@@ -16,7 +16,7 @@ title_page_update(
 \item{id}{<\code{character}> A unique id for the module. Default is "page_update".}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{parent_session}{<\code{session}> The session of the parent module that the
 bookmarking module is embedded in (\code{server.R}). Usually \code{parent_session = session}.}

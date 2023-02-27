@@ -18,7 +18,7 @@ picker_server(
 e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{picker_id}{<\code{character}> A character string giving the identifier for
 the picker input object. This will be used as the input's \code{inputId} and will

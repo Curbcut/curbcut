@@ -11,7 +11,7 @@ sidebar_server(id, r)
 e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 }
 \value{
 A Shiny module server for the sidebar component of Curbcut

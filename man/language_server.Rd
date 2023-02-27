@@ -10,7 +10,7 @@ language_server(id = "language", r, parent_session)
 \item{id}{<\code{character}> A unique id for the module. Default is "language".}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{parent_session}{<\code{session}> The session of the parent module that the
 langauge server is embedded in (\code{server.R}). Usually \code{parent_session = session}.}

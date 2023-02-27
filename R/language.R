@@ -4,7 +4,7 @@
 #'
 #' @param id <`character`> A unique id for the module. Default is "language".
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param parent_session <`session`> The session of the parent module that the
 #' langauge server is embedded in (`server.R`). Usually `parent_session = session`.
 #'

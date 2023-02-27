@@ -17,7 +17,7 @@ bookmark_server(
 will appear, e.g. \code{canale}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
-pages. Created in the \code{server.R} file.}
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{select_id}{<\verb{reactive character}> the current selected ID, usually
 \code{r[[id]]$select_id()}. Defaults to \code{NULL} for when it is not a map module.}

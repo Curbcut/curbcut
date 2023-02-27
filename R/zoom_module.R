@@ -15,7 +15,7 @@
 #' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param zoom_string <`reactive character`> A reactive object representing the
 #' current zoom level, e.g. `CSD`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom

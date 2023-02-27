@@ -48,7 +48,7 @@ copy_current_url <- function() {
 #' value.
 #'
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param lang <`character`> Value of the new language (`"fr"` or `"en"`)
 #'
 #' @return Sets the language to the value of `lang`

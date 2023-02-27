@@ -9,7 +9,7 @@
 #' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
-#' pages. Created in the `server.R` file.
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #'
 #' @return A Shiny module server for the sidebar component of Curbcut
 #' @export
