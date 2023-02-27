@@ -8,41 +8,23 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-    package = "curbcut"
+                                            package = "curbcut"
+  ))
+  set_language <- readLines(system.file("js_scripts/language.js",
+                                        package = "curbcut"
   ))
   shiny::tagList(
     shiny::tags$head(shinyjs::extendShinyjs(
       text = copy_current_url,
       functions = c("copy_current_url")
+    )),
+    shiny::tags$head(shinyjs::extendShinyjs(
+      text = set_language,
+      functions = c("set_language")
     ))
   )
 }
 
-#' Helper to use JS functions
-#'
-#' Helper to use javascript functions previously declared by \code{\link{use_curbcut_js}}.
-#' It looks the the use of the script is in the UI or in the server. If in the
-#' UI, then the js function is outputed as a character (e.g. for use in an `a`
-#' tag as the `onclick` argument). Inside a reactive context, it uses the
-#' `shinyjs` framework.
-#'
-#' @param js_fun <`character`> The name of the function to be used in the helper.
-#' Must be one of the `functions` argument of the declared functions in
-#' \code{\link{use_curbcut_js}}.
-#'
-#' @return If in the I, returns the function as a character (e.g. for use in an `a`
-#' tag as the `onclick` argument). Inside a reactive context, it returns the
-#' `shinyjs` framework.
-js_function_helper <- function(js_fun) {
-  # If outside of a reactive context, use the raw JS fonction.
-  session <- shiny::getDefaultReactiveDomain()
-  if (is.null(session)) {
-    return(paste0(js_fun, "()"))
-  }
-
-  # If inside a reactive context, use shinyjs
-  return(shinyjs::js[[js_fun]]())
-}
 
 #' Copy the current URL
 #'
@@ -52,5 +34,33 @@ js_function_helper <- function(js_fun) {
 #' @return Copies the URL.
 #' @export
 copy_current_url <- function() {
-  js_function_helper("copy_current_url")
+  if (!is.null(shiny::getDefaultReactiveDomain()))
+    stop("This function can only be used in a non-reactive context.")
+
+  return("copy_current_url()")
 }
+
+#' Update language
+#'
+#' This function changes the active language dynamically based on the user
+#' preferences. It both uses the JS `set_language` function to update which
+#' `span` gets shown ("user- lang-en" or "user-lang-fr") and updates the `r$lang()`
+#' value.
+#'
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file.
+#' @param lang <`character`> Value of the new language (`"fr"` or `"en"`)
+#'
+#' @return Sets the language to the value of `lang`
+#' @export
+update_lang <- function(r, lang) {
+  if (is.null(shiny::getDefaultReactiveDomain()))
+    stop("This function can only be used in a reactive context.")
+
+  # Update the page so that we display, in the UI, the language of the user.
+  shinyjs::js$set_language(lang)
+
+  # Update the reactive language function for the server Shiny side.
+  r$lang(lang)
+}
+

@@ -26,7 +26,7 @@ use_bookmark <- function(id = "parse_url", r, parent_session) {
 
       # Start by updating app-wide reactives
       if ("reg" %in% names(query)) {
-        reg <- r$region(query$region)
+        reg <- r$region(query$reg)
         # As we convert an ID in the region table to a numeric for smaller URL
         # bookmarking, retrieve the region string using its index.
         regions_dictionary <- get_from_globalenv("regions_dictionary")

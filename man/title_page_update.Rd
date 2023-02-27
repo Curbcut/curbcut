@@ -21,7 +21,8 @@ pages. Created in the \code{server.R} file.}
 \item{parent_session}{<\code{session}> The session of the parent module that the
 bookmarking module is embedded in (\code{server.R}). Usually \code{parent_session = session}.}
 
-\item{active_page}{<\verb{Shiny input}> The ID of the active page. Usually \code{input$cc_page}}
+\item{active_page}{<\code{reactive}> The ID of the active page. Usually \code{input$cc_page}
+in a \code{\link[shiny]{reactive}}, e.g. \code{shiny::reactive(input$cc_page)}.}
 
 \item{site_name}{<\code{character}> The current site name. Usually initiated in
 \code{global.R}.}

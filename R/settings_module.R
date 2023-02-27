@@ -12,10 +12,12 @@
 #' functions. Defaults to `"settings"`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file.
+#' @param parent_session <`session`> The session of the parent module that the
+#' langauge server is embedded in (`server.R`). Usually `parent_session = session`.
 #'
 #' @seealso \code{\link{settings_UI}}
 #' @export
-settings_server <- function(id = "settings", r) {
+settings_server <- function(id = "settings", r, parent_session) {
   shiny::moduleServer(id, function(input, output, session) {
     # Advanced options UI - Opens a modal.
     shinyjs::onclick("advanced_options", {
@@ -44,7 +46,7 @@ settings_server <- function(id = "settings", r) {
     # Change the default region and save the cookie at a change of the region.
     shiny::observeEvent(input$region_change, {
       r$region(input$region_change)
-      cookie_set(session = session, name = "region", value = input$region_change)
+      cookie_set(session = parent_session, name = "region", value = input$region_change)
     })
 
     # When the button is clicked, grab the content of the search box,

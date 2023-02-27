@@ -4,7 +4,7 @@
 \alias{settings_server}
 \title{Server logic for the settings UI module}
 \usage{
-settings_server(id = "settings", r)
+settings_server(id = "settings", r, parent_session)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the module, used to connect the UI and server
@@ -12,6 +12,9 @@ functions. Defaults to \code{"settings"}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file.}
+
+\item{parent_session}{<\code{session}> The session of the parent module that the
+langauge server is embedded in (\code{server.R}). Usually \code{parent_session = session}.}
 }
 \description{
 This function contains the server-side logic for the settings UI module.
