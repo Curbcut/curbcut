@@ -4,7 +4,7 @@
 \alias{use_bookmark}
 \title{Use Bookmark}
 \usage{
-use_bookmark(id = "parse_url", r, parent_session)
+use_bookmark(id = "parse_url", r, session)
 }
 \arguments{
 \item{id}{<\code{character}> A unique id for the module. Default is "parse_url".}
@@ -12,8 +12,8 @@ use_bookmark(id = "parse_url", r, parent_session)
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{parent_session}{<\code{session}> The session of the parent module that the
-bookmarking module is embedded in (\code{server.R}). Usually \code{parent_session = session}.}
+\item{session}{<\code{session}> The session of \code{server.R}. Usually
+\code{session = session}.}
 }
 \value{
 handles updating the state of the app based on the URL query string.
