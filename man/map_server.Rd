@@ -90,10 +90,6 @@ correspond to the Curbcut city, e.g. \code{mtl}. Defaults to grabbing the
 
 \item{map_base_style}{<\code{character}> The mapbox basemap style url.
 See https://docs.mapbox.com/api/maps/#mapbox-styles}
-
-\item{map_loc}{<\code{numeric}> A numeric vector of length two with lat/lon.
-It will be the center of the viewport on map. Defaults to grabbing the
-\code{map_loc} object from the global environment.}
 }
 \value{
 The server function returns the map viewstate coming from

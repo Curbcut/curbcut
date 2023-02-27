@@ -658,9 +658,6 @@ widget_id_verif <- function(widget_id) {
 #' is possible.
 #'
 #' @return Logical indicating whether the value can be numeric or not.
-#' @examples
-#' is_numeric("2") # TRUE
-#' is_numeric("a") # FALSE
 is_numeric <- function(x) {
   # Convert the input value to a numeric type using as.numeric()
   # Check whether the conversion was successful using is.na()

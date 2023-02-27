@@ -50,9 +50,6 @@
 #' `tileset_prefix` object from the global environment.
 #' @param map_base_style <`character`> The mapbox basemap style url.
 #' See https://docs.mapbox.com/api/maps/#mapbox-styles
-#' @param map_loc <`numeric`> A numeric vector of length two with lat/lon.
-#' It will be the center of the viewport on map. Defaults to grabbing the
-#' `map_loc` object from the global environment.
 #'
 #' @return The server function returns the map viewstate coming from
 #' \code{\link[rdeck]{get_view_state}}.
@@ -133,7 +130,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     # Show the buildings extrude at the same moment texture is off.
     # A change in the extrude reactive only triggers the `extrude` change.
     # Attempt to improve user experience between auto-zoom DA and building level.
-    extrude <- reactive({
+    extrude <- shiny::reactive({
       !map_label_show_texture(zoom = zoom(),
                               zoom_levels = zoom_levels(),
                               tile = tile())
