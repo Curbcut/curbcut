@@ -98,20 +98,25 @@ update_poi <- function(id, poi, map_viewstate) {
 #' This function updates the selected ID on a Curbcut page. It uses the
 #' \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
 #' If a new ID is selected, the function updates the `select_id` reactive to
-#' the newly selected ID. If the same is selected twice, it returns NA.
+#' the newly selected ID. If the same is selected twice, it returns NA. It also
+#' updates the select_id reactive if a match is found with the IDs from
+#' `r$default_select_ids()` if the user has decided to lock in a default location
+#' in the advanced options.
 #'
 #' @param id <`character`> Indicates the ID of the current page.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param data <`reactive data.frame`> A data frame containing the `ID` column to be
+#' checked for any match with the `r$default_select_ids()` changed in
+#' the advanced options.
 #' @param id_map <`character`> Indicates the ID of the object map, usually
-#' created by \code{\link{module_server}}. Defaults to `paste0(id, "-map")` as
+#' created by \code{\link{map_server}}. Defaults to `paste0(id, "-map")` as
 #' the default of the `map_server` function.
 #'
 #' @return This function does not return a value. Instead, it updates the
 #' `select_id` reactive in the provided reactive environment.
-#'
 #' @export
-update_select_id <- function(id, r, id_map = paste0(id, "-map")) {
+update_select_id <- function(id, r, data, id_map = paste0(id, "-map")) {
 
   # Grab the new selected ID
   new_ID <- shiny::reactive(rdeck::get_clicked_object(id_map)$ID)
@@ -123,6 +128,20 @@ update_select_id <- function(id, r, id_map = paste0(id, "-map")) {
     # newly selected ID
     out <- update_select_id_helper(new_ID = new_ID(),
                                    select_id = r[[id]]$select_id())
+
+    # Save the new selected ID in the reactive.
+    r[[id]]$select_id(out)
+  })
+
+  # Update selected ID if there are default selections (from the advanced options,
+  # stored in `r$default_select_ids()`)
+  shiny::observe({
+
+    # At the current `data()`, which is the ID that fits
+    out <- update_select_id_from_default(
+      data = data(),
+      default_select_ids = r$default_select_ids(),
+      select_id = shiny::isolate(r[[id]]$select_id()))
 
     # Save the new selected ID in the reactive.
     r[[id]]$select_id(out)
@@ -161,7 +180,7 @@ update_select_id_helper <- function(new_ID, select_id) {
 #' options, if any. If the provided default IDs are not present in the data,
 #' the original select ID is returned.
 #'
-#' @param data <`data.frame`> A data frame containing the `ID` columnb to be
+#' @param data <`data.frame`> A data frame containing the `ID` column to be
 #' checked for any match with the `default_select_ids`
 #' @param default_select_ids <`character vector`> Vector of default IDs created
 #' through  \code{\link{adv_opt_lock_selection}} present in the advanced
@@ -169,7 +188,6 @@ update_select_id_helper <- function(new_ID, select_id) {
 #' @param select_id <`character`> the current selected ID, usually `r[[id]]$select_id()`
 #'
 #' @return The updated selected ID based on the provided default IDs
-#' @export
 update_select_id_from_default <- function(data, default_select_ids, select_id) {
   if (is.null(default_select_ids)) {
     return(select_id)

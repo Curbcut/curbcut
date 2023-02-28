@@ -4,7 +4,7 @@
 \alias{update_select_id}
 \title{Update Select ID}
 \usage{
-update_select_id(id, r, id_map = paste0(id, "-map"))
+update_select_id(id, r, data, id_map = paste0(id, "-map"))
 }
 \arguments{
 \item{id}{<\code{character}> Indicates the ID of the current page.}
@@ -12,8 +12,12 @@ update_select_id(id, r, id_map = paste0(id, "-map"))
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
+\item{data}{<\verb{reactive data.frame}> A data frame containing the \code{ID} column to be
+checked for any match with the \code{r$default_select_ids()} changed in
+the advanced options.}
+
 \item{id_map}{<\code{character}> Indicates the ID of the object map, usually
-created by \code{\link{module_server}}. Defaults to \code{paste0(id, "-map")} as
+created by \code{\link{map_server}}. Defaults to \code{paste0(id, "-map")} as
 the default of the \code{map_server} function.}
 }
 \value{
@@ -24,5 +28,8 @@ This function does not return a value. Instead, it updates the
 This function updates the selected ID on a Curbcut page. It uses the
 \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
 If a new ID is selected, the function updates the \code{select_id} reactive to
-the newly selected ID. If the same is selected twice, it returns NA.
+the newly selected ID. If the same is selected twice, it returns NA. It also
+updates the select_id reactive if a match is found with the IDs from
+\code{r$default_select_ids()} if the user has decided to lock in a default location
+in the advanced options.
 }

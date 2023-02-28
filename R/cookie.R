@@ -9,14 +9,14 @@
 #' @return A tag list object with the necessary JavaScript files for using cookies
 #' in curbcut package. Must be placed in the `ui` function in `ui.R`.
 #' @export
-use_curbut_cookie <- function() {
+use_curbcut_cookie <- function() {
   shiny::addResourcePath("curbcut", system.file("js_scripts", package = "curbcut"))
   shiny::tagList(
     shiny::tags$head(shiny::tags$script(src = "curbcut/cookie.js")),
-    shiny::tags$script(src = paste0(
+    shiny::tags$head(shiny::tags$script(src = paste0(
       "https://cdn.jsdelivr.net/npm/js-cookie@rc/",
       "dist/js.cookie.min.js"
-    ))
+    )))
   )
 }
 
@@ -55,7 +55,11 @@ cookie_set <- function(session, name, value) {
 #' @return The value of the specified cookie, or NULL if the cookie is not set.
 #' @export
 cookie_retrieve <- function(input, name) {
-  input$cookies[[name]]
+  out <- input$cookies[[name]]
+  if (is.null(out)) return(NULL)
+  if (length(out) == 0) return(NULL)
+  if (out == "null") return(NULL)
+  return(out)
 }
 
 #' Update the value of a cookie and return the updated value

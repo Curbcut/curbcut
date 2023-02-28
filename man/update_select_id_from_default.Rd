@@ -7,7 +7,7 @@
 update_select_id_from_default(data, default_select_ids, select_id)
 }
 \arguments{
-\item{data}{<\code{data.frame}> A data frame containing the \code{ID} columnb to be
+\item{data}{<\code{data.frame}> A data frame containing the \code{ID} column to be
 checked for any match with the \code{default_select_ids}}
 
 \item{default_select_ids}{<\verb{character vector}> Vector of default IDs created

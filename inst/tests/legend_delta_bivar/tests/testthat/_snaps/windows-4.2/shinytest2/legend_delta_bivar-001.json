@@ -1,0 +1,59 @@
+{
+  "input": {
+
+  },
+  "output": {
+    "legend-legend": {
+      "src": "[image data hash: 65b0477efa1a4cb4425b2a1f6a7e3113]",
+      "width": 1589,
+      "height": 150,
+      "alt": "Plot object",
+      "coordmap": {
+        "panels": [
+          {
+            "panel": 1,
+            "row": 1,
+            "col": 1,
+            "panel_vars": {
+
+            },
+            "log": {
+              "x": null,
+              "y": null
+            },
+            "domain": {
+              "left": -0.15,
+              "right": 3.15,
+              "bottom": -0.15,
+              "top": 3.15
+            },
+            "mapping": {
+              "x": "y",
+              "y": "x",
+              "fill": "fill"
+            },
+            "range": {
+              "left": 52.9788099315069,
+              "right": 1583.52054794521,
+              "bottom": 118.846473150198,
+              "top": 5.47945205479452
+            }
+          }
+        ],
+        "dims": {
+          "width": 1589,
+          "height": 150
+        }
+      }
+    },
+    "legend-legend_render": {
+      "html": "<div class=\"shiny-plot-output html-fill-item\" id=\"legend-legend\" style=\"width:100%;height:150px;\"><\/div>",
+      "deps": [
+
+      ]
+    }
+  },
+  "export": {
+
+  }
+}
