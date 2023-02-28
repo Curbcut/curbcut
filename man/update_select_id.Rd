@@ -2,26 +2,27 @@
 % Please edit documentation in R/update_rvs.R
 \name{update_select_id}
 \alias{update_select_id}
-\title{Update selected ID based on clicked object}
+\title{Update Select ID}
 \usage{
-update_select_id(id, select_id, id_map = paste0(id, "-map"))
+update_select_id(id, r, id_map = paste0(id, "-map"))
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which this function will appear,
-e.g. \code{canale}.}
+\item{id}{<\code{character}> Indicates the ID of the current page.}
 
-\item{select_id}{<\code{character}> A character string representing the currently
-selected ID}
+\item{r}{<\code{reactiveValues}> The reactive values shared between modules and
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{id_map}{<\code{character}> The ID of the map. By default, it is
-set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
-module assigns the \code{map} id to the maps.}
+\item{id_map}{<\code{character}> Indicates the ID of the object map, usually
+created by \code{\link{module_server}}. Defaults to \code{paste0(id, "-map")} as
+the default of the \code{map_server} function.}
 }
 \value{
-A character string representing the new selected ID, or \code{NA} if
-the same ID gets selected twice
+This function does not return a value. Instead, it updates the
+\code{select_id} reactive in the provided reactive environment.
 }
 \description{
-This function updates the currently selected ID in a Shiny app based on the
-ID of the object that was clicked on on an \code{rdeck} map.
+This function updates the selected ID on a Curbcut page. It uses the
+\code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+If a new ID is selected, the function updates the \code{select_id} reactive to
+the newly selected ID. If the same is selected twice, it returns NA.
 }

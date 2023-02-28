@@ -4,11 +4,9 @@
 \alias{use_bookmark}
 \title{Use Bookmark}
 \usage{
-use_bookmark(id = "parse_url", r, session)
+use_bookmark(r, session)
 }
 \arguments{
-\item{id}{<\code{character}> A unique id for the module. Default is "parse_url".}
-
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 

@@ -8,29 +8,24 @@
 #' with the title of the active page, and sends a custom message to the parent
 #' session to update the page title.
 #'
-#' @param id <`character`> A unique id for the module. Default is "page_update".
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param parent_session <`session`> The session of the parent module that the
-#' bookmarking module is embedded in (`server.R`). Usually `parent_session = session`.
+#' @param session <`session`> The session of `server.R`. Usually `session = session`.
 #' @param active_page <`reactive`> The ID of the active page. Usually `input$cc_page`
 #' in a \code{\link[shiny]{reactive}}, e.g. `shiny::reactive(input$cc_page)`.
 #' @param site_name <`character`> The current site name. Usually initiated in
 #' `global.R`.
 #'
 #' @export
-title_page_update <- function(id = "page_update", r, parent_session,
-                              active_page, site_name) {
-  shiny::moduleServer(id, function(input, output, session) {
+title_page_update <- function(r, session, active_page, site_name) {
     shiny::observe({
       # Grab the update title
       site_name <- title_page_get(active_page = active_page(),
                                   site_name = site_name,
                                   lang = r$lang())
       # Change the title of the page
-      parent_session$sendCustomMessage("changetitle", site_name)
+      session$sendCustomMessage("changetitle", site_name)
     })
-  })
 }
 
 #' Get the title of the current page

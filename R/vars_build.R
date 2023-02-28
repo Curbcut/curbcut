@@ -19,14 +19,7 @@
 vars_build <- function(var_left, var_right = " ", df,
                        scales_as_DA = c("building", "street")) {
   # Check errors
-  choropleths <- get0("all_choropleths", envir = .GlobalEnv)
-  if (is.null(choropleths)) {
-    stop(paste0(
-      "`all_choropleths` is not initiated in `global.R`. It needs to ",
-      "be a character vector of all possible choropleth scales, e.g. ",
-      "c('CSD', 'CT', 'DA', 'cmhczone', ...)"
-    ))
-  }
+  choropleths <- get_from_globalenv("all_choropleths")
 
   # Switch scales to DA if necessary
   df <- treat_to_DA(scales_as_DA, df)

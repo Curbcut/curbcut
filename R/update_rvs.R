@@ -93,33 +93,65 @@ update_poi <- function(id, poi, map_viewstate) {
   return(new_pois)
 }
 
-#' Update selected ID based on clicked object
+#' Update Select ID
 #'
-#' This function updates the currently selected ID in a Shiny app based on the
-#' ID of the object that was clicked on on an `rdeck` map.
+#' This function updates the selected ID on a Curbcut page. It uses the
+#' \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+#' If a new ID is selected, the function updates the `select_id` reactive to
+#' the newly selected ID. If the same is selected twice, it returns NA.
 #'
-#' @param id <`character`> The ID of the page in which this function will appear,
-#' e.g. `canale`.
-#' @param select_id <`character`> A character string representing the currently
-#' selected ID
-#' @param id_map <`character`> The ID of the map. By default, it is
-#' set to the value of \code{paste0(id, "-map")} as the \code{\link{map_server}}
-#' module assigns the `map` id to the maps.
+#' @param id <`character`> Indicates the ID of the current page.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param id_map <`character`> Indicates the ID of the object map, usually
+#' created by \code{\link{module_server}}. Defaults to `paste0(id, "-map")` as
+#' the default of the `map_server` function.
 #'
-#' @return A character string representing the new selected ID, or \code{NA} if
-#' the same ID gets selected twice
+#' @return This function does not return a value. Instead, it updates the
+#' `select_id` reactive in the provided reactive environment.
+#'
 #' @export
-update_select_id <- function(id, select_id, id_map = paste0(id, "-map")) {
-  # Get the new selected ID
-  new <- rdeck::get_clicked_object(id_map)$ID
+update_select_id <- function(id, r, id_map = paste0(id, "-map")) {
+
+  # Grab the new selected ID
+  new_ID <- shiny::reactive(rdeck::get_clicked_object(id_map)$ID)
+
+  # If a click has been made, change then `select_id` reactive
+  shiny::observeEvent(new_ID(), {
+
+    # If the same ID has been selected twice, return NA. If not, return the
+    # newly selected ID
+    out <- update_select_id_helper(new_ID = new_ID(),
+                                   select_id = r[[id]]$select_id())
+
+    # Save the new selected ID in the reactive.
+    r[[id]]$select_id(out)
+  })
+
+}
+
+#' Update Select ID Helper
+#'
+#' @param new_ID <`character`> A character vector indicating the new ID that's
+#' been selected.
+#' @param select_id <`character`> A character indicating the current selected ID.
+#'
+#' @return If the same ID gets selected twice, the function returns NA.
+#' Otherwise, it returns the new ID.
+update_select_id_helper <- function(new_ID, select_id) {
+
+  # Make sure the new ID is valid
+  if (is.na(new_ID)) {
+    return(NA)
+  }
 
   # If the same ID gets selected twice, deactivate selection
-  if (!is.na(select_id) && new == select_id) {
+  if (!is.na(select_id) && new_ID == select_id) {
     return(NA)
   }
 
   # Return new ID
-  return(new)
+  return(new_ID)
 }
 
 #' Update Select ID Based on the default ID (Location lock in advanced settings)

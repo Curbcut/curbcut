@@ -5,7 +5,6 @@
 #' of a specific state of the application. It is designed to be placed only once,
 #' in the `server.R` file.
 #'
-#' @param id <`character`> A unique id for the module. Default is "parse_url".
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param session <`session`> The session of `server.R`. Usually
@@ -13,7 +12,7 @@
 #'
 #' @return handles updating the state of the app based on the URL query string.
 #' @export
-use_bookmark <- function(id = "parse_url", r, session) {
+use_bookmark <- function(r, session) {
 
     shiny::observeEvent(shiny::parseQueryString(session$clientData$url_search), {
       # Get the URL search query
@@ -26,7 +25,7 @@ use_bookmark <- function(id = "parse_url", r, session) {
 
       # Start by updating app-wide reactives
       if ("reg" %in% names(query)) {
-        reg <- r$region(query$reg)
+        reg <- query$reg
         # As we convert an ID in the region table to a numeric for smaller URL
         # bookmarking, retrieve the region string using its index.
         regions_dictionary <- get_from_globalenv("regions_dictionary")

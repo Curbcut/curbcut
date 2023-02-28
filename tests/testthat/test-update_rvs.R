@@ -128,3 +128,24 @@ test_that("update_poi returns the correct nearby POIs", {
   expected_pois <- c("little_burgundy", "alley_strategy")
   expect_equal(update_poi("canale", poi, map_viewstate), expected_pois)
 })
+
+
+test_that("update_select_id_helper returns new ID when different ID is selected", {
+  expect_equal(update_select_id_helper("B", "A"), "B")
+})
+
+test_that("update_select_id_helper returns NA when same ID is selected twice", {
+  expect_equal(update_select_id_helper("A", "A"), NA)
+})
+
+test_that("update_select_id_helper returns new id when current selected ID is NA", {
+  expect_equal(update_select_id_helper("A", NA), "A")
+})
+
+test_that("update_select_id_helper returns NA when new ID is NA", {
+  expect_equal(update_select_id_helper(NA, "A"), NA)
+})
+
+test_that("update_select_id_helper returns NA when both new and current IDs are NA", {
+  expect_equal(update_select_id_helper(NA, NA), NA)
+})
