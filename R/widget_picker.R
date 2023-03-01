@@ -45,13 +45,11 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     # Translate var_list
     var_list_t <- shiny::reactive(cc_t(var_list, lang = r$lang()))
 
-
     # Get the `divs` with the explanation on hover (translated)
     hovers <- shiny::reactive(picker_hover_divs(
       var_list = var_list_t(),
       lang = r$lang()
     ))
-
 
     # If the picking is made while in a `delta` mode (comparing two years),
     # we disable the variables that are not present at all years.
@@ -76,7 +74,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
         inputId = picker_id,
         choices = var_list_t(),
         choicesOpt = c(
-          hovers(),
+          if (!is.null(hovers())) hovers(),
           list(
             disabled = disable(),
             style = disable_style()
@@ -143,7 +141,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   shiny::div(
     style = div_style,
     shinyWidgets::pickerInput(
-      shiny::NS(id, picker_id),
+      inputId = shiny::NS(id, picker_id),
       label = label,
       choices = var_list,
       selected = selected,

@@ -4,7 +4,12 @@
 \alias{update_select_id}
 \title{Update Select ID}
 \usage{
-update_select_id(id, r, data, id_map = paste0(id, "-map"))
+update_select_id(
+  id,
+  r,
+  data = shiny::reactive(NULL),
+  id_map = paste0(id, "-map")
+)
 }
 \arguments{
 \item{id}{<\code{character}> Indicates the ID of the current page.}

@@ -25,10 +25,9 @@ picker_hover_divs <- function(var_list, lang = NULL) {
   # Get the variable list as a character vector
   vars <- unname(unlist(var_list))
 
-  # If at least one variable is not in the `variables` table, return the
-  # `var_list` as is.
-  if (sum(!vars %in% variables$var_code) > 0) {
-    return(var_list)
+  # If vars is not in `variables`, return no hover (NULL)
+  if (sum(!vars %in% variables$var_code) > 1) {
+    return(NULL)
   }
 
   # Grab the explanation
@@ -97,8 +96,16 @@ picker_multi_year_disable <- function(var_list, disable) {
     return(rep(FALSE, sum(lengths(var_list))))
   }
 
-  # Get all the years
+  # Get the variable list as a character vector
   var_unlist <- unname(unlist(var_list))
+
+  # If vars are not in the variables table, return no disabling
+  variables <- get_from_globalenv("variables")
+  if (sum(!var_unlist %in% variables$var_code) > 0) {
+    return(rep(FALSE, length(var_unlist)))
+  }
+
+  # Get all the years
   vars <- var_unlist[var_unlist != " "] # Drop the 'no' comparison value
   all_years <- lapply(vars, \(x) var_get_info(x, what = "dates")[[1]])
 
@@ -140,9 +147,10 @@ picker_return_var <- function(input, time) {
     return(input)
   }
 
-  # If empty input (for a compare dropdown), return empty
-  if (input == " ") {
-    return(" ")
+  # If input isn't in `variables` returns input
+  variables <- get_from_globalenv("variables")
+  if (!input %in% variables$var_code) {
+    return(input)
   }
 
   # Grab the dates at which the variable is available

@@ -15,11 +15,15 @@
 #' @param map_viewstate <`reactive list`> The map viewstate. Usually the output of the
 #' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}. Defaults
 #' to `NULL` for when it is not a map module.
+#' @param exclude_input <`character vector`> Widget names to exclude from
+#' bookmarking. By default, the input monitoring the opening of dropdowns
+#' is excluded. Example of exclusion: `ccpicker_var`.
 #'
 #' @return The module server function for creating bookmarkable URLs.
 #' @export
 bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
-                            map_viewstate = shiny::reactive(NULL)) {
+                            map_viewstate = shiny::reactive(NULL),
+                            exclude_input = c()) {
   shiny::moduleServer(id, function(input, output, session) {
 
     # Grab all inputs built using Curbcut widgets
@@ -37,6 +41,11 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
       if (length(all_widgets) == 0) {
         return(NULL)
       }
+
+      # Exclude the necessary widgets
+      all_widgets <- all_widgets[!all_widgets %in% exclude_input]
+      # Do not keep track of the opening of the dropdowns
+      all_widgets <- all_widgets[!grepl("ccpicker_.*_open$", all_widgets)]
 
       # Get the widget's value
       sapply(all_widgets, \(x) {
@@ -105,8 +114,6 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
 
   # Process the widgets
   if (!is.null(widgets)) {
-    # Do not keep track of the opening of the dropdowns
-    widgets <- widgets[!grepl("ccpicker_.*_open$", names(widgets))]
     widgets_processed <-
       mapply(\(name, value) {
         # If the value is a checkbox-like, make it shorter

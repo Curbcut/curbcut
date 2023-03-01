@@ -116,7 +116,8 @@ update_poi <- function(id, poi, map_viewstate) {
 #' @return This function does not return a value. Instead, it updates the
 #' `select_id` reactive in the provided reactive environment.
 #' @export
-update_select_id <- function(id, r, data, id_map = paste0(id, "-map")) {
+update_select_id <- function(id, r, data = shiny::reactive(NULL),
+                             id_map = paste0(id, "-map")) {
 
   # Grab the new selected ID
   new_ID <- shiny::reactive(rdeck::get_clicked_object(id_map)$ID)
@@ -136,6 +137,7 @@ update_select_id <- function(id, r, data, id_map = paste0(id, "-map")) {
   # Update selected ID if there are default selections (from the advanced options,
   # stored in `r$default_select_ids()`)
   shiny::observe({
+    if (is.null(data())) return(NULL)
 
     # At the current `data()`, which is the ID that fits
     out <- update_select_id_from_default(

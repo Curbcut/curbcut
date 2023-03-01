@@ -9,7 +9,8 @@ bookmark_server(
   id,
   r,
   select_id = shiny::reactive(NULL),
-  map_viewstate = shiny::reactive(NULL)
+  map_viewstate = shiny::reactive(NULL),
+  exclude_input = c()
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \item{map_viewstate}{<\verb{reactive list}> The map viewstate. Usually the output of the
 \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}. Defaults
 to \code{NULL} for when it is not a map module.}
+
+\item{exclude_input}{<\verb{character vector}> Widget names to exclude from
+bookmarking. By default, the input monitoring the opening of dropdowns
+is excluded. Example of exclusion: \code{stories-ccpicker_var}.}
 }
 \value{
 The module server function for creating bookmarkable URLs.

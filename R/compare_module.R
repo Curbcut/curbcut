@@ -69,7 +69,7 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
 #' @describeIn compare_server Create the UI for the compare module
 #' @export
 compare_UI <- function(id, var_list) {
-  shiny::div(id = NS(id, "compare_panel"),
+  shiny::div(id = shiny::NS(id, "compare_panel"),
              shiny::fluidRow(
                shiny::column(width = 7, shiny::h4(cc_t("Compare"))),
                shiny::column(width = 5, align = "right",

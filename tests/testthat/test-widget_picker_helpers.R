@@ -35,9 +35,10 @@ test_that("picker_hover_divs creates divs with translated explanations on hover 
   var_list <- dropdown_make(vars = variables$var_code[1:3], compare = TRUE)
   lang <- "fr"
   var_list_t <- cc_t(var_list, lang = "fr")
-  expected_output <- list(`----` = " ", Logement = list(
-    `Occupé par un locataire (%)` = "housing_tenant",
-    `Loyer moyen ($)` = "housing_rent", `Logement nécessitant des réparations majeures (%)` = "housing_repairs"
+  expected_output <- list(content = c("<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
+                                      "<div title=\"le pourcentage de logements privés occupés par des locataires\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
+                                      "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
+                                      "<div title=\"le pourcentage de ménages vivant dans des logements nécessitant des réparations importantes\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
   ))
   actual_output <- picker_hover_divs(var_list_t, lang)
   expect_identical(actual_output, expected_output)
@@ -46,9 +47,16 @@ test_that("picker_hover_divs creates divs with translated explanations on hover 
 test_that("picker_hover_divs does not fail when variables are not part of the variables table", {
   var_list <- list("First" = "first", "Second" = "second", "Third" = "third")
   lang <- "fr"
-  expected_output <- list(First = "first", Second = "second", Third = "third")
+  expected_output <- NULL
   actual_output <- picker_hover_divs(var_list, lang)
   expect_identical(actual_output, expected_output)
+})
+
+test_that("picker_hover_divs does not fail when variables are unknown vectors", {
+  var_list <- c("First", "Second", "third")
+  lang <- "fr"
+  actual_output <- picker_hover_divs(var_list, lang)
+  expect_identical(actual_output, NULL)
 })
 
 
@@ -65,6 +73,17 @@ test_that("picker_multi_year_disable disables variables when necessary", {
       FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,
       TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
       FALSE, FALSE
+    )
+  expect_identical(actual_output, expected_output)
+})
+
+test_that("picker_multi_year_disable disables nothing when variables aren't in `variables` table", {
+  var_list <- c("unkown", "in", "variables")
+  disable <- TRUE
+  actual_output <- picker_multi_year_disable(var_list, disable)
+  expected_output <-
+    c(
+      FALSE, FALSE, FALSE
     )
   expect_identical(actual_output, expected_output)
 })
