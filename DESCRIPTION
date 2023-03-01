@@ -27,7 +27,8 @@ Suggests:
     testthat (>= 3.0.0),
     qs,
     RSQLite,
-    shinytest2
+    shinytest2,
+    here
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

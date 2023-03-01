@@ -98,13 +98,17 @@ picker_multi_year_disable <- function(var_list, disable) {
   }
 
   # Get all the years
-  vars <- unname(unlist(var_list))
+  var_unlist <- unname(unlist(var_list))
+  vars <- var_unlist[var_unlist != " "] # Drop the 'no' comparison value
   all_years <- lapply(vars, \(x) var_get_info(x, what = "dates")[[1]])
 
   # We select the variables that are available the same amount as the variables
   # present at the most years
   max_years <- max(lengths(all_years))
   vec <- sapply(lengths(all_years), `==`, max_years)
+
+  # Reattach the 'no' comparison value
+  if (" " %in% var_unlist) vec <- c(TRUE, vec)
 
   # Return the opposite as TRUE means disable
   return(!vec)

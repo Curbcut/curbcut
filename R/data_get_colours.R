@@ -155,7 +155,7 @@ data_get_colours.bivar_ldelta_rq3 <- function(vars, region, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.default <- function(vars, region, zoom_levels,
                                      scales_as_DA = c("building", "street"), ...) {
-  data <- data.frame(ID = NA)
-  data$fill <- "NA"
+  data <- data.frame(ID = "NA")
+  data$fill <- "#B3B3BB"
   return(data)
 }

@@ -96,14 +96,26 @@ use_bookmark <- function(r, session) {
             selected = widget[[2]]
           )
         })
-
-        # Finish with the pickers
-        lapply(widgets$picker, \(widget) {
-          shinyWidgets::updatePickerInput(
+        lapply(widgets$slider, \(widget) {
+          # If there are multiple values, split at every `-`
+          value <- strsplit(widget[[2]], split = "-")[[1]]
+          shiny::updateSliderInput(
             session = session,
             inputId = ns(widget[[1]]),
-            selected = widget[[2]]
+            value = as.numeric(value)
           )
+        })
+
+        # Finish with the pickers, with a delay to make sure the rest is
+        # well updated first
+        shinyjs::delay(500, {
+          lapply(widgets$picker, \(widget) {
+            shinyWidgets::updatePickerInput(
+              session = session,
+              inputId = ns(widget[[1]]),
+              selected = widget[[2]]
+            )
+          })
         })
       })
 
@@ -167,6 +179,7 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
   cbox <- from_codes[grepl("cccheckbox_", lapply(from_codes, `[[`, 1))]
   s_text <- from_codes[grepl("ccslidertext_", lapply(from_codes, `[[`, 1))]
   picker <- from_codes[grepl("ccpicker_", lapply(from_codes, `[[`, 1))]
+  slider <- from_codes[grepl("ccslider_", lapply(from_codes, `[[`, 1))]
 
   # Process the widget value as needed
   scales_dictionary <- get_from_globalenv("scales_dictionary")
@@ -183,12 +196,13 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
     }
     return(widget)
   })
-  codes <- list(cbox = cbox, s_text = s_text, picker = picker)
+  codes <- list(cbox = cbox, s_text = s_text, picker = picker, slider = slider)
 
   ## Continue with the additional widgets
   cbox <- from_short[grepl("cccheckbox_", lapply(from_short, `[[`, 1))]
   s_text <- from_short[grepl("ccslidertext_", lapply(from_short, `[[`, 1))]
   picker <- from_short[grepl("ccpicker_", lapply(from_short, `[[`, 1))]
+  slider <- from_short[grepl("ccslider_", lapply(from_short, `[[`, 1))]
 
   # Process the widget value as needed
   picker <- lapply(picker, \(widget) {
@@ -197,11 +211,12 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
     }
     return(widget)
   })
-  shorts <- list(cbox = cbox, s_text = s_text, picker = picker)
+  shorts <- list(cbox = cbox, s_text = s_text, picker = picker, slider = slider)
 
   # Return the list of widgets
   return(list(cbox = c(codes$cbox, shorts$cbox),
               s_text = c(codes$s_text, shorts$s_text),
-              picker = c(codes$picker, shorts$picker)))
+              picker = c(codes$picker, shorts$picker),
+              slider = c(codes$slider, shorts$slider)))
 
 }

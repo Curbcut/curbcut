@@ -29,7 +29,7 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
       if (length(all_input) == 0) {
         return(NULL)
       }
-      all_widgets <- grep("ccpicker_|ccslidertext_|cccheckbox_",
+      all_widgets <- grep("ccpicker_|ccslidertext_|cccheckbox_|ccslider_",
         all_input,
         value = TRUE
       )
@@ -105,6 +105,8 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
 
   # Process the widgets
   if (!is.null(widgets)) {
+    # Do not keep track of the opening of the dropdowns
+    widgets <- widgets[!grepl("ccpicker_.*_open$", names(widgets))]
     widgets_processed <-
       mapply(\(name, value) {
         # If the value is a checkbox-like, make it shorter
@@ -121,6 +123,10 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
         # Grab the code rather than the label for the zoom module
         if (name == "zoom_slider-ccslidertext_slt") {
           value <- zoom_get_code(value, lang = lang)
+        }
+        # If the value of the slider is of length > 1
+        if (length(value) > 1) {
+          value <- paste0(value, collapse = "-")
         }
 
         # If the name is part of a known code, switch it

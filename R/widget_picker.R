@@ -55,7 +55,10 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 
     # If the picking is made while in a `delta` mode (comparing two years),
     # we disable the variables that are not present at all years.
-    multi_year <- shiny::reactive(length(time()) > 1)
+    multi_year <- shiny::reactiveVal(FALSE)
+    # Make sure we don't create unwanted reactivity that triggers the reset
+    # of the dropdown.
+    shiny::observeEvent(time(), multi_year(length(time()) > 1))
     disable <- shiny::reactive(picker_multi_year_disable(
       var_list = var_list,
       disable = multi_year()

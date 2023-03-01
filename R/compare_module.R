@@ -39,10 +39,10 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
   shiny::moduleServer(id, function(input, output, session) {
 
     # Get the var_right reactive
-    var_right <- curbcut::picker_server(id = "compare",
-                                        r = r,
-                                        var_list = var_list,
-                                        time = time)
+    var_right <- picker_server(id = "compare",
+                               r = r,
+                               var_list = var_list,
+                               time = time)
 
     # If we shouldn't show the panel
     shiny::observeEvent(show_panel(), {
