@@ -8,7 +8,19 @@ test_that("geocode returns NULL for an invalid address", {
   expect_equal(result, NULL)
 })
 
-test_that("Function handles non-string input", {
+test_that("geocode handles non-string input", {
   result <- geocode(123)
   expect_equal(result, NULL)
 })
+
+test_that("rev_geocode handles non-string input", {
+  result <- rev_geocode(lon = -73.5750825, lat = 45.5055633)
+  expect_equal(result, "3459 Rue University, Montréal")
+})
+
+test_that("rev_geocode returns NA when the query is invalid", {
+  result <- rev_geocode(lon = "h", lat = 45.5055633)
+  expect_equal(result, NA_character_)
+})
+
+

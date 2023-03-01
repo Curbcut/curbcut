@@ -26,7 +26,8 @@ BugReports: https://github.com/MSSI-urban/curbcut/issues
 Suggests: 
     testthat (>= 3.0.0),
     qs,
-    RSQLite
+    RSQLite,
+    shinytest2
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

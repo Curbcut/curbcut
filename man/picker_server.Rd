@@ -28,7 +28,7 @@ is \code{"var"}.}
 \item{var_list}{<\verb{named list}> Choices to display in the picker input. Normally
 made using \code{\link{dropdown_make}}.}
 
-\item{time}{<\verb{reactive numeric vector}> List of time values to use for
+\item{time}{<\verb{reactive numeric vector}> Vector of time values to use for
 appending a time to the variables picked. The returned vector will be the
 same length as this argument.}
 

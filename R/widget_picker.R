@@ -21,7 +21,7 @@
 #' is `"var"`.
 #' @param var_list <`named list`> Choices to display in the picker input. Normally
 #' made using \code{\link{dropdown_make}}.
-#' @param time <`reactive numeric vector`> List of time values to use for
+#' @param time <`reactive numeric vector`> Vector of time values to use for
 #' appending a time to the variables picked. The returned vector will be the
 #' same length as this argument.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}
