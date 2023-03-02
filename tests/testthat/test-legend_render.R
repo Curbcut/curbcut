@@ -38,7 +38,7 @@ test_that("legend_render.delta  works", {
     var_right = " ", df = "CMA_CSD"
   )
   p <- legend_render(vars, df = "CMA_CSD", font_family = NULL)
-  expect_error(print(p), NA)
+  expect_error(p, NA)
 })
 
 test_that("legend_render.q100  works", {
@@ -57,7 +57,7 @@ test_that("legend_render.delta_bivar  works", {
   )
   data <- data_get(vars, df = "city_CSD")
   p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
-  expect_error(print(p), NA)
+  expect_error(p, NA)
 })
 
 test_that("legend_render.bivar_ldelta_rq3  works", {
@@ -67,5 +67,5 @@ test_that("legend_render.bivar_ldelta_rq3  works", {
   )
   data <- data_get(vars, df = "city_CSD")
   p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
-  expect_error(print(p), NA)
+  expect_error(p, NA)
 })

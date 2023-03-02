@@ -53,7 +53,12 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
     # Show labels
     rdeck::rdeck_proxy("map") |>
       rdeck::add_mvt_layer(
-        id = paste0(id, "_CSD_labels"),
+        id = paste0(id, "_CSD_label"),
+        data = tilejson(
+          mapbox_username = mapbox_username,
+          tileset_prefix = tileset_prefix,
+          tile = "CSD_label"
+        ),
         visible = TRUE,
         point_type = "text",
         get_text = !!as.name("name"),

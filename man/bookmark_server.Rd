@@ -29,7 +29,7 @@ to \code{NULL} for when it is not a map module.}
 
 \item{exclude_input}{<\verb{character vector}> Widget names to exclude from
 bookmarking. By default, the input monitoring the opening of dropdowns
-is excluded. Example of exclusion: \code{stories-ccpicker_var}.}
+is excluded. Example of exclusion: \code{ccpicker_var}.}
 }
 \value{
 The module server function for creating bookmarkable URLs.
