@@ -81,7 +81,6 @@ min_sig_digits <- function(x) {
 #' convert_unit("default", c(10.2, 10000, 5.67))
 #' @export
 convert_unit <- function(var = NULL, x, ...) {
-
   if (length(x) == 0) {
     return(x)
   }
@@ -120,7 +119,6 @@ convert_unit.pct <- function(var, x, decimal = 2, ...) {
 #' @method convert_unit dollar
 #' @export
 convert_unit.dollar <- function(var, x, compact, ...) {
-
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(x)
 
@@ -145,7 +143,6 @@ convert_unit.dollar <- function(var, x, compact, ...) {
 #' @method convert_unit default
 #' @export
 convert_unit.default <- function(var, x, compact = FALSE, ...) {
-
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(x)
 

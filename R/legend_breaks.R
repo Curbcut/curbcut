@@ -29,7 +29,6 @@ legend_breaks <- function(vars, ...) {
 #' @return A vector of legend breaks with pretty labels.
 #' @export
 legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
-
   # Get the breaks
   breaks <- var_get_breaks(
     var = vars$var_left, df = df,
@@ -54,7 +53,6 @@ legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
 #' @return A vector of legend breaks with pretty labels.
 #' @export
 legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
-
   # Grab the breaks from the variables table
   # Are there already var_name_short recorded?
   breaks <-
@@ -229,7 +227,8 @@ legend_breaks.delta_bivar <- function(vars, data, ...) {
 
   break_labs_y <- convert_unit.pct(
     x = break_labs_y,
-    compact = TRUE)
+    compact = TRUE
+  )
   break_labs_x <- convert_unit.pct(
     x = break_labs_x,
     compact = TRUE,

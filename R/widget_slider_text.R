@@ -70,7 +70,6 @@ slider_text_server <- function(id, r, slider_text_id = "slt",
 #' @export
 slider_text_UI <- function(id, slider_text_id = "slt", label = "Select a year",
                            choices, selected = NULL, force_edges = TRUE, ...) {
-
   # Verify if the widget ID will interfere with bookmark
   slider_text_id <- widget_id_verif(widget_id = slider_text_id)
 

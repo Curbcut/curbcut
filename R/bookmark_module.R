@@ -25,7 +25,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
                             map_viewstate = shiny::reactive(NULL),
                             exclude_input = c()) {
   shiny::moduleServer(id, function(input, output, session) {
-
     # Grab all inputs built using Curbcut widgets
     widgets <- shiny::reactive({
       # Grab all the available input in the page and subset the Curbcut widgets

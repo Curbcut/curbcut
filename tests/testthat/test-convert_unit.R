@@ -33,7 +33,8 @@ test_that("convert_unit works", {
   )
   expect_equal(
     convert_unit(
-      x = c(1000, 2000, 5000)),
+      x = c(1000, 2000, 5000)
+    ),
     c("1,000", "2,000", "5,000")
   )
   expect_equal(

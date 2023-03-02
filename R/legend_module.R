@@ -47,7 +47,6 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
   stopifnot(shiny::is.reactive(breaks))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Switch scales to DA if necessary
     treated_df <-
       shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
@@ -81,8 +80,8 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
       output$legend <- shiny::renderPlot(legend())
       # Weird hack to get legend plot to inherit full namespace
       shiny::plotOutput(session$ns("legend"),
-                        height = plot_height(),
-                        width = "100%"
+        height = plot_height(),
+        width = "100%"
       )
     })
 

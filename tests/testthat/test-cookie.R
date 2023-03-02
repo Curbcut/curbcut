@@ -21,5 +21,3 @@ test_that("use_curbut_cookie function loads necessary JavaScript files", {
 #   appdir <- system.file(package = "curbcut", "tests/cookies")
 #   test_app(appdir)
 # })
-
-

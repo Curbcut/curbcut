@@ -12,37 +12,41 @@
 #' @export
 language_server <- function(id = "language", r, parent_session) {
   shiny::moduleServer(id, function(input, output, session) {
-
     # Switch the language on a new session if it's in a cookie
-    lang_cookie <- shiny::reactive(cookie_retrieve(input = parent_session$input,
-                                                   name = "lang"))
+    lang_cookie <- shiny::reactive(cookie_retrieve(
+      input = parent_session$input,
+      name = "lang"
+    ))
 
     shiny::observeEvent(lang_cookie(),
-                        update_lang(r = r, lang = lang_cookie()),
-                        once = TRUE, ignoreNULL = TRUE)
+      update_lang(r = r, lang = lang_cookie()),
+      once = TRUE, ignoreNULL = TRUE
+    )
 
     # Update language and set a cookie
-    shiny::observeEvent(input$language_button, {
+    shiny::observeEvent(input$language_button,
+      {
+        # Get the new language
+        new_lang <- if (r$lang() == "en") "fr" else "en"
 
-      # Get the new language
-      new_lang <- if (r$lang() == "en") "fr" else "en"
+        # Update JS and Shiny
+        update_lang(r = r, lang = new_lang)
 
-      # Update JS and Shiny
-      update_lang(r = r, lang = new_lang)
-
-      # Set the cookie
-      cookie_set(session = parent_session, name = "lang", value = new_lang)
-
-    }, ignoreInit = TRUE)
+        # Set the cookie
+        cookie_set(session = parent_session, name = "lang", value = new_lang)
+      },
+      ignoreInit = TRUE
+    )
 
     # Update label of the button based on current language
     shiny::observeEvent(r$lang(), {
       new_label <- if (r$lang() == "fr") "English" else "Français"
-      shiny::updateActionLink(session = session,
-                              inputId = "language_button",
-                              label = lang_button_label(new_label))
+      shiny::updateActionLink(
+        session = session,
+        inputId = "language_button",
+        label = lang_button_label(new_label)
+      )
     })
-
   })
 }
 
@@ -59,7 +63,8 @@ language_UI <- function(id = "language") {
   shiny::actionLink(
     inputId = shiny::NS(id, "language_button"),
     style = "min-width: 112px;",
-    label = "")
+    label = ""
+  )
 }
 
 #' Create a language button label
@@ -72,7 +77,8 @@ language_UI <- function(id = "language") {
 #'
 #' @return A character string representing the language button label.
 lang_button_label <- function(text) {
-  as.character(shiny::tags$span(icon_material("language"),
-                                shiny::tags$span(text)))
+  as.character(shiny::tags$span(
+    icon_material("language"),
+    shiny::tags$span(text)
+  ))
 }
-

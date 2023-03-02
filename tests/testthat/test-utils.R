@@ -209,13 +209,17 @@ test_that("widget_id_verif returns the original widget ID for a valid widget ID"
 })
 
 test_that("widget_id_verif throws an error when the widget ID contains more than one underscore", {
-  expect_error(widget_id_verif("a_b_c"),
-               "No underscore can be used in a widget ID.")
+  expect_error(
+    widget_id_verif("a_b_c"),
+    "No underscore can be used in a widget ID."
+  )
 })
 
 test_that("widget_id_verif hrows an error when the widget ID has more than 3 characters", {
-  expect_error(widget_id_verif("abcd"),
-               "Widget ID can contain no more than 4 characters to reduce bookmark URL size.")
+  expect_error(
+    widget_id_verif("abcd"),
+    "Widget ID can contain no more than 4 characters to reduce bookmark URL size."
+  )
 })
 
 test_that("widget_id_verif throws an error when the widget ID interferes with known codes and short codes", {

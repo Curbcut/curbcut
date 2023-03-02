@@ -32,15 +32,17 @@ r_init <- function(lang_init = NULL,
                    map_zoom = get_from_globalenv("map_zoom"),
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
-
   # Initate
   r <- shiny::reactiveValues(
     lang = shiny::reactiveVal(lang_init),
     region = shiny::reactiveVal(default_region),
     default_select_ids = shiny::reactiveVal(NULL),
     stories = shiny::reactiveValues(select_id = shiny::reactiveVal(NA)),
-    place_explorer = shiny::reactiveValues(select_id = shiny::reactiveVal(NA),
-                                           df = shiny::reactiveVal("DA")))
+    place_explorer = shiny::reactiveValues(
+      select_id = shiny::reactiveVal(NA),
+      df = shiny::reactiveVal("DA")
+    )
+  )
 
   # Loop over all modules to add the rest of the needed reactives
   modules <- get_from_globalenv("modules")
@@ -57,9 +59,9 @@ r_init <- function(lang_init = NULL,
         zoom = shiny::reactiveVal(zoom_get(map_zoom)),
         coords = shiny::reactiveVal(map_loc),
         poi = shiny::reactiveVal(NULL),
-        ...)
+        ...
+      )
     } else {
-
       # Grab the first zoom level to be the default `df`
       first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", df))[1]
       first_mzl <- names(first_mzl)
@@ -71,11 +73,11 @@ r_init <- function(lang_init = NULL,
         zoom = shiny::reactiveVal(zoom_get(map_zoom)),
         coords = shiny::reactiveVal(map_loc),
         poi = shiny::reactiveVal(NULL),
-        ...)
+        ...
+      )
     }
   }
 
   # Return r
   return(r)
 }
-

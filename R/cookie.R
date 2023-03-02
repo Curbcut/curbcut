@@ -56,9 +56,15 @@ cookie_set <- function(session, name, value) {
 #' @export
 cookie_retrieve <- function(input, name) {
   out <- input$cookies[[name]]
-  if (is.null(out)) return(NULL)
-  if (length(out) == 0) return(NULL)
-  if (out == "null") return(NULL)
+  if (is.null(out)) {
+    return(NULL)
+  }
+  if (length(out) == 0) {
+    return(NULL)
+  }
+  if (out == "null") {
+    return(NULL)
+  }
   return(out)
 }
 

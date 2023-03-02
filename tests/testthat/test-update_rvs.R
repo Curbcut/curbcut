@@ -115,9 +115,11 @@ test_that("update_poi returns NULL when map zoom is less than 13", {
 
 test_that("update_poi returns nothing too far from the stories", {
   poi <- c("little_burgundy", "mirron_quarry")
-  map_viewstate <- list(zoom = 13,
-                        latitude = stories[1,]$lat - 5,
-                        longitude = stories[1,]$lon - 5)
+  map_viewstate <- list(
+    zoom = 13,
+    latitude = stories[1, ]$lat - 5,
+    longitude = stories[1, ]$lon - 5
+  )
   result <- update_poi("id", poi = poi, map_viewstate)
   expect_equal(result, NULL)
 })

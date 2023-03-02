@@ -8,10 +8,10 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/language.js",
-                                        package = "curbcut"
+    package = "curbcut"
   ))
   shiny::tagList(
     shiny::tags$head(shinyjs::extendShinyjs(
@@ -34,8 +34,9 @@ use_curbcut_js <- function() {
 #' @return Copies the URL.
 #' @export
 copy_current_url <- function() {
-  if (!is.null(shiny::getDefaultReactiveDomain()))
+  if (!is.null(shiny::getDefaultReactiveDomain())) {
     stop("This function can only be used in a non-reactive context.")
+  }
 
   return("copy_current_url()")
 }
@@ -54,8 +55,9 @@ copy_current_url <- function() {
 #' @return Sets the language to the value of `lang`
 #' @export
 update_lang <- function(r, lang) {
-  if (is.null(shiny::getDefaultReactiveDomain()))
+  if (is.null(shiny::getDefaultReactiveDomain())) {
     stop("This function can only be used in a reactive context.")
+  }
 
   # Update the page so that we display, in the UI, the language of the user.
   shinyjs::js$set_language(lang)
@@ -63,4 +65,3 @@ update_lang <- function(r, lang) {
   # Update the reactive language function for the server Shiny side.
   r$lang(lang)
 }
-

@@ -51,7 +51,6 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' returns the input POI vector.
 #' @export
 update_poi <- function(id, poi, map_viewstate) {
-
   # Initialize objects
   out <- NULL
   zoom <- map_viewstate$zoom
@@ -118,17 +117,17 @@ update_poi <- function(id, poi, map_viewstate) {
 #' @export
 update_select_id <- function(id, r, data = shiny::reactive(NULL),
                              id_map = paste0(id, "-map")) {
-
   # Grab the new selected ID
   new_ID <- shiny::reactive(rdeck::get_clicked_object(id_map)$ID)
 
   # If a click has been made, change then `select_id` reactive
   shiny::observeEvent(new_ID(), {
-
     # If the same ID has been selected twice, return NA. If not, return the
     # newly selected ID
-    out <- update_select_id_helper(new_ID = new_ID(),
-                                   select_id = r[[id]]$select_id())
+    out <- update_select_id_helper(
+      new_ID = new_ID(),
+      select_id = r[[id]]$select_id()
+    )
 
     # Save the new selected ID in the reactive.
     r[[id]]$select_id(out)
@@ -137,18 +136,20 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
   # Update selected ID if there are default selections (from the advanced options,
   # stored in `r$default_select_ids()`)
   shiny::observe({
-    if (is.null(data())) return(NULL)
+    if (is.null(data())) {
+      return(NULL)
+    }
 
     # At the current `data()`, which is the ID that fits
     out <- update_select_id_from_default(
       data = data(),
       default_select_ids = r$default_select_ids(),
-      select_id = shiny::isolate(r[[id]]$select_id()))
+      select_id = shiny::isolate(r[[id]]$select_id())
+    )
 
     # Save the new selected ID in the reactive.
     r[[id]]$select_id(out)
   })
-
 }
 
 #' Update Select ID Helper
@@ -160,7 +161,6 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
 #' @return If the same ID gets selected twice, the function returns NA.
 #' Otherwise, it returns the new ID.
 update_select_id_helper <- function(new_ID, select_id) {
-
   # Make sure the new ID is valid
   if (is.na(new_ID)) {
     return(NA)

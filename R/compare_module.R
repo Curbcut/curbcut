@@ -31,18 +31,18 @@
 #' @export
 compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
                            show_panel = shiny::reactive(TRUE)) {
-
   stopifnot(!shiny::is.reactive(var_list))
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(show_panel))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Get the var_right reactive
-    var_right <- picker_server(id = "compare",
-                               r = r,
-                               var_list = var_list,
-                               time = time)
+    var_right <- picker_server(
+      id = "compare",
+      r = r,
+      var_list = var_list,
+      time = time
+    )
 
     # If we shouldn't show the panel
     shiny::observeEvent(show_panel(), {
@@ -56,10 +56,14 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
       # Change label
       lab <- if (input$hide_compare %% 2 == 0) {
         cc_t(lang = r$lang(), "Hide")
-      } else cc_t(lang = r$lang(), "Show")
-      shiny::updateActionButton(session = session,
-                                inputId = "hide_compare",
-                                label = lab)
+      } else {
+        cc_t(lang = r$lang(), "Show")
+      }
+      shiny::updateActionButton(
+        session = session,
+        inputId = "hide_compare",
+        label = lab
+      )
     })
 
     var_right
@@ -69,17 +73,26 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
 #' @describeIn compare_server Create the UI for the compare module
 #' @export
 compare_UI <- function(id, var_list) {
-  shiny::div(id = shiny::NS(id, "compare_panel"),
-             shiny::fluidRow(
-               shiny::column(width = 7, shiny::h4(cc_t("Compare"))),
-               shiny::column(width = 5, align = "right",
-                             shiny::actionLink(
-                               inputId = shiny::NS(id, "hide_compare"),
-                               class = "sus-small-link",
-                               label = cc_t("Hide")))),
-             shiny::div(id = shiny::NS(id, "widgets"),
-                        picker_UI(id = shiny::NS(id, "compare"),
-                                  var_list = var_list)),
-             shiny::hr()
+  shiny::div(
+    id = shiny::NS(id, "compare_panel"),
+    shiny::fluidRow(
+      shiny::column(width = 7, shiny::h4(cc_t("Compare"))),
+      shiny::column(
+        width = 5, align = "right",
+        shiny::actionLink(
+          inputId = shiny::NS(id, "hide_compare"),
+          class = "sus-small-link",
+          label = cc_t("Hide")
+        )
+      )
+    ),
+    shiny::div(
+      id = shiny::NS(id, "widgets"),
+      picker_UI(
+        id = shiny::NS(id, "compare"),
+        var_list = var_list
+      )
+    ),
+    shiny::hr()
   )
 }

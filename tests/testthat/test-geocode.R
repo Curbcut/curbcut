@@ -22,5 +22,3 @@ test_that("rev_geocode returns NA when the query is invalid", {
   result <- rev_geocode(lon = "h", lat = 45.5055633)
   expect_equal(result, NA_character_)
 })
-
-

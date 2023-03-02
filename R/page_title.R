@@ -18,14 +18,16 @@
 #'
 #' @export
 title_page_update <- function(r, session, active_page, site_name) {
-    shiny::observe({
-      # Grab the update title
-      site_name <- title_page_get(active_page = active_page(),
-                                  site_name = site_name,
-                                  lang = r$lang())
-      # Change the title of the page
-      session$sendCustomMessage("changetitle", site_name)
-    })
+  shiny::observe({
+    # Grab the update title
+    site_name <- title_page_get(
+      active_page = active_page(),
+      site_name = site_name,
+      lang = r$lang()
+    )
+    # Change the title of the page
+    session$sendCustomMessage("changetitle", site_name)
+  })
 }
 
 #' Get the title of the current page
@@ -42,7 +44,6 @@ title_page_update <- function(r, session, active_page, site_name) {
 #'
 #' @return The title of the current page
 title_page_get <- function(active_page, site_name, lang = NULL) {
-
   # Get the modules table
   modules <- get_from_globalenv("modules")
 

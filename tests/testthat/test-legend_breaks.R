@@ -114,4 +114,3 @@ test_that("legend_breaks.delta_bivar works", {
     ))
   )
 })
-

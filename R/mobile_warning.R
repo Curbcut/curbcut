@@ -11,18 +11,21 @@
 #'
 #' @export
 mobile_warning <- function(r, session) {
-
-    shiny::observe({
-      device <- session$input$.shinybrowser$device
-      # Return nothing if device isn't detected
-      if (is.null(device)) return(NULL)
-      # If not desktop, return the error.
-      if (device != "Desktop") {
-        shinyjs::info(
-          cc_t(lang = r$lang(),
-               "Curbcut does not currently support mobile phones. ",
-               "Please visit from a computer."))
-      }
-    })
-
+  shiny::observe({
+    device <- session$input$.shinybrowser$device
+    # Return nothing if device isn't detected
+    if (is.null(device)) {
+      return(NULL)
+    }
+    # If not desktop, return the error.
+    if (device != "Desktop") {
+      shinyjs::info(
+        cc_t(
+          lang = r$lang(),
+          "Curbcut does not currently support mobile phones. ",
+          "Please visit from a computer."
+        )
+      )
+    }
+  })
 }

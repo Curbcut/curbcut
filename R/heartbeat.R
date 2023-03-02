@@ -24,10 +24,11 @@
 #' the user forgets to close it.
 #' @export
 heartbeat <- function(input) {
-
   # Update the reactive every time an input changes
-  timeout_start <- shiny::eventReactive(shiny::reactiveValuesToList(input),
-                                        Sys.time())
+  timeout_start <- shiny::eventReactive(
+    shiny::reactiveValuesToList(input),
+    Sys.time()
+  )
 
   # Every 10 seconds, this reactive context will be invalidated and so
   # re-triggered. Alike a while loop. After 2 hours, then the heartbeat will

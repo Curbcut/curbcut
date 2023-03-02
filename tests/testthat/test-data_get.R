@@ -270,4 +270,3 @@ test_that("data_get.bivar_ldelta_rq3 works", {
     )), row.names = c(NA, -19L), class = "data.frame")
   )
 })
-

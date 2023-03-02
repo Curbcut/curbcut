@@ -307,7 +307,6 @@ tilejson <- function(mapbox_username, tileset_prefix, tile) {
 #' @return The original widget ID if it passes all verification criteria.
 #' @export
 widget_id_verif <- function(widget_id) {
-
   # Is it an empty string
   if (widget_id == "" || is.null(widget_id)) {
     stop("The widget ID can't be an empty string")
@@ -320,16 +319,20 @@ widget_id_verif <- function(widget_id) {
 
   # Widget ID must be as small as possible
   if (nchar(widget_id) > 3) {
-    stop(paste0("Widget ID can contain no more than 4 characters to reduce ",
-                "bookmark URL size."))
+    stop(paste0(
+      "Widget ID can contain no more than 4 characters to reduce ",
+      "bookmark URL size."
+    ))
   }
 
   # Can the ID interfere with known codes and short code
   detect <- grepl(widget_id, c(curbcut::bookmark_codes, curbcut::bookmark_shorts))
   if (sum(detect) > 0) {
-    stop(paste0("Widget ID can not be the same as a value of ",
-                "`curbcut::bookmark_codes` or `curbcut::bookmark_shorts` ",
-                "to limit interference with bookmark codes."))
+    stop(paste0(
+      "Widget ID can not be the same as a value of ",
+      "`curbcut::bookmark_codes` or `curbcut::bookmark_shorts` ",
+      "to limit interference with bookmark codes."
+    ))
   }
 
   return(widget_id)

@@ -83,7 +83,6 @@ checkbox_server <- function(id, r, checkbox_id = "cbx",
 #' @export
 checkbox_UI <- function(id, checkbox_id = "cbx", label = NULL, value = TRUE,
                         ...) {
-
   # Verify if the widget ID will interfere with bookmark
   checkbox_id <- widget_id_verif(widget_id = checkbox_id)
 

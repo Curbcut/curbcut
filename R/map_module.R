@@ -79,7 +79,6 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(coords))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Map
     output$map <- rdeck::renderRdeck({
       rdeck::rdeck(
@@ -131,16 +130,19 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     # A change in the extrude reactive only triggers the `extrude` change.
     # Attempt to improve user experience between auto-zoom DA and building level.
     extrude <- shiny::reactive({
-      !map_label_show_texture(zoom = zoom(),
-                              zoom_levels = zoom_levels(),
-                              tile = tile())
+      !map_label_show_texture(
+        zoom = zoom(),
+        zoom_levels = zoom_levels(),
+        tile = tile()
+      )
     })
-    shiny::observeEvent(extrude(),
-                        rdeck::rdeck_proxy("map") |>
-                          rdeck::update_mvt_layer(
-                            id = id,
-                            extruded = extrude()
-                          )
+    shiny::observeEvent(
+      extrude(),
+      rdeck::rdeck_proxy("map") |>
+        rdeck::update_mvt_layer(
+          id = id,
+          extruded = extrude()
+        )
     )
 
     # Return the viewstate

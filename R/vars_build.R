@@ -25,11 +25,15 @@ vars_build <- function(var_left, var_right = " ", df,
   df <- treat_to_DA(scales_as_DA, df)
 
   # Add var left and right types as classes
-  class(var_left) <- c(unlist(var_get_info(var_left[[1]], "type")),
-                       class(var_left))
+  class(var_left) <- c(
+    unlist(var_get_info(var_left[[1]], "type")),
+    class(var_left)
+  )
   if (var_right[[1]] != " ") {
-    class(var_right) <- c(unlist(var_get_info(var_right[[1]], "type")),
-                          class(var_right))
+    class(var_right) <- c(
+      unlist(var_get_info(var_right[[1]], "type")),
+      class(var_right)
+    )
   }
 
   # Grab the class
@@ -64,7 +68,9 @@ vars_build <- function(var_left, var_right = " ", df,
       return("bivar_ldelta_rq3")
     }
     if (length(var_left) == 1 && var_right[1] == " ") {
-      if ("ind" %in% class(var_left)) return(c("q5_ind", "q5"))
+      if ("ind" %in% class(var_left)) {
+        return(c("q5_ind", "q5"))
+      }
       return("q5")
     }
     if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ") {

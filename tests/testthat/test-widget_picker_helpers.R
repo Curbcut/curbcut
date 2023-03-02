@@ -35,10 +35,11 @@ test_that("picker_hover_divs creates divs with translated explanations on hover 
   var_list <- dropdown_make(vars = variables$var_code[1:3], compare = TRUE)
   lang <- "fr"
   var_list_t <- cc_t(var_list, lang = "fr")
-  expected_output <- list(content = c("<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
-                                      "<div title=\"le pourcentage de logements privés occupés par des locataires\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
-                                      "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
-                                      "<div title=\"le pourcentage de ménages vivant dans des logements nécessitant des réparations importantes\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
+  expected_output <- list(content = c(
+    "<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
+    "<div title=\"le pourcentage de logements privés occupés par des locataires\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
+    "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
+    "<div title=\"le pourcentage de ménages vivant dans des logements nécessitant des réparations importantes\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
   ))
   actual_output <- picker_hover_divs(var_list_t, lang)
   expect_identical(actual_output, expected_output)

@@ -125,7 +125,6 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
                       width = "100%", div_style = NULL, selected = NULL,
                       ...) {
-
   # Verify if the widget ID will interfere with bookmark
   picker_id <- widget_id_verif(widget_id = picker_id)
 

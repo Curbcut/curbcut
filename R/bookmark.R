@@ -13,8 +13,8 @@
 #' @return handles updating the state of the app based on the URL query string.
 #' @export
 use_bookmark <- function(r, session) {
-
-    shiny::observeEvent(shiny::parseQueryString(session$clientData$url_search), {
+  shiny::observeEvent(shiny::parseQueryString(session$clientData$url_search),
+    {
       # Get the URL search query
       query <- shiny::parseQueryString(session$clientData$url_search)
 
@@ -65,19 +65,24 @@ use_bookmark <- function(r, session) {
       # Update widgets
       wgt <- query$wgt
       # If no widgets, do nothing
-      if (is.null(wgt)) return(NULL)
+      if (is.null(wgt)) {
+        return(NULL)
+      }
 
       # Make a NS minimal function
       ns <- function(widget_id, tb = tab, double = T) {
-        if (double) return(paste(tb, tb, widget_id, sep = "-"))
+        if (double) {
+          return(paste(tb, tb, widget_id, sep = "-"))
+        }
         return(paste(tb, widget_id, sep = "-"))
       }
 
       # Delay first, then update all the widgets
       shinyjs::delay(500, {
-
-        widgets <- bookmark_widget_helper(wgt = wgt,
-                                          lang = r$lang())
+        widgets <- bookmark_widget_helper(
+          wgt = wgt,
+          lang = r$lang()
+        )
 
         # Start by the checkboxes
         lapply(widgets$cbox, \(widget) {
@@ -124,9 +129,9 @@ use_bookmark <- function(r, session) {
         new_id <- if (query$sid %in% c("", "NA")) NA else query$sid
         r[[tab]]$select_id(new_id)
       }
-
-    }, priority = -5)
-
+    },
+    priority = -5
+  )
 }
 
 
@@ -147,7 +152,6 @@ use_bookmark <- function(r, session) {
 #' categories: "cbox" (checkboxes), "s_text" (slider text), and "picker" (pickers).
 #' @export
 bookmark_widget_helper <- function(wgt, lang = NULL) {
-
   # Separate widgets between bookmark_codes and bookmark_shorts
   widgets <- strsplit(wgt, ";")[[1]]
   widgets <- sapply(widgets, strsplit, ":", USE.NAMES = FALSE)
@@ -214,9 +218,10 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
   shorts <- list(cbox = cbox, s_text = s_text, picker = picker, slider = slider)
 
   # Return the list of widgets
-  return(list(cbox = c(codes$cbox, shorts$cbox),
-              s_text = c(codes$s_text, shorts$s_text),
-              picker = c(codes$picker, shorts$picker),
-              slider = c(codes$slider, shorts$slider)))
-
+  return(list(
+    cbox = c(codes$cbox, shorts$cbox),
+    s_text = c(codes$s_text, shorts$s_text),
+    picker = c(codes$picker, shorts$picker),
+    slider = c(codes$slider, shorts$slider)
+  ))
 }

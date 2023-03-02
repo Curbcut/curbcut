@@ -19,7 +19,6 @@
 #' triggered in the same session.
 #' @export
 trigger_pages_server <- function(cc_page, r, r_folder_envir) {
-
   # Create a reactiveValues that will be used to detect which pages have
   # already been opened
   page_activity <- shiny::reactiveValues()
@@ -35,16 +34,18 @@ trigger_pages_server <- function(cc_page, r, r_folder_envir) {
 
   # Every time a page is opened, trigger the server module of the page (only
   # if the page has not been visited yet).
-  shiny::observeEvent(cc_page(), {
+  shiny::observeEvent(cc_page(),
+    {
+      if (!cc_page() %in% page_activity$previous_tabs()) {
+        # page_server_fun <- get0(paste(cc_page(), "_server"), envir = r_folder_envir)
+        do.call(paste0(cc_page(), "_server"), list(cc_page(), r = r),
+          envir = r_folder_envir
+        )
+      }
 
-    if (!cc_page() %in% page_activity$previous_tabs()) {
-      # page_server_fun <- get0(paste(cc_page(), "_server"), envir = r_folder_envir)
-      do.call(paste0(cc_page(), "_server"), list(cc_page(), r = r),
-              envir = r_folder_envir)
-    }
-
-    # Update the URL
-    shiny::updateQueryString("?")
-  }, ignoreInit = TRUE)
-
+      # Update the URL
+      shiny::updateQueryString("?")
+    },
+    ignoreInit = TRUE
+  )
 }

@@ -18,13 +18,11 @@ slider_server <- function(id, slider_id = "sld",
                           value = shiny::reactive(NULL),
                           min = shiny::reactive(NULL),
                           max = shiny::reactive(NULL)) {
-
   stopifnot(shiny::is.reactive(value))
   stopifnot(shiny::is.reactive(min))
   stopifnot(shiny::is.reactive(max))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Reformat the slider_id to make it obvious it's a slider (for bookmark)
     slider_id <- paste0("ccslider_", slider_id)
 
@@ -35,14 +33,13 @@ slider_server <- function(id, slider_id = "sld",
         inputId = slider_id,
         value = value(),
         min = min(),
-        max = max())
+        max = max()
+      )
     })
 
     # Output the slider input
     shiny::reactive(input[[slider_id]])
-
   })
-
 }
 
 #' Create a Slider Input UI Element
@@ -79,7 +76,6 @@ slider_server <- function(id, slider_id = "sld",
 slider_UI <- function(id, slider_id = "sld", label = cc_t("Select a year"),
                       step = 5, min, max, sep = "", value = max,
                       width = "95%", ...) {
-
   # Verify if the widget ID will interfere with bookmark
   slider_id <- widget_id_verif(widget_id = slider_id)
 
@@ -87,13 +83,15 @@ slider_UI <- function(id, slider_id = "sld", label = cc_t("Select a year"),
   slider_id <- paste0("ccslider_", slider_id)
 
   # Declare the input in an optionally styled div
-  shiny::sliderInput(inputId = shiny::NS(id, slider_id),
-                     label = cc_t(label),
-                     min = min,
-                     max = max,
-                     step = step,
-                     sep = sep,
-                     value = value,
-                     width = width,
-                     ...)
+  shiny::sliderInput(
+    inputId = shiny::NS(id, slider_id),
+    label = cc_t(label),
+    min = min,
+    max = max,
+    step = step,
+    sep = sep,
+    value = value,
+    width = width,
+    ...
+  )
 }
