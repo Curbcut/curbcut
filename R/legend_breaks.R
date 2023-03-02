@@ -29,25 +29,50 @@ legend_breaks <- function(vars, ...) {
 #' @return A vector of legend breaks with pretty labels.
 #' @export
 legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
-  # Are the breaks qualitative
-  is_character_breaks <- "qual" %in% unlist(var_get_info(vars$var_left, "type"))
+
+  # Get the breaks
+  breaks <- var_get_breaks(
+    var = vars$var_left, df = df,
+    q3_q5 = "q5", pretty = TRUE, compact = TRUE
+  )
+
+  # Return
+  return(breaks)
+}
+
+#' Compute legend breaks for a single `ind` `var_left`
+#'
+#' @param vars <`named list`> A list object of class `q5_ind`. The output of
+#' \code{\link{vars_build}}.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param lang <`character`> String indicating the language to translate the
+#' breaks to. Defaults to `NULL`, which is no translation.
+#' @param ... Additional arguments passed to methods.
+#'
+#' @return A vector of legend breaks with pretty labels.
+#' @export
+legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
 
   # Grab the breaks from the variables table
-  breaks <- if (is_character_breaks) {
+  # Are there already var_name_short recorded?
+  breaks <-
     var_get_breaks(
       var = vars$var_left, df = df,
       break_col = "var_name_short", q3_q5 = "q5",
       pretty = TRUE, compact = TRUE, lang = lang
     )
-  } else {
-    var_get_breaks(
-      var = vars$var_left, df = df,
-      q3_q5 = "q5", pretty = TRUE, compact = TRUE
+
+  # If there are no var_name_short in the `variables` table for the variable,
+  # default to "Low" and "High"
+  if (is.null(breaks)) {
+    breaks <- c(
+      cc_t(lang = lang, "Low"),
+      sapply(1:3, \(x) NULL),
+      cc_t(lang = lang, "High")
     )
   }
-
-  # Add a 'are the breaks characters?' attribute
-  attr(breaks, "chr_breaks") <- is_character_breaks
 
   # Return
   return(breaks)
@@ -133,9 +158,9 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, df, data, ...) {
     max(data$var_left[data$var_left_q3 == 2], na.rm = TRUE),
     max(data$var_left, na.rm = TRUE)
   )
-  break_labs_y <- convert_unit(break_labs_y,
+  break_labs_y <- convert_unit.pct(
+    x = break_labs_y,
     compact = TRUE,
-    scale_fun = scales::percent
   )
 
   break_labs_x <- var_get_breaks(
@@ -202,13 +227,12 @@ legend_breaks.delta_bivar <- function(vars, data, ...) {
     max(data$var_right, na.rm = TRUE)
   )
 
-  break_labs_y <- convert_unit(break_labs_y,
+  break_labs_y <- convert_unit.pct(
+    x = break_labs_y,
+    compact = TRUE)
+  break_labs_x <- convert_unit.pct(
+    x = break_labs_x,
     compact = TRUE,
-    scale_fun = scales::percent
-  )
-  break_labs_x <- convert_unit(break_labs_x,
-    compact = TRUE,
-    scale_fun = scales::percent
   )
 
   return(list(x = break_labs_x, y = break_labs_y))

@@ -1,0 +1,19 @@
+{
+  "input": {
+
+  },
+  "output": {
+    "legend-legend_render": {
+      "message": "the condition has length > 1",
+      "call": [
+        "if (grepl(\"bivar\", attr(vars(), \"class\"))) {",
+        "    return(150)",
+        "}"
+      ],
+      "type": null
+    }
+  },
+  "export": {
+
+  }
+}

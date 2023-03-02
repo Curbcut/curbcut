@@ -2,18 +2,20 @@
 #'
 #' @param lon <`numeric`> Represents the longitude of the location
 #' @param lat <`numeric`> Represents the latitude of the location
+#' @param timeout <`numeric`> After how many seconds should the function
+#' stop trying to access the `photon` server. Defaults to 2 seconds.
 #'
 #' @return A character vector of the reverse geocoded location (address)
 #' @export
 #'
 #' @examples
 #' rev_geocode(12.4924, 41.8902) # "Piazza del Colosseo, Roma"
-rev_geocode <- function(lon, lat) {
+rev_geocode <- function(lon, lat, timeout = 2) {
   link <- paste0(
     "photon.komoot.io/reverse?lon=", lon, "&lat=",
     lat
   )
-  out <- tryCatch(httr::content(httr::GET(link, httr::timeout(2))),
+  out <- tryCatch(httr::content(httr::GET(link, httr::timeout(timeout))),
     error = function(e) NULL
   )
   if (is.null(out$features) || length(out$features) == 0) {

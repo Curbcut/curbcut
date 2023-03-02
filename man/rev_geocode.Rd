@@ -4,12 +4,15 @@
 \alias{rev_geocode}
 \title{Reverse geocode a location using \verb{https://photon.komoot.io/}}
 \usage{
-rev_geocode(lon, lat)
+rev_geocode(lon, lat, timeout = 2)
 }
 \arguments{
 \item{lon}{<\code{numeric}> Represents the longitude of the location}
 
 \item{lat}{<\code{numeric}> Represents the latitude of the location}
+
+\item{timeout}{<\code{numeric}> After how many seconds should the function
+stop trying to access the \code{photon} server. Defaults to 2 seconds.}
 }
 \value{
 A character vector of the reverse geocoded location (address)

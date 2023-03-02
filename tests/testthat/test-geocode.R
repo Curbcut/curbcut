@@ -14,7 +14,7 @@ test_that("geocode handles non-string input", {
 })
 
 test_that("rev_geocode handles non-string input", {
-  result <- rev_geocode(lon = -73.5750825, lat = 45.5055633)
+  result <- rev_geocode(lon = -73.5750825, lat = 45.5055633, timeout = 2)
   expect_equal(result, "3459 Rue University, Montréal")
 })
 

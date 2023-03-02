@@ -89,31 +89,89 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro", ...) {
   leg[2, ] <- list(x = 0.75, y = 1, fill = "#FFFFFFFF")
 
   # Adjust break placements if breaks are characters
-  breaks_placement <- if (attr(leg_info$break_labs, "chr_breaks")) {
-    c(-0.375, c(0:4) + 0.5)
-  } else {
-    c(-0.375, 0:5)
-  }
+  breaks_placement <- c(-0.375, 0:5)
 
   # Grab labels to check length
   breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
   breaks_label <- c("NA", breaks_label)
   if (length(breaks_placement) != length(breaks_label)) {
-    if (attr(leg_info$break_labs, "chr_breaks")) {
-      stop(paste0(
-        "The number of breaks is not the same as the number of break ",
-        "labels.  For a `q5` map with a variable whose breaks are ",
-        "characters, there must  be 5 breaks in the `variables$break_q5` ",
-        "(for ranks 1:5) with the exception of rank 0 that can be NA, ",
-        "which will be filtered out automatically."
-      ))
-    } else {
-      stop(paste0(
-        "The number of breaks is not the same as the number of break ",
-        "labels. For a `q5` map, there needs to be 6 breaks in the ",
-        "`variables$break_q5` table (for ranks 0:5)."
-      ))
-    }
+    warning(paste0(
+      "The number of breaks is not the same as the number of break ",
+      "labels. For a `q5` map, there needs to be 6 breaks in the ",
+      "`variables$break_q5` table (for ranks 0:5)."
+    ))
+    return(NULL)
+  }
+
+  # Make the plot
+  leg |>
+    ggplot2::ggplot(
+      ggplot2::aes(
+        xmin = group - 1, xmax = group, ymin = y - 1,
+        ymax = y, fill = fill
+      )
+    ) +
+    ggplot2::geom_rect() +
+    ggplot2::scale_x_continuous(
+      breaks = breaks_placement,
+      labels = breaks_label
+    ) +
+    ggplot2::scale_y_continuous(labels = NULL) +
+    ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
+    leg_info$labs_xy +
+    leg_info$theme_default
+}
+
+#' Render the legend for the q5 class
+#'
+#' This function generates a plot which includes the NA category. It uses the
+#' \code{\link{legend_get_info}} function to obtain the necessary
+#' information about the legend, and then modifies the
+#' breaks to add the NA category to the legend. It looks at the variable `type`
+#' to detect wether the variable has character breaks with the `qual` type in
+#' the variables table. If so, breaks appear in the middle of the lines.
+#' Finally, it creates the plot using the ggplot2 package and the obtained
+#' information.
+#'
+#' @param vars <`named list`> A list object with a `q5` class. The
+#' output of \code{\link{vars_build}}.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the default font family og ggplot2, use `NULL`.
+#' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
+#'
+#' @return A plot generated using ggplot2.
+#' @export
+legend_render.q5_ind <- function(vars, font_family = "SourceSansPro", ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
+  # Get all necessary information
+  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+
+  # Adapt breaks to add the `NA` bar
+  leg <- leg_info$colours_dfs$left_5[1:6, ]
+  leg$group <- suppressWarnings(as.double(leg$group))
+  leg[1, ]$group <- 0.5
+  leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
+  leg[2, ] <- list(x = 0.75, y = 1, fill = "#FFFFFFFF")
+
+  # Adjust break placements if breaks are characters
+  breaks_placement <- c(-0.375, c(0:4) + 0.5)
+
+  # Grab labels to check length
+  breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
+  breaks_label <- c("NA", breaks_label)
+  if (length(breaks_placement) != length(breaks_label)) {
+    warning(paste0(
+      "The number of breaks is not the same as the number of break ",
+      "labels.  For a `q5` map with a variable whose breaks are ",
+      "characters, there must  be 5 breaks in the `variables$break_q5` ",
+      "(for ranks 1:5) with the exception of rank 0 that can be NA, ",
+      "which will be filtered out automatically."
+    ))
+    return(NULL)
   }
 
   # Make the plot

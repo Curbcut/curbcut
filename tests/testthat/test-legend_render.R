@@ -7,14 +7,22 @@ test_that("legend_breaks.q5 (without `chr_breaks` attribute) works", {
   expect_error(print(p), NA)
 })
 
-test_that("legend_breaks.q5 (with `chr_breaks` attribute) works", {
+test_that("legend_breaks.q5_ind works", {
   vars <- vars_build(
     var_left = "climate_drought_2016",
     var_right = " ", df = "grid_grid"
   )
   p <- legend_render(vars, df = "grid_grid", font_family = NULL)
   expect_error(print(p), NA)
+
+  vars <- vars_build(
+    var_left = "canale",
+    var_right = " ", df = "grid_grid"
+  )
+  p <- legend_render(vars, df = "grid_grid", font_family = NULL)
+  expect_error(print(p), NA)
 })
+
 
 # test_that("legend_render.qual works", {
 #   vars <- vars_build(var_left = "",

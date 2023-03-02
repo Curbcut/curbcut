@@ -4,15 +4,26 @@ test_that("legend_breaks.q5 works", {
   vars3 <- vars_build(var_left = "climate_drought", df = "grid_grid")
   expect_equal(
     legend_breaks(vars1, df = "CMA_CSD"),
-    structure(c("0%", "20%", "40%", "60%", "80%", "100%"), chr_breaks = FALSE)
+    structure(c("0%", "20%", "40%", "60%", "80%", "100%"))
   )
   expect_equal(
     legend_breaks(vars2, df = "CMA_DA"),
-    structure(c("$0K", "$200K", "$400K", "$600K", "$800K", "$1,000K"), chr_breaks = FALSE)
+    structure(c("$0K", "$200K", "$400K", "$600K", "$800K", "$1,000K"))
   )
+})
+
+test_that("legend_breaks.q5_ind works", {
+  vars1 <- vars_build(var_left = "climate_drought", df = "grid_grid")
+  vars2 <- vars_build(var_left = "canale", df = "grid_grid")
+
   expect_equal(
-    legend_breaks(vars3, df = "grid_grid"),
-    structure(c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major"), chr_breaks = TRUE)
+    legend_breaks(vars1, df = "grid_grid"),
+    structure(c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major"))
+  )
+
+  expect_equal(
+    legend_breaks(vars2, df = "CMA_CSD"),
+    structure(list("Low", NULL, NULL, NULL, "High"))
   )
 })
 
@@ -75,7 +86,7 @@ test_that("legend_breaks.bivar works", {
   )
   expect_equal(
     legend_breaks(vars, df = "grid_grid"),
-    list(x = c("0.2%", "20.2%", "57.1%", "100%"), y = c(
+    list(x = c("0.24%", "20.2%", "57.12%", "100%"), y = c(
       "0", "1",
       "3", "5"
     ))
@@ -103,3 +114,4 @@ test_that("legend_breaks.delta_bivar works", {
     ))
   )
 })
+
