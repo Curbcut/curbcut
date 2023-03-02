@@ -5,5 +5,4 @@ test_that("{shinytest2} recording: legend_raster", {
       width = 1619)
   app$expect_values()
   app$expect_screenshot()
-  app$expect_screenshot()
 })

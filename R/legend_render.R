@@ -20,7 +20,7 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
-      text = ggplot2::element_text(family = font_family, size = 11),
+      text = ggplot2::element_text(family = font_family, size = 12),
       legend.position = "none",
       panel.grid = ggplot2::element_blank()
     )

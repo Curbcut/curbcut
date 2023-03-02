@@ -4,7 +4,7 @@
   },
   "output": {
     "legend-legend": {
-      "src": "[image data hash: 23dbc84c439afbe2a05f1cae83f8493a]",
+      "src": "[image data hash: 1d5c014f771db8e7b8b356433dab814a]",
       "width": 1589,
       "height": 60,
       "alt": "Plot object",
@@ -39,7 +39,7 @@
             "range": {
               "left": 8.21917808219178,
               "right": 1583.52054794521,
-              "bottom": 28.8464731501983,
+              "bottom": 26.8434518763107,
               "top": 5.47945205479452
             }
           }
