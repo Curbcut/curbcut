@@ -47,13 +47,6 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
   stopifnot(shiny::is.reactive(breaks))
 
   shiny::moduleServer(id, function(input, output, session) {
-    # Define plot height
-    plot_height <- function() {
-      if (grepl("bivar", attr(vars(), "class"))) {
-        return(150)
-      }
-      return(60)
-    }
 
     # Switch scales to DA if necessary
     treated_df <-
@@ -74,13 +67,22 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
       })
     )
 
+    # Define plot height
+    plot_height <- function() {
+      # If there's the `bivar` string detected in one of the classes
+      if (sum(grepl("bivar", attr(vars(), "class"))) > 0) {
+        return(150)
+      }
+      return(60)
+    }
+
     # Output legend
     output$legend_render <- shiny::renderUI({
       output$legend <- shiny::renderPlot(legend())
       # Weird hack to get legend plot to inherit full namespace
       shiny::plotOutput(session$ns("legend"),
-        height = plot_height(),
-        width = "100%"
+                        height = plot_height(),
+                        width = "100%"
       )
     })
 
