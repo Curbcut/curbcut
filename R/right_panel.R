@@ -16,6 +16,7 @@ right_panel <- function(id, ...) {
   shiny::absolutePanel(
     id = shiny::NS(id, "right_panel"),
     class = "panel panel-default sus-map-panel sus-scroll",
-    shiny::div(class = "sus-map-panel-content sus-scroll-content", ...)
+    shiny::div(class = "sus-map-panel-content sus-scroll-content",
+               id = "cc-right-panel", ...)
   )
 }
