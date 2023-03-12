@@ -146,6 +146,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       selected = selected,
       width = width,
       choicesOpt = picker_hover_divs(var_list),
+      options = pickerOptions(dropdownAlignRight = "auto"),
       ...
     )
   )
