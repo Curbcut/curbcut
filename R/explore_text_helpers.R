@@ -1,0 +1,310 @@
+#' Get region text info
+#'
+#' This function retrieves the region df from the global environment given the
+#' region name and returns it in a list with the first letter of the region name
+#' capitalized.
+#'
+#' @param region <`character`> String specifying the code of the region to
+#' retrieve, e.g. `CMA`. Usually equivalent of `r$region()`.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`. If there is a selection (select_id is not NA), the
+#' name of the selected polygon will appear.
+#' @param df <`character`> The combination of the region under study and the
+#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#'
+#' @return A list containing the region text with the first letter capitalized.
+explore_context <- function(region, select_id, df) {
+
+  # Grab the region dictionary
+  regions_dictionary <- get_from_globalenv("regions_dictionary")
+  region <- regions_dictionary[regions_dictionary$region == region, ]
+
+  if (is.na(select_id)) {
+    # Grab the region text
+    to_compare <- region$to_compare
+
+    # Return as a sentence
+    return(list(p_start = s_sentence(to_compare)))
+  }
+
+  # Grab the right scale
+  scales_dictionary <- get_from_globalenv("scales_dictionary")
+  scale <- scales_dictionary[
+    is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE), ]
+  # Get the place heading and glue it
+  dat <- get_from_globalenv(df)
+  dat <- dat[dat$ID == select_id, ]
+  name_2 <- dat$name_2
+  name <- dat$name
+  heading <- glue::glue(scale$place_heading)
+
+  # Get the sentence start (In Borough or In dissemination area XYZ, )
+  p_start <- cc_t(tolower(scale$place_name))
+
+  # Return
+  return(list(heading = heading,
+              p_start = cc_t("In {p_start}"),
+              name = cc_t("in {name}"),
+              to_compare_determ = region$to_compare_determ,
+              to_compare_short = region$to_compare_short,
+              scale_plur = scale$plur))
+}
+
+#' Get parent title of a variable
+#'
+#' This function retrieves the title of the parent variable given the variable
+#' name and returns it in lowercase.
+#'
+#' @param var <`character`> The variable name for which the parent title needs
+#' to be retrieved.
+#'
+#' @return The title of the parent variable in lowercase.
+explore_text_parent_title <- function(var) {
+  # Get the parent_vec of the current variable
+  parent_string <- var_get_info(var = var, what = "parent_vec")
+
+  # Grab the title of that parent_vec
+  # If the parent vector is all population/individuals or households, return it
+  if (parent_string %in% c("individuals", "households")) return(parent_string)
+  parent_string <- var_get_info(var = parent_string, what = "var_title",
+                                check_year = FALSE)
+
+  # To lowercase
+  parent_string <- tolower(parent_string)
+
+  # Return
+  return(parent_string)
+}
+
+#' Get region values data frame
+#'
+#' This function retrieves the region values data frame given the variable name
+#' and region and subsets the data frame based on the region name. If the variable
+#' is a year, then it filters the row based on the year. It then returns the
+#' resulting data frame.
+#'
+#' If there is a selection, then
+#'
+#' @param var <`character`> The variable name for which the region values data
+#' frame needs to be retrieved.
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
+#' function: \itemize{
+#'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
+#'  \item{df <`character`>}{The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.}
+#' }
+#'
+#' @return The resulting data frame after subsetting or list when there is a
+#' selection.
+explore_text_region_val_df <- function(var, region, select_id, ...) {
+
+  if (is.na(select_id)) {
+    # Grab the region values dataframe
+    region_values <- var_get_info(var = var, what = "region_values")[[1]]
+
+    # Subset current region
+    region_values <- region_values[region_values$region == region, ]
+
+    # If year, filter the right row
+    if ("year" %in% names(region_values)) {
+      time <- var_get_time(var)
+      if (is.na(time)) stop(sprintf("var `%s` needs an appended time.", var))
+      region_values <- region_values[region_values[["year"]] == time, ]
+    }
+
+    # Return the values
+    return(region_values)
+  }
+
+  return(explore_text_select_val(var = var,
+                                 region = region,
+                                 select_id = select_id,
+                                 ...))
+}
+
+#' Get parent data for a given variable and ID
+#'
+#' This function retrieves the parent data for a given variable and ID.
+#' If a time variable is present in the dataset, the time value is
+#' added to the parent string to retrieve the corresponding data.
+#'
+#' @param var <`character`> The code of the variable for which to retrieve the
+#' parent data.
+#' @param select_id <`character`> The ID of the selected zone for which to
+#' retrieve the parent data.
+#' @param df <`character`>The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#'
+#' @return A vector containing the parent value for the zone.
+explore_get_parent_data <- function(var, select_id, df) {
+  # Get the parent string
+  parent_string <- var_get_info(var = var, what = "parent_vec")
+
+  # Is there a time?
+  time <- var_get_time(var)
+
+  # If so, add it to the parent string
+  if (!is.na(time)) parent_string <- paste(parent_string, time, sep = "_")
+
+  # Grab the parent data
+  parent_data <- data_get(parent_string, df)
+
+  # Get the parent value for the zone
+  all_count <- parent_data$var_left[parent_data$ID == select_id]
+
+  # Return
+  return(all_count)
+}
+
+#' Generate values for the given variable and selection
+#'
+#' This function dispatches to the appropriate value-generating function based on
+#' the variable type and returns the resulting values. It is only used when
+#' there is a selection, and replaces the value of \code{\link{explore_text_region_val_df}}
+#'
+#' @param var <`character`> The variable code of the variable for which the
+#' values need to be generated. Usually one element of the output of
+#' \code{\link{vars_build}}.
+#' @param ... Additional arguments passed to the dispatched function.
+#'
+#' @return The resulting values
+#' @export
+explore_text_select_val <- function(var, ...) {
+  UseMethod("explore_text_select_val", var)
+}
+
+#' @rdname explore_text_select_val
+#'
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param data <`data.frame`>The output of \code{\link{data_get}}.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#'
+#' @export
+explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
+
+  # Create empty vector
+  out <- c()
+
+  # Add the percentage value for the selection. Second column is always
+  out$val <- data$var_left[data$ID == select_id]
+
+  # Get the parent data
+  all_count <- explore_get_parent_data(var = var, select_id = select_id,
+                                       df = df)
+
+  # Multiply the percentage by the count of parent in the zone
+  out$count <- out$val * all_count
+
+  # Round to the closest 5
+  out$count <- round(out$count/5)*5
+
+  # Return
+  return(out)
+}
+
+#' @rdname explore_text_select_val
+#'
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param data <`data.frame`>The output of \code{\link{data_get}}.
+#'
+#' @export
+explore_text_select_val.dollar <- function(var, data, select_id, ...) {
+
+  # Create empty vector
+  out <- c()
+
+  # Add the value for the selection
+  out$val <- data$var_left[data$ID == select_id]
+
+  # Return
+  return(out)
+}
+
+#' @rdname explore_text_select_val
+#'
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param data <`data.frame`>The output of \code{\link{data_get}}.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#'
+#' @export
+explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
+  # Create empty vector
+  out <- c()
+
+  # Get the group in which falls the selection
+  rank <- data$var_left_q5[data$ID == select_id]
+
+  # Grab the rank name for the rank
+  brks <- var_get_info(var = var, what = "breaks_q5")[[1]]
+  brks <- brks[brks$df == df, ]
+  out$val <- brks$rank_name[brks$rank == rank]
+
+  # Lower letters
+  out$val <- tolower(out$val)
+
+  # Return
+  return(out)
+}
+
+#' Explore Text Selection Comparison
+#'
+#' This function calculates the percentage of observations with a lower value
+#' than the selected observation for a given variable and ranks the selected
+#' observation within predefined groups (as a character extracted from the
+#' `variables` table.
+#'
+#' @param var <`character`> A variable code specifying the variable of interest. This
+#' variable will be compared across observations.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The data frame must have columns named var_left
+#' and ID. The output of \code{\link{data_get}}.
+#' @param select_id <`character`> The ID of the selected zone for which to
+#' retrieve the ranking.
+#'
+#' @return A named list with two elements:
+#' \itemize{
+#' \item \code{higher_than}: A character string representing the proportion of
+#' other observations with a lower value for the specified variable than the
+#' selected observation, formatted as a percentage with one decimal place.
+#' \item \code{rank_chr}: A character string representing the ranking category
+#' of the selected observation in comparison to the other observations for the
+#' specified variable.
+#' }
+explore_text_selection_comparison <- function(var, data, select_id) {
+
+  # The value is higher than X of other observations
+  higher_than <- data$var_left[data$ID == select_id] > data$var_left
+  higher_than <- mean(higher_than, na.rm = TRUE)
+  if (is.na(higher_than)) {
+    return(list(higher_than = NA,
+                rank_chr = NA))
+  }
+  higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 1)
+
+  # Ranking as characters. We can't use q5 as it's built for breaks of
+  # multiple years. Here we only compare with ONE year.
+  quants <- 1:100 %% 20
+  quants <- which(quants == 0) / 100
+  rank <- findInterval(higher_than, quants) + 1
+  ranks_chr <- var_get_info(var = var, what = "rankings_chr")[[1]]
+  rank_chr <- ranks_chr[[rank]]
+
+  # Return both
+  return(list(higher_than = higher_than_chr,
+              rank_chr = rank_chr))
+
+}

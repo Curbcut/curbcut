@@ -14,7 +14,7 @@ assign("colours_dfs",
 
 # Variables present in the .GlobalEnv
 assign("all_choropleths",
-  value = c("CSD", "CT", "DA", "building", "grid"),
+  value = c("CSD", "CT", "DA", "building", "grid", "cmhczone"),
   envir = .GlobalEnv
 )
 
@@ -26,17 +26,22 @@ assign("translation_df",
 
 # Connection to the sqlite db present in the .GlobalEnv
 assign("city_CSD_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CSD.sqlite"),
-  envir = .GlobalEnv
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CSD.sqlite"),
+       envir = .GlobalEnv
 )
 assign("city_CT_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CT.sqlite"),
-  envir = .GlobalEnv
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CT.sqlite"),
+       envir = .GlobalEnv
 )
 assign("city_DA_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_DA.sqlite"),
-  envir = .GlobalEnv
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_DA.sqlite"),
+       envir = .GlobalEnv
 )
+assign("cmhc_cmhczone_conn",
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/cmhc_cmhczone.sqlite"),
+       envir = .GlobalEnv
+)
+
 
 # Map zoom levels
 qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)
@@ -74,6 +79,7 @@ assign("postal_codes",
 # Few regions
 qs::qload("resources/city.qsm", env = .GlobalEnv)
 qs::qload("resources/island.qsm", env = .GlobalEnv)
+qs::qload("resources/cmhc.qsm", env = .GlobalEnv)
 
 # Stories for poi test
 qs::qload("resources/stories.qsm", env = .GlobalEnv)

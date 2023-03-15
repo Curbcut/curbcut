@@ -4,13 +4,16 @@
 \alias{is_scale_df}
 \title{Test if x scale is under study}
 \usage{
-is_scale_df(scales, df)
+is_scale_df(scales, df, vectorized = FALSE)
 }
 \arguments{
 \item{scales}{<\verb{character vector}> All scales to test if it is part of \code{df}.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}.}
+
+\item{vectorized}{<\code{logical}> Should all elements of \code{scales} be evaluated
+and return a logical vector the same length of \code{scales}?}
 }
 \value{
 Returns TRUE or FALSE

@@ -142,6 +142,8 @@ ntile <- function(x, n) {
 #' @param scales <`character vector`> All scales to test if it is part of `df`.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param vectorized <`logical`> Should all elements of `scales` be evaluated
+#' and return a logical vector the same length of `scales`?
 #'
 #' @return Returns TRUE or FALSE
 #' @export
@@ -149,9 +151,13 @@ ntile <- function(x, n) {
 #' @examples
 #' is_scale_df(scales = c("CSD", "CT", "DA"), df = "CMA_DA") # TRUE
 #' is_scale_df(scales = c("CSD", "CT"), df = "CMA_DA") # FALSE
-is_scale_df <- function(scales, df) {
-  scls <- paste0(scales, "$", collapse = "|")
-  grepl(scls, df)
+is_scale_df <- function(scales, df, vectorized = FALSE) {
+  if (!vectorized) {
+    scls <- paste0(scales, "$", collapse = "|")
+    return(grepl(scls, df))
+  }
+
+  sapply(scales, grepl, df, USE.NAMES = FALSE)
 }
 
 #' Extract substrings from a character vector that matches a regular
@@ -171,6 +177,34 @@ is_scale_df <- function(scales, df) {
 #' s_extract("[0-9]+", c("123abc", "def456")) # "123", "456"
 s_extract <- function(pattern, x) {
   sapply(regmatches(x, regexec(pattern, x, perl = TRUE)), `[`, 1)
+}
+
+#' Capitalize the first letter of a sentence
+#'
+#' This function takes a string as input and returns the same string with the
+#' first etter capitalized, assuming it is the first letter of a sentence. It does this by
+#' extracting the first letter, capitalizing it, extracting the rest of the string,
+#' and then combining the two parts.
+#'
+#' @param x <`character`> A character string to capitalize
+#'
+#' @return A character string with the first letter capitalized
+#' @export
+#'
+#' @examples
+#' s_sentence("hello world") # "Hello world"
+s_sentence <- function(x) {
+  # Extract the first letter and capitalize it
+  first_letter <- toupper(substring(x, 1, 1))
+
+  # Extract the rest of the string and leave it as is
+  rest_of_string <- substring(x, 2)
+
+  # Combine the first letter and the rest of the string
+  capitalized_string <- paste(first_letter, rest_of_string, sep = "")
+
+  # Return the result
+  return(capitalized_string)
 }
 
 #' Retrieve the `colours_dfs` object

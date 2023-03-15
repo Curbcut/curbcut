@@ -30,6 +30,41 @@ compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
   return(do.call(scale_fun, list(x, 1)))
 }
 
+#' Round a numeric vector and apply a scale function based on its value magnitude
+#'
+#' This function rounds a numeric vector and applies a scale function to format
+#' it based on its value magnitude. The scale function is applied using the
+#' \code{scales} package, which provides several options for formatting numeric
+#' values, such as adding commas or dollar signs.
+#'
+#' @param x <`numeric vector`> Numeric values to be rounded and scaled.
+#' @param min_dig <`numeric`> An integer specifying the minimum number of digits to be
+#' displayed after rounding. If the value magnitude is larger than or equal to
+#' 6, 5, or 4, \code{accuracy} is set to \code{1e+03}, \code{1e+02}, or
+#' \code{1e+01}, respectively, to round the value accordingly. Otherwise,
+#' \code{accuracy} is set to \code{1} and \code{min_dig} is used to set the
+#' rounding accuracy. `min_dig` is usually the output of \code{\link{min_sig_digits}}
+#' @param scale_fun <`function`> A scale function to be applied to the rounded values. This
+#' should be a function from the \code{scales} package that takes a numeric
+#' vector as input and returns a character vector with formatted values. The
+#' default is \code{scales::comma}, which adds commas to separate thousands
+#' and rounds values to two decimal places by default.
+#'
+#' @return A character vector with the rounded and scaled values.
+round_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
+  if (min_dig >= 7) {
+    return(do.call(scale_fun, list(x, 1, accuracy = 1e+03)))
+  }
+  if (min_dig >= 5) {
+    return(do.call(scale_fun, list(x, 1, accuracy = 1e+02)))
+  }
+  if (min_dig >= 4) {
+    return(do.call(scale_fun, list(x, 1, accuracy = 1e+01)))
+  }
+
+  return(do.call(scale_fun, list(x, 1)))
+}
+
 #' Get the minimum number of significant digits before the decimal point in a
 #' vector of numbers
 #'
@@ -47,6 +82,10 @@ compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' x <- c(123.456, 0.000789, 0.01, 1000, 0.5)
 #' min_sig_digits(x) # 3
 min_sig_digits <- function(x) {
+
+  # If zero, return zero
+  if (all(x == 0)) return(rep(0, length(x)))
+
   # Find the minimum absolute value in x that is greater than 0
   min_abs_val <- min(abs(x[x != 0]))
 
@@ -74,11 +113,6 @@ min_sig_digits <- function(x) {
 #'
 #' @return A character vector with a specified unit based on the variable type
 #' specified.
-#'
-#' @examples
-#' convert_unit("pct", 0.25)
-#' convert_unit("dollar", 1000, compact = TRUE)
-#' convert_unit("default", c(10.2, 10000, 5.67))
 #' @export
 convert_unit <- function(var = NULL, x, ...) {
   if (length(x) == 0) {
@@ -104,7 +138,7 @@ convert_unit <- function(var = NULL, x, ...) {
 #' @method convert_unit pct
 #' @export
 convert_unit.pct <- function(var, x, decimal = 2, ...) {
-  paste0(round(x * 100, 2), "%")
+  paste0(round(x * 100, digits = decimal), "%")
 }
 
 #' Convert a numeric vector into a character vector with a dollar sign
@@ -124,11 +158,14 @@ convert_unit.dollar <- function(var, x, compact, ...) {
 
   # If compact and large digit
   if (compact && min_dig >= 4) {
-    return(compact_big_marks(x, min_dig, scales::dollar))
+    return(compact_big_marks(x = x,
+                             min_dig = min_dig,
+                             scale_fun = scales::dollar))
   }
 
-  # Non-compact or small digit
-  return(scales::dollar(x, 1))
+  # Non-compact
+  out <- round_big_marks(x = x, min_dig = min_dig, scale_fun = scales::dollar)
+  return(out)
 }
 
 #' Convert a numeric vector into a character vector with a default separator
@@ -147,7 +184,14 @@ convert_unit.default <- function(var, x, compact = FALSE, ...) {
   min_dig <- min_sig_digits(x)
 
   if (compact && min_dig >= 4) {
-    return(compact_big_marks(x, min_dig, scales::comma))
+    return(compact_big_marks(x = x,
+                             min_dig = min_dig,
+                             scale_fun = scales::comma))
+  }
+  if (max(abs(x)) >= 1000) {
+    return(round_big_marks(x = x,
+                           min_dig = min_dig,
+                           scale_fun = scales::comma))
   }
   if (max(abs(x)) >= 100 || all(round(x) == x)) {
     return(scales::comma(x, 1))

@@ -161,8 +161,7 @@ legend_render.q5_ind <- function(vars, font_family = "SourceSansPro", ...) {
   breaks_placement <- c(-0.375, c(0:4) + 0.5)
 
   # Grab labels to check length
-  breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
-  breaks_label <- c("NA", breaks_label)
+  breaks_label <- c("NA", leg_info$break_labs)
   if (length(breaks_placement) != length(breaks_label)) {
     warning(paste0(
       "The number of breaks is not the same as the number of break ",

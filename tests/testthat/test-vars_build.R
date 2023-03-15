@@ -123,10 +123,10 @@ test_that("vars_build works", {
 
   expect_equal(
     vars_build(
-      var_left = "climate_drought_2016", var_right = " ",
+      var_left = "climate_drought_2017", var_right = " ",
       df = "grid_grid"
     ),
-    structure(list(var_left = structure("climate_drought_2016", class = c(
+    structure(list(var_left = structure("climate_drought_20176", class = c(
       "ind",
       "character"
     )), var_right = " "), class = c("q5_ind", "q5"))

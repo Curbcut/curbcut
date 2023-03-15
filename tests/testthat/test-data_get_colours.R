@@ -4,7 +4,7 @@ test_that("data_get_colours.q5  works", {
     vars = vars, region = "city",
     zoom_levels = map_zoom_levels_city
   )
-  expect_equal(nrow(data_colours), 3301)
+  expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
@@ -19,7 +19,7 @@ test_that("data_get_colours.bivar works", {
     vars = vars, region = "city",
     zoom_levels = map_zoom_levels_city
   )
-  expect_equal(nrow(data_colours), 3301)
+  expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
@@ -34,7 +34,7 @@ test_that("data_get_colours.delta works", {
     vars = vars, region = "city",
     zoom_levels = map_zoom_levels_city
   )
-  expect_equal(nrow(data_colours), 3301)
+  expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
@@ -49,7 +49,7 @@ test_that("data_get_colours.delta_bivar works", {
     vars = vars, region = "city",
     zoom_levels = map_zoom_levels_city
   )
-  expect_equal(nrow(data_colours), 3301)
+  expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
@@ -64,7 +64,8 @@ test_that("data_get_colours.bivar_ldelta_rq3 works", {
     vars = vars, region = "city",
     zoom_levels = map_zoom_levels_city
   )
-  expect_equal(nrow(data_colours), 3301)
+  expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
+

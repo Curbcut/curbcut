@@ -1,7 +1,7 @@
 test_that("legend_breaks.q5 works", {
   vars1 <- vars_build(var_left = "housing_tenant_2016", df = "CMA_CSD")
   vars2 <- vars_build(var_left = "housing_value_2011", df = "CMA_DA")
-  vars3 <- vars_build(var_left = "climate_drought", df = "grid_grid")
+  vars3 <- vars_build(var_left = "climate_drought_2017", df = "grid_grid")
   expect_equal(
     legend_breaks(vars1, df = "CMA_CSD"),
     structure(c("0%", "20%", "40%", "60%", "80%", "100%"))
@@ -13,8 +13,8 @@ test_that("legend_breaks.q5 works", {
 })
 
 test_that("legend_breaks.q5_ind works", {
-  vars1 <- vars_build(var_left = "climate_drought", df = "grid_grid")
-  vars2 <- vars_build(var_left = "canale", df = "grid_grid")
+  vars1 <- vars_build(var_left = "climate_drought_2017", df = "grid_grid")
+  vars2 <- vars_build(var_left = "canale_2016", df = "grid_grid")
 
   expect_equal(
     legend_breaks(vars1, df = "grid_grid"),
@@ -28,7 +28,7 @@ test_that("legend_breaks.q5_ind works", {
 })
 
 test_that("legend_breaks.q100 works", {
-  vars <- vars_build(var_left = "climate_flood", df = "raster")
+  vars <- vars_build(var_left = "climate_flood_2017", df = "raster")
   expect_equal(
     legend_breaks(vars, df = "raster"),
     list(
@@ -80,7 +80,7 @@ test_that("legend_breaks.delta works", {
 
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(
-    var_left = "climate_flood",
+    var_left = "climate_flood_2017",
     var_right = "housing_tenant_2016",
     df = "grid_grid"
   )

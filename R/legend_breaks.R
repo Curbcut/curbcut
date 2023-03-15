@@ -54,17 +54,17 @@ legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
 #' @export
 legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
   # Grab the breaks from the variables table
-  # Are there already var_name_short recorded?
   breaks <-
     var_get_breaks(
       var = vars$var_left, df = df,
-      break_col = "var_name_short", q3_q5 = "q5",
+      break_col = "rank_name_short", q3_q5 = "q5",
       pretty = TRUE, compact = TRUE, lang = lang
     )
+  breaks <- breaks[!is.na(breaks)]
 
-  # If there are no var_name_short in the `variables` table for the variable,
-  # default to "Low" and "High"
-  if (is.null(breaks)) {
+  # If the default, filter out some breaks to lighten the legend
+  if (identical(breaks, c("Low", "B. average", "Average", "A. average",
+                          "High"))) {
     breaks <- c(
       cc_t(lang = lang, "Low"),
       sapply(1:3, \(x) NULL),
@@ -113,7 +113,7 @@ legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
 legend_breaks.qual <- function(vars, df, lang = NULL, ...) {
   var_get_breaks(
     var = vars$var_left, df = df,
-    break_col = "var_name_short", q3_q5 = "q5",
+    break_col = "rank_name_short", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE, lang = lang
   )
 }

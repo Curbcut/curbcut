@@ -27,7 +27,7 @@ test_that("legend_labels.q100 works", {
 })
 
 test_that("legend_labels.qual works", {
-  vars <- structure(list(var_left = "climate_flood", var_right = " "),
+  vars <- structure(list(var_left = "climate_flood_2017", var_right = " "),
     class = "qual"
   )
   expect_equal(
@@ -43,7 +43,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
         "housing_tenant_2006",
         "housing_tenant_2016"
       ),
-      var_right = "climate_drought_2016"
+      var_right = "climate_drought_2017"
     ),
     class = "bivar_ldelta_rq3"
   )
@@ -51,7 +51,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
     legend_labels(vars),
     list(
       ggplot2::labs(
-        x = "Drought (2016)",
+        x = "Drought (2017)",
         y = "Tenant (\u0394 2006 - 2016)"
       ),
       x_short = "Drought", y_short = "Tenant"
@@ -90,7 +90,7 @@ test_that("legend_labels.delta works", {
 test_that("legend_labels.bivar works", {
   vars <- structure(
     list(
-      var_left = "climate_flood",
+      var_left = "climate_flood_2017",
       var_right = "housing_tenant_2016"
     ),
     class = "bivar"

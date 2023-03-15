@@ -135,3 +135,4 @@ test_that("zoom_get_levels returns the correct map_zoom_levels and region when r
     list(zoom_levels = c(cmhczone = 0), region = "cmhc")
   )
 })
+

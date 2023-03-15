@@ -4,7 +4,13 @@
 \alias{var_get_info}
 \title{Get information about a variable from the \code{variables} table}
 \usage{
-var_get_info(var, what = "var_title", translate = FALSE, lang = NULL)
+var_get_info(
+  var,
+  what = "var_title",
+  translate = FALSE,
+  lang = NULL,
+  check_year = TRUE
+)
 }
 \arguments{
 \item{var}{<\verb{character vector}> String representing the code of the variable
@@ -18,6 +24,9 @@ information using the \code{\link{cc_t}} function. Defaults to \code{FALSE}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate to, if
 \code{translate} is TRUE. If not specified, the function will not attempt to translate.}
+
+\item{check_year}{<\code{logical}> Should the year be removed from \code{var} to grab
+variable's info? Defaults to TRUE}
 }
 \value{
 The requested information about the variable, with optional translation

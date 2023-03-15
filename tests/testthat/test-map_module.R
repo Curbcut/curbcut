@@ -29,7 +29,7 @@ shiny::shinyApp(
       data_colours = data_colours,
       select_id = reactive("24660001"),
       zoom_levels = reactive(map_zoom_levels_city),
-      zoom = zoom
+      zoom = zoom,
     )
   }
 )

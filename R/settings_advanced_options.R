@@ -245,7 +245,35 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
             type = "default"
           )
         }
-        return(unique(unlist(sapply(all_ids, `[`, "IDs"))))
+
+        # Do not double `CSD_ID`. Keep only the one closer to the address
+        ids <- lapply(all_ids, `[[`, 1)
+        dist <- lapply(all_ids, `[[`, 2)
+
+        scale_ids_available <-
+          unique(unlist(sapply(ids, names, simplify = FALSE)))
+
+        # For all scales with an ID available, which is the closer one to the address
+        scales_keep <- sapply(scale_ids_available, \(scale) {
+
+          # Include only the region that share the ID
+          includes <- sapply(ids, \(n) scale %in% names(n))
+          includes <- includes[includes]
+
+          # Filter in only the distance for the region that share the ID
+          d <- dist[names(dist) %in% names(includes)]
+
+          # Which region is closer to the address
+          names(includes[which(unlist(d) == min(unlist(d)))])
+
+        }, USE.NAMES = TRUE)
+
+        # Filter
+        out <- mapply(\(id, scale) {
+          ids[[scale]][[id]]
+        }, names(scales_keep), scales_keep, USE.NAMES = FALSE)
+
+        return(out)
       }
     }
   }

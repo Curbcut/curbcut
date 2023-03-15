@@ -27,8 +27,3 @@ based on the class of \code{x}. Supported unit types are percentage, dollar,
 and default (comma-separated with varying decimal points). If \code{compact}
 is \code{TRUE}, the function will attempt to compact large numbers.
 }
-\examples{
-convert_unit("pct", 0.25)
-convert_unit("dollar", 1000, compact = TRUE)
-convert_unit("default", c(10.2, 10000, 5.67))
-}

@@ -251,20 +251,29 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, ...) {
 
 #' Default data method
 #'
-#' This is the default data method, which returns all possible columns filled
-#' with NA values. It is intended to be used when no specific get data method
-#' is available or necessary. In this case, `NA` takes place.
+#' This is the default data method, which simply returns the table taken out
+#' from the sql database. It extracts the first element of `vars` as the `var`
+#' argument for the  \code{\link{data_get_sql}} call. It directly outputs the
+#' output.
 #'
-#' @param vars <`named list`> A list object with an unknown class.
+#' @param vars <`named list`> A list object with an unknown class. For this `default`
+#' method, no need for vars to have a class. It will extract the first element of
+#' `vars` as the `var` argument for the  \code{\link{data_get_sql}} call.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
-#' @return A dataframe with `NA` values
+#' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
-data_get.default <- function(vars, ...) {
-  data <- data.frame(ID = NA)
-  data$ID <- data$var_left <- data$var_left_q3 <- data$var_left_1 <-
-    data$var_left_2 <- data$var_right <- data$var_right_q3 <-
-    data$var_right_1 <- data$var_right_2 <- NA
-  data$group <- "NA"
+data_get.default <- function(vars, df, ...) {
+
+  # Default method retrieves the data of the first element of `vars`
+  data <- data_get_sql(var = vars[[1]], df = df)
+
+  # To keep it constant, rename with var_left
+  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+
+  # Return
   return(data)
 }

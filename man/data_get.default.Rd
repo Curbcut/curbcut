@@ -4,18 +4,25 @@
 \alias{data_get.default}
 \title{Default data method}
 \usage{
-\method{data_get}{default}(vars, ...)
+\method{data_get}{default}(vars, df, ...)
 }
 \arguments{
-\item{vars}{<\verb{named list}> A list object with an unknown class.}
+\item{vars}{<\verb{named list}> A list object with an unknown class. For this \code{default}
+method, no need for vars to have a class. It will extract the first element of
+\code{vars} as the \code{var} argument for the  \code{\link{data_get_sql}} call.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
 
 \item{...}{Additional arguments passed to other functions.}
 }
 \value{
-A dataframe with \code{NA} values
+A data.frame containing the raw sql table for the first element of \code{vars}.
 }
 \description{
-This is the default data method, which returns all possible columns filled
-with NA values. It is intended to be used when no specific get data method
-is available or necessary. In this case, \code{NA} takes place.
+This is the default data method, which simply returns the table taken out
+from the sql database. It extracts the first element of \code{vars} as the \code{var}
+argument for the  \code{\link{data_get_sql}} call. It directly outputs the
+output.
 }

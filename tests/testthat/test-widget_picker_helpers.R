@@ -2,9 +2,9 @@ test_that("picker_hover_divs creates divs with explanations on hover for a list 
   var_list <- dropdown_make(vars = variables$var_code[1:3])
   lang <- NULL
   expected_output <- list(content = c(
-    "<div title=\"the percentage of private dwellings occupied by tenants\" value=\"housing_tenant\" style=\"width: 100%;\">Tenant-occupied (%)</div>",
+    "<div title=\"the percentage of private households occupied by tenants\" value=\"housing_tenant\" style=\"width: 100%;\">Tenant-occupied (%)</div>",
     "<div title=\"the average rent paid by tenants per month\" value=\"housing_rent\" style=\"width: 100%;\">Average rent ($)</div>",
-    "<div title=\"the percentage of households living in dwellings requiring major repairs\" value=\"housing_repairs\" style=\"width: 100%;\">Housing requiring major repairs (%)</div>"
+    "<div title=\"the percentage of dwellings requiring major repairs\" value=\"housing_repairs\" style=\"width: 100%;\">Housing requiring major repairs (%)</div>"
   ))
   actual_output <- picker_hover_divs(var_list, lang)
   expect_identical(actual_output, expected_output)
@@ -35,12 +35,12 @@ test_that("picker_hover_divs creates divs with translated explanations on hover 
   var_list <- dropdown_make(vars = variables$var_code[1:3], compare = TRUE)
   lang <- "fr"
   var_list_t <- cc_t(var_list, lang = "fr")
-  expected_output <- list(content = c(
-    "<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
-    "<div title=\"le pourcentage de logements privés occupés par des locataires\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
-    "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
-    "<div title=\"le pourcentage de ménages vivant dans des logements nécessitant des réparations importantes\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
-  ))
+  expected_output <-
+    list(content = c("<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
+                     "<div title=\"the percentage of private households occupied by tenants\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
+                     "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
+                     "<div title=\"the percentage of dwellings requiring major repairs\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
+    ))
   actual_output <- picker_hover_divs(var_list_t, lang)
   expect_identical(actual_output, expected_output)
 })
@@ -61,19 +61,17 @@ test_that("picker_hover_divs does not fail when variables are unknown vectors", 
 })
 
 
-vars <- variables$var_code[variables$source == "Canadian census"]
+vars <- variables$var_code[variables$source == "Canadian census" & !is.na(variables$parent_vec)]
 
 test_that("picker_multi_year_disable disables variables when necessary", {
   var_list <- dropdown_make(vars = vars)
   disable <- TRUE
   actual_output <- picker_multi_year_disable(var_list, disable)
   expected_output <-
-    c(
-      FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
+    c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
       FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,
-      FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, TRUE,
-      TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-      FALSE, FALSE
+      FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE,
+      FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
     )
   expect_identical(actual_output, expected_output)
 })

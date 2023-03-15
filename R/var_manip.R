@@ -49,24 +49,43 @@ var_remove_time <- function(var) {
 #' information using the \code{\link{cc_t}} function. Defaults to `FALSE`.
 #' @param lang <`character`> String indicating the language to translate to, if
 #' `translate` is TRUE. If not specified, the function will not attempt to translate.
+#' @param check_year <`logical`> Should the year be removed from `var` to grab
+#' variable's info? Defaults to TRUE
 #'
 #' @return The requested information about the variable, with optional translation
 #' using the \code{\link{cc_t}} function.
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
-                         lang = NULL) {
+                         lang = NULL, check_year = TRUE) {
   variables <- get_from_globalenv("variables")
 
   if (!what %in% names(variables)) {
     stop(glue::glue("`{what}` is not a column of the `variables` table."))
   }
 
-  subset_vector <- variables$var_code == var_remove_time(var)
-  if (sum(subset_vector) == 0) {
-    stop(glue::glue(
-      "`{var_remove_time(var)}` is not a variable code in the ",
-      "`variables` table."
-    ))
+  subset_vector <- if (check_year) {
+    sub <- variables$var_code == var_remove_time(var)
+
+    # If the latter is not present in the `variables` table
+    if (sum(sub) == 0) {
+      stop(glue::glue(
+        "`{var_remove_time(var)}` is not a variable code in the ",
+        "`variables` table."
+      ))
+    }
+
+    sub
+  } else {
+    sub <- which(variables$var_code == var)
+
+    # If the latter is not present in the `variables` table
+    if (length(sub) == 0) {
+      stop(glue::glue(
+        "`{var}` is not a variable code in the ",
+        "`variables` table."
+      ))
+    }
+    sub
   }
 
   out <- variables[[what]][subset_vector]
