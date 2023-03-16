@@ -2,8 +2,10 @@ test_that("data_get.q5  works", {
   vars <- vars_build(var_left = "housing_tenant_2016", df = "city_CSD")
   output <- data_get(vars = vars, df = "city_CSD")
   expect_equal(nrow(output) > 15, TRUE)
-  expect_equal(names(output),
-               c("ID", "var_left", "var_left_q3", "var_left_q5", "group"))
+  expect_equal(
+    names(output),
+    c("ID", "var_left", "var_left_q3", "var_left_q5", "group")
+  )
   expect_equal(class(output[[1]]), "character")
   expect_equal(class(output[[2]]), "numeric")
 })
@@ -33,8 +35,10 @@ test_that("data_get.delta works", {
   )
   output <- data_get(vars = vars, df = "city_CSD")
   expect_equal(nrow(output) > 15, TRUE)
-  expect_equal(names(output), c("ID", "var_left_1", "var_left_2", "var_left",
-                                "var_left_q5", "group"))
+  expect_equal(names(output), c(
+    "ID", "var_left_1", "var_left_2", "var_left",
+    "var_left_q5", "group"
+  ))
   expect_equal(class(output[[1]]), "character")
   expect_equal(class(output[[2]]), "numeric")
   expect_equal(class(output[[4]]), "numeric")
@@ -49,9 +53,11 @@ test_that("data_get.delta_bivar works", {
 
   output <- data_get(vars = vars, df = "city_CSD")
   expect_equal(nrow(output) > 15, TRUE)
-  expect_equal(names(output), c("ID", "var_left_1", "var_left_2", "var_left",
-                                "var_right_1", "var_right_2", "var_right",
-                                "var_left_q3", "var_right_q3", "group"))
+  expect_equal(names(output), c(
+    "ID", "var_left_1", "var_left_2", "var_left",
+    "var_right_1", "var_right_2", "var_right",
+    "var_left_q3", "var_right_q3", "group"
+  ))
   expect_equal(class(output[[1]]), "character")
   expect_equal(class(output[[2]]), "numeric")
   expect_equal(class(output[[4]]), "numeric")

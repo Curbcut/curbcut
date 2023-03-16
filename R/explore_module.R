@@ -59,8 +59,8 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(),
                              select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), df = df()))) {
-
+                             scales_as_DA = scales_as_DA(), df = df()
+                           ))) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
@@ -73,15 +73,15 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
   stopifnot(shiny::is.reactive(table_args))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Make info table. If fails, returns NULL
     table_out <- shiny::reactive(
       tryCatch(
-        do.call(table(), table_args())
-        , error = function(e) {
+        do.call(table(), table_args()),
+        error = function(e) {
           print(e)
           return(NULL)
-        })
+        }
+      )
     )
 
     # Display info table
@@ -106,12 +106,14 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
 
     # Clear selection on button click
     shiny::observeEvent(input$clear_selection, r[[id]]$select_id(NA),
-                        ignoreInit = TRUE)
+      ignoreInit = TRUE
+    )
 
     # Hide compare picker and update the the action link
     shiny::observeEvent(input$hide_explore, {
       shinyjs::toggle("explore_content",
-                      condition = input$hide_explore %% 2 == 0)
+        condition = input$hide_explore %% 2 == 0
+      )
 
       # Change label
       lab <- if (input$hide_explore %% 2 == 0) {
@@ -125,32 +127,41 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
         label = lab
       )
     })
-
   })
 }
 
 #' @describeIn explore_server Create the UI for the explore module
 #' @export
 explore_UI <- function(id) {
-
   shiny::tagList(
-    shiny::div(id = shiny::NS(id, "explore_title"),
-               shiny::fluidRow(shiny::column(
-                 width = 7,
-                 shiny::h4(cc_t("Explore"))),
-                 shiny::column(
-                   width = 5, align = "right",
-                   shiny::actionLink(
-                     inputId = shiny::NS(id, "hide_explore"),
-                     class = "sus-small-link",
-                     label = cc_t("Hide"))))),
-
-    shiny::div(id = shiny::NS(id, "explore_content"),
-               shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
-               # shiny::plotOutput(outputId = shiny::NS(id, "explore_graph"),
-               #                   height = 150),
-               shinyjs::hidden(
-                 shiny::actionLink(inputId = shiny::NS(id, "clear_selection"),
-                                   label = cc_t("Clear selection"))))
+    shiny::div(
+      id = shiny::NS(id, "explore_title"),
+      shiny::fluidRow(
+        shiny::column(
+          width = 7,
+          shiny::h4(cc_t("Explore"))
+        ),
+        shiny::column(
+          width = 5, align = "right",
+          shiny::actionLink(
+            inputId = shiny::NS(id, "hide_explore"),
+            class = "sus-small-link",
+            label = cc_t("Hide")
+          )
+        )
+      )
+    ),
+    shiny::div(
+      id = shiny::NS(id, "explore_content"),
+      shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
+      # shiny::plotOutput(outputId = shiny::NS(id, "explore_graph"),
+      #                   height = 150),
+      shinyjs::hidden(
+        shiny::actionLink(
+          inputId = shiny::NS(id, "clear_selection"),
+          label = cc_t("Clear selection")
+        )
+      )
+    )
   )
 }

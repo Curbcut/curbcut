@@ -111,7 +111,6 @@ data_get <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
 #' added `group` column for map colouring.
 #' @export
 data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -142,7 +141,6 @@ data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
 #' binded in the same dataframe with an added `group` column for map colouring.
 #' @export
 data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -188,7 +186,6 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...
 #' to the `group` column for map colouring.
 #' @export
 data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -226,7 +223,6 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"), ...
 #' `group` column for the map colouring.
 #' @export
 data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -265,7 +261,6 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 #' column for map colouring.
 #' @export
 data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -309,7 +304,6 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
 data_get.default <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
-
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 

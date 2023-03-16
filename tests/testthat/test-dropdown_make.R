@@ -55,8 +55,7 @@ test_that("dropdown_make generates a dropdown list for variables in multiple the
   expected_output <- list(
     Housing = list(`Tenant-occupied (%)` = "housing_tenant"),
     Income = list(`Income above $100k (%)` = "inc_high"),
-    Language = list(`English only (%)` = "lang_eng_only"
-    )
+    Language = list(`English only (%)` = "lang_eng_only")
   )
   actual_output <- dropdown_make(vars, compare)
   expect_identical(actual_output, expected_output)

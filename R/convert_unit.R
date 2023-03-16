@@ -78,9 +78,10 @@ round_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' @return An integer representing the minimum number of significant digits
 #' before the decimal point in x
 min_sig_digits <- function(x) {
-
   # If zero, return zero
-  if (all(x == 0)) return(rep(0, length(x)))
+  if (all(x == 0)) {
+    return(rep(0, length(x)))
+  }
 
   # Find the minimum absolute value in x that is greater than 0
   min_abs_val <- min(abs(x[x != 0]))
@@ -154,9 +155,11 @@ convert_unit.dollar <- function(var, x, compact, ...) {
 
   # If compact and large digit
   if (compact && min_dig >= 4) {
-    return(compact_big_marks(x = x,
-                             min_dig = min_dig,
-                             scale_fun = scales::dollar))
+    return(compact_big_marks(
+      x = x,
+      min_dig = min_dig,
+      scale_fun = scales::dollar
+    ))
   }
 
   # Non-compact
@@ -180,14 +183,18 @@ convert_unit.default <- function(var, x, compact = FALSE, ...) {
   min_dig <- min_sig_digits(x)
 
   if (compact && min_dig >= 4) {
-    return(compact_big_marks(x = x,
-                             min_dig = min_dig,
-                             scale_fun = scales::comma))
+    return(compact_big_marks(
+      x = x,
+      min_dig = min_dig,
+      scale_fun = scales::comma
+    ))
   }
   if (max(abs(x)) >= 1000) {
-    return(round_big_marks(x = x,
-                           min_dig = min_dig,
-                           scale_fun = scales::comma))
+    return(round_big_marks(
+      x = x,
+      min_dig = min_dig,
+      scale_fun = scales::comma
+    ))
   }
   if (max(abs(x)) >= 100 || all(round(x) == x)) {
     return(scales::comma(x, 1))

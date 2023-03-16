@@ -36,10 +36,11 @@ test_that("picker_hover_divs creates divs with translated explanations on hover 
   lang <- "fr"
   var_list_t <- cc_t(var_list, lang = "fr")
   expected_output <-
-    list(content = c("<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
-                     "<div title=\"the percentage of private households occupied by tenants\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
-                     "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
-                     "<div title=\"the percentage of dwellings requiring major repairs\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
+    list(content = c(
+      "<div title=\" \" value=\" \" style=\"width: 100%;\">----</div>",
+      "<div title=\"the percentage of private households occupied by tenants\" value=\"housing_tenant\" style=\"width: 100%;\">Occupé par un locataire (%)</div>",
+      "<div title=\"le loyer moyen payé par les locataires par mois\" value=\"housing_rent\" style=\"width: 100%;\">Loyer moyen ($)</div>",
+      "<div title=\"the percentage of dwellings requiring major repairs\" value=\"housing_repairs\" style=\"width: 100%;\">Logement nécessitant des réparations majeures (%)</div>"
     ))
   actual_output <- picker_hover_divs(var_list_t, lang)
   expect_identical(actual_output, expected_output)
@@ -68,7 +69,8 @@ test_that("picker_multi_year_disable disables variables when necessary", {
   disable <- TRUE
   actual_output <- picker_multi_year_disable(var_list, disable)
   expected_output <-
-    c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
+    c(
+      FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE, FALSE,
       FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,
       FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE,
       FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE

@@ -68,4 +68,3 @@ test_that("data_get_colours.bivar_ldelta_rq3 works", {
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID", "fill"))
 })
-

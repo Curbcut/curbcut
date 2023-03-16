@@ -255,7 +255,6 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
 
         # For all scales with an ID available, which is the closer one to the address
         scales_keep <- sapply(scale_ids_available, \(scale) {
-
           # Include only the region that share the ID
           includes <- sapply(ids, \(n) scale %in% names(n))
           includes <- includes[includes]
@@ -265,7 +264,6 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
 
           # Which region is closer to the address
           names(includes[which(unlist(d) == min(unlist(d)))])
-
         }, USE.NAMES = TRUE)
 
         # Filter

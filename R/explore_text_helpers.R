@@ -17,7 +17,6 @@
 #'
 #' @return A list containing multiple texts used for the explore text panel.
 explore_context <- function(region, select_id, df, switch_DA) {
-
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   region_df <- regions_dictionary[regions_dictionary$region == region, ]
@@ -38,7 +37,8 @@ explore_context <- function(region, select_id, df, switch_DA) {
   # Grab the right scale
   scales_dictionary <- get_from_globalenv("scales_dictionary")
   scale <- scales_dictionary[
-    is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE), ]
+    is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE),
+  ]
 
   # Normal retrieval when the `df` is not part of the scales to treat as
   # DA.
@@ -55,9 +55,13 @@ explore_context <- function(region, select_id, df, switch_DA) {
   if (switch_DA) {
     # Grab the DA ID and the address from the SQL database
     sql_link <- eval(parse(text = (paste0(gsub(".*_", "", df), "_conn"))))
-    bs <- DBI::dbGetQuery(sql_link,
-                          sprintf("SELECT name, DA_ID FROM %s WHERE ID = '%s'",
-                                  df, select_id))
+    bs <- DBI::dbGetQuery(
+      sql_link,
+      sprintf(
+        "SELECT name, DA_ID FROM %s WHERE ID = '%s'",
+        df, select_id
+      )
+    )
 
     # If the selection ID is not in the SQL database, return the region only text
     # with an empty NA. The text that will be showed is the basic one for the region.
@@ -79,13 +83,15 @@ explore_context <- function(region, select_id, df, switch_DA) {
   p_start <- cc_t(tolower(scale$place_name))
 
   # Return
-  return(list(heading = heading,
-              p_start = cc_t("in {p_start}"),
-              name = cc_t("in {name}"),
-              to_compare_determ = region_df$to_compare_determ,
-              to_compare_short = region_df$to_compare_short,
-              scale_plur = scale$plur,
-              select_id = select_id))
+  return(list(
+    heading = heading,
+    p_start = cc_t("in {p_start}"),
+    name = cc_t("in {name}"),
+    to_compare_determ = region_df$to_compare_determ,
+    to_compare_short = region_df$to_compare_short,
+    scale_plur = scale$plur,
+    select_id = select_id
+  ))
 }
 
 #' Get parent title of a variable
@@ -103,9 +109,13 @@ explore_text_parent_title <- function(var) {
 
   # Grab the title of that parent_vec
   # If the parent vector is all population/individuals or households, return it
-  if (parent_string %in% c("individuals", "households")) return(parent_string)
-  parent_string <- var_get_info(var = parent_string, what = "var_title",
-                                check_year = FALSE)
+  if (parent_string %in% c("individuals", "households")) {
+    return(parent_string)
+  }
+  parent_string <- var_get_info(
+    var = parent_string, what = "var_title",
+    check_year = FALSE
+  )
 
   # To lowercase
   parent_string <- tolower(parent_string)
@@ -140,7 +150,6 @@ explore_text_parent_title <- function(var) {
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
 explore_text_region_val_df <- function(var, region, select_id, ...) {
-
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- var_get_info(var = var, what = "region_values")[[1]]
@@ -159,10 +168,12 @@ explore_text_region_val_df <- function(var, region, select_id, ...) {
     return(region_values)
   }
 
-  return(explore_text_select_val(var = var,
-                                 region = region,
-                                 select_id = select_id,
-                                 ...))
+  return(explore_text_select_val(
+    var = var,
+    region = region,
+    select_id = select_id,
+    ...
+  ))
 }
 
 #' Get parent data for a given variable and ID
@@ -228,7 +239,6 @@ explore_text_select_val <- function(var, ...) {
 #'
 #' @export
 explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
-
   # Create empty vector
   out <- c()
 
@@ -241,14 +251,16 @@ explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
   out$val <- data$var_left[data$ID == select_id]
 
   # Get the parent data
-  all_count <- explore_get_parent_data(var = var, select_id = select_id,
-                                       df = df)
+  all_count <- explore_get_parent_data(
+    var = var, select_id = select_id,
+    df = df
+  )
 
   # Multiply the percentage by the count of parent in the zone
   out$count <- out$val * all_count
 
   # Round to the closest 5
-  out$count <- round(out$count/5)*5
+  out$count <- round(out$count / 5) * 5
 
   # Return
   return(out)
@@ -262,7 +274,6 @@ explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
 #'
 #' @export
 explore_text_select_val.dollar <- function(var, data, select_id, ...) {
-
   # Create empty vector
   out <- c()
 
@@ -337,7 +348,6 @@ explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
 #' specified variable.
 #' }
 explore_text_selection_comparison <- function(var, data, select_id) {
-
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
@@ -347,8 +357,10 @@ explore_text_selection_comparison <- function(var, data, select_id) {
   higher_than <- data$var_left[data$ID == select_id] > data$var_left
   higher_than <- mean(higher_than, na.rm = TRUE)
   if (is.na(higher_than)) {
-    return(list(higher_than = NA,
-                rank_chr = NA))
+    return(list(
+      higher_than = NA,
+      rank_chr = NA
+    ))
   }
   higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 0)
 
@@ -361,7 +373,8 @@ explore_text_selection_comparison <- function(var, data, select_id) {
   rank_chr <- ranks_chr[[rank]]
 
   # Return both
-  return(list(higher_than = higher_than_chr,
-              rank_chr = rank_chr))
-
+  return(list(
+    higher_than = higher_than_chr,
+    rank_chr = rank_chr
+  ))
 }

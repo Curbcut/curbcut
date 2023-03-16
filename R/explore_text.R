@@ -40,7 +40,6 @@ explore_text <- function(vars, ...) {
 #' @export
 explore_text.q5 <- function(vars, region, select_id, df, data,
                             scales_as_DA = c("building", "street"), ...) {
-
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
   switch_DA <- is_scale_df(scales_as_DA, df)
@@ -49,17 +48,21 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
-  context <- explore_context(region = region, select_id = select_id, df = df,
-                             switch_DA = switch_DA)
+  context <- explore_context(
+    region = region, select_id = select_id, df = df,
+    switch_DA = switch_DA
+  )
 
   # The context might have used a scale in the `scales_as_DA` argument, and
   # the select_id needs to be switched to that of the dissemination area.
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Grab the value string
-  value_string <- explore_text_values_q5(var = vars$var_left, region = region,
-                                         select_id = select_id, data = data,
-                                         df = df)
+  value_string <- explore_text_values_q5(
+    var = vars$var_left, region = region,
+    select_id = select_id, data = data,
+    df = df
+  )
 
   # Put it all together
   out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), value_string$text)
@@ -70,21 +73,27 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     out <- sprintf("<p><b>%s</b>%s", context$heading, out)
 
     # Get the information on how the selection compares
-    relat <- explore_text_selection_comparison(var = vars$var_left, data = data,
-                                               select_id = select_id)
+    relat <- explore_text_selection_comparison(
+      var = vars$var_left, data = data,
+      select_id = select_id
+    )
 
     # Make the first sentence of the paragraph
-    first_step <- sprintf("This is %s for %s", relat$rank_chr,
-                          context$to_compare_determ)
+    first_step <- sprintf(
+      "This is %s for %s", relat$rank_chr,
+      context$to_compare_determ
+    )
 
     # Grab the explanation and capitalize the first letter
     exp <- var_get_info(vars$var_left, what = "explanation") |>
       s_sentence()
 
     # Plug the right elements for the final sentence
-    second_step <- sprintf("%s %s is higher than %s of other %s %s", exp,
-                           context$p_start, relat$higher_than, context$scale_plur,
-                           context$to_compare_short)
+    second_step <- sprintf(
+      "%s %s is higher than %s of other %s %s", exp,
+      context$p_start, relat$higher_than, context$scale_plur,
+      context$to_compare_short
+    )
 
     # Bind it all
     out <- sprintf("%s<p>%s. %s.", out, first_step, second_step)
@@ -98,7 +107,6 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
 
   # Return the text
   return(out)
-
 }
 
 #' Generate text for the given variables and region - q5 version
@@ -139,7 +147,6 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
-
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -147,18 +154,22 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
   exp <- var_get_info(var = var, what = "exp_q5")
 
   # Grab the region values
-  region_values <- explore_text_region_val_df(var = var,
-                                              region = region,
-                                              data = data,
-                                              df = df,
-                                              select_id = select_id)
+  region_values <- explore_text_region_val_df(
+    var = var,
+    region = region,
+    data = data,
+    df = df,
+    select_id = select_id
+  )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(var = var, what = "explanation")
     out <- sprintf("we currently don't have information regarding %s", exp)
-    return(list(text = out,
-                na = TRUE))
+    return(list(
+      text = out,
+      na = TRUE
+    ))
   }
 
   # Make the region values as characters
@@ -169,9 +180,10 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
   out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
 
   # Return
-  return(list(text = out,
-              na = FALSE))
-
+  return(list(
+    text = out,
+    na = FALSE
+  ))
 }
 
 #' Generate text for the given variables and region - q5 version using dollar
@@ -191,19 +203,22 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.dollar <- function(var, region, data, select_id, ...) {
-
   # Grab the region values
-  region_values <- explore_text_region_val_df(var = var,
-                                              region = region,
-                                              data = data,
-                                              select_id = select_id)
+  region_values <- explore_text_region_val_df(
+    var = var,
+    region = region,
+    data = data,
+    select_id = select_id
+  )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(var = var, what = "explanation")
     out <- sprintf("we currently don't have information regarding %s", exp)
-    return(list(text = out,
-                na = TRUE))
+    return(list(
+      text = out,
+      na = TRUE
+    ))
   }
 
   dollar_string <- convert_unit.dollar(x = region_values$val, compact = FALSE)
@@ -215,9 +230,10 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id, ...) {
   out <- sprintf("%s %s", exp, dollar_string)
 
   # Return
-  return(list(text = out,
-              na = FALSE))
-
+  return(list(
+    text = out,
+    na = FALSE
+  ))
 }
 
 #' Generate text for the given variables and region - Q5 version using indices
@@ -240,28 +256,30 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id, ...) {
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
-
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
   # Grab the region values
-  region_values <- explore_text_region_val_df(var = var,
-                                              region = region,
-                                              select_id = select_id,
-                                              data = data,
-                                              df = df)
+  region_values <- explore_text_region_val_df(
+    var = var,
+    region = region,
+    select_id = select_id,
+    data = data,
+    df = df
+  )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(var = var, what = "explanation")
     out <- sprintf("we currently don't have information regarding %s", exp)
-    return(list(text = out,
-                na = TRUE))
+    return(list(
+      text = out,
+      na = TRUE
+    ))
   }
 
   # If there is no selection
   if (is.na(select_id)) {
-
     # Construct the region values
     pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
     count_string <- convert_unit(x = region_values$count, decimal = 1)
@@ -274,8 +292,10 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
     exp <- if (identical(two_last_ranks, c("above average", "high"))) {
       gsub("_X_", "a higher-than-average", exp)
     } else {
-      gsub("_X_", sprintf("`%s` to `%s`", two_last_ranks[[1]],
-                          two_last_ranks[[2]]), exp)
+      gsub("_X_", sprintf(
+        "`%s` to `%s`", two_last_ranks[[1]],
+        two_last_ranks[[2]]
+      ), exp)
     }
 
     # Grab the explanation
@@ -285,9 +305,10 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
     out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
 
     # Return
-    return(list(text = out,
-                na = TRUE))
-
+    return(list(
+      text = out,
+      na = TRUE
+    ))
   }
 
   # If there is a selection
@@ -297,8 +318,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
   out <- sprintf("%s is %s", exp, region_values$val)
 
   # Return
-  return(list(text = out,
-              na = FALSE))
-
+  return(list(
+    text = out,
+    na = FALSE
+  ))
 }
-
