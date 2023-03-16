@@ -164,7 +164,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   }
 
   # English
-  if (lang == "en") {
+  if (is.null(lang) || lang == "en") {
     return(return_raw(x))
   }
 

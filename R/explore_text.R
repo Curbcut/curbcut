@@ -31,14 +31,30 @@ explore_text <- function(vars, ...) {
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text.q5 <- function(vars, region, select_id, df, data, ...) {
+explore_text.q5 <- function(vars, region, select_id, df, data,
+                            scales_as_DA = c("building", "street"), ...) {
+
+  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # of the `scales_as_DA` argument.
+  switch_DA <- is_scale_df(scales_as_DA, df)
+
+  # Adjust the selected ID in the case where the selection is not in `data`
+  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
-  context <- explore_context(region = region, select_id = select_id, df = df)
+  context <- explore_context(region = region, select_id = select_id, df = df,
+                             switch_DA = switch_DA)
+
+  # The context might have used a scale in the `scales_as_DA` argument, and
+  # the select_id needs to be switched to that of the dissemination area.
+  if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Grab the value string
   value_string <- explore_text_values_q5(var = vars$var_left, region = region,
@@ -46,7 +62,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data, ...) {
                                          df = df)
 
   # Put it all together
-  out <- sprintf("<p>%s, %s.", context$p_start, value_string$text)
+  out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), value_string$text)
 
   # Add the second paragraph if there is a selection
   if (!is.na(select_id) && !value_string$na) {
@@ -66,8 +82,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data, ...) {
       s_sentence()
 
     # Plug the right elements for the final sentence
-    second_step <- sprintf("%s %s is higher than in %s of other %s %s", exp,
-                           context$name, relat$higher_than, context$scale_plur,
+    second_step <- sprintf("%s %s is higher than %s of other %s %s", exp,
+                           context$p_start, relat$higher_than, context$scale_plur,
                            context$to_compare_short)
 
     # Bind it all

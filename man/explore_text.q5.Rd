@@ -4,7 +4,15 @@
 \alias{explore_text.q5}
 \title{Generate text for the given variables and region - q5 version}
 \usage{
-\method{explore_text}{q5}(vars, region, select_id, df, data, ...)
+\method{explore_text}{q5}(
+  vars,
+  region,
+  select_id,
+  df,
+  data,
+  scales_as_DA = c("building", "street"),
+  ...
+)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
@@ -23,6 +31,10 @@ scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The data frame must have columns named var_left
 and ID. The output of \code{\link{data_get}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 
 \item{...}{Additional arguments passed to the dispatched function.}
 }

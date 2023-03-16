@@ -50,29 +50,6 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
       ))
     }
 
-    # Show labels
-    rdeck::rdeck_proxy("map") |>
-      rdeck::add_mvt_layer(
-        id = paste0(id, "_CSD_label"),
-        data = tilejson(
-          mapbox_username = mapbox_username,
-          tileset_prefix = tileset_prefix,
-          tile = "CSD_label"
-        ),
-        visible = TRUE,
-        point_type = "text",
-        get_text = !!as.name("name"),
-        text_background = TRUE,
-        text_background_padding = rep(2, 4),
-        text_font_family = "source-sans-pro-regular",
-        text_font_weight = "bold",
-        get_text_color = "#000000FF",
-        get_text_size = 10,
-        get_text_background_color = "#FFFFFF90",
-        get_text_border_color = "#00000000",
-        get_text_border_width = 0
-      )
-
     # Load texture (streets, buildings, parks (included in street_3), etc.) but
     # invisibly
     street_1 <- tilejson(
@@ -132,6 +109,29 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
         get_line_width = 4,
         get_line_color = "#FFFFFFBB",
         get_fill_color = "#A9A9A94D"
+      )
+
+    # Show labels on top of everything (crated last)
+    rdeck::rdeck_proxy("map") |>
+      rdeck::add_mvt_layer(
+        id = paste0(id, "_CSD_label"),
+        data = tilejson(
+          mapbox_username = mapbox_username,
+          tileset_prefix = tileset_prefix,
+          tile = "CSD_label"
+        ),
+        visible = TRUE,
+        point_type = "text",
+        get_text = !!as.name("name"),
+        text_background = TRUE,
+        text_background_padding = rep(2, 4),
+        text_font_family = "source-sans-pro-regular",
+        text_font_weight = "bold",
+        get_text_color = "#000000FF",
+        get_text_size = 10,
+        get_text_background_color = "#FFFFFF90",
+        get_text_border_color = "#00000000",
+        get_text_border_width = 0
       )
 
     # Reload the building layer depending on the region

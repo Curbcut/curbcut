@@ -1,15 +1,17 @@
 test_that("explore_context works", {
   actual <- explore_context(region = "CMA", select_id = NA,
-                            df = "CSD")
+                            df = "CSD", scales_as_DA = c("building", "street"))
   expected <- list(p_start = "In the Montreal region")
   expect_equal(actual, expected)
 
   # All IDs gives the corresponding list
   expected_names <-
     c("heading", "p_start", "name", "to_compare_determ", "to_compare_short",
-      "scale_plur")
+      "scale_plur", "select_id")
   actual <- sapply(city_CT$ID, \(x) {
-    actual_names <- explore_context(region = "city", select_id = x, df = "city_CT")
+    actual_names <-
+      explore_context(region = "city", select_id = x, df = "city_CT",
+                      scales_as_DA = c("building", "street"))
     all(names(actual_names) == expected_names)
   })
   expect_equal(all(actual), TRUE)
@@ -83,7 +85,7 @@ test_that("explore_text_selection_comparison works", {
                                               select_id = "4620003.00",
                                               data = data)
   expect_equal(actual,
-               list(higher_than = "17.9%", rank_chr = "exceptionally inexpensive"))
+               list(higher_than = "18%", rank_chr = "exceptionally inexpensive"))
 
 
   df <-  "city_CT"
@@ -94,5 +96,5 @@ test_that("explore_text_selection_comparison works", {
                                               select_id = "4620003.00",
                                               data = data)
   expect_equal(actual,
-               list(higher_than = "30.7%", rank_chr = "unusually low"))
+               list(higher_than = "31%", rank_chr = "unusually low"))
 })

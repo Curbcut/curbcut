@@ -82,12 +82,16 @@ data_get_delta <- function(var_two_years, df) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#'
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`
 #' along with a `group` column for map colouring.
 #' @export
-data_get <- function(vars, df, ...) {
+data_get <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
   UseMethod("data_get", vars)
 }
 
@@ -98,12 +102,19 @@ data_get <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
 #' added `group` column for map colouring.
 #' @export
-data_get.q5 <- function(vars, df, ...) {
+data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   # Get var_left and rename
   data <- data_get_sql(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
@@ -122,12 +133,19 @@ data_get.q5 <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
 #' binded in the same dataframe with an added `group` column for map colouring.
 #' @export
-data_get.bivar <- function(vars, df, ...) {
+data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   # Get var_left and rename
   data <- data_get_sql(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
@@ -160,13 +178,20 @@ data_get.bivar <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
 #' years of the same variable. `q5` is calculated on the spot with and doubled
 #' to the `group` column for map colouring.
 #' @export
-data_get.delta <- function(vars, df, ...) {
+data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   # Retrieve
   data <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
@@ -191,13 +216,20 @@ data_get.delta <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
 #' years of two variables. `q3`s are calculated on the spot along with the
 #' `group` column for the map colouring.
 #' @export
-data_get.delta_bivar <- function(vars, df, ...) {
+data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   # Retrieve
   data_vl <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
@@ -221,6 +253,9 @@ data_get.delta_bivar <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -229,7 +264,11 @@ data_get.delta_bivar <- function(vars, df, ...) {
 #' to regroup with the `q3` column of the second value to create the `group`
 #' column for map colouring.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, df, ...) {
+data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   # Retrieve var_left and add a `q3 column`
   data_vl <- data_get_delta(var_two_years = vars$var_left, df = df)
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
@@ -262,11 +301,17 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
-data_get.default <- function(vars, df, ...) {
+data_get.default <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Default method retrieves the data of the first element of `vars`
   data <- data_get_sql(var = vars[[1]], df = df)

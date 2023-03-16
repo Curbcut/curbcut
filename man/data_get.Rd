@@ -4,7 +4,7 @@
 \alias{data_get}
 \title{Get data from the SQLite database}
 \usage{
-data_get(vars, df, ...)
+data_get(vars, df, scales_as_DA = c("building", "street"), ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
@@ -14,6 +14,10 @@ used to determine how to grab de data and output it.}
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 
 \item{...}{Additional arguments passed to methods.}
 }

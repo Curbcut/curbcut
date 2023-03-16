@@ -48,12 +48,12 @@ r_init <- function(lang_init = NULL,
   modules <- get_from_globalenv("modules")
 
   for (i in modules$id) {
-    df <- modules$regions[modules$id == i]
-    df <- unlist(df)[[1]]
+    reg <- modules$regions[modules$id == i]
+    reg <- unlist(reg)[1]
 
     # If there are no `regions` entry in the modules table, don't bother
     # saving a `df` value.
-    if (is.null(df)) {
+    if (is.null(reg)) {
       r[[i]] <- shiny::reactiveValues(
         select_id = shiny::reactiveVal(NA),
         zoom = shiny::reactiveVal(zoom_get(map_zoom)),
@@ -63,9 +63,9 @@ r_init <- function(lang_init = NULL,
       )
     } else {
       # Grab the first zoom level to be the default `df`
-      first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", df))[1]
+      first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", reg))[1]
       first_mzl <- names(first_mzl)
-      df <- paste(first_mzl, df, sep = "_")
+      df <- paste(reg, first_mzl, sep = "_")
 
       r[[i]] <- shiny::reactiveValues(
         select_id = shiny::reactiveVal(NA),

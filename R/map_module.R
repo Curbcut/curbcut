@@ -133,7 +133,8 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
       !map_label_show_texture(
         zoom = zoom(),
         zoom_levels = zoom_levels(),
-        tile = tile()
+        tile = tile(),
+        map_module = TRUE
       )
     })
     shiny::observeEvent(

@@ -11,10 +11,12 @@
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
+#' @param map_module <`logical`> Is the function placed inside the map module
+#' to informe extrusion? If so, zoom should have no effect on extrusion.
 #'
 #' @return A logical value indicating whether or not to show texture for the given
 #' zoom level and tile name
-map_label_show_texture <- function(zoom, tile, zoom_levels) {
+map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) {
   # In no case we show empty buildings on a building scale
   if (is_scale_df(tile, "building")) {
     return(FALSE)
@@ -23,6 +25,11 @@ map_label_show_texture <- function(zoom, tile, zoom_levels) {
   # In no case we show empty buildings on an auto_zoom after the building threshold
   building_zml <- zoom_levels[names(zoom_levels) == "building"]
   if (length(building_zml) > 0 & zoom > (building_zml - 0.5)) {
+    return(FALSE)
+  }
+
+  # In no case we show the zoom under 11
+  if (zoom < 11.5 && !map_module) {
     return(FALSE)
   }
 

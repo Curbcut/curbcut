@@ -21,7 +21,3 @@ the vector contains the numbers 123.456, 0.000789, 0.01, 1000, and 0.5, the
 minimum number of significant digits before the decimal point is 1
 (corresponding to the number of digits in the number 0.5).
 }
-\examples{
-x <- c(123.456, 0.000789, 0.01, 1000, 0.5)
-min_sig_digits(x) # 3
-}

@@ -42,8 +42,8 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 \item{breaks}{<\verb{reactive numeric vector}> Breaks if they need to be manually
 supplied to the legend module.}
 
-\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
-should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 }
 \value{

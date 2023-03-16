@@ -31,8 +31,8 @@
 #' `shiny::reactive(FALSE)`
 #' @param breaks <`reactive numeric vector`> Breaks if they need to be manually
 #' supplied to the legend module.
-#' @param scales_as_DA <`character vector`> A character vector of `scales` that
-#' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
 #'
 #' @return The legend Shiny UI and server module functions
@@ -45,6 +45,7 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(hide))
   stopifnot(shiny::is.reactive(breaks))
+  stopifnot(shiny::is.reactive(scales_as_DA))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Switch scales to DA if necessary

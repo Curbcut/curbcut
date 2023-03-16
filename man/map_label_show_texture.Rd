@@ -4,7 +4,7 @@
 \alias{map_label_show_texture}
 \title{Determine whether to show texture for a given zoom level and tile name}
 \usage{
-map_label_show_texture(zoom, tile, zoom_levels)
+map_label_show_texture(zoom, tile, zoom_levels, map_module = FALSE)
 }
 \arguments{
 \item{zoom}{<\code{numeric}> Value representing the current zoom level. Usually
@@ -17,6 +17,9 @@ levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-zoom).}
+
+\item{map_module}{<\code{logical}> Is the function placed inside the map module
+to informe extrusion? If so, zoom should have no effect on extrusion.}
 }
 \value{
 A logical value indicating whether or not to show texture for the given

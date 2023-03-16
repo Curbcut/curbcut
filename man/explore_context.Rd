@@ -4,7 +4,7 @@
 \alias{explore_context}
 \title{Get region text info}
 \usage{
-explore_context(region, select_id, df)
+explore_context(region, select_id, df, switch_DA)
 }
 \arguments{
 \item{region}{<\code{character}> String specifying the code of the region to
@@ -17,9 +17,12 @@ name of the selected polygon will appear.}
 \item{df}{<\code{character}> The combination of the region under study and the
 scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
+
+\item{switch_DA}{<\code{logical}> Is the \code{df} part of the scales that should be
+switched as DAs instead.}
 }
 \value{
-A list containing the region text with the first letter capitalized.
+A list containing multiple texts used for the explore text panel.
 }
 \description{
 This function retrieves the region df from the global environment given the

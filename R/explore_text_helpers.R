@@ -12,43 +12,80 @@
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param switch_DA <`logical`> Is the `df` part of the scales that should be
+#' switched as DAs instead.
 #'
-#' @return A list containing the region text with the first letter capitalized.
-explore_context <- function(region, select_id, df) {
+#' @return A list containing multiple texts used for the explore text panel.
+explore_context <- function(region, select_id, df, switch_DA) {
 
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
-  region <- regions_dictionary[regions_dictionary$region == region, ]
+  region_df <- regions_dictionary[regions_dictionary$region == region, ]
 
-  if (is.na(select_id)) {
+  region_only_return <- \(region_df) {
     # Grab the region text
-    to_compare <- region$to_compare
+    to_compare <- region_df$to_compare
 
     # Return as a sentence
-    return(list(p_start = s_sentence(to_compare)))
+    return(list(p_start = to_compare))
+  }
+
+  # If there is no selection, return the region text only
+  if (is.na(select_id)) {
+    return(region_only_return(region_df))
   }
 
   # Grab the right scale
   scales_dictionary <- get_from_globalenv("scales_dictionary")
   scale <- scales_dictionary[
     is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE), ]
-  # Get the place heading and glue it
-  dat <- get_from_globalenv(df)
-  dat <- dat[dat$ID == select_id, ]
-  name_2 <- dat$name_2
-  name <- dat$name
-  heading <- glue::glue(scale$place_heading)
+
+  # Normal retrieval when the `df` is not part of the scales to treat as
+  # DA.
+  if (!switch_DA) {
+    # Get the place heading and glue it
+    dat <- get_from_globalenv(df)
+    dat <- dat[dat$ID == select_id, ]
+    name_2 <- dat$name_2
+    name <- dat$name
+    heading <- glue::glue(scale$place_heading)
+  }
+
+  # Tweaked retrieval when the `df` is part of the scales to treat as DAs.
+  if (switch_DA) {
+    # Grab the DA ID and the address from the SQL database
+    sql_link <- eval(parse(text = (paste0(gsub(".*_", "", df), "_conn"))))
+    bs <- DBI::dbGetQuery(sql_link,
+                          sprintf("SELECT name, DA_ID FROM %s WHERE ID = '%s'",
+                                  df, select_id))
+
+    # If the selection ID is not in the SQL database, return the region only text
+    # with an empty NA. The text that will be showed is the basic one for the region.
+    if (nrow(bs) == 0) {
+      out <- region_only_return(region_df)
+      out$select_id <- NA
+      return(out)
+    }
+
+    # Get the heading
+    name <- bs$name
+    heading <- glue::glue(scale$place_heading)
+
+    # Switch the select_id, to be able to use the data values of the `DA`
+    select_id <- bs$DA_ID
+  }
 
   # Get the sentence start (In Borough or In dissemination area XYZ, )
   p_start <- cc_t(tolower(scale$place_name))
 
   # Return
   return(list(heading = heading,
-              p_start = cc_t("In {p_start}"),
+              p_start = cc_t("in {p_start}"),
               name = cc_t("in {name}"),
-              to_compare_determ = region$to_compare_determ,
-              to_compare_short = region$to_compare_short,
-              scale_plur = scale$plur))
+              to_compare_determ = region_df$to_compare_determ,
+              to_compare_short = region_df$to_compare_short,
+              scale_plur = scale$plur,
+              select_id = select_id))
 }
 
 #' Get parent title of a variable
@@ -195,6 +232,11 @@ explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
   # Create empty vector
   out <- c()
 
+  # Throw error if the selected ID is not in the data.
+  if (!select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
+
   # Add the percentage value for the selection. Second column is always
   out$val <- data$var_left[data$ID == select_id]
 
@@ -224,6 +266,11 @@ explore_text_select_val.dollar <- function(var, data, select_id, ...) {
   # Create empty vector
   out <- c()
 
+  # Throw error if the selected ID is not in the data.
+  if (!select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
+
   # Add the value for the selection
   out$val <- data$var_left[data$ID == select_id]
 
@@ -244,6 +291,11 @@ explore_text_select_val.dollar <- function(var, data, select_id, ...) {
 explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
   # Create empty vector
   out <- c()
+
+  # Throw error if the selected ID is not in the data.
+  if (!select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
 
   # Get the group in which falls the selection
   rank <- data$var_left_q5[data$ID == select_id]
@@ -286,6 +338,11 @@ explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
 #' }
 explore_text_selection_comparison <- function(var, data, select_id) {
 
+  # Throw error if the selected ID is not in the data.
+  if (!select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
+
   # The value is higher than X of other observations
   higher_than <- data$var_left[data$ID == select_id] > data$var_left
   higher_than <- mean(higher_than, na.rm = TRUE)
@@ -293,7 +350,7 @@ explore_text_selection_comparison <- function(var, data, select_id) {
     return(list(higher_than = NA,
                 rank_chr = NA))
   }
-  higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 1)
+  higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 0)
 
   # Ranking as characters. We can't use q5 as it's built for breaks of
   # multiple years. Here we only compare with ONE year.

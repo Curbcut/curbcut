@@ -4,7 +4,7 @@
 \alias{data_get.default}
 \title{Default data method}
 \usage{
-\method{data_get}{default}(vars, df, ...)
+\method{data_get}{default}(vars, df, scales_as_DA = c("building", "street"), ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with an unknown class. For this \code{default}
@@ -14,6 +14,10 @@ method, no need for vars to have a class. It will extract the first element of
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 
 \item{...}{Additional arguments passed to other functions.}
 }

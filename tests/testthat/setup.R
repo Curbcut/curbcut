@@ -43,6 +43,13 @@ assign("cmhc_cmhczone_conn",
 )
 
 
+# building sql connection
+assign("building_conn",
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/building.sqlite"),
+       envir = .GlobalEnv
+)
+
+
 # Map zoom levels
 qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)
 

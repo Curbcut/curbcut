@@ -77,10 +77,6 @@ round_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
 #' @param x <`numeric`> A numeric vector
 #' @return An integer representing the minimum number of significant digits
 #' before the decimal point in x
-#'
-#' @examples
-#' x <- c(123.456, 0.000789, 0.01, 1000, 0.5)
-#' min_sig_digits(x) # 3
 min_sig_digits <- function(x) {
 
   # If zero, return zero
