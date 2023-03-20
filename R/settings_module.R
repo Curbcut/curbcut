@@ -126,6 +126,6 @@ settings_UI <- function(id = "settings", contact_email = "contact@curbcut.ca") {
         label = cc_t("Advanced options"),
         shiny::icon("gear", verify_fa = FALSE)
       )
-    ), "summarize"
+    ), "more_horiz"
   )
 }

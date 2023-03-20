@@ -1,9 +1,8 @@
 test_that("explore_context works", {
   actual <- explore_context(
     region = "CMA", select_id = NA,
-    df = "CSD", scales_as_DA = c("building", "street")
-  )
-  expected <- list(p_start = "In the Montreal region")
+    df = "CSD", switch_DA = FALSE)
+  expected <- list(p_start = c(CMA = "in the Montreal region"))
   expect_equal(actual, expected)
 
   # All IDs gives the corresponding list
@@ -16,7 +15,7 @@ test_that("explore_context works", {
     actual_names <-
       explore_context(
         region = "city", select_id = x, df = "city_CT",
-        scales_as_DA = c("building", "street")
+        switch_DA = FALSE
       )
     all(names(actual_names) == expected_names)
   })
@@ -115,3 +114,4 @@ test_that("explore_text_selection_comparison works", {
     list(higher_than = "31%", rank_chr = "unusually low")
   )
 })
+

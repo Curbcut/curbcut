@@ -136,6 +136,16 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
     stop("A picker should not be numeric. It will interfere with bookmarking.")
   }
 
+  # If forgot to drop parent vectors from the list of variables to pick
+  if (all(unlist(var_list) %in% variables$var_code)) {
+    parent_vecs <- variables$parent_vec[variables$var_code %in% unlist(var_list)]
+    if (sum(is.na(parent_vecs)) > 0) {
+      stop(sprintf(paste0("Parent vectors were included in the variable list ",
+                          "for the picker `%s-%s`. They can't be used ",
+                          "front-facing yet."), id, picker_id))
+    }
+  }
+
   # Declare the input in an optionally styled div
   shiny::div(
     style = div_style,

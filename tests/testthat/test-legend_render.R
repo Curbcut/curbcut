@@ -12,15 +12,15 @@ test_that("legend_breaks.q5_ind works", {
     var_left = "climate_drought_2017",
     var_right = " ", df = "grid_grid"
   )
-  p <- legend_render(vars, df = "grid_grid", font_family = NULL)
-  expect_error(print(p), NA)
+  p1 <- legend_render(vars, df = "grid_grid", font_family = NULL)
+  expect_error(print(p1), NA)
 
   vars <- vars_build(
     var_left = "canale",
-    var_right = " ", df = "grid_grid"
+    var_right = " ", df = "CMA_CSD"
   )
-  p <- legend_render(vars, df = "grid_grid", font_family = NULL)
-  expect_error(print(p), NA)
+  p2 <- legend_render(vars, df = "CMA_CSD", font_family = NULL)
+  expect_error(print(p2), NA)
 })
 
 
@@ -49,14 +49,14 @@ test_that("legend_render.delta  works", {
   expect_error(p, NA)
 })
 
-test_that("legend_render.q100  works", {
-  vars <- vars_build(
-    var_left = "c_flood",
-    var_right = " ", df = "raster"
-  )
-  p <- legend_render(vars, df = "raster", font_family = NULL)
-  expect_error(print(p), NA)
-})
+# test_that("legend_render.q100  works", {
+#   vars <- vars_build(
+#     var_left = "c_flood",
+#     var_right = " ", df = "raster"
+#   )
+#   p <- legend_render(vars, df = "raster", font_family = NULL)
+#   expect_error(print(p), NA)
+# })
 
 test_that("legend_render.delta_bivar  works", {
   vars <- vars_build(

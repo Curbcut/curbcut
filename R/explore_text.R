@@ -284,6 +284,9 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
     pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
     count_string <- convert_unit(x = region_values$count, decimal = 1)
 
+    # Grab the explanation
+    exp_q5 <- var_get_info(var = var, what = "exp_q5")
+
     # Sub the placeholder for the two last brackets
     breaks <- var_get_info(var = var, what = "breaks_q5")[[1]]
     breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
@@ -295,11 +298,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
       gsub("_X_", sprintf(
         "`%s` to `%s`", two_last_ranks[[1]],
         two_last_ranks[[2]]
-      ), exp)
+      ), exp_q5)
     }
-
-    # Grab the explanation
-    exp <- var_get_info(var = var, what = "exp_q5")
 
     # Build the return
     out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)

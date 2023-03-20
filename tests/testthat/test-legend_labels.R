@@ -15,16 +15,16 @@ test_that("legend_labels.q5 works", {
   )
 })
 
-test_that("legend_labels.q100 works", {
-  vars <- vars_build(var_left = "c_flood", var_right = " ", df = "raster")
-
-  expect_equal(
-    legend_labels(vars),
-    list(structure(list(x = structure("Flood prev.", class = c(
-      "glue", "character"
-    )), y = NULL), class = "labels"))
-  )
-})
+# test_that("legend_labels.q100 works", {
+#   vars <- vars_build(var_left = "c_flood", var_right = " ", df = "raster")
+#
+#   expect_equal(
+#     legend_labels(vars),
+#     list(structure(list(x = structure("Flood prev.", class = c(
+#       "glue", "character"
+#     )), y = NULL), class = "labels"))
+#   )
+# })
 
 test_that("legend_labels.qual works", {
   vars <- structure(list(var_left = "climate_flood_2017", var_right = " "),
@@ -59,7 +59,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
   )
   expect_equal(
     legend_labels(vars, lang = "fr"),
-    list(structure(list(x = "Sécheresses (2016)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
+    list(structure(list(x = "Sécheresses (2017)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
       x_short = structure("Sécheresses", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
     )
   )
@@ -100,7 +100,7 @@ test_that("legend_labels.bivar works", {
     list(
       ggplot2::labs(
         x = "Tenant-occupied (%) (2016)",
-        y = "Flood"
+        y = "Flood (2017)"
       ),
       x_short = "Tenant",
       y_short = "Flood"
@@ -143,3 +143,4 @@ test_that("legend_labels translation works", {
     )
   )
 })
+

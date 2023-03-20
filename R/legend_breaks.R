@@ -58,7 +58,7 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
     var_get_breaks(
       var = vars$var_left, df = df,
       break_col = "rank_name_short", q3_q5 = "q5",
-      pretty = TRUE, compact = TRUE, lang = lang
+      pretty = TRUE, compact = TRUE, lang = NULL
     )
   breaks <- breaks[!is.na(breaks)]
 
@@ -72,6 +72,8 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
       sapply(1:3, \(x) NULL),
       cc_t(lang = lang, "High")
     )
+  } else {
+    breaks <- sapply(breaks, cc_t)
   }
 
   # Return

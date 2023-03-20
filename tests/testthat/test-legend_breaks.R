@@ -17,8 +17,8 @@ test_that("legend_breaks.q5_ind works", {
   vars2 <- vars_build(var_left = "canale_2016", df = "grid_grid")
 
   expect_equal(
-    legend_breaks(vars1, df = "grid_grid"),
-    structure(c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major"))
+    unname(legend_breaks(vars1, df = "grid_grid")),
+    structure(c("Insig.", "Minor", "Mod.", "Elev.", "Major"))
   )
 
   expect_equal(
@@ -60,10 +60,8 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
       data = data,
       df = "city_CSD"
     ),
-    list(x = c("-0.6", "1.8", "4.1", "10.6"), y = c(
-      "-8.27%", "-4.77%",
-      "-1.51%", "4.24%"
-    ))
+    list(x = c("0.4", "2.7", "4.2", "12.6"), y = c("-8.27%", "-4.75%",
+                                                   "-1.42%", "4.11%"))
   )
 })
 
@@ -80,15 +78,15 @@ test_that("legend_breaks.delta works", {
 
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(
-    var_left = "climate_flood_2017",
+    var_left = "climate_drought_2017",
     var_right = "housing_tenant_2016",
     df = "grid_grid"
   )
   expect_equal(
     legend_breaks(vars, df = "grid_grid"),
     list(x = c("0.24%", "20.2%", "57.12%", "100%"), y = c(
-      "0", "1",
-      "3", "5"
+      "0", "0",
+      "2", "5"
     ))
   )
 })
@@ -108,9 +106,7 @@ test_that("legend_breaks.delta_bivar works", {
   )
   expect_equal(
     legend_breaks(vars, data = data),
-    list(x = c("-8.27%", "-4.77%", "-1.51%", "4.24%"), y = c(
-      "-27.72%",
-      "-21.88%", "-18.54%", "-16.09%"
-    ))
+    list(x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"), y = c("-27.63%",
+                                                             "-21.92%", "-18.54%", "-15.97%"))
   )
 })

@@ -42,6 +42,11 @@ assign("cmhc_cmhczone_conn",
   envir = .GlobalEnv
 )
 
+assign("grid_grid_conn",
+       value = DBI::dbConnect(RSQLite::SQLite(), "resources/grid_grid.sqlite"),
+       envir = .GlobalEnv
+)
+
 
 # building sql connection
 assign("building_conn",
@@ -87,6 +92,7 @@ assign("postal_codes",
 qs::qload("resources/city.qsm", env = .GlobalEnv)
 qs::qload("resources/island.qsm", env = .GlobalEnv)
 qs::qload("resources/cmhc.qsm", env = .GlobalEnv)
+qs::qload("resources/grid.qsm", env = .GlobalEnv)
 
 # Stories for poi test
 qs::qload("resources/stories.qsm", env = .GlobalEnv)

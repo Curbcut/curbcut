@@ -128,7 +128,7 @@ test_that("var_get_breaks works", {
     var_get_breaks(
       var = "climate_drought_2017",
       df = "grid_grid", q3_q5 = "q5",
-      break_col = "var_name_short",
+      break_col = "rank_name_short",
       pretty = TRUE, compact = TRUE
     ),
     c(NA, "Insig.", "Minor", "Mod.", "Elev.", "Major")
