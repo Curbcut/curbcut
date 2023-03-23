@@ -94,6 +94,14 @@ test_that("picker_multi_year_disable returns NULL when the list is empty", {
   expect_identical(actual_output, expected_output)
 })
 
+test_that("picker_multi_year_disable works when on compare", {
+  var_list <- dropdown_make(vars = vars, compare = TRUE)
+  disable <- TRUE
+  expected_output <- TRUE
+  actual_output <- picker_multi_year_disable(var_list, disable)
+  expect_identical(sum(actual_output) > 0, expected_output)
+})
+
 test_that("picker_return_var returns input if time is NULL", {
   input <- "housing_tenant"
   time <- NULL

@@ -4,10 +4,12 @@
 \alias{icon_material}
 \title{Create a Material Design icon.}
 \usage{
-icon_material(icon)
+icon_material(icon, style = NULL)
 }
 \arguments{
 \item{icon}{<\code{character}> The name of the icon to be displayed.}
+
+\item{style}{<\code{character}> Added CSS styling like \code{"color:white;"}}
 }
 \value{
 A "span" element with the "material-icons" class and the specified icon.

@@ -26,14 +26,16 @@ legend_labels <- function(vars, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
+#' @param short_threshold <`numeric`> Maximum threshold for the title length,
+#' above which the short title will be returned.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.q5 <- function(vars, lang = NULL, ...) {
+legend_labels.q5 <- function(vars, lang = NULL, short_threshold = 25, ...) {
   title_left <-
     var_get_title(
-      var = vars$var_left, short_treshold = 25,
+      var = vars$var_left, short_treshold = short_threshold,
       translate = TRUE, lang = lang
     )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
@@ -51,14 +53,16 @@ legend_labels.q5 <- function(vars, lang = NULL, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
+#' @param short_threshold <`numeric`> Maximum threshold for the title length,
+#' above which the short title will be returned.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.q100 <- function(vars, lang = NULL, ...) {
+legend_labels.q100 <- function(vars, lang = NULL, short_threshold = 25, ...) {
   title_left <-
     var_get_title(
-      var = vars$var_left, short_treshold = 25,
+      var = vars$var_left, short_treshold = short_threshold,
       translate = TRUE, lang = lang
     )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
@@ -77,14 +81,16 @@ legend_labels.q100 <- function(vars, lang = NULL, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
+#' @param short_threshold <`numeric`> Maximum threshold for the title length,
+#' above which the short title will be returned.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.qual <- function(vars, lang = NULL, ...) {
+legend_labels.qual <- function(vars, lang = NULL, short_threshold = 25, ...) {
   title_left <-
     var_get_title(
-      var = vars$var_left, short_treshold = 25,
+      var = vars$var_left, short_treshold = short_threshold,
       translate = TRUE, lang = lang
     )
   return(list(ggplot2::labs(x = title_left, y = NULL)))
@@ -161,14 +167,16 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
+#' @param short_threshold <`numeric`> Maximum threshold for the title length,
+#' above which the short title will be returned.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.delta <- function(vars, lang = NULL, ...) {
+legend_labels.delta <- function(vars, lang = NULL, short_threshold = 25, ...) {
   title_left <-
     var_get_title(
-      var = vars$var_left, short_treshold = 25,
+      var = vars$var_left, short_treshold = short_threshold,
       translate = TRUE, lang = lang
     )
   date_left <- var_get_time(var = vars$var_left)

@@ -96,7 +96,8 @@ test_that("explore_text_selection_comparison works", {
   )
   expect_equal(
     actual,
-    list(higher_than = "18%", rank_chr = "exceptionally inexpensive")
+    list(higher_than = "18%", rank_chr = "exceptionally inexpensive",
+         higher_than_num = 0.179324894514768)
   )
 
 
@@ -111,7 +112,8 @@ test_that("explore_text_selection_comparison works", {
   )
   expect_equal(
     actual,
-    list(higher_than = "31%", rank_chr = "unusually low")
+    list(higher_than = "31%", rank_chr = "unusually low",
+         higher_than_num = 0.307368421052632)
   )
 })
 

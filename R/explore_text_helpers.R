@@ -21,6 +21,7 @@ explore_context <- function(region, select_id, df, switch_DA) {
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   region_df <- regions_dictionary[regions_dictionary$region == region, ]
 
+  # Prepare a return when there is no selection
   region_only_return <- \(region_df) {
     # Grab the region text
     to_compare <- region_df$to_compare
@@ -139,6 +140,9 @@ explore_text_parent_title <- function(var) {
 #' Usually equivalent of `r$region()`.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
 #' function: \itemize{
 #'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
@@ -149,7 +153,7 @@ explore_text_parent_title <- function(var) {
 #'
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
-explore_text_region_val_df <- function(var, region, select_id, ...) {
+explore_text_region_val_df <- function(var, region, select_id, left = TRUE, ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- var_get_info(var = var, what = "region_values")[[1]]
@@ -172,6 +176,7 @@ explore_text_region_val_df <- function(var, region, select_id, ...) {
     var = var,
     region = region,
     select_id = select_id,
+    left = left,
     ...
   ))
 }
@@ -189,9 +194,12 @@ explore_text_region_val_df <- function(var, region, select_id, ...) {
 #' @param df <`character`>The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #'
 #' @return A vector containing the parent value for the zone.
-explore_get_parent_data <- function(var, select_id, df) {
+explore_get_parent_data <- function(var, select_id, df, left = TRUE) {
   # Get the parent string
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
@@ -204,8 +212,11 @@ explore_get_parent_data <- function(var, select_id, df) {
   # Grab the parent data
   parent_data <- data_get(parent_string, df)
 
+  # Which column in the data?
+  column <- if (left) "var_left" else "var_right"
+
   # Get the parent value for the zone
-  all_count <- parent_data$var_left[parent_data$ID == select_id]
+  all_count <- parent_data[[column]][parent_data$ID == select_id]
 
   # Return
   return(all_count)
@@ -236,9 +247,13 @@ explore_text_select_val <- function(var, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #'
 #' @export
-explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
+explore_text_select_val.pct <- function(var, select_id, data, df, left = TRUE,
+                                        ...) {
   # Create empty vector
   out <- c()
 
@@ -247,8 +262,11 @@ explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
+  # Which column in the data?
+  column <- if (left) "var_left" else "var_right"
+
   # Add the percentage value for the selection. Second column is always
-  out$val <- data$var_left[data$ID == select_id]
+  out$val <- data[[column]][data$ID == select_id]
 
   # Get the parent data
   all_count <- explore_get_parent_data(
@@ -271,9 +289,13 @@ explore_text_select_val.pct <- function(var, select_id, data, df, ...) {
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param data <`data.frame`>The output of \code{\link{data_get}}.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #'
 #' @export
-explore_text_select_val.dollar <- function(var, data, select_id, ...) {
+explore_text_select_val.dollar <- function(var, data, select_id, left = TRUE,
+                                           ...) {
   # Create empty vector
   out <- c()
 
@@ -282,8 +304,11 @@ explore_text_select_val.dollar <- function(var, data, select_id, ...) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
+  # Which column in the data?
+  column <- if (left) "var_left" else "var_right"
+
   # Add the value for the selection
-  out$val <- data$var_left[data$ID == select_id]
+  out$val <- data[[column]][data$ID == select_id]
 
   # Return
   return(out)
@@ -297,9 +322,13 @@ explore_text_select_val.dollar <- function(var, data, select_id, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #'
 #' @export
-explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
+explore_text_select_val.ind <- function(var, data, df, select_id, left = TRUE,
+                                        ...) {
   # Create empty vector
   out <- c()
 
@@ -308,8 +337,11 @@ explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
+  # Which column in the data?
+  column <- if (left) "var_left_q5" else "var_right_q5"
+
   # Get the group in which falls the selection
-  rank <- data$var_left_q5[data$ID == select_id]
+  rank <- data[[column]][data$ID == select_id]
 
   # Grab the rank name for the rank
   brks <- var_get_info(var = var, what = "breaks_q5")[[1]]
@@ -337,6 +369,9 @@ explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
 #' and ID. The output of \code{\link{data_get}}.
 #' @param select_id <`character`> The ID of the selected zone for which to
 #' retrieve the ranking.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -347,14 +382,18 @@ explore_text_select_val.ind <- function(var, data, df, select_id, ...) {
 #' of the selected observation in comparison to the other observations for the
 #' specified variable.
 #' }
-explore_text_selection_comparison <- function(var, data, select_id) {
+explore_text_selection_comparison <- function(var, data, select_id,
+                                              left = TRUE) {
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
+  # Which column in the data?
+  column <- if (left) "var_left" else "var_right"
+
   # The value is higher than X of other observations
-  higher_than <- data$var_left[data$ID == select_id] > data$var_left
+  higher_than <- data[[column]][data$ID == select_id] > data[[column]]
   higher_than <- mean(higher_than, na.rm = TRUE)
   if (is.na(higher_than)) {
     return(list(
@@ -375,6 +414,58 @@ explore_text_selection_comparison <- function(var, data, select_id) {
   # Return both
   return(list(
     higher_than = higher_than_chr,
-    rank_chr = rank_chr
+    rank_chr = rank_chr,
+    higher_than_num = higher_than
   ))
+}
+
+#' Helper function for exploring bivariate correlation between variables
+#'
+#' This function calculates bivariate correlation between two text variables
+#' using either Pearson's correlation coefficient or Spearman's rank correlation
+#' coefficient based on the type of variables passed as arguments. The result is
+#' returned as a list containing the correlation coefficient and a formatted
+#' string.
+#'
+#' @param vars <`character`> A list containing the variable names for which the
+#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The output of \code{\link{data_get}}.
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#' @param ... Additional arguments to be passed.
+#'
+#' @return A list containing the correlation coefficient and a formatted string.
+#' @export
+explore_text_bivar_correlation_helper <- function(vars, data, lang, ...) {
+  UseMethod("explore_text_bivar_correlation_helper", vars)
+}
+
+#' @rdname explore_text_bivar_correlation_helper
+#' @export
+explore_text_bivar_correlation_helper.scalar <- function(vars, data,
+                                                         lang = NULL, ...) {
+
+  # Correlation
+  corr <- stats::cor(data$var_left, data$var_right, use = "complete.obs")
+  corr_string <- sprintf("Pearson's r: %s", round(corr, digits = 2))
+  corr_string <- cc_t(corr_string, lang = lang)
+
+  return(list(corr = corr,
+              corr_string = corr_string))
+}
+
+#' @rdname explore_text_bivar_correlation_helper
+#' @export
+explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
+                                                          lang = NULL, ...) {
+
+  # Correlation
+  corr <- stats::cor(data$var_left, data$var_right,
+              use = "complete.obs", method = "spearman")
+  corr_string <- sprintf("Spearman's rho: %s", round(corr, digits = 2))
+  corr_string <- cc_t(corr_string, lang = lang)
+
+  return(list(corr = corr,
+              corr_string = corr_string))
 }

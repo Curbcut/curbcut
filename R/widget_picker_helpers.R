@@ -99,14 +99,16 @@ picker_multi_year_disable <- function(var_list, disable) {
   # Get the variable list as a character vector
   var_unlist <- unname(unlist(var_list))
 
+  # Get all the vars except the empty comparison value
+  vars <- var_unlist[var_unlist != " "] # Drop the 'no' comparison value
+
   # If vars are not in the variables table, return no disabling
   variables <- get_from_globalenv("variables")
-  if (sum(!var_unlist %in% variables$var_code) > 0) {
-    return(rep(FALSE, length(var_unlist)))
+  if (sum(!vars %in% variables$var_code) > 0) {
+    return(rep(FALSE, length(vars)))
   }
 
   # Get all the years
-  vars <- var_unlist[var_unlist != " "] # Drop the 'no' comparison value
   all_years <- lapply(vars, \(x) var_get_info(x, what = "dates")[[1]])
 
   # We select the variables that are available the same amount as the variables

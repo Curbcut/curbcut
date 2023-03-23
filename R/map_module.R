@@ -155,7 +155,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
 #' @export
 map_UI <- function(id) {
   shiny::div(
-    class = "map_div",
+    class = "map_div", id = shiny::NS(id, "map_div"),
     rdeck::rdeckOutput(shiny::NS(id, "map"), height = "100%")
   )
 }

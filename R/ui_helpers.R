@@ -18,11 +18,12 @@
 #' please visit \href{https://material.io/resources/icons/}{Material Symbols and Icons - Google Fonts}.
 #'
 #' @param icon <`character`> The name of the icon to be displayed.
+#' @param style <`character`> Added CSS styling like `"color:white;"`
 #'
 #' @return A "span" element with the "material-icons" class and the specified icon.
 #' @export
-icon_material <- function(icon) {
-  shiny::span(class = "material-icons", icon)
+icon_material <- function(icon, style = NULL) {
+  shiny::span(class = "material-icons", style = style, icon)
 }
 #' Create a custom icon element
 #'

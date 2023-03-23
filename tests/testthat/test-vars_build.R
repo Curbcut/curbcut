@@ -4,10 +4,9 @@ test_that("vars_build works", {
       var_left = "housing_tenant_2016", var_right = " ",
       df = "CMA_CSD"
     ),
-    structure(list(var_left = structure("housing_tenant_2016", class = c(
-      "pct",
-      "character"
-    )), var_right = " "), class = "q5")
+    structure(list(var_left = structure("housing_tenant_2016", class = c("pct",
+                                                                         "scalar", "character")), var_right = " "), class = c("q5", "scalar"
+                                                                         ))
   )
 
   expect_equal(
@@ -15,10 +14,9 @@ test_that("vars_build works", {
       var_left = "housing_tenant_2016", var_right = " ",
       df = "CMA_building"
     ),
-    structure(list(var_left = structure("housing_tenant_2016", class = c(
-      "pct",
-      "character"
-    )), var_right = " "), class = "q5")
+    structure(list(var_left = structure("housing_tenant_2016", class = c("pct",
+                                                                         "scalar", "character")), var_right = " "), class = c("q5", "scalar"
+                                                                         ))
   )
 
   expect_equal(
@@ -28,11 +26,13 @@ test_that("vars_build works", {
     ),
     structure(list(var_left = structure("housing_tenant_2016", class = c(
       "pct",
+      "scalar",
       "character"
     )), var_right = structure("inc_limat_2016", class = c(
       "pct",
+      "scalar",
       "character"
-    ))), class = "bivar")
+    ))), class = c("bivar", "scalar"))
   )
 
   expect_equal(
@@ -50,10 +50,10 @@ test_that("vars_build works", {
     structure(list(var_left = structure(c(
       "housing_tenant_2006",
       "housing_tenant_2016"
-    ), class = c("pct", "character")), var_right = structure(c(
+    ), class = c("pct", "scalar", "character")), var_right = structure(c(
       "inc_limat_2006",
       "inc_limat_2016"
-    ), class = c("pct", "character"))), class = "delta_bivar")
+    ), class = c("pct", "scalar", "character"))), class = c("delta_bivar","scalar"))
   )
 
   expect_equal(
@@ -68,7 +68,8 @@ test_that("vars_build works", {
     structure(list(var_left = structure(c(
       "housing_tenant_2006",
       "housing_tenant_2016"
-    ), class = c("pct", "character")), var_right = " "), class = "delta")
+    ), class = c("pct", "scalar", "character")), var_right = " "),
+    class = c("delta", "scalar"))
   )
 
   expect_equal(
@@ -83,10 +84,10 @@ test_that("vars_build works", {
     structure(list(var_left = structure(c(
       "housing_tenant_2006",
       "housing_tenant_2016"
-    ), class = c("pct", "character")), var_right = structure("inc_limat_2006", class = c(
-      "pct",
+    ), class = c("pct", "scalar", "character")), var_right = structure("inc_limat_2006", class = c(
+      "pct", "scalar",
       "character"
-    ))), class = "bivar_ldelta_rq3")
+    ))), class = c("bivar_ldelta_rq3", "scalar"))
   )
 
   expect_equal(
@@ -112,13 +113,12 @@ test_that("vars_build works", {
     structure(list(
       var_left = structure(
         c(
-          "housing_tenant_2016",
           "housing_tenant_2016"
         ),
-        class = c("pct", "character")
+        class = c("pct", "scalar", "character")
       ),
       var_right = " "
-    ), class = "NA")
+    ), class = c("q5", "scalar"))
   )
 
   expect_equal(
@@ -128,8 +128,9 @@ test_that("vars_build works", {
     ),
     structure(list(var_left = structure("climate_drought_2017", class = c(
       "ind",
+      "ordinal",
       "character"
-    )), var_right = " "), class = c("q5_ind", "q5"))
+    )), var_right = " "), class = c("q5_ind", "q5", "ordinal"))
   )
 
   # expect_equal(

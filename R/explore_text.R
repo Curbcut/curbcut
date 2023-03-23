@@ -1,23 +1,7 @@
 #' Generate text for the given variables and region
 #'
 #' This function dispatches to the appropriate text-generating function based on
-#' the variable type and returns the resulting text.
-#'
-#' @param vars <`character`> A list containing the variable names for which the
-#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
-#' @param ... Additional arguments passed to the dispatched function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text <- function(vars, ...) {
-  UseMethod("explore_text", vars)
-}
-
-#' Generate text for the given variables and region - q5 version
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version. It dispatches to the appropriate text-generating function based on
-#' the variable type and returns the resulting text.
+#' the type of `vars` and returns the resulting text.
 #'
 #' @param vars <`character`> A list containing the variable names for which the
 #' text needs to be generated. Usually the output of \code{\link{vars_build}}.
@@ -34,12 +18,25 @@ explore_text <- function(vars, ...) {
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting text.
 #' @export
+explore_text <- function(vars, region, select_id, df, data, scales_as_DA,
+                         lang, ...) {
+  UseMethod("explore_text", vars)
+}
+
+
+# Q5 ----------------------------------------------------------------------
+
+#' @rdname explore_text
+#' @export
 explore_text.q5 <- function(vars, region, select_id, df, data,
-                            scales_as_DA = c("building", "street"), ...) {
+                            scales_as_DA = c("building", "street"),
+                            lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
   switch_DA <- is_scale_df(scales_as_DA, df)
@@ -142,11 +139,15 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' \code{\link{update_df}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
+explore_text_values_q5.pct <- function(var, region, data, df, select_id,
+                                       left = TRUE, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -159,7 +160,8 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
     region = region,
     data = data,
     df = df,
-    select_id = select_id
+    select_id = select_id,
+    left = left
   )
 
   # NA message
@@ -198,17 +200,22 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id, ...) {
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.dollar <- function(var, region, data, select_id, ...) {
+explore_text_values_q5.dollar <- function(var, region, data, select_id,
+                                          left = TRUE, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
     data = data,
-    select_id = select_id
+    select_id = select_id,
+    left = left
   )
 
   # NA message
@@ -251,11 +258,15 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id, ...) {
 #' \code{\link{update_df}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
+#' or the `var_right`. It will impact on which column of `data` is selected
+#' to grab the information.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
+explore_text_values_q5.ind <- function(var, region, select_id, data, df,
+                                       left = TRUE, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -265,7 +276,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
     region = region,
     select_id = select_id,
     data = data,
-    df = df
+    df = df,
+    left = left
   )
 
   # NA message
@@ -322,4 +334,320 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df, ...) {
     text = out,
     na = FALSE
   ))
+}
+
+
+# BIVAR -------------------------------------------------------------------
+
+#' @rdname explore_text
+#' @export
+explore_text.bivar <- function(vars, region, select_id, df, data,
+                               scales_as_DA = c("building", "street"),
+                               lang = NULL, ...) {
+
+  # Append date function helper
+  append_date <- \(out) {
+    date_1 <- var_get_time(vars$var_left)
+    date_2 <- var_get_time(vars$var_right)
+    date <- if (is.na(date_1) & is.na(date_2)) {
+      NA
+    } else if (is.na(date_1) & !is.na(date_2)) {
+      date_2
+    } else if (!is.na(date_1) & is.na(date_2)) {
+      date_1
+    } else if (date_1 == date_2) {
+      date_1
+    } else {
+      sprintf("%s and %s", date_1, date_2)
+    }
+    if (!is.na(date)) {
+      sprintf("%s <i>(Data from %s.)</i>", out, date)
+    }
+  }
+
+  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # of the `scales_as_DA` argument.
+  switch_DA <- is_scale_df(scales_as_DA, df)
+
+  # Adjust the selected ID in the case where the selection is not in `data`
+  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+
+  # Grab the shared info
+  context <- explore_context(
+    region = region, select_id = select_id, df = df,
+    switch_DA = switch_DA
+  )
+
+  # The context might have used a scale in the `scales_as_DA` argument, and
+  # the select_id needs to be switched to that of the dissemination area.
+  if ("select_id" %in% names(context)) select_id <- context$select_id
+
+  # If there is a selection, return a completely diferent text
+  if (!is.na(select_id)) {
+
+    # Grab the value string
+    value_string_left <- explore_text_values_q5(
+      var = vars$var_left, region = region,
+      select_id = select_id, data = data,
+      df = df
+    )
+
+    # Grab the value string
+    value_string_right <- explore_text_values_q5(
+      var = vars$var_right, region = region,
+      select_id = select_id, data = data,
+      df = df,
+      left = FALSE
+    )
+
+    # If one of the value is NA, return that there is a missing value
+    if (value_string_left$na) {
+      return(sprintf("<p>%s, %s.", s_sentence(context$p_start),
+                     value_string_left$text))
+    }
+    if (value_string_right$na) {
+      return(sprintf("<p>%s, %s.", s_sentence(context$p_start),
+                     value_string_right$text))
+    }
+
+    # Start with the header
+    out <- sprintf("<p><b>%s</b>", context$heading)
+
+    out <- sprintf("%s<p>%s, %s and %s.", out, s_sentence(context$p_start),
+                   value_string_left$text, value_string_right$text)
+
+    # Grab the two texts for var_left and var_right
+    compare_texts <- lapply(vars, \(var) {
+
+      left <- if (var == vars$var_left) TRUE else FALSE
+
+      # Get the information on how the selection compares
+      relat <- explore_text_selection_comparison(
+        var = var, data = data,
+        select_id = select_id,
+        left = left
+      )
+
+      # Grab the explanation and capitalize the first letter
+      exp <- var_get_info(var, what = "explanation")
+
+      # Plug the right elements for the final sentence
+      first_step_1 <- if (left) sprintf("%s %s", exp, context$p_start) else {
+        exp
+      }
+      first_step <- sprintf(
+        "%s is higher than %s of other %s", first_step_1, relat$higher_than,
+        context$scale_plur
+      )
+
+      # Make the second step of the sentence
+      second_step <- sprintf(
+        "which is %s for %s", relat$rank_chr, context$to_compare_determ
+      )
+
+      return(list(higher_than = relat$higher_than_num,
+                  text = sprintf("%s, %s", first_step, second_step)))
+
+    })
+
+    # Is the rank similar or different
+    percs <- sapply(compare_texts, `[[`, "higher_than")
+    percs_distance <- abs(percs[[1]] - percs[[2]])
+    connector <- if (percs_distance > 0.2) "Whereas" else "Similarly"
+
+    compare_texts$var_left$text <- s_sentence(compare_texts$var_left$text)
+
+    # Bind it all
+    out <- sprintf("%s<p>%s. %s, %s.", out, compare_texts$var_left$text,
+                   connector, compare_texts$var_right$text)
+
+    return(append_date(out))
+  }
+
+  # Scales
+  scales_dictionary <- get_from_globalenv("scales_dictionary")
+  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_plur <- scales_dictionary$plur[scale_vec]
+
+  # Correlation
+  relation <- explore_text_bivar_correlation(vars, data, lang = lang)
+
+  # If there is no correlation, the text is slightly different
+  if (relation$no_correlation) {
+
+    # Explanations
+    left_exp <- var_get_info(vars$var_left, what = "explanation",
+                             translate = TRUE, lang = lang)
+    right_exp <- var_get_info(vars$var_right, what = "explanation",
+                              translate = TRUE, lang = lang)
+
+    out <- sprintf("%s, there is %s (%s) between %s and %s in %s.",
+                   s_sentence(context$p_start), relation$relation_text, relation$corr,
+                   left_exp, right_exp, scale_plur)
+
+    return(append_date(out))
+
+  }
+
+  # Adjectives
+  left_adj <- explore_text_bivar_adjective(var = vars$var_left,
+                                           left = TRUE,
+                                           lang = lang)
+  right_adj <- explore_text_bivar_adjective(var = vars$var_right,
+                                            left = FALSE,
+                                            positive = relation$positive,
+                                            lang = lang)
+
+  # Explanations
+  left_exp <- var_get_info(vars$var_left, what = "explanation_nodet",
+                           translate = TRUE, lang = lang)
+  right_exp <- var_get_info(vars$var_right, what = "explanation_nodet",
+                            translate = TRUE, lang = lang)
+
+  # Paragraphs
+  first_p <-
+    if (grepl("_X_", relation$relation_text)) {
+      # When the relationship is 'weak', it's a two-part relation_text
+      relation_right_ajd_exp <-
+        gsub("_X_", sprintf("have %s %s", right_adj, right_exp),
+             relation$relation_text)
+
+      sprintf("%s, %s with %s %s %s.",
+              s_sentence(context$p_start), scale_plur, left_adj, left_exp,
+              relation_right_ajd_exp)
+    } else {
+
+      sprintf("%s, %s with %s %s %s have %s %s.",
+              s_sentence(context$p_start), scale_plur, left_adj, left_exp,
+              relation$relation_text, right_adj, right_exp)
+    }
+  second_p <- sprintf("There is a %s (%s) between these two variables.",
+                      relation$corr_strength, relation$corr)
+
+  # Bind the two paragraphs
+  out <- sprintf("<p>%s<p>%s", first_p, second_p)
+
+  # Write STRONG CORRELATION if it is the case
+  if (relation$strong) {
+    out <- sprintf("<p><b>STRONG CORRELATION</b>%s", out)
+  }
+
+  return(append_date(out))
+
+}
+
+#' Function for exploring bivariate correlation between two variables
+#'
+#' This function calculates bivariate correlation between two variables and
+#' returns a list containing the correlation coefficient, a boolean indicating
+#' whether the correlation is positive or negative, a text string describing the
+#' strength and direction of the correlation, and a text string describing the
+#' relationship between the variables.
+#'
+#' @param vars <`character`> A list containing the variable names for which the
+#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The output of \code{\link{data_get}}.
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#'
+#' @return A list containing the correlation coefficient, a boolean indicating
+#' whether the correlation is positive or negative, a text string describing
+#' the strength and direction of the correlation, and a text string describing
+#' the relationship between the variables.
+explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
+
+  # Get correlation and method string
+  corr <- explore_text_bivar_correlation_helper(vars = vars,
+                                                data = data,
+                                                lang = lang)
+
+  # Is the correlation positive
+  positive <- corr$corr > 0
+  positive_string <- if (positive) "positive" else "negative"
+
+  # Correlation strings
+  absolute <- abs(corr$corr)
+  # Flag the correlation as NOT strong to start with.
+  strong <- FALSE
+  # Flag the correlation as inexistant to start with
+  no_correlation <- FALSE
+
+  if (absolute > 0.7) {
+
+    relation_text <- cc_t("almost always", lang = lang)
+    strength <- "strong"
+    strong <- TRUE
+
+    corr_strength <- sprintf("%s %s correlation", strength, positive_string)
+
+  } else if (absolute > 0.3) {
+    relation_text <- cc_t("tend to", lang = lang)
+    strength <- "moderate"
+
+    corr_strength <- sprintf("%s %s correlation", strength, positive_string)
+
+  } else if (absolute > 0.1) {
+    relation_text <- cc_t("often _X_, although with many exceptions",
+                          lang = lang)
+    strength <- "weak"
+
+    corr_strength <- sprintf("%s %s correlation", strength, positive_string)
+
+  } else {
+    relation_text <- cc_t("effectively no relationship", lang = lang)
+    strength <- "effectively no correlation"
+    no_correlation <- TRUE
+
+    corr_strength <- strength
+  }
+
+  return(list(corr = corr$corr_string,
+              strong = strong,
+              positive = positive,
+              no_correlation = no_correlation,
+              relation_text = relation_text,
+              corr_strength = corr_strength))
+}
+
+#' Helper function for generating adjective to describe bivariate relationship
+#' between text variables
+#'
+#' This function generates a text string containing an adjective to describe the
+#' bivariate relationship between two variables based on whether the relationship
+#' is positive or negative.
+#'
+#' @param var <`character`> The variable name for which the text needs to be
+#' generated. `vars$var_left` or `vars$var_right`
+#' @param left <`logical>` Whether the `var` supplied is the var_left
+#' or the `var_right`. If `var_left`, TRUE.
+#' @param positive <`logical`> Wheter the bivariate relationship is positive
+#' or negative. One of the output of \code{\link{explore_text_bivar_correlation}}
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#' @param ... Additional arguments to be passed.
+#'
+#' @return A text string containing an adjective to describe the bivariate
+#' relationship.
+#' @export
+explore_text_bivar_adjective <- function(var, left, positive, lang = NULL, ...) {
+  UseMethod("explore_text_bivar_adjective", var)
+}
+
+#' @rdname explore_text_bivar_adjective
+#' @export
+explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
+                                                ...) {
+  if (left) return(cc_t("higher", lang = lang))
+  if (positive) return(cc_t("higher", lang = lang))
+  return(cc_t("lower", lang = lang))
+}
+
+#' @rdname explore_text_bivar_adjective
+#' @export
+explore_text_bivar_adjective.default <- function(var, left, positive, lang,
+                                                 ...) {
+  if (left) return(cc_t("a higher", lang = lang))
+  if (positive) return(cc_t("a higher", lang = lang))
+  return(cc_t("a lower", lang = lang))
 }

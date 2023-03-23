@@ -24,11 +24,13 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
 
   # In no case we show empty buildings on an auto_zoom after the building threshold
   building_zml <- zoom_levels[names(zoom_levels) == "building"]
-  if (length(building_zml) > 0 & zoom > (building_zml - 0.5)) {
+  if (is_scale_df("auto_zoom", tile) &
+      length(building_zml) > 0 &
+      zoom > (building_zml - 0.5)) {
     return(FALSE)
   }
 
-  # In no case we show the zoom under 11
+  # In no case we show texture under 11
   if (zoom < 11.5 && !map_module) {
     return(FALSE)
   }

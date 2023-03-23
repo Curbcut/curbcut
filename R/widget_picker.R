@@ -137,6 +137,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   }
 
   # If forgot to drop parent vectors from the list of variables to pick
+  variables <- get_from_globalenv("variables")
   if (all(unlist(var_list) %in% variables$var_code)) {
     parent_vecs <- variables$parent_vec[variables$var_code %in% unlist(var_list)]
     if (sum(is.na(parent_vecs)) > 0) {

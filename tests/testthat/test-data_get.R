@@ -35,6 +35,7 @@ test_that("data_get.delta works", {
   )
   output <- data_get(vars = vars, df = "city_CSD")
   expect_equal(nrow(output) > 15, TRUE)
+  # ORDER IS IMPORTANT FOR TABLE VIEW (PANEL_VIEW)
   expect_equal(names(output), c(
     "ID", "var_left_1", "var_left_2", "var_left",
     "var_left_q5", "group"
@@ -53,6 +54,7 @@ test_that("data_get.delta_bivar works", {
 
   output <- data_get(vars = vars, df = "city_CSD")
   expect_equal(nrow(output) > 15, TRUE)
+  # ORDER IS IMPORTANT FOR TABLE VIEW (PANEL_VIEW)
   expect_equal(names(output), c(
     "ID", "var_left_1", "var_left_2", "var_left",
     "var_right_1", "var_right_2", "var_right",

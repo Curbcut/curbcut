@@ -4,7 +4,7 @@
 \alias{legend_labels.qual}
 \title{Get a list of label titles for qualitative Curbcut legends}
 \usage{
-\method{legend_labels}{qual}(vars, lang = NULL, ...)
+\method{legend_labels}{qual}(vars, lang = NULL, short_threshold = 25, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A named list object of class \code{qual}. The
@@ -12,6 +12,9 @@ output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}
+
+\item{short_threshold}{<\code{numeric}> Maximum threshold for the title length,
+above which the short title will be returned.}
 
 \item{...}{Additional arguments passed to methods.}
 }

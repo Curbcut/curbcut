@@ -18,11 +18,28 @@
 #' @export
 vars_build <- function(var_left, var_right = " ", df,
                        scales_as_DA = c("building", "street")) {
+
+  # If the `var` displays twice the same year
+  var_left <- unique(var_left)
+  var_right <- unique(var_right)
+
   # Check errors
   choropleths <- get_from_globalenv("all_choropleths")
 
   # Switch scales to DA if necessary
   df <- treat_to_DA(scales_as_DA, df)
+
+  # Add var left and right measurement variable as classes
+  var_left_m <- var_get_info(var_left[[1]], "var_measurement")[[1]]
+  var_left_m <- var_left_m$measurement[var_left_m$df == df]
+  class(var_left) <- c(var_left_m, class(var_left))
+  if (var_right[[1]] != " ") {
+    var_right_m <- var_get_info(var_right[[1]], "var_measurement")[[1]]
+    var_right_m <- var_right_m$measurement[var_right_m$df == df]
+    class(var_right) <- c(var_right_m, class(var_right))
+  } else {
+    var_right_m <- " "
+  }
 
   # Add var left and right types as classes
   class(var_left) <- c(
@@ -87,6 +104,14 @@ vars_build <- function(var_left, var_right = " ", df,
     return(df)
   })()
 
+  # Add the measurement variable as a class to the main output, in order.
+  # The following is the priority levels:
+  measurement_order <- c("nominal", "ordinal", "scalar")
+  current_measurement_var <- c(var_left_m, var_right_m)
+  meas <- which.min(factor(current_measurement_var, levels = measurement_order))
+  z <- c(z, current_measurement_var[meas])
+
+  # Return
   return(structure(list(var_left = var_left, var_right = var_right),
     class = z
   ))

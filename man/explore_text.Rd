@@ -2,13 +2,58 @@
 % Please edit documentation in R/explore_text.R
 \name{explore_text}
 \alias{explore_text}
+\alias{explore_text.q5}
+\alias{explore_text.bivar}
 \title{Generate text for the given variables and region}
 \usage{
-explore_text(vars, ...)
+explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
+
+\method{explore_text}{q5}(
+  vars,
+  region,
+  select_id,
+  df,
+  data,
+  scales_as_DA = c("building", "street"),
+  lang = NULL,
+  ...
+)
+
+\method{explore_text}{bivar}(
+  vars,
+  region,
+  select_id,
+  df,
+  data,
+  scales_as_DA = c("building", "street"),
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
 text needs to be generated. Usually the output of \code{\link{vars_build}}.}
+
+\item{region}{<\code{character}> String specifying the name of the region.
+Usually equivalent of \code{r$region()}.}
+
+\item{select_id}{A string indicating the ID of the currently selected region
+(if any). Usually \code{r[[id]]$select_id()}}
+
+\item{df}{<\code{character}> The combination of the region under study and the
+scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
+
+\item{data}{<\code{data.frame}> A data frame containing the variables and
+observations to be compared. The data frame must have columns named var_left
+and ID. The output of \code{\link{data_get}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
+
+\item{lang}{<\code{character}> A string indicating the language in which to
+translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{...}{Additional arguments passed to the dispatched function.}
 }
@@ -17,5 +62,5 @@ The resulting text.
 }
 \description{
 This function dispatches to the appropriate text-generating function based on
-the variable type and returns the resulting text.
+the type of \code{vars} and returns the resulting text.
 }
