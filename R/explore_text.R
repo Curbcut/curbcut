@@ -428,7 +428,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
         left = left
       )
 
-      # Grab the explanation and capitalize the first letter
+      # Grab the explanation
       exp <- var_get_info(var, what = "explanation")
 
       # Plug the right elements for the final sentence
@@ -651,3 +651,51 @@ explore_text_bivar_adjective.default <- function(var, left, positive, lang,
   if (positive) return(cc_t("a higher", lang = lang))
   return(cc_t("a lower", lang = lang))
 }
+
+
+# DELTA -------------------------------------------------------------------
+
+#' @rdname explore_text
+#' @export
+explore_text.bivar <- function(vars, region, select_id, df, data,
+                               scales_as_DA = c("building", "street"),
+                               lang = NULL, ...) {
+
+  # Grab the shared info
+  context <- explore_context(
+    region = region, select_id = select_id, df = df,
+    switch_DA = switch_DA
+  )
+
+  # Grab the explanation
+  exp <- var_get_info(vars$var_left, what = "explanation")
+
+  # Grab the change
+  times <- var_get_time(vars$var_left)
+  region_vals <- var_get_info(vars$var_left, what = "region_values")[[1]]
+  region_vals <- region_vals[region_vals$region == region, ]
+  region_vals <- region_vals$val[region_vals$year %in% times]
+  region_vals_strings <- convert_unit(vars$var_left, x = region_vals,
+                                      decimal = 1)
+
+  change <- (region_vals[1] - region_vals[2]) / region_vals[2]
+  change_string <- convert_unit.pct(x = change, decimal = 1)
+
+  inc_dec <- if (change > 0) "increased" else "decreased"
+
+  first_part <- sprintf("%s, %s changed from %s in %s to %s in %s.",
+                        s_sentence(context$p_start), exp, region_vals_strings[2],
+                        times[1], region_vals_strings[1], times[2])
+
+  second_part <- sprintf("%s has %s by %s between these years.",
+                         s_sentence(exp), inc_dec, change_string)
+
+  out <- sprintf("<p>%s<p>%s", first_part, second_part)
+
+  return(out)
+
+}
+
+# DELTA BIVAR -------------------------------------------------------------
+
+

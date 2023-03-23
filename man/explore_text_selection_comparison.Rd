@@ -4,7 +4,7 @@
 \alias{explore_text_selection_comparison}
 \title{Explore Text Selection Comparison}
 \usage{
-explore_text_selection_comparison(var, data, select_id)
+explore_text_selection_comparison(var, data, select_id, left = TRUE)
 }
 \arguments{
 \item{var}{<\code{character}> A variable code specifying the variable of interest. This
@@ -16,6 +16,10 @@ and ID. The output of \code{\link{data_get}}.}
 
 \item{select_id}{<\code{character}> The ID of the selected zone for which to
 retrieve the ranking.}
+
+\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
+or the \code{var_right}. It will impact on which column of \code{data} is selected
+to grab the information.}
 }
 \value{
 A named list with two elements:

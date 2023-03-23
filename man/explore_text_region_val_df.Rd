@@ -4,7 +4,7 @@
 \alias{explore_text_region_val_df}
 \title{Get region values data frame}
 \usage{
-explore_text_region_val_df(var, region, select_id, ...)
+explore_text_region_val_df(var, region, select_id, left = TRUE, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the region values data
@@ -15,6 +15,10 @@ Usually equivalent of \code{r$region()}.}
 
 \item{select_id}{<\code{character}> the current selected ID, usually
 \code{r[[id]]$select_id()}.}
+
+\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
+or the \code{var_right}. It will impact on which column of \code{data} is selected
+to grab the information.}
 
 \item{...}{Additional arguments for the \code{\link{explore_text_select_val}}
 function: \itemize{

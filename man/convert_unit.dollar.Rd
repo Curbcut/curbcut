@@ -4,7 +4,7 @@
 \alias{convert_unit.dollar}
 \title{Convert a numeric vector into a character vector with a dollar sign}
 \usage{
-\method{convert_unit}{dollar}(var, x, compact, ...)
+\method{convert_unit}{dollar}(var, x, compact = FALSE, ...)
 }
 \arguments{
 \item{var}{Same as in the generic function.}

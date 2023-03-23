@@ -9,11 +9,11 @@
 \usage{
 explore_text_select_val(var, ...)
 
-\method{explore_text_select_val}{pct}(var, select_id, data, df, ...)
+\method{explore_text_select_val}{pct}(var, select_id, data, df, left = TRUE, ...)
 
-\method{explore_text_select_val}{dollar}(var, data, select_id, ...)
+\method{explore_text_select_val}{dollar}(var, data, select_id, left = TRUE, ...)
 
-\method{explore_text_select_val}{ind}(var, data, df, select_id, ...)
+\method{explore_text_select_val}{ind}(var, data, df, select_id, left = TRUE, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code of the variable for which the
@@ -30,6 +30,10 @@ values need to be generated. Usually one element of the output of
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
+
+\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
+or the \code{var_right}. It will impact on which column of \code{data} is selected
+to grab the information.}
 }
 \value{
 The resulting values

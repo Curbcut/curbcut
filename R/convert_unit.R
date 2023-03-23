@@ -149,7 +149,7 @@ convert_unit.pct <- function(var, x, decimal = 2, ...) {
 #'
 #' @method convert_unit dollar
 #' @export
-convert_unit.dollar <- function(var, x, compact, ...) {
+convert_unit.dollar <- function(var, x, compact = FALSE, ...) {
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(x)
 

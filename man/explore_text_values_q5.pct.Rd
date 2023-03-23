@@ -4,7 +4,7 @@
 \alias{explore_text_values_q5.pct}
 \title{Generate text for the given variables and region - q5 version using percentage}
 \usage{
-\method{explore_text_values_q5}{pct}(var, region, data, df, select_id, ...)
+\method{explore_text_values_q5}{pct}(var, region, data, df, select_id, left = TRUE, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the text needs to be
@@ -21,6 +21,10 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 
 \item{select_id}{<\code{character}> the current selected ID, usually
 \code{r[[id]]$select_id()}.}
+
+\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
+or the \code{var_right}. It will impact on which column of \code{data} is selected
+to grab the information.}
 
 \item{...}{Additional arguments passed to the function.}
 }

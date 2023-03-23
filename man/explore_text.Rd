@@ -29,6 +29,17 @@ explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
   lang = NULL,
   ...
 )
+
+\method{explore_text}{bivar}(
+  vars,
+  region,
+  select_id,
+  df,
+  data,
+  scales_as_DA = c("building", "street"),
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
