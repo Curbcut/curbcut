@@ -4,7 +4,7 @@
 \alias{explore_get_parent_data}
 \title{Get parent data for a given variable and ID}
 \usage{
-explore_get_parent_data(var, select_id, df, left = TRUE)
+explore_get_parent_data(var, select_id, df, col = "var_left")
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable for which to retrieve the
@@ -17,9 +17,9 @@ retrieve the parent data.}
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
 
-\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
-or the \code{var_right}. It will impact on which column of \code{data} is selected
-to grab the information.}
+\item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
+value information. Defaults to \code{var_left}, but could also be \code{var_right} or
+\code{var_left_1} in delta.}
 }
 \value{
 A vector containing the parent value for the zone.

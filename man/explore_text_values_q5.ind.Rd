@@ -4,7 +4,7 @@
 \alias{explore_text_values_q5.ind}
 \title{Generate text for the given variables and region - Q5 version using indices}
 \usage{
-\method{explore_text_values_q5}{ind}(var, region, select_id, data, df, left = TRUE, ...)
+\method{explore_text_values_q5}{ind}(var, region, select_id, data, df, col = "var_left", ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the text needs to be
@@ -22,9 +22,9 @@ Usually equivalent of \code{r$region()}.}
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
 
-\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
-or the \code{var_right}. It will impact on which column of \code{data} is selected
-to grab the information.}
+\item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
+value information. Defaults to \code{var_left}, but could also be \code{var_right} or
+\code{var_left_1} in delta.}
 
 \item{...}{Additional arguments passed to the function.}
 }

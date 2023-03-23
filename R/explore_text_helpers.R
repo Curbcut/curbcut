@@ -140,9 +140,9 @@ explore_text_parent_title <- function(var) {
 #' Usually equivalent of `r$region()`.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
 #' function: \itemize{
 #'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
@@ -153,7 +153,7 @@ explore_text_parent_title <- function(var) {
 #'
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
-explore_text_region_val_df <- function(var, region, select_id, left = TRUE, ...) {
+explore_text_region_val_df <- function(var, region, select_id, col = "var_left", ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- var_get_info(var = var, what = "region_values")[[1]]
@@ -176,7 +176,7 @@ explore_text_region_val_df <- function(var, region, select_id, left = TRUE, ...)
     var = var,
     region = region,
     select_id = select_id,
-    left = left,
+    col = col,
     ...
   ))
 }
@@ -194,12 +194,12 @@ explore_text_region_val_df <- function(var, region, select_id, left = TRUE, ...)
 #' @param df <`character`>The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #'
 #' @return A vector containing the parent value for the zone.
-explore_get_parent_data <- function(var, select_id, df, left = TRUE) {
+explore_get_parent_data <- function(var, select_id, df, col = "var_left") {
   # Get the parent string
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
@@ -212,11 +212,8 @@ explore_get_parent_data <- function(var, select_id, df, left = TRUE) {
   # Grab the parent data
   parent_data <- data_get(parent_string, df)
 
-  # Which column in the data?
-  column <- if (left) "var_left" else "var_right"
-
   # Get the parent value for the zone
-  all_count <- parent_data[[column]][parent_data$ID == select_id]
+  all_count <- parent_data[[col]][parent_data$ID == select_id]
 
   # Return
   return(all_count)
@@ -247,12 +244,12 @@ explore_text_select_val <- function(var, ...) {
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #'
 #' @export
-explore_text_select_val.pct <- function(var, select_id, data, df, left = TRUE,
+explore_text_select_val.pct <- function(var, select_id, data, df, col = "var_left",
                                         ...) {
   # Create empty vector
   out <- c()
@@ -262,11 +259,8 @@ explore_text_select_val.pct <- function(var, select_id, data, df, left = TRUE,
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  # Which column in the data?
-  column <- if (left) "var_left" else "var_right"
-
   # Add the percentage value for the selection. Second column is always
-  out$val <- data[[column]][data$ID == select_id]
+  out$val <- data[[col]][data$ID == select_id]
 
   # Get the parent data
   all_count <- explore_get_parent_data(
@@ -289,12 +283,12 @@ explore_text_select_val.pct <- function(var, select_id, data, df, left = TRUE,
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #'
 #' @export
-explore_text_select_val.dollar <- function(var, data, select_id, left = TRUE,
+explore_text_select_val.dollar <- function(var, data, select_id, col = "var_left",
                                            ...) {
   # Create empty vector
   out <- c()
@@ -304,11 +298,8 @@ explore_text_select_val.dollar <- function(var, data, select_id, left = TRUE,
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  # Which column in the data?
-  column <- if (left) "var_left" else "var_right"
-
   # Add the value for the selection
-  out$val <- data[[column]][data$ID == select_id]
+  out$val <- data[[col]][data$ID == select_id]
 
   # Return
   return(out)
@@ -322,12 +313,12 @@ explore_text_select_val.dollar <- function(var, data, select_id, left = TRUE,
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #'
 #' @export
-explore_text_select_val.ind <- function(var, data, df, select_id, left = TRUE,
+explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_left",
                                         ...) {
   # Create empty vector
   out <- c()
@@ -337,11 +328,8 @@ explore_text_select_val.ind <- function(var, data, df, select_id, left = TRUE,
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  # Which column in the data?
-  column <- if (left) "var_left_q5" else "var_right_q5"
-
   # Get the group in which falls the selection
-  rank <- data[[column]][data$ID == select_id]
+  rank <- data[[col]][data$ID == select_id]
 
   # Grab the rank name for the rank
   brks <- var_get_info(var = var, what = "breaks_q5")[[1]]
@@ -369,9 +357,14 @@ explore_text_select_val.ind <- function(var, data, df, select_id, left = TRUE,
 #' and ID. The output of \code{\link{data_get}}.
 #' @param select_id <`character`> The ID of the selected zone for which to
 #' retrieve the ranking.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#' @param ranks_override <`character vector`> A vector of length 5. Used if
+#' the ranks in the `variables$rankings_chr` table should be overriden for the
+#' `rank_chr` output. Used in `delta` mode where it's a change in percentage
+#' over two years, and so the character rankings from the variables table do not
+#' matter.
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -381,19 +374,20 @@ explore_text_select_val.ind <- function(var, data, df, select_id, left = TRUE,
 #' \item \code{rank_chr}: A character string representing the ranking category
 #' of the selected observation in comparison to the other observations for the
 #' specified variable.
+#' \item \code{higher_than_num}: A numeric value representing the proportion of
+#' other observations with a lower value for the specified variable than the
+#' selected observation.
 #' }
 explore_text_selection_comparison <- function(var, data, select_id,
-                                              left = TRUE) {
+                                              col = "var_left",
+                                              ranks_override = NULL) {
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  # Which column in the data?
-  column <- if (left) "var_left" else "var_right"
-
   # The value is higher than X of other observations
-  higher_than <- data[[column]][data$ID == select_id] > data[[column]]
+  higher_than <- data[[col]][data$ID == select_id] > data[[col]]
   higher_than <- mean(higher_than, na.rm = TRUE)
   if (is.na(higher_than)) {
     return(list(
@@ -408,7 +402,12 @@ explore_text_selection_comparison <- function(var, data, select_id,
   quants <- 1:100 %% 20
   quants <- which(quants == 0) / 100
   rank <- findInterval(higher_than, quants) + 1
-  ranks_chr <- var_get_info(var = var, what = "rankings_chr")[[1]]
+  ranks_chr <-
+    if (is.null(ranks_override)) {
+      var_get_info(var = var, what = "rankings_chr")[[1]]
+    } else {
+      ranks_override
+    }
   rank_chr <- ranks_chr[[rank]]
 
   # Return both

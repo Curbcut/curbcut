@@ -4,6 +4,7 @@
 \alias{explore_text}
 \alias{explore_text.q5}
 \alias{explore_text.bivar}
+\alias{explore_text.delta}
 \title{Generate text for the given variables and region}
 \usage{
 explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
@@ -30,7 +31,7 @@ explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
   ...
 )
 
-\method{explore_text}{bivar}(
+\method{explore_text}{delta}(
   vars,
   region,
   select_id,

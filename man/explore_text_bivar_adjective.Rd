@@ -14,7 +14,7 @@ explore_text_bivar_adjective(var, left, positive, lang = NULL, ...)
 \method{explore_text_bivar_adjective}{default}(var, left, positive, lang, ...)
 }
 \arguments{
-\item{var}{<\code{character}> The variable name for which the text needs to be
+\item{var}{<\code{character}> The variable code for which the text needs to be
 generated. \code{vars$var_left} or \code{vars$var_right}}
 
 \item{left}{<\verb{logical>} Whether the \code{var} supplied is the var_left

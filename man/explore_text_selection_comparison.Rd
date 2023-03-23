@@ -4,7 +4,13 @@
 \alias{explore_text_selection_comparison}
 \title{Explore Text Selection Comparison}
 \usage{
-explore_text_selection_comparison(var, data, select_id, left = TRUE)
+explore_text_selection_comparison(
+  var,
+  data,
+  select_id,
+  col = "var_left",
+  ranks_override = NULL
+)
 }
 \arguments{
 \item{var}{<\code{character}> A variable code specifying the variable of interest. This
@@ -17,9 +23,15 @@ and ID. The output of \code{\link{data_get}}.}
 \item{select_id}{<\code{character}> The ID of the selected zone for which to
 retrieve the ranking.}
 
-\item{left}{<\code{logical}> Whether the variable to grab data for is the \code{var_left}
-or the \code{var_right}. It will impact on which column of \code{data} is selected
-to grab the information.}
+\item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
+value information. Defaults to \code{var_left}, but could also be \code{var_right} or
+\code{var_left_1} in delta.}
+
+\item{ranks_override}{<\verb{character vector}> A vector of length 5. Used if
+the ranks in the \code{variables$rankings_chr} table should be overriden for the
+\code{rank_chr} output. Used in \code{delta} mode where it's a change in percentage
+over two years, and so the character rankings from the variables table do not
+matter.}
 }
 \value{
 A named list with two elements:
@@ -30,6 +42,9 @@ selected observation, formatted as a percentage with one decimal place.
 \item \code{rank_chr}: A character string representing the ranking category
 of the selected observation in comparison to the other observations for the
 specified variable.
+\item \code{higher_than_num}: A numeric value representing the proportion of
+other observations with a lower value for the specified variable than the
+selected observation.
 }
 }
 \description{

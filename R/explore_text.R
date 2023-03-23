@@ -139,15 +139,15 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' \code{\link{update_df}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.pct <- function(var, region, data, df, select_id,
-                                       left = TRUE, ...) {
+                                       col = "var_left", ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -161,7 +161,7 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
     data = data,
     df = df,
     select_id = select_id,
-    left = left
+    col = col
   )
 
   # NA message
@@ -200,22 +200,22 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.dollar <- function(var, region, data, select_id,
-                                          left = TRUE, ...) {
+                                          col = "var_left", ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
     data = data,
     select_id = select_id,
-    left = left
+    col = col
   )
 
   # NA message
@@ -258,15 +258,15 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
 #' \code{\link{update_df}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
-#' @param left <`logical`> Whether the variable to grab data for is the `var_left`
-#' or the `var_right`. It will impact on which column of `data` is selected
-#' to grab the information.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.ind <- function(var, region, select_id, data, df,
-                                       left = TRUE, ...) {
+                                       col = "var_left", ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -277,7 +277,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     select_id = select_id,
     data = data,
     df = df,
-    left = left
+    col = col
   )
 
   # NA message
@@ -305,7 +305,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
     # If the two last brackets is recognized as the default, write a particular string
     exp <- if (identical(two_last_ranks, c("above average", "high"))) {
-      gsub("_X_", "a higher-than-average", exp)
+      gsub("_X_", "a higher-than-average", exp_q5)
     } else {
       gsub("_X_", sprintf(
         "`%s` to `%s`", two_last_ranks[[1]],
@@ -397,7 +397,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
       df = df,
-      left = FALSE
+      col = "var_right"
     )
 
     # If one of the value is NA, return that there is a missing value
@@ -419,20 +419,22 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     # Grab the two texts for var_left and var_right
     compare_texts <- lapply(vars, \(var) {
 
-      left <- if (var == vars$var_left) TRUE else FALSE
+      col <- if (var == vars$var_left) "var_left" else "var_left"
 
       # Get the information on how the selection compares
       relat <- explore_text_selection_comparison(
         var = var, data = data,
         select_id = select_id,
-        left = left
+        col = col
       )
 
       # Grab the explanation
       exp <- var_get_info(var, what = "explanation")
 
       # Plug the right elements for the final sentence
-      first_step_1 <- if (left) sprintf("%s %s", exp, context$p_start) else {
+      first_step_1 <- if (var == vars$var_left) {
+        sprintf("%s %s", exp, context$p_start)
+      } else {
         exp
       }
       first_step <- sprintf(
@@ -617,7 +619,7 @@ explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
 #' bivariate relationship between two variables based on whether the relationship
 #' is positive or negative.
 #'
-#' @param var <`character`> The variable name for which the text needs to be
+#' @param var <`character`> The variable code for which the text needs to be
 #' generated. `vars$var_left` or `vars$var_right`
 #' @param left <`logical>` Whether the `var` supplied is the var_left
 #' or the `var_right`. If `var_left`, TRUE.
@@ -657,9 +659,16 @@ explore_text_bivar_adjective.default <- function(var, left, positive, lang,
 
 #' @rdname explore_text
 #' @export
-explore_text.bivar <- function(vars, region, select_id, df, data,
+explore_text.delta <- function(vars, region, select_id, df, data,
                                scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
+
+  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # of the `scales_as_DA` argument.
+  switch_DA <- is_scale_df(scales_as_DA, df)
+
+  # Adjust the selected ID in the case where the selection is not in `data`
+  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
   context <- explore_context(
@@ -667,33 +676,165 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     switch_DA = switch_DA
   )
 
-  # Grab the explanation
-  exp <- var_get_info(vars$var_left, what = "explanation")
+  # The context might have used a scale in the `scales_as_DA` argument, and
+  # the select_id needs to be switched to that of the dissemination area.
+  if ("select_id" %in% names(context)) select_id <- context$select_id
 
-  # Grab the change
-  times <- var_get_time(vars$var_left)
-  region_vals <- var_get_info(vars$var_left, what = "region_values")[[1]]
-  region_vals <- region_vals[region_vals$region == region, ]
-  region_vals <- region_vals$val[region_vals$year %in% times]
-  region_vals_strings <- convert_unit(vars$var_left, x = region_vals,
-                                      decimal = 1)
+  # Grab the explanation and region values
+  exp_vals <- explore_text_delta_exp(var = vars$var_left, region = region,
+                                     select_id = select_id, data  = data,
+                                     df = df)
 
-  change <- (region_vals[1] - region_vals[2]) / region_vals[2]
+  # Calculate the variation change
+  change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
   change_string <- convert_unit.pct(x = change, decimal = 1)
 
+  # Did it increase or decrease
   inc_dec <- if (change > 0) "increased" else "decreased"
 
+  # Craft the paragraphs
   first_part <- sprintf("%s, %s changed from %s in %s to %s in %s.",
-                        s_sentence(context$p_start), exp, region_vals_strings[2],
-                        times[1], region_vals_strings[1], times[2])
-
+                        s_sentence(context$p_start), exp_vals$exp,
+                        exp_vals$region_vals_strings[2], exp_vals$times[1],
+                        exp_vals$region_vals_strings[1], exp_vals$times[2])
   second_part <- sprintf("%s has %s by %s between these years.",
-                         s_sentence(exp), inc_dec, change_string)
+                         s_sentence(exp_vals$exp), inc_dec, change_string)
 
+  # Bind
   out <- sprintf("<p>%s<p>%s", first_part, second_part)
 
-  return(out)
+  # Return the first paragraph if there are no selections
+  if (is.na(select_id)) return(out)
 
+  # Add the header for the selection
+  out <- sprintf("<p><b>%s</b><p>%s", context$heading, out)
+
+  # Get the necessary information for the second paragraph
+  inc_dec <- if (change > 0) "increase" else "decrease"
+  exp_nodet <- var_get_info(vars$var_left, what = "explanation_nodet")
+  relat <- explore_text_selection_comparison(
+    var = vars$var_left,
+    data = data,
+    select_id = select_id,
+    col = "var_left",
+    ranks_override = c("exceptionally small", "unusually small",
+                       "just about average", "unusually large",
+                       "exceptionnally large"))
+
+  # Craft the second paragraph
+  first_part <- sprintf("This %s is %s for %s.", inc_dec,
+                        relat$rank_chr, context$to_compare_deter)
+  second_part <-
+    sprintf(paste0("The change in %s %s between %s and %s is larger than %s of ",
+                   "other %s between the same years."),
+            exp_nodet, context$p_start, exp_vals$times[1],
+            exp_vals$times[2], relat$higher_than, context$scale_plur)
+
+  out <- sprintf("%s<p>%s %s", out, first_part, second_part)
+
+  # Return
+  return(out)
+}
+
+#' Explore text `delta` explanation and values for
+#'
+#' This function delivers the delta text and values of a given variable when
+#' compared between two yeas. It dispatches to specific methods depending on the
+#' structure of the variable.
+#'
+#' @param var <`character`> The variable code for which the text and values need
+#' to be generated. Usually `vars$var_left`.
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param ... Additional arguments passed to the dispatched method.
+#'
+#' @return A list with the following elements:
+#' \item{exp}{A character string describing the explanation of the variable}
+#' \item{region_vals}{A numeric vector containing the variable values in the
+#' current region and time period.}
+#' \item{region_vals_strings}{A character vector with the same length as
+#' \code{region_vals}, containing the variable values formatted according
+#' to the class of `var`}
+explore_text_delta_exp <- function(var, region, ...) {
+  UseMethod("explore_text_delta_exp", var)
+}
+
+#' @rdname explore_text_delta_exp
+#' @export
+explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
+
+  # Grab the parent variable
+  parent <- var_get_info(var = var[[1]], what = "parent_vec")
+
+  # Grab the explanation
+  exp_q5 <- var_get_info(var = var[[1]], what = "exp_q5")
+
+  # Sub the placeholder for the two last brackets
+  breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
+  breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
+  two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
+  # If the two last brackets is recognized as the default, write a particular string
+  exp <- if (identical(two_last_ranks, c("above average", "high"))) {
+    gsub("_X_", "a higher-than-average", exp_q5)
+  } else {
+    gsub("_X_", sprintf(
+      "`%s` to `%s`", two_last_ranks[[1]],
+      two_last_ranks[[2]]
+    ), exp_q5)
+  }
+
+  # Grab the region values
+  times <- var_get_time(var)
+  region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
+  region_vals <- region_vals[region_vals$region == region, ]
+  region_vals <- region_vals$val[region_vals$year %in% times]
+  region_vals_strings <- convert_unit.pct(var, x = region_vals,
+                                          decimal = 1)
+
+  # Return
+  return(list(exp = sprintf("the percentage of %s that %s", parent, exp),
+              region_vals = region_vals,
+              region_vals_strings = region_vals_strings,
+              times = times))
+}
+
+#' @rdname explore_text_delta_exp
+#' @export
+explore_text_delta_exp.default <- function(var, region, select_id, data, df,
+                                           ...) {
+
+  # Grab the explanation
+  exp <- var_get_info(var[[1]], what = "explanation")
+
+  # Grab the region values
+  times <- var_get_time(var)
+  if (is.na(select_id)) {
+    region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
+    region_vals <- region_vals[region_vals$region == region, ]
+    region_vals <- region_vals$val[region_vals$year %in% times]
+  } else {
+    # Grab the region values
+    region_values <-
+      lapply(var, \(x) explore_text_region_val_df(
+        var = structure(x, class = class(var)),
+        region = region,
+        select_id = select_id,
+        data = data,
+        df = df,
+        col = sprintf("var_left_%s", which(x == var))
+      ))
+    region_vals <- sapply(region_values, `[[`, "val")
+    # Newest value must be first, like for the no-selection values
+    region_vals <- rev(region_vals)
+  }
+
+  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1)
+
+  # Return
+  return(list(exp = exp,
+              region_vals = region_vals,
+              region_vals_strings = region_vals_strings,
+              times = times))
 }
 
 # DELTA BIVAR -------------------------------------------------------------

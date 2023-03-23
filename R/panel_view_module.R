@@ -112,7 +112,10 @@ panel_view_server <- function(id, r, vars, data) {
     })
 
     # Show the table
-    output$data_table <- DT::renderDT(datatable_styled())
+    output$data_table <- DT::renderDT({
+      input$panel_data
+      datatable_styled()
+    })
 
     # If there is a selection in the table, update the selection
     shiny::observeEvent(input$data_table_rows_selected, {
