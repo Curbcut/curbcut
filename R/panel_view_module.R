@@ -113,6 +113,7 @@ panel_view_server <- function(id, r, vars, data) {
 
     # Show the table
     output$data_table <- DT::renderDT({
+      # Recalculate every time the button is pressed
       input$panel_data
       datatable_styled()
     })
@@ -127,6 +128,15 @@ panel_view_server <- function(id, r, vars, data) {
       new_id <- pretty_data()$ID[input$data_table_rows_selected]
       r[[id]]$select_id(new_id)
     }, ignoreNULL = FALSE, ignoreInit = TRUE)
+
+    # When the user clicks to download the .csv
+    output$download_csv <-
+      shiny::downloadHandler(
+        filename = sprintf("%s_data.csv", id),
+        content = function(file) {
+          data <- datas()$data
+          utils::write.csv(data, file, row.names = FALSE)
+        }, contentType = "text/csv")
 
   })
 }
@@ -178,8 +188,14 @@ panel_view_UI <- function(id) {
         shiny::htmlOutput(
           outputId = shiny::NS(id, "data_info"),
           fill = TRUE),
-        DT::DTOutput(
-          outputId = shiny::NS(id, "data_table"))))
-
+        shiny::div(style = "margin-bottom:20px;",
+                   DT::DTOutput(
+                     outputId = shiny::NS(id, "data_table"))),
+        shiny::div(
+          style = "text-align:right",
+          shiny::div(style = "display:inline;margin-right:10px;",
+                     shiny::downloadButton("download_csv", "Download '.csv'")),
+          shiny::div(style = "",
+                     shiny::downloadButton("download_shp", "Download '.shp'")))))
   )
 }

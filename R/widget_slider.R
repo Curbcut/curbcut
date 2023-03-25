@@ -85,7 +85,7 @@ slider_UI <- function(id, slider_id = "sld", label = cc_t("Select a year"),
   # Declare the input in an optionally styled div
   shiny::sliderInput(
     inputId = shiny::NS(id, slider_id),
-    label = cc_t(label),
+    label = label,
     min = min,
     max = max,
     step = step,
