@@ -316,12 +316,13 @@ get_dist <- function(x, y) {
 #' @export
 tilejson <- function(mapbox_username, tileset_prefix, tile) {
   tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
-  out <- tryCatch(rdeck::mvt_url(tile_link),
-    error = function(e) {
-      warning(glue::glue("Tile `{tile_link}` not found."))
-      NULL
-    }
-  )
+  out <- #tryCatch(
+    rdeck::mvt_url(tile_link)#,
+    # error = function(e) {
+    #   warning(glue::glue("Tile `{tile_link}` not found."))
+    #   NULL
+    # }
+  #)
   return(out)
 }
 
