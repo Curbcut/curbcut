@@ -8,23 +8,35 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-    package = "curbcut"
+                                            package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/language.js",
-    package = "curbcut"
+                                        package = "curbcut"
   ))
   shiny::tagList(
+    # Copy URL
     shiny::tags$head(shinyjs::extendShinyjs(
       text = copy_current_url,
       functions = c("copy_current_url")
     )),
+    # Set language
     shiny::tags$head(shinyjs::extendShinyjs(
       text = set_language,
       functions = c("set_language")
-    ))
+    )),
+    # Change window title
+    shiny::tags$head(shiny::tags$script(
+      shiny::HTML(
+        paste0('Shiny.addCustomMessageHandler("changetitle", function(x)
+                   {document.title=x});')),
+    )),
+    # Allow hover with texts on elements of the picker menus
+    shiny::tags$head(tags$script(
+      "var myDefaultWhiteList = $.fn.selectpicker.Constructor.DEFAULTS.whiteList;
+    myDefaultWhiteList.div = ['title'];"
+    )),
   )
 }
-
 
 #' Copy the current URL
 #'

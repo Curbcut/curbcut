@@ -319,7 +319,7 @@ tilejson <- function(mapbox_username, tileset_prefix, tile) {
   out <- tryCatch(
     rdeck::tile_json(tile_link),
     error = function(e) {
-      warning(e)
+      print(e)
       NULL
     }
   )

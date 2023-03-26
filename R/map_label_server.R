@@ -159,6 +159,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
         zoom_levels = zoom_levels()
       )
     )
+
     shiny::observeEvent(
       show_texture(),
       rdeck::rdeck_proxy("map") |>

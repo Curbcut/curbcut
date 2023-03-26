@@ -1,0 +1,107 @@
+:root {
+  --w-data-view: calc(100vw - var(--w-panel) - var(--w-sidebar)-1vw);
+}
+
+.panel_view {
+  box-sizing:border-box;
+  margin: 1rem calc(var(--w-panel) + 1.7vw) 0 calc(var(--w-sidebar) + 1rem);
+  background-color: white;
+  border: 0.4px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--box-shadow-md);
+  overflow-y: scroll;
+  padding: .5rem 1rem .5rem 1rem;
+  overflow-x: auto;
+  border-radius: var(--border-radius-sm);
+  max-height: calc(100vh - var(--h-navbar) - 85px);
+}
+
+.download_csv, .download_shp {
+  padding: 0.4rem !important;
+  margin-left: 10px !important;
+  font-size: 1.3rem !important;
+  display: inline !important;
+}
+
+table.dataTable tr.selected td, table.dataTable td.selected {
+  box-shadow: inset 0 0 0 9999px var(--c-medium-blue) !important;
+}
+
+.floating-panel {
+  position: fixed;
+  bottom: 1rem;
+  left: calc((100vw + var(--w-panel) - var(--w-sidebar)) / 2);
+  transform: translateX(-50%);
+  border-radius: 25px;
+  color: #000;
+  font-size: 4rem;
+  width: auto;
+  height: auto;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--ff-label);
+  align-items: center;
+}
+
+.floating-panel-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.action-button.floating-bar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: auto;
+  border-style: none;
+  border: none;
+  padding: 0 2rem 0 2rem;
+  background-color: #4a5c83de;
+  box-shadow: 0 0 15px 1 black;
+  color: white;
+  height: 5rem;
+}
+
+.action-button.floating-bar-btn:hover {
+  text-shadow: 0 2px 2px  #1a202d;
+  transform: scale(1.03);
+  box-shadow: 5px 0 .5 black;
+  transition: background-color 0.4s ease-in-out;
+  background-color: var(--c-medium-blue);
+  background-size: 200% 200%;
+  background-position: 100% 0;
+  transition: background-position 0.5s;
+
+}
+
+.action-button.floating-bar-btn:hover:active {
+  background-position: 0 100%;
+}
+
+.action-button.map-btn {
+  border-radius: 0 0 0 2.5rem;
+}
+
+.action-button.data-btn {
+  border-radius: 0 2.5rem 0 0;
+}
+
+.action-button.portrait-btn {
+  border-radius: 0 2.5rem 0 2.5rem;
+  margin-left: .9em;
+}
+
+.floating-panel-text {
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.action-button.floating-bar.selection {
+  border: solid 2px white;
+  background-color: var(--c-medium-blue);
+}

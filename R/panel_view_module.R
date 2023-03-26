@@ -18,23 +18,34 @@
 #'
 #' @return Panel view module
 #' @export
-panel_view_server <- function(id, r, vars, data) {
+panel_view_server <- function(id, r, vars, data,
+                              scales_as_DA = shiny::reactive(c("building", "street"))) {
 
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
+  stopifnot(shiny::is.reactive(scales_as_DA))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # Switch scales to DA if necessary
+    treated_df <-
+      shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(),
+                                  df = r[[id]]$df()))
 
     # Show the map when the right button is clicked
     shiny::observeEvent(input$panel_map, {
       shinyjs::show(id = "map_div", anim = TRUE, animType = "fade")
       shinyjs::hide(id = "view_data", anim = TRUE, animType = "fade")
+      shinyjs::removeClass(id = "panel_data", class = "selection")
+      shinyjs::addClass(id = "panel_map", class = "selection")
     })
 
     # Hide the map and show the data when the right button is clicked
     shiny::observeEvent(input$panel_data, {
       shinyjs::hide(id = "map_div", anim = TRUE, animType = "fade")
       shinyjs::show(id = "view_data", anim = TRUE, animType = "fade")
+      shinyjs::removeClass(id = "panel_map", class = "selection")
+      shinyjs::addClass(id = "panel_data", class = "selection")
     })
 
     # Bring the user to the place explorer when there is a selection
@@ -70,7 +81,7 @@ panel_view_server <- function(id, r, vars, data) {
       # Prepare the pretty table and the download table
       dat <- table_view_prep_table(vars = vars(),
                                    data = data(),
-                                   df = r[[id]]$df(),
+                                   df = treated_df(),
                                    lang = r$lang())
 
       # Return
@@ -132,7 +143,7 @@ panel_view_server <- function(id, r, vars, data) {
     # When the user clicks to download the .csv
     output$download_csv <-
       shiny::downloadHandler(
-        filename = sprintf("%s_data.csv", id),
+        filename = paste0(id, "_data.csv"),
         content = function(file) {
           data <- datas()$data
           utils::write.csv(data, file, row.names = FALSE)
@@ -149,41 +160,46 @@ panel_view_UI <- function(id) {
     shiny::tags$div(
       class = "floating-panel",
       shiny::tags$div(
-        class = "hidden-icons",
+        class = "floating-panel-content",
+        id = "floating-panel-content",
         # Map
         shiny::tags$button(
-          class = "action-button",
-          style = "background-color:transparent;border:none;",
+          class = "action-button floating-bar floating-bar-btn map-btn selection",
           id = shiny::NS(id, "panel_map"),
-          icon_material("map", style = "color:white;font-size:40px;"),
-          shiny::tags$span(class = "help-text",
-                           style = "color:white;padding:20px;",
-                           cc_t("View map"))),
+          icon_material("map", style = "color:white;font-size:2rem;"),
+          shiny::tags$div(
+            class = "floating-panel-text",
+            cc_t("Map")
+          )
+        ),
         # Data
         shiny::tags$button(
-          class = "action-button",
-          style = "background-color:transparent;border:none;",
+          class = "action-button floating-bar floating-bar-btn data-btn",
           id = shiny::NS(id, "panel_data"),
-          icon_material("table_view", style = "color:white;font-size:40px;"),
-          shiny::tags$span(class = "help-text",
-                           style = "color:white;padding:20px;",
-                           cc_t("View/export data"))),
+          icon_material("table_view", style = "color:white;font-size:2rem;"),
+          shiny::tags$div(
+            class = "floating-panel-text",
+            cc_t("Data")
+          )
+        ),
         # Explore data link
         shinyjs::hidden(shiny::tags$button(
-          class = "action-button",
-          style = "background-color:transparent;border:none;",
+          class = "action-button floating-bar floating-bar-btn portrait-btn",
           id = shiny::NS(id, "panel_selection"),
-          icon_material("search", style = "color:white;font-size:40px;"),
-          shiny::tags$span(class = "help-text",
-                           style = "color:white;padding:20px;",
-                           cc_t("Regional portrait"))))
+          icon_material("search", style = "color:white;font-size:2rem;"),
+          shiny::tags$div(
+            class = "floating-panel-text",
+            cc_t("Portrait")
+          )
+        )
+        )
       )
     ),
 
     # To accompany the panel data button, create the div
     shinyjs::hidden(
       shiny::div(
-        style = "margin-right:500px;margin-left:500px",
+        class = "panel_view",
         id = shiny::NS(id, "view_data"),
         shiny::htmlOutput(
           outputId = shiny::NS(id, "data_info"),
@@ -193,9 +209,11 @@ panel_view_UI <- function(id) {
                      outputId = shiny::NS(id, "data_table"))),
         shiny::div(
           style = "text-align:right",
-          shiny::div(style = "display:inline;margin-right:10px;",
-                     shiny::downloadButton("download_csv", "Download '.csv'")),
-          shiny::div(style = "",
-                     shiny::downloadButton("download_shp", "Download '.shp'")))))
+          shiny::downloadButton(class = "download_csv",
+                                outputId = shiny::NS(id, "download_csv"),
+                                label = cc_t("Download '.csv'")),
+          shiny::downloadButton(class = "download_shp",
+                                outputId = shiny::NS(id, "download_shp"),
+                                label = cc_t("Download '.shp'")))))
   )
 }

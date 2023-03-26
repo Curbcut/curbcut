@@ -18,7 +18,7 @@
 #' zoom level and tile name
 map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) {
   # In no case we show empty buildings on a building scale
-  if (is_scale_df(tile, "building")) {
+  if (is_scale_df("building", tile)) {
     return(FALSE)
   }
 

@@ -5,7 +5,13 @@
 \alias{panel_view_UI}
 \title{Renders a floating panel with a map view and data view buttons.}
 \usage{
-panel_view_server(id, r, vars, data)
+panel_view_server(
+  id,
+  r,
+  vars,
+  data,
+  scales_as_DA = shiny::reactive(c("building", "street"))
+)
 
 panel_view_UI(id)
 }

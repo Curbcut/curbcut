@@ -34,6 +34,9 @@ table_view_prep_table <- function(vars, data, df, lang = NULL) {
   df_dat <- df_dat[c("name", "name_2", "population", "households")]
   dat <- cbind(df_dat, dat)
 
+  # Order data by population
+  dat <- dat[order(dat$population, decreasing = TRUE), ]
+
   # Update column names (More user friendly)
   pretty_dat <- dat
   # Start with the basic usual ones

@@ -6,7 +6,7 @@ test_that("use_curbut_cookie function loads necessary JavaScript files", {
   expect_equal(output[[1]]$name, "head")
   expect_s3_class(output[[1]]$children[[1]], "shiny.tag")
   expect_equal(output[[1]]$children[[1]]$name, "script")
-  expect_equal(output[[1]]$children[[1]]$attribs$src, "curbcut/cookie.js")
+  expect_equal(output[[1]]$children[[1]]$attribs$src, "curbcut_js/cookie.js")
   expect_s3_class(output[[2]], "shiny.tag")
   expect_equal(output[[2]]$name, "head")
   expect_equal(output[[2]]$children[[1]]$attribs$src, "https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js")

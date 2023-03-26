@@ -10,9 +10,10 @@
 #' in curbcut package. Must be placed in the `ui` function in `ui.R`.
 #' @export
 use_curbcut_cookie <- function() {
-  shiny::addResourcePath("curbcut", system.file("js_scripts", package = "curbcut"))
+  shiny::addResourcePath("curbcut_js", system.file("js_scripts",
+                                                   package = "curbcut"))
   shiny::tagList(
-    shiny::tags$head(shiny::tags$script(src = "curbcut/cookie.js")),
+    shiny::tags$head(shiny::tags$script(src = "curbcut_js/cookie.js")),
     shiny::tags$head(shiny::tags$script(src = paste0(
       "https://cdn.jsdelivr.net/npm/js-cookie@rc/",
       "dist/js.cookie.min.js"
