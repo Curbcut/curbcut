@@ -4,7 +4,11 @@
 \alias{use_curbcut_css}
 \title{Add Curbcut CSS}
 \usage{
-use_curbcut_css()
+use_curbcut_css(lang_init = FALSE)
+}
+\arguments{
+\item{lang_init}{<\code{logical}> Is the app bilingual? In that case, there must
+be an added class to the body to inform the app it starts as \code{fr}.}
 }
 \description{
 This function adds the Curbcut shared CSS files by creating a resource path to

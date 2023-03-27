@@ -149,6 +149,49 @@ panel_view_server <- function(id, r, vars, data,
           utils::write.csv(data, file, row.names = FALSE)
         }, contentType = "text/csv")
 
+    # When the user clicks to download the .shp
+    output$download_shp <-
+      shiny::downloadHandler(
+        filename = shiny::reactive(paste0(id, "_shp.zip")),
+        content = function(file) {
+
+          # Add progress as it's not instant
+          shiny::withProgress(
+            message = cc_t("Exporting data", lang = r$lang()), {
+              shiny::incProgress(0.4)
+
+              # Prepare data by attaching geometries
+              geo <- qs::qread(paste0("data/geometry_export/", treated_df(),
+                                      ".qs"))
+              data <- merge(datas()$data, geo, by = "ID")
+
+              shiny::incProgress(0.3)
+
+              # Set file names
+              tmp_path <- dirname(file)
+              name_base <- file.path(tmp_path, paste0(id, "_data"))
+              name_glob <- paste0(name_base, ".*")
+              name_shp  <- paste0(name_base, ".shp")
+              name_zip  <- paste0(name_base, ".zip")
+
+              # Remove any previously generated files with the same name
+              if (length(Sys.glob(name_glob)) > 0) file.remove(Sys.glob(name_glob))
+
+              # Write the data to a shapefile
+              sf::st_write(data, dsn = name_shp, driver = "ESRI Shapefile",
+                           quiet = TRUE)
+
+              # Zip the shapefile and copy to the desired location
+              utils::zip(zipfile = name_zip, files = Sys.glob(name_glob))
+              shiny::req(file.copy(name_zip, file))
+
+              shiny::incProgress(0.3)
+
+              # Remove any temporary files
+              if (length(Sys.glob(name_glob)) > 0) file.remove(Sys.glob(name_glob))
+            })
+        })
+
   })
 }
 
