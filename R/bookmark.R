@@ -7,16 +7,14 @@
 #'
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param session <`session`> The session of `server.R`. Usually
-#' `session = session`.
 #'
 #' @return handles updating the state of the app based on the URL query string.
 #' @export
-use_bookmark <- function(r, session) {
-  shiny::observeEvent(shiny::parseQueryString(session$clientData$url_search),
+use_bookmark <- function(r) {
+  shiny::observeEvent(shiny::parseQueryString(r$server_session()$clientData$url_search),
     {
       # Get the URL search query
-      query <- shiny::parseQueryString(session$clientData$url_search)
+      query <- shiny::parseQueryString(r$server_session()$clientData$url_search)
 
       # If no query, do no action
       if (length(query) == 0) {
@@ -49,7 +47,7 @@ use_bookmark <- function(r, session) {
       }
       # Update the current tab
       shiny::updateTabsetPanel(
-        session = session,
+        session = r$server_session(),
         inputId = "cc_page",
         selected = tab
       )
@@ -87,7 +85,7 @@ use_bookmark <- function(r, session) {
         # Start by the checkboxes
         lapply(widgets$cbox, \(widget) {
           shiny::updateCheckboxInput(
-            session = session,
+            session = r$server_session(),
             inputId = ns(widget[[1]]),
             value = as.logical(widget[[2]])
           )
@@ -96,7 +94,7 @@ use_bookmark <- function(r, session) {
         # Followed by the sliders
         lapply(widgets$s_text, \(widget) {
           shinyWidgets::updateSliderTextInput(
-            session = session,
+            session = r$server_session(),
             inputId = ns(widget[[1]]),
             selected = widget[[2]]
           )
@@ -105,7 +103,7 @@ use_bookmark <- function(r, session) {
           # If there are multiple values, split at every `-`
           value <- strsplit(widget[[2]], split = "-")[[1]]
           shiny::updateSliderInput(
-            session = session,
+            session = r$server_session(),
             inputId = ns(widget[[1]]),
             value = as.numeric(value)
           )
@@ -116,7 +114,7 @@ use_bookmark <- function(r, session) {
         shinyjs::delay(500, {
           lapply(widgets$picker, \(widget) {
             shinyWidgets::updatePickerInput(
-              session = session,
+              session = r$server_session(),
               inputId = ns(widget[[1]]),
               selected = widget[[2]]
             )

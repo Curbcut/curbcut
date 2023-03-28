@@ -10,14 +10,13 @@
 #'
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param session <`session`> The session of `server.R`. Usually `session = session`.
 #' @param active_page <`reactive`> The ID of the active page. Usually `input$cc_page`
 #' in a \code{\link[shiny]{reactive}}, e.g. `shiny::reactive(input$cc_page)`.
 #' @param site_name <`character`> The current site name. Usually initiated in
 #' `global.R`.
 #'
 #' @export
-title_page_update <- function(r, session, active_page, site_name) {
+title_page_update <- function(r, active_page, site_name) {
   shiny::observe({
     # Grab the update title
     site_name <- title_page_get(
@@ -26,7 +25,7 @@ title_page_update <- function(r, session, active_page, site_name) {
       lang = r$lang()
     )
     # Change the title of the page
-    session$sendCustomMessage("changetitle", site_name)
+    r$server_session()$sendCustomMessage("changetitle", site_name)
   })
 }
 

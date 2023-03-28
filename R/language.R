@@ -5,16 +5,14 @@
 #' @param id <`character`> A unique id for the module. Default is "language".
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param parent_session <`session`> The session of the parent module that the
-#' langauge server is embedded in (`server.R`). Usually `parent_session = session`.
 #'
 #' @return A module server function that controls the behavior of the module.
 #' @export
-language_server <- function(id = "language", r, parent_session) {
+language_server <- function(id = "language", r) {
   shiny::moduleServer(id, function(input, output, session) {
     # Switch the language on a new session if it's in a cookie
     lang_cookie <- shiny::reactive(cookie_retrieve(
-      input = parent_session$input,
+      input = r$server_session()$input,
       name = "lang"
     ))
 

@@ -15,6 +15,9 @@
 #' used to determine which type of legend to draw.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' the data shown will be `DA`.
 #'
 #' @return Panel view module
 #' @export
@@ -58,6 +61,13 @@ panel_view_server <- function(id, r, vars, data,
     # Show the data in the same spot as the map (`map_div`)
     output$data_info <- shiny::renderUI({
       # TKTK data show text
+    })
+
+    # If the 'Portrait' button is clicked, bring to place explorer
+    shiny::observeEvent(input$panel_selection, {
+      link(r = r,
+           page = "place_explorer",
+           select_id = r[[id]]$select_id())
     })
 
     # If the data is private

@@ -4,14 +4,11 @@
 \alias{use_bookmark}
 \title{Use Bookmark}
 \usage{
-use_bookmark(r, session)
+use_bookmark(r)
 }
 \arguments{
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
-
-\item{session}{<\code{session}> The session of \code{server.R}. Usually
-\code{session = session}.}
 }
 \value{
 handles updating the state of the app based on the URL query string.

@@ -31,7 +31,7 @@ use_curbcut_js <- function() {
                    {document.title=x});')),
     )),
     # Allow hover with texts on elements of the picker menus
-    shiny::tags$head(tags$script(
+    shiny::tags$head(shiny::tags$script(
       "var myDefaultWhiteList = $.fn.selectpicker.Constructor.DEFAULTS.whiteList;
     myDefaultWhiteList.div = ['title'];"
     )),

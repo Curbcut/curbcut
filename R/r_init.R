@@ -4,6 +4,9 @@
 #' lang, ...). It also sets up reactive alues for each module defined in the
 #' \code{modules} object.
 #'
+#' @param server_session <`ShinySession`> The server session from `server.R`, used
+#' tu update the tab and other necessary actions taken from modules to the server
+#' itself.
 #' @param lang_init <`character`> An optional character string specifying the
 #' initial language for the Curbcut. Default is \code{NULL}.
 #' @param default_region <`character`> The default region for the app. By default,
@@ -27,13 +30,15 @@
 #' organized and easy to maintain, and passed down through every module. This way,
 #' every module has access to this set of reactives.
 #' @export
-r_init <- function(lang_init = NULL,
+r_init <- function(server_session,
+                   lang_init = NULL,
                    default_region = get_from_globalenv("default_region"),
                    map_zoom = get_from_globalenv("map_zoom"),
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
   # Initate
   r <- shiny::reactiveValues(
+    server_session = shiny::reactiveVal(server_session),
     lang = shiny::reactiveVal(lang_init),
     region = shiny::reactiveVal(default_region),
     default_select_ids = shiny::reactiveVal(NULL),

@@ -28,6 +28,10 @@ used to determine which type of legend to draw.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
+
+\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+the data shown will be \code{DA}.}
 }
 \value{
 Panel view module

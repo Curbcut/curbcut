@@ -4,13 +4,11 @@
 \alias{title_page_update}
 \title{Update the web title of Curbcut}
 \usage{
-title_page_update(r, session, active_page, site_name)
+title_page_update(r, active_page, site_name)
 }
 \arguments{
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
-
-\item{session}{<\code{session}> The session of \code{server.R}. Usually \code{session = session}.}
 
 \item{active_page}{<\code{reactive}> The ID of the active page. Usually \code{input$cc_page}
 in a \code{\link[shiny]{reactive}}, e.g. \code{shiny::reactive(input$cc_page)}.}

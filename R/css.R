@@ -11,13 +11,14 @@ use_curbcut_css <- function(lang_init = FALSE) {
   shiny::addResourcePath("curbcut_css", system.file("css", package = "curbcut"))
 
   shiny::tagList(
-    tags$head(tags$link(rel = "stylesheet", type = "text/css",
-                        href = paste0("https://fonts.googleapis.com/icon?",
-                                      "family=Material+Icons"))),
+    shiny::tags$head(shiny::tags$link(rel = "stylesheet",
+                                      type = "text/css",
+                                      href = paste0("https://fonts.googleapis.com/icon?",
+                                                    "family=Material+Icons"))),
     shiny::tags$head(shiny::tags$link(rel = "stylesheet", type = "text/css",
                                       href = "curbcut_css/panel_view.css")),
     shiny::tags$head(shiny::tags$link(rel = "stylesheet", type = "text/css",
                                       href = "curbcut_css/language_span.css")),
-    if (lang_init) tags$body(class = "user-lang-fr")
+    if (lang_init) shiny::tags$body(class = "user-lang-fr")
   )
 }

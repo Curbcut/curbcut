@@ -6,13 +6,11 @@
 #'
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param session <`session`> The session/scope of the `server.R`.
-#' Usually `session = session`.
 #'
 #' @export
-mobile_warning <- function(r, session) {
+mobile_warning <- function(r) {
   shiny::observe({
-    device <- session$input$.shinybrowser$device
+    device <- r$server_session()$input$.shinybrowser$device
     # Return nothing if device isn't detected
     if (is.null(device)) {
       return(NULL)

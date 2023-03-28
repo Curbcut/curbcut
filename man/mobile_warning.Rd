@@ -4,14 +4,11 @@
 \alias{mobile_warning}
 \title{Display a warning message if the user is accessing the app from a mobile device}
 \usage{
-mobile_warning(r, session)
+mobile_warning(r)
 }
 \arguments{
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
-
-\item{session}{<\code{session}> The session/scope of the \code{server.R}.
-Usually \code{session = session}.}
 }
 \description{
 This function displays a warning message if the user is accessing the Shiny app

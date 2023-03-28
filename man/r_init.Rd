@@ -5,6 +5,7 @@
 \title{Initialize reactive values for Curbcut}
 \usage{
 r_init(
+  server_session,
   lang_init = NULL,
   default_region = get_from_globalenv("default_region"),
   map_zoom = get_from_globalenv("map_zoom"),
@@ -13,6 +14,10 @@ r_init(
 )
 }
 \arguments{
+\item{server_session}{<\code{ShinySession}> The server session from \code{server.R}, used
+tu update the tab and other necessary actions taken from modules to the server
+itself.}
+
 \item{lang_init}{<\code{character}> An optional character string specifying the
 initial language for the Curbcut. Default is \code{NULL}.}
 
