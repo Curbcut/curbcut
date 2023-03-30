@@ -11,7 +11,8 @@
 #' @return handles updating the state of the app based on the URL query string.
 #' @export
 use_bookmark <- function(r) {
-  shiny::observeEvent(shiny::parseQueryString(r$server_session()$clientData$url_search),
+  shiny::observeEvent(
+    shiny::parseQueryString(r$server_session()$clientData$url_search),
     {
       # Get the URL search query
       query <- shiny::parseQueryString(r$server_session()$clientData$url_search)
@@ -177,7 +178,7 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
     return(c(code, widget[[2]]))
   })
 
-  ## Start with the well known widgets (bookmark_codes)
+  # Start with the well known widgets (bookmark_codes)
   cbox <- from_codes[grepl("cccheckbox_", lapply(from_codes, `[[`, 1))]
   s_text <- from_codes[grepl("ccslidertext_", lapply(from_codes, `[[`, 1))]
   picker <- from_codes[grepl("ccpicker_", lapply(from_codes, `[[`, 1))]

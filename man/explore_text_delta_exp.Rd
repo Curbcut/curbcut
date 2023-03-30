@@ -20,6 +20,17 @@ to be generated. Usually \code{vars$var_left}.}
 Usually equivalent of \code{r$region()}.}
 
 \item{...}{Additional arguments passed to the dispatched method.}
+
+\item{select_id}{A string indicating the ID of the currently selected region
+(if any). Usually \code{r[[id]]$select_id()}}
+
+\item{data}{<\code{data.frame}> A data frame containing the variables and
+observations to be compared. The data frame must have columns named var_left
+and ID. The output of \code{\link{data_get}}.}
+
+\item{df}{<\code{character}> The combination of the region under study and the
+scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
 }
 \value{
 A list with the following elements:

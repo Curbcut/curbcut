@@ -7,12 +7,17 @@
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
-table_view_prep_table <- function(vars, data, df, lang = NULL) {
+table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   # Take out the `q3`, `q5` and `group`
   dat <- data
   dat <- dat[!grepl("_q3$|_q5$|group$", names(dat))]
@@ -31,24 +36,54 @@ table_view_prep_table <- function(vars, data, df, lang = NULL) {
 
   # Bind the `df` data to the real data
   df_dat <- get_from_globalenv(df)
-  df_dat <- df_dat[c("name", "name_2", "population", "households")]
-  dat <- cbind(df_dat, dat)
+  df_dat <- df_dat[c("ID", "name", "name_2", "population", "households")]
+  dat <- cbind(df_dat, dat[names(dat) != "ID"])
 
   # Order data by population
   dat <- dat[order(dat$population, decreasing = TRUE), ]
 
   # Update column names (More user friendly)
   pretty_dat <- dat
+
+  # Switch name_2 column name depending on `zoom_levels`
+  # Switch df to scale as it can cause a bug where the region is the same as the
+  # scale. centraide_CT catches both the `centraide` and the `CT` scale.
+  scale <- gsub(".*_", "", df)
+  which_zl <- which(is_scale_df(names(zoom_levels), scale, vectorized = TRUE))
+  names(pretty_dat)[names(pretty_dat) == "name_2"] <-
+    if (which_zl == 1) {
+      "Scale"
+    } else {
+      zoom_get_name(names(zoom_levels)[1])
+    }
+
+  # Add a new column 'Scale' to be clear which scale the user is seeing
+  if (which_zl > 1) {
+    pretty_dat$Scale <- zoom_get_name(names(zoom_levels)[which_zl])
+    first_cols <- c("ID", "Scale")
+    rest_cols <- names(pretty_dat)[!names(pretty_dat) %in% first_cols]
+    pretty_dat <- pretty_dat[, c(first_cols, rest_cols)]
+  }
+
   # Start with the basic usual ones
   to_sentence_vector <-
-    names(pretty_dat) %in% c("name", "name_2", "population", "households")
+    names(pretty_dat) %in% c("name", "population", "households")
   names(pretty_dat)[to_sentence_vector] <-
-    s_sentence(sapply(names(pretty_dat)[to_sentence_vector], cc_t, lang = lang))
+    sapply(s_sentence(names(pretty_dat)[to_sentence_vector]), cc_t, lang = lang)
+
+  # Take out one of Name or ID if they are identical
+  if (identical(pretty_dat$Name, pretty_dat$ID))
+    pretty_dat <- pretty_dat[names(pretty_dat) != "Name"]
 
   # Depending on the class of `vars`, update the other column names and
   # out as a datatable.
   pretty_dat <-
     panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang, df = df)
+
+  # Add population and households to the title vars so they also are formatted
+  pretty_dat$title_vars <- c(pretty_dat$title_vars,
+                             list(structure(cc_t("Population", lang = lang), class = "count")),
+                             list(structure(cc_t("Households", lang = lang), class = "count")))
 
   return(list(pretty_data = pretty_dat$data,
               data = dat,
@@ -244,6 +279,12 @@ panel_view_style_cols.dollar <- function(var, table, ...) {
 
 #' @rdname panel_view_style_cols
 #' @export
+panel_view_style_cols.count <- function(var, table, ...) {
+  DT::formatCurrency(table, var, currency = "", digits = 0)
+}
+
+#' @rdname panel_view_style_cols
+#' @export
 panel_view_style_cols.default <- function(var, table, ...) {
-  DT::formatRound(table, var, digits = 3)
+  DT::formatRound(table, var, digits = 2)
 }

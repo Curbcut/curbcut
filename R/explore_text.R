@@ -746,6 +746,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 #' to be generated. Usually `vars$var_left`.
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
+#' @param select_id A string indicating the ID of the currently selected region
+#' (if any). Usually `r[[id]]$select_id()`
 #' @param ... Additional arguments passed to the dispatched method.
 #'
 #' @return A list with the following elements:
@@ -799,6 +801,14 @@ explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
 }
 
 #' @rdname explore_text_delta_exp
+#'
+#' @param df <`character`> The combination of the region under study and the
+#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The data frame must have columns named var_left
+#' and ID. The output of \code{\link{data_get}}.
+#'
 #' @export
 explore_text_delta_exp.default <- function(var, region, select_id, data, df,
                                            ...) {

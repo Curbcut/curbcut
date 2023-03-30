@@ -113,8 +113,7 @@ zoom_UI <- function(id, zoom_levels) {
       slider_text_UI(
         id = shiny::NS(id, "zoom_slider"),
         label = NULL,
-        choices = zoom_get_label(zoom_levels),
-        hide_min_max = TRUE
+        choices = zoom_get_label(zoom_levels)
       )
     )
   )

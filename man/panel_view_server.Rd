@@ -10,6 +10,8 @@ panel_view_server(
   r,
   vars,
   data,
+  zoom_levels,
+  temp_folder = get_from_globalenv("temp_folder"),
   scales_as_DA = shiny::reactive(c("building", "street"))
 )
 
@@ -28,6 +30,16 @@ used to determine which type of legend to draw.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+will sort them to make sure the lower zoom level is first, and the highest
+is last (so it makes sense on an auto-zoom).}
+
+\item{temp_folder}{<\code{character}> The temporary folder of the app. By default
+will grab the \code{temp_folder} object as it's already supposed to have been assigned
+in the \code{global.R} file}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

@@ -7,7 +7,7 @@
 icon_material_button(tag, icon)
 }
 \arguments{
-\item{tag}{<\verb{HTML element}>An HTML tag object (a list that represents an HTML
+\item{tag}{<\verb{HTML element}> An HTML tag object (a list that represents an HTML
 element, e.g. \code{\link[shinyWidgets]{dropdownButton}}) to be modified into
 a button with a Material Design icon.}
 

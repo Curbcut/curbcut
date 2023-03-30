@@ -15,17 +15,27 @@
 #' used to determine which type of legend to draw.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
+#' @param temp_folder <`character`> The temporary folder of the app. By default
+#' will grab the `temp_folder` object as it's already supposed to have been assigned
+#' in the `global.R` file
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' the data shown will be `DA`.
 #'
 #' @return Panel view module
 #' @export
-panel_view_server <- function(id, r, vars, data,
+panel_view_server <- function(id, r, vars, data, zoom_levels,
+                              temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
 
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
+  stopifnot(shiny::is.reactive(zoom_levels))
   stopifnot(shiny::is.reactive(scales_as_DA))
 
   shiny::moduleServer(id, function(input, output, session) {
@@ -51,10 +61,12 @@ panel_view_server <- function(id, r, vars, data,
       shinyjs::addClass(id = "panel_data", class = "selection")
     })
 
-    # Bring the user to the place explorer when there is a selection
-    shiny::observeEvent(r[[id]]$select_id(), {
+    # Bring the user to the place explorer when there is a selection and that
+    # selection is in `data`
+    shiny::observe({
       shinyjs::toggle(id = "panel_selection",
-                      condition = !is.na(r[[id]]$select_id()),
+                      condition = !is.na(r[[id]]$select_id()) &&
+                        r[[id]]$select_id() %in% data()$ID,
                       anim = TRUE, animType = "fade")
     })
 
@@ -65,9 +77,42 @@ panel_view_server <- function(id, r, vars, data,
 
     # If the 'Portrait' button is clicked, bring to place explorer
     shiny::observeEvent(input$panel_selection, {
-      link(r = r,
-           page = "place_explorer",
-           select_id = r[[id]]$select_id())
+
+      # Adjust the height of the modal
+      # Request window height using shinyjs
+      shinyjs::runjs("Shiny.setInputValue('window_height', window.innerHeight);")
+      window_height <- input$window_height
+      modal_height <- window_height - 100
+
+      # Get the place explorer HTML document
+      pe_src <- place_explorer_html_links(temp_folder = temp_folder,
+                                          df = r[[id]]$df(),
+                                          select_id = r[[id]]$select_id(),
+                                          lang = r$lang())$src
+
+      # Popup the modal
+      shiny::showModal(shiny::modalDialog(
+        # Hack the namespace of the button so that it's detectable from within
+        # this module (nested in another page, so double ns)
+        action_button(classes = c("floating-bar-btn", "visit-place-ex"),
+                      id = shiny::NS(id, shiny::NS(id, "go_pe")),
+                      icon = "search",
+                      text_class = "floating-panel-text",
+                      text = cc_t("Visit the place explorer", lang = r$lang())),
+        shiny::tags$iframe(style = "width:100%;height:calc(100vh - 260px)",
+                           title = "place_ex",
+                           src = pe_src,
+                           frameborder = 0),
+        footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
+        size = "xl",
+        easyClose = TRUE
+      ))
+    })
+
+    # If the user click on the 'visit the place explorer' button from the modal
+    shiny::observeEvent(input$go_pe, {
+      shiny::removeModal()
+      link(r = r, page = "place_explorer")
     })
 
     # If the data is private
@@ -92,6 +137,7 @@ panel_view_server <- function(id, r, vars, data,
       dat <- table_view_prep_table(vars = vars(),
                                    data = data(),
                                    df = treated_df(),
+                                   zoom_levels = zoom_levels(),
                                    lang = r$lang())
 
       # Return
@@ -148,6 +194,15 @@ panel_view_server <- function(id, r, vars, data,
       # If there is a selection, update the selected id
       new_id <- pretty_data()$ID[input$data_table_rows_selected]
       r[[id]]$select_id(new_id)
+
+      # If there is a selection, update the central coordinates of the map
+      df_data <- get_from_globalenv(treated_df())
+      coords <- df_data$centroid[df_data$ID == new_id][[1]]
+      coords <- sapply(coords, round, digits = 2)
+      rdeck::rdeck_proxy(id = "map",
+                         initial_view_state =
+                           rdeck::view_state(center = coords,
+                                             zoom = r[[id]]$zoom()))
     }, ignoreNULL = FALSE, ignoreInit = TRUE)
 
     # When the user clicks to download the .csv
@@ -216,36 +271,26 @@ panel_view_UI <- function(id) {
         class = "floating-panel-content",
         id = "floating-panel-content",
         # Map
-        shiny::tags$button(
-          class = "action-button floating-bar floating-bar-btn map-btn selection",
-          id = shiny::NS(id, "panel_map"),
-          icon_material("map", style = "color:white;font-size:2rem;"),
-          shiny::tags$div(
-            class = "floating-panel-text",
-            cc_t("Map")
-          )
-        ),
+        action_button(classes = c("floating-bar", "floating-bar-btn", "map-btn",
+                                  "selection"),
+                      id = shiny::NS(id, "panel_map"),
+                      icon = "map",
+                      text_class = "floating-panel-text",
+                      text = cc_t("Map")),
         # Data
-        shiny::tags$button(
-          class = "action-button floating-bar floating-bar-btn data-btn",
-          id = shiny::NS(id, "panel_data"),
-          icon_material("table_view", style = "color:white;font-size:2rem;"),
-          shiny::tags$div(
-            class = "floating-panel-text",
-            cc_t("Data")
-          )
-        ),
+        action_button(classes = c("floating-bar", "floating-bar-btn", "data-btn"),
+                      id = shiny::NS(id, "panel_data"),
+                      icon = "table_view",
+                      text_class = "floating-panel-text",
+                      text = cc_t("Data")),
         # Explore data link
-        shinyjs::hidden(shiny::tags$button(
-          class = "action-button floating-bar floating-bar-btn portrait-btn",
-          id = shiny::NS(id, "panel_selection"),
-          icon_material("search", style = "color:white;font-size:2rem;"),
-          shiny::tags$div(
-            class = "floating-panel-text",
-            cc_t("Portrait")
-          )
-        )
-        )
+        shinyjs::hidden(action_button(classes = c("floating-bar",
+                                                  "floating-bar-btn",
+                                                  "portrait-btn"),
+                                      id = shiny::NS(id, "panel_selection"),
+                                      icon = "search",
+                                      text_class = "floating-panel-text",
+                                      text = cc_t("Portrait")))
       )
     ),
 
@@ -254,12 +299,12 @@ panel_view_UI <- function(id) {
       shiny::div(
         class = "panel_view",
         id = shiny::NS(id, "view_data"),
-        shiny::htmlOutput(
-          outputId = shiny::NS(id, "data_info"),
-          fill = TRUE),
         shiny::div(style = "margin-bottom:20px;",
                    DT::DTOutput(
                      outputId = shiny::NS(id, "data_table"))),
+        shiny::htmlOutput(
+          outputId = shiny::NS(id, "data_info"),
+          fill = TRUE),
         shiny::div(
           style = "text-align:right",
           shiny::downloadButton(class = "download_csv",

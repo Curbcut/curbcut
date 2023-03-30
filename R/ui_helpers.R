@@ -50,7 +50,7 @@ icon_custom <- function(icon) {
 #' To view the available icons that can be used with the "material-icons" class,
 #' please visit \href{https://material.io/resources/icons/}{Material Symbols and Icons - Google Fonts}.
 #'
-#' @param tag <`HTML element`>An HTML tag object (a list that represents an HTML
+#' @param tag <`HTML element`> An HTML tag object (a list that represents an HTML
 #' element, e.g. \code{\link[shinyWidgets]{dropdownButton}}) to be modified into
 #' a button with a Material Design icon.
 #' @param icon <`character`> A string indicating the name of the icon to be displayed.

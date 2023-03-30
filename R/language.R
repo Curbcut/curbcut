@@ -31,7 +31,8 @@ language_server <- function(id = "language", r) {
         update_lang(r = r, lang = new_lang)
 
         # Set the cookie
-        cookie_set(session = parent_session, name = "lang", value = new_lang)
+        cookie_set(session = r$server_session(), name = "lang",
+                   value = new_lang)
       },
       ignoreInit = TRUE
     )

@@ -31,15 +31,6 @@ table.dataTable tr.selected td, table.dataTable td.selected {
   bottom: 1rem;
   left: calc((100vw + var(--w-panel) - var(--w-sidebar)) / 2);
   transform: translateX(-50%);
-  border-radius: 25px;
-  color: #000;
-  font-size: 4rem;
-  width: auto;
-  height: auto;
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--ff-label);
-  align-items: center;
 }
 
 .floating-panel-content {
@@ -99,9 +90,20 @@ table.dataTable tr.selected td, table.dataTable td.selected {
   font-size: 1.5rem;
   margin-top: 0.5rem;
   text-align: center;
+  font-family: var(--ff-label);
 }
 
 .action-button.floating-bar.selection {
   border: solid 2px white;
   background-color: var(--c-medium-blue);
+}
+
+.floating-bar-btn.material-icons {
+  color:white;
+  font-size:2rem;
+}
+
+.visit-place-ex {
+  width: 100% !important;
+  margin-bottom: 20px;
 }

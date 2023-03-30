@@ -4,7 +4,7 @@
 \alias{settings_server}
 \title{Server logic for the settings UI module}
 \usage{
-settings_server(id = "settings", r, parent_session)
+settings_server(id = "settings", r)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the module, used to connect the UI and server

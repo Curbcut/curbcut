@@ -19,6 +19,8 @@ use_curbcut_css <- function(lang_init = FALSE) {
                                       href = "curbcut_css/panel_view.css")),
     shiny::tags$head(shiny::tags$link(rel = "stylesheet", type = "text/css",
                                       href = "curbcut_css/language_span.css")),
+    shiny::tags$head(shiny::tags$link(rel = "stylesheet", type = "text/css",
+                                      href = "curbcut_css/place_explorer.css")),
     if (lang_init) shiny::tags$body(class = "user-lang-fr")
   )
 }

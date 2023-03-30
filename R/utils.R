@@ -179,6 +179,26 @@ s_extract <- function(pattern, x) {
   sapply(regmatches(x, regexec(pattern, x, perl = TRUE)), `[`, 1)
 }
 
+#' Extract all occurrences of a regular expression pattern from a character vector
+#'
+#' It is a reimplementation of \code{\link[stringr]{str_extract_all}} in base R.
+#'
+#' @param pattern <`character`> A regular expression pattern to match
+#' @param x <`character`> A vector from which to extract the substring
+#'
+#' @return A character vector containing all occurrences of the regular
+#' expression pattern found in the input vector.
+#'
+#' @details The function uses the `gregexpr` function to locate all occurrences of
+#' the specified regular expression pattern in the input character vector `x`.
+#' The resulting match positions are then passed to the `regmatches` function to
+#' extract the matching substrings.
+#'
+#' @export
+s_extract_all <- function(pattern, x) {
+  unlist(regmatches(x, gregexpr(pattern, x, perl = TRUE)))
+}
+
 #' Capitalize the first letter of a sentence
 #'
 #' This function takes a string as input and returns the same string with the

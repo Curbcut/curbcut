@@ -4,6 +4,7 @@
 \alias{panel_view_style_cols}
 \alias{panel_view_style_cols.pct}
 \alias{panel_view_style_cols.dollar}
+\alias{panel_view_style_cols.count}
 \alias{panel_view_style_cols.default}
 \title{Apply styling to columns of a DT::datatable based on data type}
 \usage{
@@ -12,6 +13,8 @@ panel_view_style_cols(var, table, ...)
 \method{panel_view_style_cols}{pct}(var, table, ...)
 
 \method{panel_view_style_cols}{dollar}(var, table, ...)
+
+\method{panel_view_style_cols}{count}(var, table, ...)
 
 \method{panel_view_style_cols}{default}(var, table, ...)
 }
