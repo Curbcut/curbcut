@@ -21,11 +21,6 @@
 #' function to show/hide the comparison panel based on the value of the
 #' `show_panel` reactive expression.
 #'
-#' The `input$hide_compare` event is used to toggle the visibility of the
-#' comparison picker and update the label of the "Hide/Show" action button
-#' accordingly. This event is triggered by clicking on the "Hide/Show" action
-#' button.
-#'
 #' @return A Shiny module server function that provides the logic for
 #' comparing variables in Curbcut
 #' @export
@@ -49,23 +44,6 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
       shinyjs::toggle("compare_panel", condition = show_panel())
     })
 
-    # Hide compare picker and update the the action link
-    shiny::observeEvent(input$hide_compare, {
-      shinyjs::toggle("widgets", condition = input$hide_compare %% 2 == 0)
-
-      # Change label
-      lab <- if (input$hide_compare %% 2 == 0) {
-        cc_t(lang = r$lang(), "Hide")
-      } else {
-        cc_t(lang = r$lang(), "Show")
-      }
-      shiny::updateActionButton(
-        session = session,
-        inputId = "hide_compare",
-        label = lab
-      )
-    })
-
     var_right
   })
 }
@@ -76,15 +54,7 @@ compare_UI <- function(id, var_list) {
   shiny::div(
     id = shiny::NS(id, "compare_panel"),
     shiny::fluidRow(
-      shiny::column(width = 7, shiny::h4(cc_t("Compare"))),
-      shiny::column(
-        width = 5, align = "right",
-        shiny::actionLink(
-          inputId = shiny::NS(id, "hide_compare"),
-          class = "sus-small-link",
-          label = cc_t("Hide")
-        )
-      )
+      shiny::column(width = 7, shiny::h4(cc_t("Compare")))
     ),
     shiny::div(
       id = shiny::NS(id, "widgets"),

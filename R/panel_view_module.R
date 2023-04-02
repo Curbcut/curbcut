@@ -70,11 +70,6 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
                       anim = TRUE, animType = "fade")
     })
 
-    # Show the data in the same spot as the map (`map_div`)
-    output$data_info <- shiny::renderUI({
-      # TKTK data show text
-    })
-
     # If the 'Portrait' button is clicked, bring to place explorer
     shiny::observeEvent(input$panel_selection, {
 
@@ -142,6 +137,26 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
       # Return
       return(dat)
+    })
+
+    # Show the text information
+    output$data_info <- shiny::renderUI({
+      modules <- get_from_globalenv("modules")
+      # Spatial organization of data
+      scale <-
+        tolower(curbcut::cc_t(lang = r$lang(), zoom_get_name(r[[id]]$df())))
+      scale <- sprintf(cc_t("The spatial organization of the data is the %s scale.",
+                            lang = r$lang()),
+                       scale)
+
+      shiny::tagList(
+        shiny::h4(cc_t("Overview", lang = r$lang())),
+        # About the module
+        shiny::HTML(cc_t(modules$dataset_info[modules$id == id], lang = r$lang())),
+        shiny::p(scale),
+        # About the variables
+        shiny::HTML(datas()$text)
+      )
     })
 
     # Place the selection first in the pretty_data
@@ -302,9 +317,6 @@ panel_view_UI <- function(id) {
         shiny::div(style = "margin-bottom:20px;",
                    DT::DTOutput(
                      outputId = shiny::NS(id, "data_table"))),
-        shiny::htmlOutput(
-          outputId = shiny::NS(id, "data_info"),
-          fill = TRUE),
         shiny::div(
           style = "text-align:right",
           shiny::downloadButton(class = "download_csv",
@@ -312,6 +324,9 @@ panel_view_UI <- function(id) {
                                 label = cc_t("Download '.csv'")),
           shiny::downloadButton(class = "download_shp",
                                 outputId = shiny::NS(id, "download_shp"),
-                                label = cc_t("Download '.shp'")))))
+                                label = cc_t("Download '.shp'"))),
+        shiny::htmlOutput(
+          outputId = shiny::NS(id, "data_info"),
+          fill = TRUE)))
   )
 }

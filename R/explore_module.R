@@ -108,25 +108,6 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     shiny::observeEvent(input$clear_selection, r[[id]]$select_id(NA),
       ignoreInit = TRUE
     )
-
-    # Hide compare picker and update the the action link
-    shiny::observeEvent(input$hide_explore, {
-      shinyjs::toggle("explore_content",
-        condition = input$hide_explore %% 2 == 0
-      )
-
-      # Change label
-      lab <- if (input$hide_explore %% 2 == 0) {
-        cc_t(lang = r$lang(), "Hide")
-      } else {
-        cc_t(lang = r$lang(), "Show")
-      }
-      shiny::updateActionButton(
-        session = session,
-        inputId = "hide_explore",
-        label = lab
-      )
-    })
   })
 }
 
@@ -140,14 +121,6 @@ explore_UI <- function(id) {
         shiny::column(
           width = 7,
           shiny::h4(cc_t("Explore"))
-        ),
-        shiny::column(
-          width = 5, align = "right",
-          shiny::actionLink(
-            inputId = shiny::NS(id, "hide_explore"),
-            class = "sus-small-link",
-            label = cc_t("Hide")
-          )
         )
       )
     ),
