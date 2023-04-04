@@ -46,11 +46,6 @@ generate a reactive expression (\code{var_right}) that contains the selected
 variable(s) for comparison. It also uses the \code{\link[shinyjs]{toggle}}
 function to show/hide the comparison panel based on the value of the
 \code{show_panel} reactive expression.
-
-The \code{input$hide_compare} event is used to toggle the visibility of the
-comparison picker and update the label of the "Hide/Show" action button
-accordingly. This event is triggered by clicking on the "Hide/Show" action
-button.
 }
 \section{Functions}{
 \itemize{

@@ -552,10 +552,34 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
     source_bit <-
       if (source == "Canadian census") {
         date <- var_get_time(var)
-        sprintf(paste0("The data comes from the %s Canadian census and has ",
-                       "been retrieved from <a href = 'https://censusma",
-                       "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
-                       "using the R cancensus package."), date)
+        s <- sprintf(paste0("The data comes from the %s Canadian census and has ",
+                            "been retrieved from <a href = 'https://censusma",
+                            "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
+                            "using the R cancensus package."), date)
+        # Info on how we created the variable
+        census_variables <- get_from_globalenv("census_variables")
+        info <- lapply(census_variables[census_variables$var_code == var, ],
+                       unlist)
+        par_exp <- var_get_parent_info(var = var, what = "explanation",
+                                       translate = TRUE, lang = lang)
+        source_vec <- paste0("<b>", info$vec, "</b> (",info$vec_label, ")",
+                             collapse = ", ")
+        v <- if (length(info$vec) > 1) "vectors and their" else "vector and its"
+        source_vec <- sprintf("%s %s", source_vec, v)
+
+        total_vec <- paste0("<b>", info$parent_vec, "</b> (",info$parent_vec_label, ")",
+                             collapse = ", ")
+        v <- if (length(info$parent_vec) > 1) "vectors" else "vector"
+        total_vec <- sprintf("%s %s", v, total_vec)
+        e <- sprintf(paste0("To calculate %s, we extract the %s corresponding ",
+                            "total %s. Here, the term 'total vector' refers to ",
+                            "the data source that represents %s, which we use ",
+                            "as a basis to compute %s."),
+                     explanation, source_vec, total_vec,
+                     par_exp, explanation)
+
+        # Bind two parts
+        sprintf("%s %s", s, e)
       } else {
         sprintf("The source of the data is `%s`.", source)
       }

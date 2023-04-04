@@ -455,7 +455,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     # Is the rank similar or different
     percs <- sapply(compare_texts, `[[`, "higher_than")
     percs_distance <- abs(percs[[1]] - percs[[2]])
-    connector <- if (percs_distance > 0.2) "Whereas" else "Similarly"
+    connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
 
     compare_texts$var_left$text <- s_sentence(compare_texts$var_left$text)
 
@@ -725,7 +725,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   first_part <- sprintf("This %s is %s for %s.", inc_dec,
                         relat$rank_chr, context$to_compare_deter)
   second_part <-
-    sprintf(paste0("The change in %s %s between %s and %s is larger than %s of ",
+    sprintf(paste0("The change in %s %s between %s and %s is larger than in %s of ",
                    "other %s between the same years."),
             exp_nodet, context$p_start, exp_vals$times[1],
             exp_vals$times[2], relat$higher_than, context$scale_plur)

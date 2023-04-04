@@ -96,3 +96,9 @@ qs::qload("resources/grid.qsm", env = .GlobalEnv)
 
 # Stories for poi test
 qs::qload("resources/stories.qsm", env = .GlobalEnv)
+
+# Add the census variables
+assign("census_variables",
+       value = qs::qread("resources/census_variables.qs"),
+       envir = .GlobalEnv
+)

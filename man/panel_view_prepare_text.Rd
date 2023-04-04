@@ -10,13 +10,13 @@
 \usage{
 panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{q5}(vars, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{q5}(vars, df, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{delta}(vars, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta}(vars, df, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{bivar}(vars, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{bivar}(vars, df, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{delta_bivar}(vars, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta_bivar}(vars, df, dat, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
@@ -30,7 +30,7 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 \item{lang}{<\code{character}> The language to use for translating the texts.
 Defaults to NULL for no translation}
 
-\item{...}{Additional arguments passed to the function.}
+\item{...}{Additional arguments to be passed to the underlying methods.}
 }
 \value{
 A string containing the panel view text.

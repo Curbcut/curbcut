@@ -21,6 +21,12 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 \item{var}{<\code{character}> A character representing the variable name in the
 dataset (e.g. 'housing_tenant') with the right class (pct, dollar, ind, ...).}
 
+\item{dat}{<\code{data.frame}> The data frame containing the columns from which
+to retrieve the values.}
+
+\item{title}{<\code{character}> The pretty title of the variable, which must
+match the column of the pretty table.}
+
 \item{explanation}{<\code{character}> A character representing the explanation of
 the variable. A piece of the \code{variables} table.}
 

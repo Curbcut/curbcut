@@ -220,3 +220,36 @@ var_row_index <- function(var) {
   # Get the row number of `var`
   return(which(variables$var_code == var))
 }
+
+#' Get information about the parent variable of a variable from the `variables`
+#' table
+#'
+#' This function retrieves information about the parent variable of a given
+#' variable from the `variables` table in the global environment.
+#'
+#' It is using the \code{\link{var_get_info}} function to retrieve the correct
+#' information.
+#'
+#' @param var <`character vector`> String representing the code of the variable
+#' to retrieve the parent variable information for.
+#' @param what <`character`> String indicating the column name in the
+#' `variables` table to retrieve information from. Defaults to `"var_title"`.
+#' @param translate <`logical`> Indicating whether or not to translate the retrieved
+#' information using the \code{\link{cc_t}} function. Defaults to `FALSE`.
+#' @param lang <`character`> String indicating the language to translate to, if
+#' `translate` is TRUE. If not specified, the function will not attempt to translate.
+#' @param check_year <`logical`> Should the year be removed from `var` to grab
+#' variable's info? Defaults to TRUE
+#'
+#' @return The requested information about the parent variable, with optional
+#' translation using the \code{\link{cc_t}} function.
+#' @export
+var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
+                                lang = NULL, check_year = TRUE) {
+
+  parent <- var_get_info(var, what = "parent_vec")
+  parent_info <- var_get_info(parent, what = what, translate = translate,
+                              lang = lang, check_year = check_year)
+
+  return(parent_info)
+}
