@@ -4,14 +4,11 @@
 \alias{settings_UI}
 \title{Create a settings menu UI for Curbcut}
 \usage{
-settings_UI(id = "settings", contact_email = "contact@curbcut.ca")
+settings_UI(id = "settings")
 }
 \arguments{
 \item{id}{A character string specifying the input ID for the settings menu.
 Defaults to \code{"settings"}.}
-
-\item{contact_email}{A character string specifying the email address for
-providing feedback. Defaults to \code{"contact@curbcut.ca"}.}
 }
 \value{
 A dropdown button object from the shinyWidgets package representing

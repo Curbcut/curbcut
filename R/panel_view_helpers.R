@@ -555,7 +555,10 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         s <- sprintf(paste0("The data comes from the %s Canadian census and has ",
                             "been retrieved from <a href = 'https://censusma",
                             "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
-                            "using the R cancensus package."), date)
+                            "using the R <a href = 'https://cran.r-project.org",
+                            "/web/packages/cancensus/', target = '_blank'>canc",
+                            "ensus</a> package."),
+                     date)
         # Info on how we created the variable
         census_variables <- get_from_globalenv("census_variables")
         info <- lapply(census_variables[census_variables$var_code == var, ],
@@ -569,10 +572,10 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
 
         total_vec <- paste0("<b>", info$parent_vec, "</b> (",info$parent_vec_label, ")",
                              collapse = ", ")
-        v <- if (length(info$parent_vec) > 1) "vectors" else "vector"
+        v <- if (length(info$parent_vec) > 1) "parent vectors" else "parent vector"
         total_vec <- sprintf("%s %s", v, total_vec)
         e <- sprintf(paste0("To calculate %s, we extract the %s corresponding ",
-                            "total %s. Here, the term 'total vector' refers to ",
+                            "%s. Here, the term 'parent vector' refers to ",
                             "the data source that represents %s, which we use ",
                             "as a basis to compute %s."),
                      explanation, source_vec, total_vec,

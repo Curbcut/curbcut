@@ -70,60 +70,23 @@ settings_server <- function(id = "settings", r) {
 
 #' Create a settings menu UI for Curbcut
 #'
-#' This function creates a settings menu for a Shiny app, with several action
-#' links for bookmarking, providing feedback, exporting data, subscribing to a
-#' newsletter, and accessing advanced options. The UI is returned as a dropdown
-#' button object from the shinyWidgets package.
+#' This function returns a settings menu in the form of an action link button
+#' with a gear icon.The button triggers advanced options modal.
 #'
 #' @param id A character string specifying the input ID for the settings menu.
 #' Defaults to `"settings"`.
-#' @param contact_email A character string specifying the email address for
-#' providing feedback. Defaults to `"contact@curbcut.ca"`.
 #'
-#' @return A dropdown button object from the shinyWidgets package representing
-#' the settings menu UI.
+#' @return A Shiny actionLink wrapped inside an icon_material_button with a
+#' gear icon.
 #'
 #' @seealso \code{\link{settings_server}}
 #'
 #' @export
-settings_UI <- function(id = "settings", contact_email = "contact@curbcut.ca") {
-  # Put together the contact email in an action
-  contact <- glue::glue("window.open('mailto:{contact_email}', '_blank')")
-
+settings_UI <- function(id = "settings") {
   # Return the settings menu
-  icon_material_button(
-    shinyWidgets::dropdownButton(
-      inputId = "settings",
-      shiny::a(
-        id = "bookmark",
-        class = "action-button shiny-bound-input",
-        role = "menuitem",
-        href = "#",
-        shiny::icon("link", verify_fa = FALSE),
-        cc_t("Bookmark"),
-        onclick = copy_current_url()
-      ),
-      shiny::actionLink(
-        inputId = shiny::NS(id, "contact"),
-        label = cc_t("Contact/feedback"),
-        shiny::icon("comment", verify_fa = FALSE),
-        onclick = contact
-      ),
-      shiny::actionLink(
-        inputId = shiny::NS(id, "download_data"),
-        label = cc_t("Export data"),
-        shiny::icon("download", verify_fa = FALSE)
-      ),
-      shiny::actionLink(
-        inputId = shiny::NS(id, "subscribe"),
-        label = cc_t("Newsletter"),
-        shiny::icon("rectangle-list", verify_fa = FALSE)
-      ),
-      shiny::actionLink(
-        inputId = shiny::NS(id, "advanced_options"),
-        label = cc_t("Advanced options"),
-        shiny::icon("gear", verify_fa = FALSE)
-      )
-    ), "more_horiz"
+  shiny::actionLink(
+    inputId = shiny::NS(id, "advanced_options"),
+    label = NULL,
+    shiny::icon("gear", verify_fa = FALSE)
   )
 }
