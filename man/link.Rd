@@ -10,10 +10,13 @@ link(r, page, select_id = NA, df = NULL)
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{page}{A reactive object containing the ID of the tab to be selected.}
+\item{page}{<\code{character}> The id of the tab to be opened.}
 
-\item{select_id}{A reactive object containing the ID of the item to be selected
-within the selected tab.}
+\item{select_id}{<\code{character}> ID of the item to be selected within the newly
+opened page.}
+
+\item{df}{<\code{character}> Combination of region and scale to update the zoom
+of the newly opened page's map.}
 }
 \description{
 This function updates the tabset panel with the given \code{page} and selects

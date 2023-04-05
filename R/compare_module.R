@@ -63,6 +63,6 @@ compare_UI <- function(id, var_list) {
         var_list = var_list
       )
     ),
-    shiny::hr()
+    shiny::hr(id = NS(id, "compare_separator"))
   )
 }

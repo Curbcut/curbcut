@@ -9,7 +9,8 @@ explore_text_selection_comparison(
   data,
   select_id,
   col = "var_left",
-  ranks_override = NULL
+  ranks_override = NULL,
+  lang = NULL
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ the ranks in the \code{variables$rankings_chr} table should be overriden for the
 \code{rank_chr} output. Used in \code{delta} mode where it's a change in percentage
 over two years, and so the character rankings from the variables table do not
 matter.}
+
+\item{lang}{<\code{character}> Language the ranking character should be translated
+to. Defaults to NULL for no translation.}
 }
 \value{
 A named list with two elements:

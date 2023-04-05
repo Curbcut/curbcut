@@ -87,7 +87,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
 
     # Plug the right elements for the final sentence
     second_step <- sprintf(
-      "%s %s is higher than %s of other %s %s", exp,
+      "%s %s is higher than in %s of other %s %s", exp,
       context$p_start, relat$higher_than, context$scale_plur,
       context$to_compare_short
     )
@@ -352,13 +352,15 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     date <- if (is.na(date_1) & is.na(date_2)) {
       NA
     } else if (is.na(date_1) & !is.na(date_2)) {
-      date_2
+      explore_text_color(date_2, "right")
     } else if (!is.na(date_1) & is.na(date_2)) {
-      date_1
+      explore_text_color(date_1, "left")
     } else if (date_1 == date_2) {
+      # No color if both dates are the same.
       date_1
     } else {
-      sprintf("%s and %s", date_1, date_2)
+      sprintf("%s and %s", explore_text_color(date_1, "left"),
+              explore_text_color(date_2, "right"))
     }
     if (!is.na(date)) {
       sprintf("%s <i>(Data from %s.)</i>", out, date)
@@ -400,6 +402,12 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
       col = "var_right"
     )
 
+    # Add the coloring
+    value_string_left$text <-
+      explore_text_color(value_string_left$text, meaning = "left")
+    value_string_right$text <-
+      explore_text_color(value_string_right$text, meaning = "right")
+
     # If one of the value is NA, return that there is a missing value
     if (value_string_left$na) {
       return(sprintf("<p>%s, %s.", s_sentence(context$p_start),
@@ -419,7 +427,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     # Grab the two texts for var_left and var_right
     compare_texts <- lapply(vars, \(var) {
 
-      col <- if (var == vars$var_left) "var_left" else "var_left"
+      col <- if (var == vars$var_left) "var_left" else "var_right"
 
       # Get the information on how the selection compares
       relat <- explore_text_selection_comparison(
@@ -430,6 +438,10 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
       # Grab the explanation
       exp <- var_get_info(var, what = "explanation")
+      # If left, starts with a capital letter.
+      if (col == "var_left") exp <- s_sentence(exp)
+      exp <- explore_text_color(
+        exp, meaning = if (col == "var_left") "left" else "right")
 
       # Plug the right elements for the final sentence
       first_step_1 <- if (var == vars$var_left) {
@@ -438,7 +450,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
         exp
       }
       first_step <- sprintf(
-        "%s is higher than %s of other %s", first_step_1, relat$higher_than,
+        "%s is higher than in %s of other %s", first_step_1, relat$higher_than,
         context$scale_plur
       )
 
@@ -456,8 +468,6 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     percs <- sapply(compare_texts, `[[`, "higher_than")
     percs_distance <- abs(percs[[1]] - percs[[2]])
     connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
-
-    compare_texts$var_left$text <- s_sentence(compare_texts$var_left$text)
 
     # Bind it all
     out <- sprintf("%s<p>%s. %s, %s.", out, compare_texts$var_left$text,
@@ -479,9 +489,12 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
     # Explanations
     left_exp <- var_get_info(vars$var_left, what = "explanation",
-                             translate = TRUE, lang = lang)
+                             translate = TRUE, lang = lang) |>
+      explore_text_color(meaning = "left")
+
     right_exp <- var_get_info(vars$var_right, what = "explanation",
-                              translate = TRUE, lang = lang)
+                              translate = TRUE, lang = lang) |>
+      explore_text_color(meaning = "right")
 
     out <- sprintf("%s, there is %s (%s) between %s and %s in %s.",
                    s_sentence(context$p_start), relation$relation_text, relation$corr,
@@ -502,9 +515,11 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
   # Explanations
   left_exp <- var_get_info(vars$var_left, what = "explanation_nodet",
-                           translate = TRUE, lang = lang)
+                           translate = TRUE, lang = lang) |>
+    explore_text_color(meaning = "left")
   right_exp <- var_get_info(vars$var_right, what = "explanation_nodet",
-                            translate = TRUE, lang = lang)
+                            translate = TRUE, lang = lang) |>
+    explore_text_color(meaning = "right")
 
   # Paragraphs
   first_p <-
@@ -640,18 +655,26 @@ explore_text_bivar_adjective <- function(var, left, positive, lang = NULL, ...) 
 #' @export
 explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
                                                 ...) {
-  if (left) return(cc_t("higher", lang = lang))
-  if (positive) return(cc_t("higher", lang = lang))
-  return(cc_t("lower", lang = lang))
+  string <- (\(x) {
+    if (left) return(cc_t("higher", lang = lang))
+    if (positive) return(cc_t("higher", lang = lang))
+    return(cc_t("lower", lang = lang))
+  })()
+
+  return(sprintf("<b>%s</b>", string))
 }
 
 #' @rdname explore_text_bivar_adjective
 #' @export
 explore_text_bivar_adjective.default <- function(var, left, positive, lang,
                                                  ...) {
-  if (left) return(cc_t("a higher", lang = lang))
-  if (positive) return(cc_t("a higher", lang = lang))
-  return(cc_t("a lower", lang = lang))
+  string <- (\(x) {
+    if (left) return(cc_t("a higher", lang = lang))
+    if (positive) return(cc_t("a higher", lang = lang))
+    return(cc_t("a lower", lang = lang))
+  })()
+
+  return(sprintf("<b>%s</b>", string))
 }
 
 
@@ -686,11 +709,17 @@ explore_text.delta <- function(vars, region, select_id, df, data,
                                      df = df)
 
   # Calculate the variation change
-  change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
-  change_string <- convert_unit.pct(x = change, decimal = 1)
+  change_string <- explore_text_delta_change(var = vars$var_left,
+                                             exp_vals = exp_vals)
 
-  # Did it increase or decrease
-  inc_dec <- if (change > 0) "increased" else "decreased"
+  # Did it increase or decrease? put in color
+  inc_dec <- if (change_string$pct_change > 0) {
+    cc_t("increased", lang = lang) |>
+      explore_text_color(meaning = "increase")
+  } else {
+    cc_t("decreased", lang = lang) |>
+      explore_text_color(meaning = "decrease")
+  }
 
   # Craft the paragraphs
   first_part <- sprintf("%s, %s changed from %s in %s to %s in %s.",
@@ -698,7 +727,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
                         exp_vals$region_vals_strings[2], exp_vals$times[1],
                         exp_vals$region_vals_strings[1], exp_vals$times[2])
   second_part <- sprintf("%s has %s by %s between these years.",
-                         s_sentence(exp_vals$exp), inc_dec, change_string)
+                         s_sentence(exp_vals$exp), inc_dec, change_string$text)
 
   # Bind
   out <- sprintf("<p>%s<p>%s", first_part, second_part)
@@ -710,7 +739,13 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   out <- sprintf("<p><b>%s</b><p>%s", context$heading, out)
 
   # Get the necessary information for the second paragraph
-  inc_dec <- if (change > 0) "increase" else "decrease"
+  inc_dec <- if (change_string$pct_change > 0)  {
+    cc_t("increase", lang = lang) |>
+      explore_text_color(meaning = "increase")
+  } else {
+    cc_t("decrease", lang = lang) |>
+      explore_text_color(meaning = "decrease")
+  }
   exp_nodet <- var_get_info(vars$var_left, what = "explanation_nodet")
   relat <- explore_text_selection_comparison(
     var = vars$var_left,
@@ -846,6 +881,77 @@ explore_text_delta_exp.default <- function(var, region, select_id, data, df,
               region_vals_strings = region_vals_strings,
               times = times))
 }
+
+#' Explore Text Delta Change
+#'
+#' This function calculates and formats the text for delta change in variables,
+#' either in percentage or dollar units, and returns a formatted string.
+#'
+#' @param var <`character`> The variable code for which the text and values need
+#' to be generated. Usually `vars$var_left`.
+#' @param exp_vals <`list`> A list of values, the output of
+#' \code{\link{explore_text_delta_exp}}
+#' @param ... Additional arguments passed to the method functions.
+#'
+#' @return A character string with the formatted delta change text.
+#' @export
+explore_text_delta_change <- function(var, exp_vals, ...) {
+  UseMethod("explore_text_delta_change", var)
+}
+
+#' @rdname explore_text_delta_change
+#' @export
+explore_text_delta_change.pct <- function(var, exp_vals, ...) {
+
+  # Calculate the absolute and variation changes
+  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2]) * 100
+  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+
+  # Get the percentage change as percentage points
+  abs_change_string <- convert_unit(x = abs_change)
+
+  # Increased/decreased by z x.
+  this_x <- convert_unit(x = pct_change + 1)
+
+  out <- sprintf("%s percentage points (%sx)", abs_change_string, this_x)
+
+  return(list(pct_change = pct_change,
+              text = out))
+}
+
+#' @rdname explore_text_delta_change
+#' @export
+explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
+
+  # Calculate the absolute and variation changes
+  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
+  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+
+  # Get the absolute change as dollar
+  abs_change_string <- convert_unit.dollar(x = abs_change)
+
+  # Get the percentage change as percentage points
+  pct_change_string <- convert_unit.pct(x = pct_change, decimal = 1)
+
+  out <- sprintf("%s (%s)", abs_change_string, pct_change_string)
+
+  return(list(pct_change = pct_change,
+              text = out))
+
+}
+
+#' @rdname explore_text_delta_change
+#' @export
+explore_text_delta_change.ind <- function(var, exp_vals, ...) {
+  NULL
+}
+
+#' @rdname explore_text_delta_change
+#' @export
+explore_text_delta_change.default <- function(var, exp_vals, ...) {
+  NULL
+}
+
 
 # DELTA BIVAR -------------------------------------------------------------
 

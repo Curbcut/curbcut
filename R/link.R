@@ -6,9 +6,11 @@
 #'
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param page A reactive object containing the ID of the tab to be selected.
-#' @param select_id A reactive object containing the ID of the item to be selected
-#' within the selected tab.
+#' @param page <`character`> The id of the tab to be opened.
+#' @param select_id <`character`> ID of the item to be selected within the newly
+#' opened page.
+#' @param df <`character`> Combination of region and scale to update the zoom
+#' of the newly opened page's map.
 #'
 #' @export
 link <- function(r, page, select_id = NA, df = NULL) {
@@ -25,18 +27,14 @@ link <- function(r, page, select_id = NA, df = NULL) {
     selected = page
   )
 
-  # Make a namespace function that goes twice deep in each page module
-  ns <- function(widget) {
-    paste(page, page, widget, sep = "-")
-  }
-
   # After half a second and the tab is opened, update the widgets
   shinyjs::delay(500, {
     # Recreate the `df`
     if (!is.null(df)) {
       shinyWidgets::updateSliderTextInput(
         session = r$server_session(),
-        inputId = ns("zoom_slider-ccslidertext_slt"),
+        inputId = ns_doubled(page_id = page,
+                             element = "zoom_slider-ccslidertext_slt"),
         selected = zoom_get_name(df, lang = r$lang())
       )
     }
@@ -68,7 +66,7 @@ link <- function(r, page, select_id = NA, df = NULL) {
       r[[page]]$coords(coords)
       # Update the map using the zoom and location
       rdeck::rdeck_proxy(session = r$server_session(),
-                         id = ns("map"),
+                         id = ns_doubled(page_id = page, "map"),
                          initial_view_state =
                            rdeck::view_state(center = coords, zoom = zoom))
     }

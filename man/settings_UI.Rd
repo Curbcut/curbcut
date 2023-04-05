@@ -11,14 +11,12 @@ settings_UI(id = "settings")
 Defaults to \code{"settings"}.}
 }
 \value{
-A dropdown button object from the shinyWidgets package representing
-the settings menu UI.
+A Shiny actionLink wrapped inside an icon_material_button with a
+gear icon.
 }
 \description{
-This function creates a settings menu for a Shiny app, with several action
-links for bookmarking, providing feedback, exporting data, subscribing to a
-newsletter, and accessing advanced options. The UI is returned as a dropdown
-button object from the shinyWidgets package.
+This function returns a settings menu in the form of an action link button
+with a gear icon.The button triggers advanced options modal.
 }
 \seealso{
 \code{\link{settings_server}}

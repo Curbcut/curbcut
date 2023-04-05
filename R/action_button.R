@@ -27,7 +27,7 @@ action_button <- function(classes = c(), id, icon = NULL, icon_style = NULL,
                           text_class = NULL, text = NULL) {
 
   # Paste all classes together
-  all_classes <- c("action-button", classes)
+  all_classes <- c("action-button", "shiny-bound-input", classes)
   classes_collapsed <- paste0(all_classes, collapse = " ")
 
   shiny::tags$button(
@@ -37,3 +37,4 @@ action_button <- function(classes = c(), id, icon = NULL, icon_style = NULL,
     shiny::tags$div(class = text_class, text)
   )
 }
+

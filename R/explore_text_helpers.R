@@ -365,6 +365,8 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #' `rank_chr` output. Used in `delta` mode where it's a change in percentage
 #' over two years, and so the character rankings from the variables table do not
 #' matter.
+#' @param lang <`character`> Language the ranking character should be translated
+#' to. Defaults to NULL for no translation.
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -380,7 +382,8 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #' }
 explore_text_selection_comparison <- function(var, data, select_id,
                                               col = "var_left",
-                                              ranks_override = NULL) {
+                                              ranks_override = NULL,
+                                              lang = NULL) {
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
@@ -409,6 +412,10 @@ explore_text_selection_comparison <- function(var, data, select_id,
       ranks_override
     }
   rank_chr <- ranks_chr[[rank]]
+
+  # Translate rank_chr and convert to bold
+  rank_chr <- cc_t(rank_chr, lang = lang)
+  rank_chr <- sprintf("<b>%s</b>", rank_chr)
 
   # Return both
   return(list(
@@ -467,4 +474,49 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
 
   return(list(corr = corr,
               corr_string = corr_string))
+}
+
+#' Explore Text Color Function
+#'
+#' This function takes a text input x and assigns it a color based on the meaning
+#' argument. The colors are determined using the global environment's color
+#' schemes for bivariate and delta categories.
+#'
+#' @param x <`character`> A character string to which a color will be assigned.
+#' @param meaning <`character`> A character string indicating the color meaning.
+#' Can be one of the following: "left", "right", "increase", or "decrease".
+#' Default is "left".
+#'
+#' @return A character string with an HTML span tag containing the input text x and its
+#' assigned color as an inline style.
+#' @export
+explore_text_color <- function(x, meaning) {
+
+  if (!meaning %in% c("left", "right", "increase", "decrease")) {
+    stop('`meaning` must be one of c("left", "right", "increase", "decrease")')
+  }
+
+  # Grab the colours from the global environment
+  colours <- colours_get()
+
+  # Make the hex
+  hex <- (\(x) if (meaning == "left") {
+    clr <- colours$bivar$fill[colours$bivar$group == "3 - 1"]
+    return(clr)
+  } else if (meaning == "right") {
+    clr <- colours$bivar$fill[colours$bivar$group == "1 - 3"]
+    return(clr)
+  } else if (meaning == "increase") {
+    clr <- colours$delta$fill[colours$delta$group == "5"]
+    return(clr)
+  } else if (meaning == "decrease") {
+    clr <- colours$delta$fill[colours$delta$group == "1"]
+    return(clr)
+  })()
+
+  # Add the text in a span with the color
+  x_colored <- sprintf("<span style='color:%s'>%s</span>", hex, x)
+
+  # Return
+  return(x_colored)
 }

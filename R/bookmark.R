@@ -68,14 +68,6 @@ use_bookmark <- function(r) {
         return(NULL)
       }
 
-      # Make a NS minimal function
-      ns <- function(widget_id, tb = tab, double = T) {
-        if (double) {
-          return(paste(tb, tb, widget_id, sep = "-"))
-        }
-        return(paste(tb, widget_id, sep = "-"))
-      }
-
       # Delay first, then update all the widgets
       shinyjs::delay(500, {
         widgets <- bookmark_widget_helper(
@@ -87,7 +79,7 @@ use_bookmark <- function(r) {
         lapply(widgets$cbox, \(widget) {
           shiny::updateCheckboxInput(
             session = r$server_session(),
-            inputId = ns(widget[[1]]),
+            inputId = ns_doubled(page_id = tab, widget[[1]]),
             value = as.logical(widget[[2]])
           )
         })
@@ -96,7 +88,7 @@ use_bookmark <- function(r) {
         lapply(widgets$s_text, \(widget) {
           shinyWidgets::updateSliderTextInput(
             session = r$server_session(),
-            inputId = ns(widget[[1]]),
+            inputId = ns_doubled(page_id = tab, widget[[1]]),
             selected = widget[[2]]
           )
         })
@@ -105,7 +97,7 @@ use_bookmark <- function(r) {
           value <- strsplit(widget[[2]], split = "-")[[1]]
           shiny::updateSliderInput(
             session = r$server_session(),
-            inputId = ns(widget[[1]]),
+            inputId = ns_doubled(page_id = tab, widget[[1]]),
             value = as.numeric(value)
           )
         })
@@ -116,7 +108,7 @@ use_bookmark <- function(r) {
           lapply(widgets$picker, \(widget) {
             shinyWidgets::updatePickerInput(
               session = r$server_session(),
-              inputId = ns(widget[[1]]),
+              inputId = ns_doubled(page_id = tab, widget[[1]]),
               selected = widget[[2]]
             )
           })
