@@ -5,7 +5,7 @@
 \alias{dyk_UI}
 \title{Did You Know Server and UI Module}
 \usage{
-dyk_server(id, r, vars, df, poi = reactive(NULL))
+dyk_server(id, r, vars, df, poi = shiny::reactive(NULL))
 
 dyk_UI(id)
 }

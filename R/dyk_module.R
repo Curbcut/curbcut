@@ -58,7 +58,9 @@ dyk_UI <- function(id) {
       id = shiny::NS(id, "dyk_panel"),
       shiny::hr(),
       shiny::fluidRow(
-        shiny::column(width = 7, shiny::h4(cc_t("Did you know?")))),
+        shiny::column(width = 7,
+                      shiny::h4(icon_material_title("info"),
+                                cc_t("Did you know?")))),
       shiny::uiOutput(shiny::NS(id, "dyk_contents"))
     )
     ))

@@ -25,6 +25,24 @@
 icon_material <- function(icon, style = NULL) {
   shiny::span(class = "material-icons", style = style, icon)
 }
+
+#' Create a Material Design icon for a title in the right panel.
+#'
+#' This function creates a Material Design icon for a title, using the
+#' \code{\link{icon_material}} function. It applies a predefined set of CSS
+#' styles to the icon, such as font size, color, vertical alignment, and margin.
+#'
+#' @param icon <`character`> The name of the icon to be displayed.
+#'
+#' @return A "span" element with the "material-icons" class and the specified
+#' icon, styled for a title.
+icon_material_title <- function(icon) {
+  icon_material(icon, style = paste0("font-size: 20px; ",
+                                     "color: var(--c-dark-blue); ",
+                                     "vertical-align:sub; ",
+                                     "margin-right:.3rem"))
+}
+
 #' Create a custom icon element
 #'
 #' This function creates a custom icon element styled in the same way as the

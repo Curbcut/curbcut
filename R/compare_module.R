@@ -54,13 +54,15 @@ compare_UI <- function(id, var_list) {
   shiny::div(
     id = shiny::NS(id, "compare_panel"),
     shiny::fluidRow(
-      shiny::column(width = 7, shiny::h4(cc_t("Compare")))
+      shiny::column(width = 7, shiny::h4(icon_material_title("balance"),
+                                         cc_t("Compare")))
     ),
     shiny::div(
       id = shiny::NS(id, "widgets"),
       picker_UI(
         id = shiny::NS(id, "compare"),
-        var_list = var_list
+        var_list = var_list,
+        open_left = FALSE
       )
     ),
     shiny::hr(id = NS(id, "compare_separator"))

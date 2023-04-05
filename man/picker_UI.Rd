@@ -12,6 +12,7 @@ picker_UI(
   width = "100\%",
   div_style = NULL,
   selected = NULL,
+  open_left = TRUE,
   ...
 )
 }
@@ -37,6 +38,10 @@ The default value is \code{NULL} for no additional styling.}
 
 \item{selected}{A character vector of a value to preselect. The default value
 is \code{NULL} (the first value will be selected).}
+
+\item{open_left}{<\code{logical}> Should the dropdown open to the left? Any dropdown
+placed on the left-side of the screen should do see, and it is the default.
+Compare dropdown should open right, and this can be changed.}
 
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}}
 }

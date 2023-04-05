@@ -116,6 +116,9 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' The default value is `NULL` for no additional styling.
 #' @param selected A character vector of a value to preselect. The default value
 #' is `NULL` (the first value will be selected).
+#' @param open_left <`logical`> Should the dropdown open to the left? Any dropdown
+#' placed on the left-side of the screen should do see, and it is the default.
+#' Compare dropdown should open right, and this can be changed.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}
 #'
 #' @return A `div` container containing a \code{\link[shinyWidgets]{pickerInput}}
@@ -124,7 +127,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @export
 picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
                       width = "100%", div_style = NULL, selected = NULL,
-                      ...) {
+                      open_left = TRUE, ...) {
   # Verify if the widget ID will interfere with bookmark
   picker_id <- widget_id_verif(widget_id = picker_id)
 
@@ -157,7 +160,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       selected = selected,
       width = width,
       choicesOpt = picker_hover_divs(var_list),
-      options = shinyWidgets::pickerOptions(dropdownAlignRight = "auto",
+      options = shinyWidgets::pickerOptions(dropdownAlignRight = !open_left,
                                             container = "body"),
       ...
     )
