@@ -8,11 +8,17 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/language.js",
-                                        package = "curbcut"
+    package = "curbcut"
   ))
+
+  # Add the JS resource path
+  shiny::addResourcePath("curbcut_js", system.file("js_scripts",
+    package = "curbcut"
+  ))
+
   shiny::tagList(
     # Copy URL
     shiny::tags$head(shinyjs::extendShinyjs(
@@ -24,17 +30,25 @@ use_curbcut_js <- function() {
       text = set_language,
       functions = c("set_language")
     )),
+    # Right panel hides some div depending on window size
+    shiny::tags$head(shiny::tags$script(
+      src = "curbcut_js/right_panel.js"
+    )),
     # Change window title
     shiny::tags$head(shiny::tags$script(
       shiny::HTML(
         paste0('Shiny.addCustomMessageHandler("changetitle", function(x)
-                   {document.title=x});')),
+                   {document.title=x});')
+      ),
     )),
     # Allow hover with texts on elements of the picker menus
     shiny::tags$head(shiny::tags$script(
       "var myDefaultWhiteList = $.fn.selectpicker.Constructor.DEFAULTS.whiteList;
     myDefaultWhiteList.div = ['title'];"
     )),
+    # (linked with the previous) Make the hover on the block rather than the
+    # text itself
+    tags$head(tags$style("span.text {display: block !important;}")),
   )
 }
 

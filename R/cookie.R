@@ -11,7 +11,8 @@
 #' @export
 use_curbcut_cookie <- function() {
   shiny::addResourcePath("curbcut_js", system.file("js_scripts",
-                                                   package = "curbcut"))
+    package = "curbcut"
+  ))
   shiny::tagList(
     shiny::tags$head(shiny::tags$script(src = "curbcut_js/cookie.js")),
     shiny::tags$head(shiny::tags$script(src = paste0(

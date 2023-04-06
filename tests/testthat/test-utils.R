@@ -117,7 +117,7 @@ test_that("var_get_breaks works", {
     df = "CMA_CSD", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE
   )
-    expect_equal(all(grepl("^\\$\\d", actual)), TRUE)
+  expect_equal(all(grepl("^\\$\\d", actual)), TRUE)
 
   # SHOULD CHANGE IN FUTURE VARIABLES.QS -> THE FIRST IS NA, NOT INSIG.
   expect_equal(
@@ -192,4 +192,3 @@ test_that("widget_id_verif hrows an error when the widget ID has more than 3 cha
 test_that("widget_id_verif throws an error when the widget ID interferes with known codes and short codes", {
   expect_error(widget_id_verif("pi"), "Widget ID can not be the same as a value of `curbcut::bookmark_codes` or `curbcut::bookmark_shorts` to limit interference with bookmark codes.")
 })
-

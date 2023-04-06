@@ -20,12 +20,10 @@
 #' @return A Shiny module server function for the DYK module.
 #' @export
 dyk_server <- function(id, r, vars, df, poi = shiny::reactive(NULL)) {
-
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(poi))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Get the DYKs
     dyk <- shiny::reactive(dyk_get(id, vars(), poi(), lang = r$lang()))
 
@@ -36,9 +34,11 @@ dyk_server <- function(id, r, vars, df, poi = shiny::reactive(NULL)) {
 
     # Observe for clicks
     shiny::observeEvent(input$dyk_1, do.call(
-      link, c(r = list(r), attr(dyk(), "links")[[1]])))
+      link, c(r = list(r), attr(dyk(), "links")[[1]])
+    ))
     shiny::observeEvent(input$dyk_2, do.call(
-      link, c(r = list(r), attr(dyk(), "links")[[2]])))
+      link, c(r = list(r), attr(dyk(), "links")[[2]])
+    ))
 
     # Only show contents if dyk_output isn't empty
     output$dyk_contents <- shiny::renderUI({
@@ -46,7 +46,6 @@ dyk_server <- function(id, r, vars, df, poi = shiny::reactive(NULL)) {
         shiny::tagList(dyk())
       }
     })
-
   })
 }
 
@@ -58,11 +57,18 @@ dyk_UI <- function(id) {
       id = shiny::NS(id, "dyk_panel"),
       shiny::hr(),
       shiny::fluidRow(
-        shiny::column(width = 7,
-                      shiny::h4(icon_material_title("info"),
-                                cc_t("Did you know?")))),
-      shiny::uiOutput(shiny::NS(id, "dyk_contents"))
-    )
+        shiny::column(
+          width = 7,
+          shiny::h4(
+            icon_material_title("info"),
+            cc_t("Did you know?")
+          )
+        )
+      ),
+      shiny::div(
+        class = "right-panel-hidden",
+        shiny::uiOutput(shiny::NS(id, "dyk_contents"))
+      )
     ))
+  )
 }
-

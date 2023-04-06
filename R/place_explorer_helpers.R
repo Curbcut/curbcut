@@ -17,7 +17,6 @@
 #' character vector with the map zoom levels for the default region, excluding
 #' any specified map scales.
 place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
-
   # Grab modules from the global environment
   modules <- get_from_globalenv("modules")
 
@@ -29,8 +28,10 @@ place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
   map_zoom_levels <- map_zoom_levels[!names(map_zoom_levels) %in% scales_as_DA]
 
   # Return
-  return(list(default_region = default_region,
-              map_zoom_levels = map_zoom_levels))
+  return(list(
+    default_region = default_region,
+    map_zoom_levels = map_zoom_levels
+  ))
 }
 
 #' Create and concatenate Place Explorer HTML files
@@ -55,7 +56,6 @@ place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
 #' the static file for the web server.
 #' * file: The absolute path to the temporary file.
 place_explorer_html_links <- function(temp_folder, df, select_id, lang = NULL) {
-
   # Add the head to the place explorer file
   lang <- if (is.null(lang) || lang == "en") "en" else "fr"
 
@@ -63,9 +63,11 @@ place_explorer_html_links <- function(temp_folder, df, select_id, lang = NULL) {
   pe_file <- sprintf("www/place_explorer/%s_%s_%s.html", df, select_id, lang)
 
   # Make a temporary file
-  tmpfile <- tempfile(pattern = "placeex_tmp",
-                      tmpdir = temp_folder,
-                      fileext = ".html")
+  tmpfile <- tempfile(
+    pattern = "placeex_tmp",
+    tmpdir = temp_folder,
+    fileext = ".html"
+  )
 
   # Get the full paths of the style (header of HTML) and the place explorer HTML file
   head <- normalizePath("www/place_explorer/header.html")
@@ -82,6 +84,8 @@ place_explorer_html_links <- function(temp_folder, df, select_id, lang = NULL) {
 
   # Return the `src` for when we want to grab the static file for the web
   # server. `file` is the absolute path to the temporary file
-  return(list(src = file.path("temp_folder_shortcut", tmpfile),
-              file = sprintf("%s/%s", temp_folder, tmpfile)))
+  return(list(
+    src = file.path("temp_folder_shortcut", tmpfile),
+    file = sprintf("%s/%s", temp_folder, tmpfile)
+  ))
 }

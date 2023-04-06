@@ -246,10 +246,11 @@ var_row_index <- function(var) {
 #' @export
 var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
                                 lang = NULL, check_year = TRUE) {
-
   parent <- var_get_info(var, what = "parent_vec")
-  parent_info <- var_get_info(parent, what = what, translate = translate,
-                              lang = lang, check_year = check_year)
+  parent_info <- var_get_info(parent,
+    what = what, translate = translate,
+    lang = lang, check_year = check_year
+  )
 
   return(parent_info)
 }

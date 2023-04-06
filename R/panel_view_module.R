@@ -32,18 +32,18 @@
 panel_view_server <- function(id, r, vars, data, zoom_levels,
                               temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
-
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(zoom_levels))
   stopifnot(shiny::is.reactive(scales_as_DA))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Switch scales to DA if necessary
     treated_df <-
-      shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(),
-                                  df = r[[id]]$df()))
+      shiny::reactive(treat_to_DA(
+        scales_as_DA = scales_as_DA(),
+        df = r[[id]]$df()
+      ))
 
     # Show the map when the right button is clicked
     shiny::observeEvent(input$panel_map, {
@@ -64,15 +64,16 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
     # Bring the user to the place explorer when there is a selection and that
     # selection is in `data`
     shiny::observe({
-      shinyjs::toggle(id = "panel_selection",
-                      condition = !is.na(r[[id]]$select_id()) &&
-                        r[[id]]$select_id() %in% data()$ID,
-                      anim = TRUE, animType = "fade")
+      shinyjs::toggle(
+        id = "panel_selection",
+        condition = !is.na(r[[id]]$select_id()) &&
+          r[[id]]$select_id() %in% data()$ID,
+        anim = TRUE, animType = "fade"
+      )
     })
 
     # If the 'Portrait' button is clicked, bring to place explorer
     shiny::observeEvent(input$panel_selection, {
-
       # Adjust the height of the modal
       # Request window height using shinyjs
       shinyjs::runjs("Shiny.setInputValue('window_height', window.innerHeight);")
@@ -80,24 +81,30 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       modal_height <- window_height - 100
 
       # Get the place explorer HTML document
-      pe_src <- place_explorer_html_links(temp_folder = temp_folder,
-                                          df = r[[id]]$df(),
-                                          select_id = r[[id]]$select_id(),
-                                          lang = r$lang())$src
+      pe_src <- place_explorer_html_links(
+        temp_folder = temp_folder,
+        df = r[[id]]$df(),
+        select_id = r[[id]]$select_id(),
+        lang = r$lang()
+      )$src
 
       # Popup the modal
       shiny::showModal(shiny::modalDialog(
         # Hack the namespace of the button so that it's detectable from within
         # this module (nested in another page, so double ns)
-        action_button(classes = c("floating-bar-btn", "visit-place-ex"),
-                      id = shiny::NS(id, shiny::NS(id, "go_pe")),
-                      icon = "search",
-                      text_class = "floating-panel-text",
-                      text = cc_t("Visit the place explorer", lang = r$lang())),
-        shiny::tags$iframe(style = "width:100%;height:calc(100vh - 260px)",
-                           title = "place_ex",
-                           src = pe_src,
-                           frameborder = 0),
+        action_button(
+          classes = c("floating-bar-btn", "visit-place-ex"),
+          id = shiny::NS(id, shiny::NS(id, "go_pe")),
+          icon = "search",
+          text_class = "floating-panel-text",
+          text = cc_t("Visit the place explorer", lang = r$lang())
+        ),
+        shiny::tags$iframe(
+          style = "width:100%;height:calc(100vh - 260px)",
+          title = "place_ex",
+          src = pe_src,
+          frameborder = 0
+        ),
         footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
         size = "xl",
         easyClose = TRUE
@@ -126,14 +133,18 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
     # be downloaded
     datas <- shiny::reactive({
       # If the dataset is private, return an empty dataframe
-      if (private_data()) return(data.frame())
+      if (private_data()) {
+        return(data.frame())
+      }
 
       # Prepare the pretty table and the download table
-      dat <- table_view_prep_table(vars = vars(),
-                                   data = data(),
-                                   df = treated_df(),
-                                   zoom_levels = zoom_levels(),
-                                   lang = r$lang())
+      dat <- table_view_prep_table(
+        vars = vars(),
+        data = data(),
+        df = treated_df(),
+        zoom_levels = zoom_levels(),
+        lang = r$lang()
+      )
 
       # Return
       return(dat)
@@ -145,9 +156,12 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       # Spatial organization of data
       scale <-
         tolower(curbcut::cc_t(lang = r$lang(), zoom_get_name(r[[id]]$df())))
-      scale <- sprintf(cc_t("The spatial organization of the data is the %s scale.",
-                            lang = r$lang()),
-                       scale)
+      scale <- sprintf(
+        cc_t("The spatial organization of the data is the %s scale.",
+          lang = r$lang()
+        ),
+        scale
+      )
 
       shiny::tagList(
         shiny::h4(cc_t("Overview", lang = r$lang())),
@@ -161,7 +175,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
     # Place the selection first in the pretty_data
     pretty_data <- shiny::reactive({
-      if (is.na(r[[id]]$select_id())) return(datas()$pretty_data)
+      if (is.na(r[[id]]$select_id())) {
+        return(datas()$pretty_data)
+      }
 
       # Place the selection first
       dat <- datas()$pretty_data
@@ -174,7 +190,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
     # If there is a selection, pre-select it
     update_selection_list <- shiny::reactive({
-      if (is.na(r[[id]]$select_id())) return("single")
+      if (is.na(r[[id]]$select_id())) {
+        return("single")
+      }
       sel <- which(pretty_data()$ID == r[[id]]$select_id())
       list(mode = "single", selected = sel, target = "row")
     })
@@ -182,9 +200,10 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
     # Make the data a `DT::datatable` and style every column
     datatable_styled <- shiny::reactive({
       dat <- DT::datatable(pretty_data(),
-                           selection = update_selection_list(),
-                           options = list(autoWidth = TRUE),
-                           rownames = FALSE)
+        selection = update_selection_list(),
+        options = list(autoWidth = TRUE),
+        rownames = FALSE
+      )
 
       for (i in datas()$title_vars) {
         dat <- panel_view_style_cols(var = i, table = dat)
@@ -201,24 +220,33 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
     })
 
     # If there is a selection in the table, update the selection
-    shiny::observeEvent(input$data_table_rows_selected, {
-      # If deselected from the table, return an NA selection
-      if (is.null(input$data_table_rows_selected))
-        return(r[[id]]$select_id(NA))
+    shiny::observeEvent(input$data_table_rows_selected,
+      {
+        # If deselected from the table, return an NA selection
+        if (is.null(input$data_table_rows_selected)) {
+          return(r[[id]]$select_id(NA))
+        }
 
-      # If there is a selection, update the selected id
-      new_id <- pretty_data()$ID[input$data_table_rows_selected]
-      r[[id]]$select_id(new_id)
+        # If there is a selection, update the selected id
+        new_id <- pretty_data()$ID[input$data_table_rows_selected]
+        r[[id]]$select_id(new_id)
 
-      # If there is a selection, update the central coordinates of the map
-      df_data <- get_from_globalenv(treated_df())
-      coords <- df_data$centroid[df_data$ID == new_id][[1]]
-      coords <- sapply(coords, round, digits = 2)
-      rdeck::rdeck_proxy(id = "map",
-                         initial_view_state =
-                           rdeck::view_state(center = coords,
-                                             zoom = r[[id]]$zoom()))
-    }, ignoreNULL = FALSE, ignoreInit = TRUE)
+        # If there is a selection, update the central coordinates of the map
+        df_data <- get_from_globalenv(treated_df())
+        coords <- df_data$centroid[df_data$ID == new_id][[1]]
+        coords <- sapply(coords, round, digits = 2)
+        rdeck::rdeck_proxy(
+          id = "map",
+          initial_view_state =
+            rdeck::view_state(
+              center = coords,
+              zoom = r[[id]]$zoom()
+            )
+        )
+      },
+      ignoreNULL = FALSE,
+      ignoreInit = TRUE
+    )
 
     # When the user clicks to download the .csv
     output$download_csv <-
@@ -227,22 +255,25 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
         content = function(file) {
           data <- datas()$data
           utils::write.csv(data, file, row.names = FALSE)
-        }, contentType = "text/csv")
+        }, contentType = "text/csv"
+      )
 
     # When the user clicks to download the .shp
     output$download_shp <-
       shiny::downloadHandler(
         filename = shiny::reactive(paste0(id, "_shp.zip")),
         content = function(file) {
-
           # Add progress as it's not instant
           shiny::withProgress(
-            message = cc_t("Exporting data", lang = r$lang()), {
+            message = cc_t("Exporting data", lang = r$lang()),
+            {
               shiny::incProgress(0.4)
 
               # Prepare data by attaching geometries
-              geo <- qs::qread(paste0("data/geometry_export/", treated_df(),
-                                      ".qs"))
+              geo <- qs::qread(paste0(
+                "data/geometry_export/", treated_df(),
+                ".qs"
+              ))
               data <- merge(datas()$data, geo, by = "ID")
 
               shiny::incProgress(0.3)
@@ -251,15 +282,17 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
               tmp_path <- dirname(file)
               name_base <- file.path(tmp_path, paste0(id, "_data"))
               name_glob <- paste0(name_base, ".*")
-              name_shp  <- paste0(name_base, ".shp")
-              name_zip  <- paste0(name_base, ".zip")
+              name_shp <- paste0(name_base, ".shp")
+              name_zip <- paste0(name_base, ".zip")
 
               # Remove any previously generated files with the same name
               if (length(Sys.glob(name_glob)) > 0) file.remove(Sys.glob(name_glob))
 
               # Write the data to a shapefile
-              sf::st_write(data, dsn = name_shp, driver = "ESRI Shapefile",
-                           quiet = TRUE)
+              sf::st_write(data,
+                dsn = name_shp, driver = "ESRI Shapefile",
+                quiet = TRUE
+              )
 
               # Zip the shapefile and copy to the desired location
               utils::zip(zipfile = name_zip, files = Sys.glob(name_glob))
@@ -269,16 +302,16 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
               # Remove any temporary files
               if (length(Sys.glob(name_glob)) > 0) file.remove(Sys.glob(name_glob))
-            })
-        })
-
+            }
+          )
+        }
+      )
   })
 }
 
 #' @describeIn panel_view_server Create the UI for the legend module
 #' @export
 panel_view_UI <- function(id) {
-
   shiny::tagList(
     shiny::tags$div(
       class = "floating-panel",
@@ -286,26 +319,36 @@ panel_view_UI <- function(id) {
         class = "floating-panel-content",
         id = "floating-panel-content",
         # Map
-        action_button(classes = c("floating-bar", "floating-bar-btn", "map-btn",
-                                  "selection"),
-                      id = shiny::NS(id, "panel_map"),
-                      icon = "map",
-                      text_class = "floating-panel-text",
-                      text = cc_t("Map")),
+        action_button(
+          classes = c(
+            "floating-bar", "floating-bar-btn", "map-btn",
+            "selection"
+          ),
+          id = shiny::NS(id, "panel_map"),
+          icon = "map",
+          text_class = "floating-panel-text",
+          text = cc_t("Map")
+        ),
         # Data
-        action_button(classes = c("floating-bar", "floating-bar-btn", "data-btn"),
-                      id = shiny::NS(id, "panel_data"),
-                      icon = "table_view",
-                      text_class = "floating-panel-text",
-                      text = cc_t("Data")),
+        action_button(
+          classes = c("floating-bar", "floating-bar-btn", "data-btn"),
+          id = shiny::NS(id, "panel_data"),
+          icon = "table_view",
+          text_class = "floating-panel-text",
+          text = cc_t("Data")
+        ),
         # Explore data link
-        shinyjs::hidden(action_button(classes = c("floating-bar",
-                                                  "floating-bar-btn",
-                                                  "portrait-btn"),
-                                      id = shiny::NS(id, "panel_selection"),
-                                      icon = "search",
-                                      text_class = "floating-panel-text",
-                                      text = cc_t("Portrait")))
+        shinyjs::hidden(action_button(
+          classes = c(
+            "floating-bar",
+            "floating-bar-btn",
+            "portrait-btn"
+          ),
+          id = shiny::NS(id, "panel_selection"),
+          icon = "search",
+          text_class = "floating-panel-text",
+          text = cc_t("Portrait")
+        ))
       )
     ),
 
@@ -314,19 +357,30 @@ panel_view_UI <- function(id) {
       shiny::div(
         class = "panel_view",
         id = shiny::NS(id, "view_data"),
-        shiny::div(style = "margin-bottom:20px;",
-                   DT::DTOutput(
-                     outputId = shiny::NS(id, "data_table"))),
+        shiny::div(
+          style = "margin-bottom:20px;",
+          DT::DTOutput(
+            outputId = shiny::NS(id, "data_table")
+          )
+        ),
         shiny::div(
           style = "text-align:right",
-          shiny::downloadButton(class = "download_csv",
-                                outputId = shiny::NS(id, "download_csv"),
-                                label = cc_t("Download '.csv'")),
-          shiny::downloadButton(class = "download_shp",
-                                outputId = shiny::NS(id, "download_shp"),
-                                label = cc_t("Download '.shp'"))),
+          shiny::downloadButton(
+            class = "download_csv",
+            outputId = shiny::NS(id, "download_csv"),
+            label = cc_t("Download '.csv'")
+          ),
+          shiny::downloadButton(
+            class = "download_shp",
+            outputId = shiny::NS(id, "download_shp"),
+            label = cc_t("Download '.shp'")
+          )
+        ),
         shiny::htmlOutput(
           outputId = shiny::NS(id, "data_info"),
-          fill = TRUE)))
+          fill = TRUE
+        )
+      )
+    )
   )
 }

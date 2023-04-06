@@ -43,8 +43,8 @@ assign("cmhc_cmhczone_conn",
 )
 
 assign("grid_grid_conn",
-       value = DBI::dbConnect(RSQLite::SQLite(), "resources/grid_grid.sqlite"),
-       envir = .GlobalEnv
+  value = DBI::dbConnect(RSQLite::SQLite(), "resources/grid_grid.sqlite"),
+  envir = .GlobalEnv
 )
 
 
@@ -99,6 +99,6 @@ qs::qload("resources/stories.qsm", env = .GlobalEnv)
 
 # Add the census variables
 assign("census_variables",
-       value = qs::qread("resources/census_variables.qs"),
-       envir = .GlobalEnv
+  value = qs::qread("resources/census_variables.qs"),
+  envir = .GlobalEnv
 )

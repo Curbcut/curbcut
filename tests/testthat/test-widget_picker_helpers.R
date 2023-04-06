@@ -150,4 +150,3 @@ test_that("picker_return_var works fine when there is multiple times (wrong)", {
     c("housing_tenant_2011", "housing_tenant_2016")
   )
 })
-

@@ -37,10 +37,12 @@ icon_material <- function(icon, style = NULL) {
 #' @return A "span" element with the "material-icons" class and the specified
 #' icon, styled for a title.
 icon_material_title <- function(icon) {
-  icon_material(icon, style = paste0("font-size: 20px; ",
-                                     "color: var(--c-dark-blue); ",
-                                     "vertical-align:sub; ",
-                                     "margin-right:.3rem"))
+  icon_material(icon, style = paste0(
+    "font-size: 20px; ",
+    "color: var(--c-dark-blue); ",
+    "vertical-align:sub; ",
+    "margin-right:.3rem"
+  ))
 }
 
 #' Create a custom icon element

@@ -18,7 +18,6 @@
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
 table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
-
   # Reformat data -----------------------------------------------------------
 
   # Take out the `q3`, `q5` and `group`
@@ -27,7 +26,9 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
 
   # Add `variation` if it is multi-year
   vars_ <- lapply(vars, \(x) {
-    if (length(x) == 1) return(x)
+    if (length(x) == 1) {
+      return(x)
+    }
 
     var_code <- var_get_info(x[[1]], what = "var_code")
     c(x, paste0(var_code, "_variation"))
@@ -81,8 +82,9 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
     sapply(s_sentence(names(pretty_dat)[to_sentence_vector]), cc_t, lang = lang)
 
   # Take out one of Name or ID if they are identical
-  if (identical(pretty_dat$Name, pretty_dat$ID))
+  if (identical(pretty_dat$Name, pretty_dat$ID)) {
     pretty_dat <- pretty_dat[names(pretty_dat) != "Name"]
+  }
 
   # Depending on the class of `vars`, update the other column names and
   # out as a datatable.
@@ -90,14 +92,18 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
     panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang, df = df)
 
   # Add population and households to the title vars so they also are formatted
-  pretty_dat$title_vars <- c(pretty_dat$title_vars,
-                             list(structure(cc_t("Population", lang = lang), class = "count")),
-                             list(structure(cc_t("Households", lang = lang), class = "count")))
+  pretty_dat$title_vars <- c(
+    pretty_dat$title_vars,
+    list(structure(cc_t("Population", lang = lang), class = "count")),
+    list(structure(cc_t("Households", lang = lang), class = "count"))
+  )
 
-  return(list(pretty_data = pretty_dat$data,
-              data = dat,
-              title_vars = pretty_dat$title_vars,
-              text = text))
+  return(list(
+    pretty_data = pretty_dat$data,
+    data = dat,
+    title_vars = pretty_dat$title_vars,
+    text = text
+  ))
 }
 
 #' Rename pretty columns in data frame for panel view
@@ -124,7 +130,6 @@ panel_view_rename_cols <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @export
 panel_view_rename_cols.q5 <- function(vars, dat, lang = NULL, ...) {
-
   # Update column name
   time <- var_get_time(vars$var_left)
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
@@ -140,14 +145,17 @@ panel_view_rename_cols.q5 <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @export
 panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, ...) {
-
   # Update column name
   time <- var_get_time(vars$var_left)
-  vars_sep <- sapply(vars$var_left, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- sapply(vars$var_left, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <-
-    c(sprintf("%s (%s)", vars_sep, time),
-      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x)
+    c(
+      sprintf("%s (%s)", vars_sep, time),
+      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x
+    )
 
   var_code <- var_get_info(vars$var_left, what = "var_code")
   titles <- names(dat)[grepl(var_code, names(dat))]
@@ -165,19 +173,22 @@ panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @export
 panel_view_rename_cols.bivar <- function(vars, dat, lang = NULL, ...) {
-
   # Update column name
   time <- var_get_time(unlist(vars))
-  vars_sep <- sapply(vars, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- sapply(vars, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <- sprintf("%s (%s)", vars_sep, time)
 
   names(dat)[names(dat) %in% vars] <- new_names
 
   # Prepare the column names for styling
   title_vars <- structure(new_names[1], class = class(vars$var_left))
-  title_vars <- list(title_vars,
-                     structure(new_names[2], class = class(vars$var_right)))
+  title_vars <- list(
+    title_vars,
+    structure(new_names[2], class = class(vars$var_right))
+  )
 
   # Return
   return(list(data = dat, title_vars = title_vars))
@@ -186,11 +197,12 @@ panel_view_rename_cols.bivar <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @export
 panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
-
   # Update column name
   time <- lapply(vars, var_get_time)
-  vars_sep <- lapply(vars, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- lapply(vars, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <- mapply(\(var, name, year) {
     sprintf("%s (%s)", name, year)
   }, vars, vars_sep, time, SIMPLIFY = FALSE)
@@ -222,11 +234,12 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @export
 panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, lang = NULL, ...) {
-
   # Update column name
   time <- lapply(vars, var_get_time)
-  vars_sep <- lapply(vars, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- lapply(vars, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <- mapply(\(var, name, year) {
     sprintf("%s (%s)", name, year)
   }, vars, vars_sep, time, SIMPLIFY = FALSE)
@@ -319,7 +332,6 @@ panel_view_prepare_text <- function(vars, df, dat, lang = NULL, ...) {
 #' @rdname panel_view_prepare_text
 #' @export
 panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
-
   # Title
   time <- var_get_time(vars$var_left)
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
@@ -332,13 +344,15 @@ panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
   explanation <- var_get_info(vars$var_left, what = "explanation")
 
   # Get the text for the single left variable
-  out <- panel_view_prepare_text_helper(df = df,
-                                        var = vars$var_left,
-                                        dat = dat,
-                                        title = title,
-                                        explanation = explanation,
-                                        title_color = title_color,
-                                        lang = lang)
+  out <- panel_view_prepare_text_helper(
+    df = df,
+    var = vars$var_left,
+    dat = dat,
+    title = title,
+    explanation = explanation,
+    title_color = title_color,
+    lang = lang
+  )
 
   # Return
   return(out)
@@ -347,14 +361,17 @@ panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
 #' @rdname panel_view_prepare_text
 #' @export
 panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
-
   # Titles
   time <- var_get_time(vars$var_left)
-  vars_sep <- sapply(vars$var_left, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- sapply(vars$var_left, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <-
-    c(sprintf("%s (%s)", vars_sep, time),
-      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x)
+    c(
+      sprintf("%s (%s)", vars_sep, time),
+      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x
+    )
 
   var_code <- var_get_info(vars$var_left, what = "var_code")
   titles <- names(dat)[grepl(var_code, names(dat))]
@@ -363,8 +380,9 @@ panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
   explanations <- lapply(titles, \(x) {
     explanation <- var_get_info(vars$var_left, what = "explanation")
 
-    if (!grepl("_variation$", x))
+    if (!grepl("_variation$", x)) {
       return(var_get_info(vars$var_left, what = "explanation"))
+    }
     explanation <- var_get_info(vars$var_left, what = "explanation_nodet")
     sprintf("the change in %s between %s and %s", explanation, time[1], time[2])
   })
@@ -381,30 +399,30 @@ panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
 
   # Get the text for every columns
   titles_texts <- mapply(\(title, var, explanation) {
-
-    panel_view_prepare_text_helper(df = df,
-                                   var = var,
-                                   dat = dat,
-                                   title = title,
-                                   explanation = explanation,
-                                   title_color = title_color,
-                                   lang = lang)
-
+    panel_view_prepare_text_helper(
+      df = df,
+      var = var,
+      dat = dat,
+      title = title,
+      explanation = explanation,
+      title_color = title_color,
+      lang = lang
+    )
   }, new_names, title_vars, explanations)
 
   # Return
   return(titles_texts)
-
 }
 
 #' @rdname panel_view_prepare_text
 #' @export
 panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
-
   # Title
   time <- var_get_time(unlist(vars))
-  vars_sep <- sapply(vars, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- sapply(vars, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <- sprintf("%s (%s)", vars_sep, time)
 
   # Grab the column names
@@ -421,13 +439,15 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
 
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color) {
-    panel_view_prepare_text_helper(df = df,
-                                   var = var,
-                                   dat = dat,
-                                   title = title,
-                                   explanation = explanation,
-                                   title_color = title_color,
-                                   lang = lang)
+    panel_view_prepare_text_helper(
+      df = df,
+      var = var,
+      dat = dat,
+      title = title,
+      explanation = explanation,
+      title_color = title_color,
+      lang = lang
+    )
   }, new_names, var_codes, explanations, title_colours)
 
   # Return
@@ -437,11 +457,12 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
 #' @rdname panel_view_prepare_text
 #' @export
 panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...) {
-
   # Title
   time <- lapply(vars, var_get_time)
-  vars_sep <- lapply(vars, var_get_info, what = "var_short",
-                     translate = TRUE, lang = lang)
+  vars_sep <- lapply(vars, var_get_info,
+    what = "var_short",
+    translate = TRUE, lang = lang
+  )
   new_names <- mapply(\(var, name, year) {
     sprintf("%s (%s)", name, year)
   }, vars, vars_sep, time, SIMPLIFY = FALSE)
@@ -470,7 +491,9 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
 
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(var_codes, \(x) {
-    if (!grepl("_variation$", x)) return(var_get_info(x, what = "explanation"))
+    if (!grepl("_variation$", x)) {
+      return(var_get_info(x, what = "explanation"))
+    }
 
     code <- gsub("_variation", "", x)
     exp <- var_get_info(code, what = "explanation")
@@ -480,13 +503,15 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
 
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color) {
-    panel_view_prepare_text_helper(df = df,
-                                   var = var,
-                                   dat = dat,
-                                   title = title,
-                                   explanation = explanation,
-                                   title_color = title_color,
-                                   lang = lang)
+    panel_view_prepare_text_helper(
+      df = df,
+      var = var,
+      dat = dat,
+      title = title,
+      explanation = explanation,
+      title_color = title_color,
+      lang = lang
+    )
   }, unlist(new_names), title_vars, explanations, title_colours)
 
   # Return
@@ -518,10 +543,11 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
 #' @return A character string containing the formatted HTML text with statistics.
 panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
                                            title_color = "#73AE80", lang = NULL) {
-
   # Title
-  out_title <- shiny::h4(style = sprintf("color:%s !important", title_color),
-                         sprintf("%s: %s", title, explanation))
+  out_title <- shiny::h4(
+    style = sprintf("color:%s !important", title_color),
+    sprintf("%s: %s", title, explanation)
+  )
 
   # Text variables
   min_val <- min(dat[[var]], na.rm = TRUE)
@@ -529,19 +555,24 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
   avg <- mean(dat[[var]], na.rm = TRUE)
   std <- stats::sd(dat[[var]], na.rm = TRUE)
 
-  values <- lapply(list(min_val, max_val, avg, std),
-                   \(x) convert_unit(var = var, x = x))
+  values <- lapply(
+    list(min_val, max_val, avg, std),
+    \(x) convert_unit(var = var, x = x)
+  )
   values <- lapply(values, shiny::strong)
 
   # Create the text
   text <-
     sprintf(
-      paste0("<p>The minimum and maximum values for %s are respectively %s and %s. ",
-             "The data points have an average value (mean) of %s. Additionally, ",
-             "the standard deviation, which measures the dispersion or spread ",
-             "around this mean, is %s. (Approximately two thirds of data points ",
-             "lie within one standard deviation of the mean.)</p>"),
-      explanation, values[[1]], values[[2]], values[[3]], values[[4]])
+      paste0(
+        "<p>The minimum and maximum values for %s are respectively %s and %s. ",
+        "The data points have an average value (mean) of %s. Additionally, ",
+        "the standard deviation, which measures the dispersion or spread ",
+        "around this mean, is %s. (Approximately two thirds of data points ",
+        "lie within one standard deviation of the mean.)</p>"
+      ),
+      explanation, values[[1]], values[[2]], values[[3]], values[[4]]
+    )
 
   # Bind the title and the text
   out <- paste0(out_title, text)
@@ -552,34 +583,48 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
     source_bit <-
       if (source == "Canadian census") {
         date <- var_get_time(var)
-        s <- sprintf(paste0("The data comes from the %s Canadian census and has ",
-                            "been retrieved from <a href = 'https://censusma",
-                            "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
-                            "using the R <a href = 'https://cran.r-project.org",
-                            "/web/packages/cancensus/', target = '_blank'>canc",
-                            "ensus</a> package."),
-                     date)
+        s <- sprintf(
+          paste0(
+            "The data comes from the %s Canadian census and has ",
+            "been retrieved from <a href = 'https://censusma",
+            "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
+            "using the R <a href = 'https://cran.r-project.org",
+            "/web/packages/cancensus/', target = '_blank'>canc",
+            "ensus</a> package."
+          ),
+          date
+        )
         # Info on how we created the variable
         census_variables <- get_from_globalenv("census_variables")
-        info <- lapply(census_variables[census_variables$var_code == var, ],
-                       unlist)
-        par_exp <- var_get_parent_info(var = var, what = "explanation",
-                                       translate = TRUE, lang = lang)
-        source_vec <- paste0("<b>", info$vec, "</b> (",info$vec_label, ")",
-                             collapse = ", ")
+        info <- lapply(
+          census_variables[census_variables$var_code == var, ],
+          unlist
+        )
+        par_exp <- var_get_parent_info(
+          var = var, what = "explanation",
+          translate = TRUE, lang = lang
+        )
+        source_vec <- paste0("<b>", info$vec, "</b> (", info$vec_label, ")",
+          collapse = ", "
+        )
         v <- if (length(info$vec) > 1) "vectors and their" else "vector and its"
         source_vec <- sprintf("%s %s", source_vec, v)
 
-        total_vec <- paste0("<b>", info$parent_vec, "</b> (",info$parent_vec_label, ")",
-                             collapse = ", ")
+        total_vec <- paste0("<b>", info$parent_vec, "</b> (", info$parent_vec_label, ")",
+          collapse = ", "
+        )
         v <- if (length(info$parent_vec) > 1) "parent vectors" else "parent vector"
         total_vec <- sprintf("%s %s", v, total_vec)
-        e <- sprintf(paste0("To calculate %s, we extract the %s corresponding ",
-                            "%s. Here, the term 'parent vector' refers to ",
-                            "the data source that represents %s, which we use ",
-                            "as a basis to compute %s."),
-                     explanation, source_vec, total_vec,
-                     par_exp, explanation)
+        e <- sprintf(
+          paste0(
+            "To calculate %s, we extract the %s corresponding ",
+            "%s. Here, the term 'parent vector' refers to ",
+            "the data source that represents %s, which we use ",
+            "as a basis to compute %s."
+          ),
+          explanation, source_vec, total_vec,
+          par_exp, explanation
+        )
 
         # Bind two parts
         sprintf("%s %s", s, e)
@@ -591,7 +636,8 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
 
   # Interpolated? If so grab from what andmake the sentence
   inter <- tryCatch(var_get_info(var, what = "interpolated")[[1]],
-                    error = function(e) NULL)
+    error = function(e) NULL
+  )
   if (!is.null(inter)) {
     scale_inter <- inter$interpolated_from[inter$df == df]
     if (scale_inter != "FALSE") {
@@ -600,8 +646,10 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         scales_dictionary$plur[scales_dictionary$scale == scale_inter]
 
       scale_inter_str <- tolower(cc_t(scale_inter_str, lang = lang))
-      inter_str <- sprintf("%s has been spatially interpolated from %s.",
-                           title, scale_inter_str)
+      inter_str <- sprintf(
+        "%s has been spatially interpolated from %s.",
+        title, scale_inter_str
+      )
       # Bind the title and the text
       out <- paste0(out, sprintf("<p>%s</p>", inter_str))
     }

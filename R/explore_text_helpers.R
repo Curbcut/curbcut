@@ -451,29 +451,32 @@ explore_text_bivar_correlation_helper <- function(vars, data, lang, ...) {
 #' @export
 explore_text_bivar_correlation_helper.scalar <- function(vars, data,
                                                          lang = NULL, ...) {
-
   # Correlation
   corr <- stats::cor(data$var_left, data$var_right, use = "complete.obs")
   corr_string <- sprintf("Pearson's r: %s", round(corr, digits = 2))
   corr_string <- cc_t(corr_string, lang = lang)
 
-  return(list(corr = corr,
-              corr_string = corr_string))
+  return(list(
+    corr = corr,
+    corr_string = corr_string
+  ))
 }
 
 #' @rdname explore_text_bivar_correlation_helper
 #' @export
 explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
                                                           lang = NULL, ...) {
-
   # Correlation
   corr <- stats::cor(data$var_left, data$var_right,
-              use = "complete.obs", method = "spearman")
+    use = "complete.obs", method = "spearman"
+  )
   corr_string <- sprintf("Spearman's rho: %s", round(corr, digits = 2))
   corr_string <- cc_t(corr_string, lang = lang)
 
-  return(list(corr = corr,
-              corr_string = corr_string))
+  return(list(
+    corr = corr,
+    corr_string = corr_string
+  ))
 }
 
 #' Explore Text Color Function
@@ -491,7 +494,6 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
 #' assigned color as an inline style.
 #' @export
 explore_text_color <- function(x, meaning) {
-
   if (!meaning %in% c("left", "right", "increase", "decrease")) {
     stop('`meaning` must be one of c("left", "right", "increase", "decrease")')
   }

@@ -30,16 +30,15 @@
 #' @export
 place_explorer_server <- function(id, r,
                                   scales_as_DA = shiny::reactive(
-                                    c("building", "street")),
+                                    c("building", "street")
+                                  ),
                                   map_zoom = get_from_globalenv("map_zoom"),
                                   map_loc = get_from_globalenv("map_loc"),
                                   mapbox_username = get_from_globalenv("mapbox_username"),
                                   tileset_prefix = get_from_globalenv("tileset_prefix"),
                                   map_base_style = get_from_globalenv("map_base_style"),
                                   temp_folder = get_from_globalenv("temp_folder")) {
-
   shiny::moduleServer(id, function(input, output, session) {
-
     # Declare the map id
     id_map <- paste0(id, "-map")
     # Get default values for the place explorer
@@ -72,8 +71,10 @@ place_explorer_server <- function(id, r,
       zoom_lvls <- zoom_levels_()$zoom_levels
       zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
 
-      return(list(zoom_levels = zoom_levels,
-                  region = zoom_levels_()$region))
+      return(list(
+        zoom_levels = zoom_levels,
+        region = zoom_levels_()$region
+      ))
     })
 
     # Zoom string reactive
@@ -129,12 +130,17 @@ place_explorer_server <- function(id, r,
 
       if (length(DA_id) == 0) {
         shiny::showNotification(
-          cc_t(lang = r$lang(),
-               paste0("No postal code found for `{input$address_searched}`")),
-          type = "error")
+          cc_t(
+            lang = r$lang(),
+            paste0("No postal code found for `{input$address_searched}`")
+          ),
+          type = "error"
+        )
       } else {
         DA_table <- get_from_globalenv(paste0(r$region(), "_DA"))
-        if (is.null(DA_table)) return(NULL)
+        if (is.null(DA_table)) {
+          return(NULL)
+        }
         right_id <- DA_table[[paste0(r[[id]]$df(), "_ID")]][DA_table$ID == DA_id]
         r[[id]]$select_id(right_id)
       }
@@ -144,9 +150,11 @@ place_explorer_server <- function(id, r,
     # Map ---------------------------------------------------------------------
 
     output[[id_map]] <- rdeck::renderRdeck(
-      rdeck::rdeck(map_style = map_base_style, initial_view_state =
-                     rdeck::view_state(center = map_loc, zoom = map_zoom),
-                   layer_selector = FALSE) |>
+      rdeck::rdeck(
+        map_style = map_base_style, initial_view_state =
+          rdeck::view_state(center = map_loc, zoom = map_zoom),
+        layer_selector = FALSE
+      ) |>
         rdeck::add_mvt_layer(
           id = "place_explorer",
           name = "place_explorer",
@@ -154,7 +162,8 @@ place_explorer_server <- function(id, r,
           auto_highlight = TRUE,
           highlight_color = "#AAB6CF80",
           get_fill_color = "#AAB6CF20",
-          get_line_color = "#FFFFFF00")
+          get_line_color = "#FFFFFF00"
+        )
     )
 
     # Update the map whenever the `df` changes
@@ -162,7 +171,8 @@ place_explorer_server <- function(id, r,
       rdeck::rdeck_proxy(id_map) |>
         rdeck::update_mvt_layer(
           id = "place_explorer",
-          data = tilejson(mapbox_username, tileset_prefix, r[[id]]$df()))
+          data = tilejson(mapbox_username, tileset_prefix, r[[id]]$df())
+        )
     })
 
     # Map click
@@ -192,33 +202,44 @@ place_explorer_server <- function(id, r,
           shiny::tags$iframe(
             style = "width:100%;height:100%;",
             title = "place_ex",
-            srcdoc = paste0("<!DOCTYPE html><html><head><title></title><style",
-                            ">body {background-color: white;}</style></head><",
-                            "body><body></html>"),
-            frameborder = 0)
+            srcdoc = paste0(
+              "<!DOCTYPE html><html><head><title></title><style",
+              ">body {background-color: white;}</style></head><",
+              "body><body></html>"
+            ),
+            frameborder = 0
+          )
         )
       }
     })
 
     main_panel <- shiny::reactive({
       if (!is.na(r[[id]]$select_id())) {
-
-        pe_links <- place_explorer_html_links(temp_folder = temp_folder,
-                                              df = r[[id]]$df(),
-                                              select_id = r[[id]]$select_id(),
-                                              lang = r$lang())
+        pe_links <- place_explorer_html_links(
+          temp_folder = temp_folder,
+          df = r[[id]]$df(),
+          select_id = r[[id]]$select_id(),
+          lang = r$lang()
+        )
 
         # Show the file
-        return(list(div = shiny::div(
-          class = "main_panel_popup",
-          style = "height:100%;overflow:hidden;",
-          shiny::tags$iframe(style = "width:100%;height:100%;",
-                             title = "place_ex",
-                             src = pe_links$src,
-                             frameborder = 0)),
+        return(list(
+          div = shiny::div(
+            class = "main_panel_popup",
+            style = "height:100%;overflow:hidden;",
+            shiny::tags$iframe(
+              style = "width:100%;height:100%;",
+              title = "place_ex",
+              src = pe_links$src,
+              frameborder = 0
+            )
+          ),
           # temp_folder_shortcut is tempdir()
-          file = pe_links$file))
-      } else NULL
+          file = pe_links$file
+        ))
+      } else {
+        NULL
+      }
     })
 
     output$main_panel <- shiny::renderUI(main_panel()$div)
@@ -228,12 +249,15 @@ place_explorer_server <- function(id, r,
 
     output$download_portrait <-
       shiny::downloadHandler(
-        filename = shiny::reactive(paste0(r[[id]]$df(), "_",
-                                          r[[id]]$select_id(), ".html")),
+        filename = shiny::reactive(paste0(
+          r[[id]]$df(), "_",
+          r[[id]]$select_id(), ".html"
+        )),
         content = function(file) {
           html_content <- readLines(main_panel()$file)
           writeLines(html_content, file)
-        }, contentType = "text/html")
+        }, contentType = "text/html"
+      )
 
 
     # Bookmarking -------------------------------------------------------------
@@ -243,14 +267,12 @@ place_explorer_server <- function(id, r,
       r = r,
       select_id = r[[id]]$select_id
     )
-
   })
 }
 
 #' @describeIn place_explorer_server Create the UI for the place explorer module
 #' @export
 place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
-
   # Get default values for the place explorer
   pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA)
 
@@ -262,22 +284,32 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
       # Search box
       shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
       # Imitate a split layout which only works this way on iOS
-      shiny::HTML(paste0('<div class="shiny-split-layout">
+      shiny::HTML(paste0(
+        '<div class="shiny-split-layout">
                      <div style="width: 80%;">',
-                     shiny::textInput(inputId = shiny::NS(id, "address_searched"),
-                               label = NULL, placeholder = "H3A 2T5"),
-                     '</div><div style="width: 20%;">',
-                     shiny::actionButton(inputId = shiny::NS(id, "search_button"),
-                                  label = shiny::icon("search", verify_fa = FALSE),
-                                  style = "margin-top: var(--padding-v-md);"),
-                     '</div></div>')),
+        shiny::textInput(
+          inputId = shiny::NS(id, "address_searched"),
+          label = NULL, placeholder = "H3A 2T5"
+        ),
+        '</div><div style="width: 20%;">',
+        shiny::actionButton(
+          inputId = shiny::NS(id, "search_button"),
+          label = shiny::icon("search", verify_fa = FALSE),
+          style = "margin-top: var(--padding-v-md);"
+        ),
+        "</div></div>"
+      )),
       # Back button. The CSS file places it at the right spot
-      shiny::actionLink(shiny::NS(id, "back"),
-                        curbcut::cc_t("Back to the place explorer")),
+      shiny::actionLink(
+        shiny::NS(id, "back"),
+        curbcut::cc_t("Back to the place explorer")
+      ),
       bottom =
-        # Scale slider
-        curbcut::zoom_UI(id = shiny::NS(id, id),
-                         zoom_levels = pe_vars$map_zoom_levels),
+      # Scale slider
+        curbcut::zoom_UI(
+          id = shiny::NS(id, id),
+          zoom_levels = pe_vars$map_zoom_levels
+        ),
     ),
 
     # Map
@@ -289,9 +321,12 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
         id = shiny::NS(id, "place_exp_main_panel"),
         shiny::htmlOutput(shiny::NS(id, "loader")),
         shiny::htmlOutput(shiny::NS(id, "main_panel")),
-        shiny::downloadButton(class = "download_portrait",
-                              outputId = shiny::NS(id, "download_portrait"),
-                              label = cc_t("Download regional portrait"))
+        shiny::downloadButton(
+          class = "download_portrait",
+          outputId = shiny::NS(id, "download_portrait"),
+          label = cc_t("Download regional portrait")
+        )
       )
-    ))
+    )
+  )
 }

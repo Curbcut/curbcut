@@ -144,9 +144,11 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   if (all(unlist(var_list) %in% variables$var_code)) {
     parent_vecs <- variables$parent_vec[variables$var_code %in% unlist(var_list)]
     if (sum(is.na(parent_vecs)) > 0) {
-      stop(sprintf(paste0("Parent vectors were included in the variable list ",
-                          "for the picker `%s-%s`. They can't be used ",
-                          "front-facing yet."), id, picker_id))
+      stop(sprintf(paste0(
+        "Parent vectors were included in the variable list ",
+        "for the picker `%s-%s`. They can't be used ",
+        "front-facing yet."
+      ), id, picker_id))
     }
   }
 
@@ -160,8 +162,10 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       selected = selected,
       width = width,
       choicesOpt = picker_hover_divs(var_list),
-      options = shinyWidgets::pickerOptions(dropdownAlignRight = !open_left,
-                                            container = "body"),
+      options = shinyWidgets::pickerOptions(
+        dropdownAlignRight = !open_left,
+        container = "body"
+      ),
       ...
     )
   )

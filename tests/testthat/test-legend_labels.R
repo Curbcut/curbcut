@@ -143,4 +143,3 @@ test_that("legend_labels translation works", {
     )
   )
 })
-

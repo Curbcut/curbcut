@@ -14,7 +14,6 @@
 #'
 #' @export
 link <- function(r, page, select_id = NA, df = NULL) {
-
   # Detect if we're in a reactive context
   if (is.null(shiny::getDefaultReactiveDomain())) {
     stop("The function needs to be used in a reactive context")
@@ -33,8 +32,10 @@ link <- function(r, page, select_id = NA, df = NULL) {
     if (!is.null(df)) {
       shinyWidgets::updateSliderTextInput(
         session = r$server_session(),
-        inputId = ns_doubled(page_id = page,
-                             element = "zoom_slider-ccslidertext_slt"),
+        inputId = ns_doubled(
+          page_id = page,
+          element = "zoom_slider-ccslidertext_slt"
+        ),
         selected = zoom_get_name(df, lang = r$lang())
       )
     }
@@ -43,7 +44,6 @@ link <- function(r, page, select_id = NA, df = NULL) {
   # If there is a selection, update the map view through zoom and coords, and
   # the selection
   if (!is.na(select_id)) {
-
     # Update the zoom and map location
     if (!is.null(df)) {
       # Zoom
@@ -65,16 +65,15 @@ link <- function(r, page, select_id = NA, df = NULL) {
       r[[page]]$zoom(zoom)
       r[[page]]$coords(coords)
       # Update the map using the zoom and location
-      rdeck::rdeck_proxy(session = r$server_session(),
-                         id = ns_doubled(page_id = page, "map"),
-                         initial_view_state =
-                           rdeck::view_state(center = coords, zoom = zoom))
+      rdeck::rdeck_proxy(
+        session = r$server_session(),
+        id = ns_doubled(page_id = page, "map"),
+        initial_view_state =
+          rdeck::view_state(center = coords, zoom = zoom)
+      )
     }
 
     # Update the selection
     r[[page]]$select_id(select_id)
   }
-
 }
-
-

@@ -18,7 +18,6 @@
 #' @export
 vars_build <- function(var_left, var_right = " ", df,
                        scales_as_DA = c("building", "street")) {
-
   # If the `var` displays twice the same year
   var_left <- unique(var_left)
   var_right <- unique(var_right)
