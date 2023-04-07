@@ -48,7 +48,7 @@ use_curbcut_js <- function() {
     )),
     # (linked with the previous) Make the hover on the block rather than the
     # text itself
-    tags$head(tags$style("span.text {display: block !important;}")),
+    shiny::tags$head(shiny::tags$style("span.text {display: block !important;}")),
   )
 }
 

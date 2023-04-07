@@ -7,17 +7,16 @@
 #' text needs to be generated. Usually the output of \code{\link{vars_build}}.
 #' @param region <`character`> String specifying the name of the region.
 #' Usually equivalent of `r$region()`.
-#' @param select_id A string indicating the ID of the currently selected region
-#' (if any). Usually `r[[id]]$select_id()`
+#' @param select_id <`character`> A string indicating the ID of the currently
+#' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The data frame must have columns named var_left
-#' and ID. The output of \code{\link{data_get}}.
+#' observations to be compared. The output of \code{\link{data_get}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
+#' their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param ... Additional arguments passed to the dispatched function.

@@ -14,9 +14,14 @@ explore_server(
   df,
   select_id,
   scales_as_DA = shiny::reactive(c("building", "street")),
+  graph = shiny::reactive(explore_graph),
+  graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), df = df(),
+    select_id = select_id(), region = region(), scales_as_DA = scales_as_DA(), lang =
+    r$lang())),
   table = shiny::reactive(explore_text),
   table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), select_id =
-    select_id(), region = region(), scales_as_DA = scales_as_DA(), df = df()))
+    select_id(), region = region(), scales_as_DA = scales_as_DA(), df = df(), lang =
+    r$lang()))
 )
 
 explore_UI(id)
@@ -48,6 +53,21 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{graph}{<\verb{reactive function}> A reactive expression for the function used
+to generate the explore graph in the explore module. The default value is
+\code{shiny::reactive(explore_graph)}, which is a reactive expression that
+evaluates to the \code{explore_graph} function. If you want to use a different
+function to generate the explore graph, you can provide a custom reactive
+expression for this argument. The function you provide should have the same
+arguments as graph_args.}
+
+\item{graph_args}{<\verb{reactive list}> A reactive expression for the arguments
+to be passed to the explore graph function. If you want to customize the arguments
+passed to the explore graph function, you can provide a different reactive
+expression for this argument. The reactive expression should evaluate to a
+list of arguments to be passed to the explore graph function, including any
+additional arguments required by your custom graph function.}
 
 \item{table}{<\verb{reactive function}> A reactive expression for the function used
 to generate the info table in the explore module. The default value is

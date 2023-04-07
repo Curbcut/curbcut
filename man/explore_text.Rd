@@ -49,20 +49,19 @@ text needs to be generated. Usually the output of \code{\link{vars_build}}.}
 \item{region}{<\code{character}> String specifying the name of the region.
 Usually equivalent of \code{r$region()}.}
 
-\item{select_id}{A string indicating the ID of the currently selected region
-(if any). Usually \code{r[[id]]$select_id()}}
+\item{select_id}{<\code{character}> A string indicating the ID of the currently
+selected region (if any). Usually \code{r[[id]]$select_id()}}
 
 \item{df}{<\code{character}> The combination of the region under study and the
 scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The data frame must have columns named var_left
-and ID. The output of \code{\link{data_get}}.}
+observations to be compared. The output of \code{\link{data_get}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their colour will be the one of their DA.}
+their info will be the one of their DA.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}

@@ -45,21 +45,35 @@
 #' expression for this argument. The reactive expression should evaluate to a
 #' list of arguments to be passed to the info table function, including any
 #' additional arguments required by your custom table function.
+#' @param graph <`reactive function`> A reactive expression for the function used
+#' to generate the explore graph in the explore module. The default value is
+#' `shiny::reactive(explore_graph)`, which is a reactive expression that
+#' evaluates to the `explore_graph` function. If you want to use a different
+#' function to generate the explore graph, you can provide a custom reactive
+#' expression for this argument. The function you provide should have the same
+#' arguments as graph_args.
+#' @param graph_args <`reactive list`> A reactive expression for the arguments
+#' to be passed to the explore graph function. If you want to customize the arguments
+#' passed to the explore graph function, you can provide a different reactive
+#' expression for this argument. The reactive expression should evaluate to a
+#' list of arguments to be passed to the explore graph function, including any
+#' additional arguments required by your custom graph function.
 #'
 #' @return The explore Shiny UI and server module functions
 #' @export
 explore_server <- function(id, r, data, vars, region, df, select_id,
                            scales_as_DA = shiny::reactive(c("building", "street")),
-                           # graph = reactive(explore_graph),
-                           # graph_args = reactive(list(
-                           #   r = r,
-                           #   data = data(), vars = vars(), df = df(),
-                           #   select_id = select_id(), region = region())),
+                           graph = shiny::reactive(explore_graph),
+                           graph_args = shiny::reactive(list(
+                             r = r, data = data(), vars = vars(), df = df(),
+                             select_id = select_id(), region = region(),
+                             scales_as_DA = scales_as_DA(), lang = r$lang())),
                            table = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(),
                              select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), df = df()
+                             scales_as_DA = scales_as_DA(), df = df(),
+                             lang = r$lang()
                            ))) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
@@ -87,15 +101,17 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     # Display info table
     output$info_table <- shiny::renderUI(shiny::HTML(table_out()))
 
-    # # Make graph
-    # graph_out <- reactive(tryCatch(do.call(graph(), graph_args()),
-    #                                error = function(e) {
-    #                                  print(e)
-    #                                  return(NULL)
-    #                                }))
+    # Make graph
+    graph_out <- shiny::reactive(
+      tryCatch(
+        do.call(graph(), graph_args()),
+        error = function(e) {
+          print(e)
+          return(NULL)
+        }))
 
     # Display graph
-    # output$explore_graph <- renderPlot(graph_out())
+    output$explore_graph <- shiny::renderPlot(graph_out())
 
     # Show/hide components
     shiny::observe({
@@ -127,8 +143,8 @@ explore_UI <- function(id) {
     shiny::div(
       id = shiny::NS(id, "explore_content"),
       shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
-      # shiny::plotOutput(outputId = shiny::NS(id, "explore_graph"),
-      #                   height = 150),
+      shiny::plotOutput(outputId = shiny::NS(id, "explore_graph"),
+                        height = 150),
       shinyjs::hidden(
         shiny::actionLink(
           inputId = shiny::NS(id, "clear_selection"),

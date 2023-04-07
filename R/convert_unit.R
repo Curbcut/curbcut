@@ -83,6 +83,9 @@ min_sig_digits <- function(x) {
     return(rep(0, length(x)))
   }
 
+  # Take out NAs if there are
+  x <- x[!is.na(x)]
+
   # Find the minimum absolute value in x that is greater than 0
   min_abs_val <- min(abs(x[x != 0]))
 

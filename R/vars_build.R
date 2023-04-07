@@ -108,10 +108,11 @@ vars_build <- function(var_left, var_right = " ", df,
   measurement_order <- c("nominal", "ordinal", "scalar")
   current_measurement_var <- c(var_left_m, var_right_m)
   meas <- which.min(factor(current_measurement_var, levels = measurement_order))
-  z <- c(z, current_measurement_var[meas])
+
+  out_class <- c(z, current_measurement_var[meas])
 
   # Return
   return(structure(list(var_left = var_left, var_right = var_right),
-    class = z
+    class = out_class
   ))
 }

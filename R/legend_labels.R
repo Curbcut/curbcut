@@ -6,11 +6,13 @@
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
 #' output of \code{\link{vars_build}}.
+#' @param lang <`character`> A character string indicating the language to
+#' translate variable titles to.
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns an output of \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels <- function(vars, ...) {
+legend_labels <- function(vars, lang, ...) {
   UseMethod("legend_labels", vars)
 }
 
@@ -24,10 +26,10 @@ legend_labels <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object of class `q5`. The
 #' output of \code{\link{vars_build}}.
-#' @param lang <`character`> A character string indicating the language to
-#' translate variable titles to.
 #' @param short_threshold <`numeric`> Maximum threshold for the title length,
 #' above which the short title will be returned.
+#' @param lang <`character`> A character string indicating the language to
+#' translate variable titles to.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.

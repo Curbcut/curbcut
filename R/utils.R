@@ -407,3 +407,51 @@ is_numeric <- function(x) {
   # If the conversion was successful, the value is numeric
   !is.na(suppressWarnings(as.numeric(x)))
 }
+
+#' Find and remove outliers in specified columns of a data frame.
+#'
+#' This function package consists of two functions: find_outliers() and
+#' remove_outliers_df(). find_outliers() identifies outliers in a numeric vector
+#' using the 1.5 * IQR rule. remove_outliers_df() removes outliers in specified columns
+#' of a data frame, preserving the original row indices.
+#'
+#' @param x <`numeric`> A numeric vector for which to find outliers.
+#'
+#' @return For find_outliers(): A vector of indices of the outliers in x.
+#' For remove_outliers_df(): A data frame with outliers removed from specified
+#' columns.
+#'
+#' @examples
+#' x <- c(1, 2, 3, 4, 5, 100)
+#' find_outliers(x)
+#'
+#' df <- data.frame(a = c(1, 2, 3, 4, 5, 100), b = c(1, 2, 3, 4, 5, 6))
+#' remove_outliers_df(df, cols = "a")
+#'
+#' @export
+find_outliers <- function(x) {
+  q1 <- stats::quantile(x, 0.25, na.rm = TRUE)
+  q3 <- stats::quantile(x, 0.75, na.rm = TRUE)
+  iqr <- (q3 - q1) * 1.5
+  which(x < q1 - iqr | x > q3 + iqr)
+}
+
+#' @rdname find_outliers
+#' @param df <`data.frame`> A data frame from which to remove outliers.
+#' @param cols <`character vector`> Column names in df for which to remove o
+#' utliers.
+#' @export
+remove_outliers_df <- function(df, cols) {
+  outliers <- lapply(cols, \(c) {
+    nas <- which(is.na(df[[c]]))
+    outliers <- find_outliers(df[[c]])
+    remove <- unique(c(nas, outliers))
+    return(remove)
+  })
+
+  remove <- Reduce(c, outliers)
+  remove <- unique(remove)
+
+  return(df[-remove, ])
+}
+
