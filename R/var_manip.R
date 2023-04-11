@@ -114,6 +114,9 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 #' @export
 var_get_title <- function(var, short_treshold = NULL,
                           translate = FALSE, lang = NULL) {
+  # In the case where this is the non-selected comparison
+  if (var[1] == " ") return(NULL)
+
   title <-
     var_get_info(
       var = var, what = "var_title",
