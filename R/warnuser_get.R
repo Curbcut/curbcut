@@ -56,12 +56,14 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # Year displayed RIGHT
   if (length(right_year) == 1) {
-    if (vars$var_right != " " && right_year != unique(time)) {
-      out <- c(out,
-               list(cc_t(lang = lang,
-                         "Displayed data for <b>{var_right_title}</b> is for the ",
-                         "closest available year <b>({right_year})</b>.")
-               ))
+    if (vars$var_right != " ") {
+      if (all(right_year != unique(time))) {
+        out <- c(out,
+                 list(cc_t(lang = lang,
+                           "Displayed data for <b>{var_right_title}</b> is for the ",
+                           "closest available year <b>({right_year})</b>.")
+                 ))
+      }
     }
   }
 
