@@ -49,12 +49,15 @@ map_scale_colour <- function(...) {
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
+#' @param lwd <`numeric`> Value specifying the line width of the polygon borders,
+#' with a default value of 1. This value controls the thickness of the borders
+#' around the polygons on the map. A larger value results in thicker borders,
+#' while a smaller value results in thinner borders.
 #'
 #' @return A line width scale for polygons in an rdeck map.
 #' @export
 map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
-                          zoom_levels = NULL) {
-  lwd <- 1
+                          zoom_levels = NULL, lwd = 1) {
 
   if (all(!sapply(list(tile, zoom, zoom_levels), is.null))) {
     # If we are one zoom below the threshold at which the scale would have
@@ -63,7 +66,11 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
     # If tile wasn't found in the zoom_levels, return 1. On auto-zoom, there
     # will always be borders around the polygons.
     lwd <-
-      if (length(normal_zoom) == 0) 1 else as.numeric(zoom > (normal_zoom - 1))
+      if (length(normal_zoom) == 0) {
+        lwd
+      } else {
+        if (zoom > (normal_zoom - 1)) lwd else 0
+      }
   }
 
   # Return the categorical scale

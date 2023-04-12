@@ -332,15 +332,24 @@ get_dist <- function(x, y) {
 #' @param tile <`character`> The tile name to be fetched.
 #'
 #' @return A JSON list if succesfull. If missing tile, returns NULL preventing
-#' the app from crashing.
+#' the app from crashing. If the tile is missing and it's a _building tile,
+#' grab the first region of the regions_dictionary and show buildings for those.
 #' @export
 tilejson <- function(mapbox_username, tileset_prefix, tile) {
   tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
   out <- tryCatch(
-    rdeck::tile_json(tile_link),
+    suppressWarnings(rdeck::tile_json(tile_link)),
     error = function(e) {
-      print(e)
-      NULL
+      if (curbcut::is_scale_df("building", tile)) {
+        regions_dictionary <- get_from_globalenv("regions_dictionary")
+        base_building_tile <-
+          sprintf("%s.%s_%s_building", mapbox_username, tileset_prefix,
+                  regions_dictionary$region[1])
+        rdeck::tile_json(base_building_tile)
+      } else {
+        print(e)
+        NULL
+      }
     }
   )
   return(out)
@@ -375,7 +384,7 @@ widget_id_verif <- function(widget_id) {
   # Widget ID must be as small as possible
   if (nchar(widget_id) > 3) {
     stop(paste0(
-      "Widget ID can contain no more than 4 characters to reduce ",
+      "Widget ID can contain no more than 3 characters to reduce ",
       "bookmark URL size."
     ))
   }

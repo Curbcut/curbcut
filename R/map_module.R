@@ -61,8 +61,8 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        colour_args = shiny::reactive(list(NULL)),
                        lwd_fun = map_scale_lwd,
                        lwd_args = shiny::reactive(list(
-                         select_id(), tile(), zoom(),
-                         zoom_levels()
+                         select_id = select_id(), tile = tile(), zoom = zoom(),
+                         zoom_levels = zoom_levels(), lwd = 1
                        )),
                        auto_highlight = TRUE,
                        pickable = TRUE,

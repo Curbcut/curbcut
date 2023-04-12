@@ -4,7 +4,7 @@
 \alias{map_scale_lwd}
 \title{Map scale line width}
 \usage{
-map_scale_lwd(select_id, tile = NULL, zoom = NULL, zoom_levels = NULL)
+map_scale_lwd(select_id, tile = NULL, zoom = NULL, zoom_levels = NULL, lwd = 1)
 }
 \arguments{
 \item{select_id}{<\code{character}> A string specifying the ID of the selected polygon.
@@ -19,6 +19,11 @@ levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-zoom).}
+
+\item{lwd}{<\code{numeric}> Value specifying the line width of the polygon borders,
+with a default value of 1. This value controls the thickness of the borders
+around the polygons on the map. A larger value results in thicker borders,
+while a smaller value results in thinner borders.}
 }
 \value{
 A line width scale for polygons in an rdeck map.

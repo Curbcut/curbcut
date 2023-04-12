@@ -71,7 +71,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     # Get the information on how the selection compares
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
-      select_id = select_id
+      select_id = select_id, lang = lang
     )
 
     # Make the first sentence of the paragraph
@@ -437,7 +437,8 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
       relat <- explore_text_selection_comparison(
         var = var, data = data,
         select_id = select_id,
-        col = col
+        col = col,
+        lang = lang
       )
 
       # Grab the explanation
@@ -800,7 +801,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
       "exceptionally small", "unusually small",
       "just about average", "unusually large",
       "exceptionnally large"
-    )
+    ),
+    lang = lang
   )
 
   # Craft the second paragraph
@@ -899,10 +901,12 @@ explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
+#' @param left_right <`character`> Is it a left or right variable? Possible
+#' options are "left" or "right".
 #'
 #' @export
 explore_text_delta_exp.default <- function(var, region, select_id, data, df,
-                                           ...) {
+                                           left_right = "left", ...) {
   # Grab the explanation
   exp <- var_get_info(var[[1]], what = "explanation")
 
@@ -921,7 +925,7 @@ explore_text_delta_exp.default <- function(var, region, select_id, data, df,
         select_id = select_id,
         data = data,
         df = df,
-        col = sprintf("var_left_%s", which(x == var))
+        col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var))
       ))
     region_vals <- sapply(region_values, `[[`, "val")
     # Newest value must be first, like for the no-selection values
@@ -1012,3 +1016,247 @@ explore_text_delta_change.default <- function(var, exp_vals, ...) {
 
 
 # DELTA BIVAR -------------------------------------------------------------
+
+#' @rdname explore_text
+#' @export
+explore_text.delta_bivar <- function(vars, region, select_id, df, data,
+                                     scales_as_DA = c("building", "street"),
+                                     lang = NULL, ...) {
+
+  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # of the `scales_as_DA` argument.
+  switch_DA <- is_scale_df(scales_as_DA, df)
+
+  # Adjust the selected ID in the case where the selection is not in `data`
+  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+
+  # Grab the shared info
+  context <- explore_context(
+    region = region, select_id = select_id, df = df,
+    switch_DA = switch_DA
+  )
+
+  # The context might have used a scale in the `scales_as_DA` argument, and
+  # the select_id needs to be switched to that of the dissemination area.
+  if ("select_id" %in% names(context)) select_id <- context$select_id
+
+  # Grab the explanation and region values for both set of variables
+  exp_vals_left <- explore_text_delta_exp(
+    var = vars$var_left, region = region,
+    select_id = select_id, data = data,
+    df = df, left_right = "left"
+  )
+  exp_vals_right <- explore_text_delta_exp(
+    var = vars$var_right, region = region,
+    select_id = select_id, data = data,
+    df = df, left_right = "right"
+  )
+
+  # If there is a selection, return a completely different text
+  if (!is.na(select_id)) {
+
+    # Start with the header
+    out <- sprintf("<p><b>%s</b>", context$heading)
+
+    # Left values
+    exp_vals_left$exp <- explore_text_color(exp_vals_left$exp, meaning = "left")
+    out <- sprintf(
+      "%s<p>%s, %s changed from %s in %s to %s in %s.",
+      out, s_sentence(context$p_start), exp_vals_left$exp,
+      exp_vals_left$region_vals_strings[2], exp_vals_left$times[1],
+      exp_vals_left$region_vals_strings[1], exp_vals_left$times[2])
+
+    # Right value
+    right_sentenced <-
+      explore_text_color(s_sentence(exp_vals_right$exp), meaning = "right")
+    out <- sprintf(
+      "%s %s changed from %s in %s to %s in %s.",
+      out, right_sentenced,
+      exp_vals_right$region_vals_strings[2], exp_vals_right$times[1],
+      exp_vals_right$region_vals_strings[1], exp_vals_right$times[2])
+    exp_vals_right$exp <- explore_text_color(exp_vals_right$exp, meaning = "right")
+
+    # Get the information on how the selection compares
+    relat_left <- explore_text_selection_comparison(
+      data = data,
+      select_id = select_id,
+      col = "var_left",
+      ranks_override = c(
+        "an exceptionally small change", "an unusually small change",
+        "a just about average change", "an unusually large change",
+        "an exceptionnally large change"
+      ),
+      lang = lang
+    )
+    # Get the information on how the selection compares
+    relat_right <- explore_text_selection_comparison(
+      data = data,
+      select_id = select_id,
+      col = "var_right",
+      ranks_override = c(
+        "an exceptionally small change", "an unusually small change",
+        "a just about average change", "an unusually large change",
+        "an exceptionnally large change"
+      ),
+      lang = lang
+    )
+
+    # Is the rank similar or different
+    percs_distance <- abs(relat_left$higher_than_num - relat_right$higher_than_num)
+    connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
+
+    # Craft the left side of the second paragraph
+    first_s <-
+      sprintf(paste0("The change in %s %s from %s to %s is larger than %s ",
+                     "other %s, which is %s for %s."),
+              exp_vals_left$exp, context$name, exp_vals_left$times[1],
+              exp_vals_left$times[2], relat_left$higher_than, context$scale_plur,
+              relat_left$rank_chr, context$to_compare_determ)
+    second_s <-
+      sprintf(paste0("%s, the change in %s between the same years is larger ",
+                     "than %s of other %s, which is %s for %s."),
+              connector, exp_vals_right$exp, relat_right$higher_than,
+              context$scale_plur, relat_right$rank_chr, context$to_compare_determ)
+
+    # Bind it all
+    out <- sprintf("%s<p>%s %s", out, first_s, second_s)
+
+    return(out)
+  }
+
+  # Add colors to the explanations
+  exp_vals_left$exp <- explore_text_color(exp_vals_left$exp, meaning = "left")
+  exp_vals_right$exp <- explore_text_color(exp_vals_right$exp, meaning = "right")
+
+  # Grab the scale definition
+  scales_dictionary <- get_from_globalenv("scales_dictionary")
+  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_plur <- scales_dictionary$plur[scale_vec]
+
+  # Correlation
+  relation <- explore_text_bivar_correlation(vars, data, lang = lang)
+
+  # If there is no correlation, the text is slightly different
+  if (relation$no_correlation) {
+    out <- sprintf(
+      paste0("%s from %s to %s, there is %s (%s) between the change in %s and ",
+             "the change in %s in %s."),
+      s_sentence(context$p_start), exp_vals_left$times[1],
+      exp_vals_left$times[2], relation$relation_text, relation$corr,
+      exp_vals_left$exp, exp_vals_right$exp, scale_plur
+    )
+    return(out)
+  }
+
+  # Adjectives
+  left_adj <- explore_text_delta_bivar_adjective(
+    var = vars$var_left,
+    left = TRUE,
+    lang = lang
+  )
+  left_adj <- gsub("</b>", " change</b>", left_adj)
+  right_adj <- explore_text_delta_bivar_adjective(
+    var = vars$var_right,
+    left = FALSE,
+    positive = relation$positive,
+    lang = lang
+  )
+  right_adj <- gsub("</b>", " change</b>", right_adj)
+
+  # Paragraphs
+  first_p <-
+    if (grepl("_X_", relation$relation_text)) {
+      # When the relationship is 'weak', it's a two-part relation_text
+      relation_right_ajd_exp <-
+        gsub(
+          "_X_", sprintf("had %s in %s", right_adj, exp_vals_right$exp),
+          relation$relation_text
+        )
+
+      sprintf(
+        "%s from %s to %s, %s with %s in %s %s.",
+        s_sentence(context$p_start), exp_vals_left$times[1],
+        exp_vals_left$times[2], scale_plur, left_adj, exp_vals_left$exp,
+        relation_right_ajd_exp
+      )
+    } else {
+      sprintf(paste0("%s from %s to %s, %s with %s in %s ",
+                     "%s have had %s in %s."),
+              s_sentence(context$p_start), exp_vals_left$times[1],
+              exp_vals_left$times[2], scale_plur, left_adj, exp_vals_left$exp,
+              relation$relation_text, right_adj, exp_vals_right$exp)
+    }
+  second_p <- sprintf(
+    paste0("There is a %s (%s) between the change in these two variables ",
+           "between these years."),
+    relation$corr_strength, relation$corr
+  )
+
+  # Bind the two paragraphs
+  out <- sprintf("<p>%s<p>%s", first_p, second_p)
+
+  # Write STRONG CORRELATION if it is the case
+  if (relation$strong) {
+    out <- sprintf("<p><b>STRONG CORRELATION</b>%s", out)
+  }
+
+  return(out)
+}
+
+#' Helper function for generating adjective to describe delta/bivariate
+#' relationship between text variables
+#'
+#' This function generates a text string containing an adjective to describe the
+#' delta/bivariate relationship between two variables based on whether the relationship
+#' is positive or negative.
+#'
+#' @param var <`character`> The variable code for which the text needs to be
+#' generated. `vars$var_left` or `vars$var_right`
+#' @param left <`logical>` Whether the `var` supplied is the var_left
+#' or the `var_right`. If `var_left`, TRUE.
+#' @param positive <`logical`> Wheter the bivariate relationship is positive
+#' or negative. One of the output of \code{\link{explore_text_bivar_correlation}}
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#' @param ... Additional arguments to be passed.
+#'
+#' @return A text string containing an adjective to describe the bivariate
+#' relationship.
+#' @export
+explore_text_delta_bivar_adjective <- function(var, left, positive, lang = NULL, ...) {
+  UseMethod("explore_text_bivar_adjective", var)
+}
+
+#' @rdname explore_text_delta_bivar_adjective
+#' @export
+explore_text_delta_bivar_adjective.dollar <- function(var, left, positive, lang,
+                                                ...) {
+  string <- (\(x) {
+    if (left) {
+      return(cc_t("larger change", lang = lang))
+    }
+    if (positive) {
+      return(cc_t("larger change", lang = lang))
+    }
+    return(cc_t("smaller change", lang = lang))
+  })()
+
+  return(sprintf("<b>%s</b>", string))
+}
+
+#' @rdname explore_text_delta_bivar_adjective
+#' @export
+explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang,
+                                                 ...) {
+  string <- (\(x) {
+    if (left) {
+      return(cc_t("a larger change", lang = lang))
+    }
+    if (positive) {
+      return(cc_t("a larger change", lang = lang))
+    }
+    return(cc_t("a smaller change", lang = lang))
+  })()
+
+  return(sprintf("<b>%s</b>", string))
+}

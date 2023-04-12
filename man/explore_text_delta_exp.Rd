@@ -10,7 +10,15 @@ explore_text_delta_exp(var, region, ...)
 
 \method{explore_text_delta_exp}{ind}(var, region, select_id, ...)
 
-\method{explore_text_delta_exp}{default}(var, region, select_id, data, df, ...)
+\method{explore_text_delta_exp}{default}(
+  var,
+  region,
+  select_id,
+  data,
+  df,
+  left_right = "left",
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text and values need
@@ -31,6 +39,9 @@ and ID. The output of \code{\link{data_get}}.}
 \item{df}{<\code{character}> The combination of the region under study and the
 scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
+
+\item{left_right}{<\code{character}> Is it a left or right variable? Possible
+options are "left" or "right".}
 }
 \value{
 A list with the following elements:

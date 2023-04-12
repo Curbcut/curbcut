@@ -380,7 +380,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #' other observations with a lower value for the specified variable than the
 #' selected observation.
 #' }
-explore_text_selection_comparison <- function(var, data, select_id,
+explore_text_selection_comparison <- function(var = NULL, data, select_id,
                                               col = "var_left",
                                               ranks_override = NULL,
                                               lang = NULL) {

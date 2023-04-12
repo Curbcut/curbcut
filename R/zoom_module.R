@@ -23,11 +23,14 @@
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-zoom).
+#' @param no_autozoom <`reactive logical`> Whether the output tile() reactive
+#' should include autozooms or not.
 #'
 #' @return A reactive object representing the current tile that should be
 #' displayed on the map.
 #' @export
-zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
+zoom_server <- function(id, r = r, zoom_string, zoom_levels,
+                        no_autozoom = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(zoom_string))
   stopifnot(shiny::is.reactive(zoom_levels))
 
@@ -73,7 +76,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
     # auto-zoom or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
     tile <- shiny::reactive({
       # On auto-zoom, return the auto_zoom
-      if (zoom_auto()) {
+      if (zoom_auto() && !no_autozoom()) {
         return(paste(zoom_levels()$region, "auto_zoom", sep = "_"))
       }
 
@@ -85,7 +88,9 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels) {
       mzl <- tryCatch(get_from_globalenv(get_mzl),
         error = function(e) c(missing = "missing")
       )
-      if (!scale %in% names(mzl)) scale <- "auto_zoom"
+      if (!scale %in% names(mzl)) {
+         scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
+      }
 
       return(paste(zoom_levels()$region, scale, sep = "_"))
     })

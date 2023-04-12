@@ -16,7 +16,8 @@ correspond to the Curbcut city, e.g. \code{mtl}.}
 }
 \value{
 A JSON list if succesfull. If missing tile, returns NULL preventing
-the app from crashing.
+the app from crashing. If the tile is missing and it's a _building tile,
+grab the first region of the regions_dictionary and show buildings for those.
 }
 \description{
 Given a Mapbox username, tileset prefix, and tile name, this function

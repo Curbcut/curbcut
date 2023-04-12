@@ -5,7 +5,7 @@
 \title{Explore Text Selection Comparison}
 \usage{
 explore_text_selection_comparison(
-  var,
+  var = NULL,
   data,
   select_id,
   col = "var_left",

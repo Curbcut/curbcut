@@ -7,7 +7,7 @@
 \usage{
 warnuser_server(id, r, vars, time, data, more_text = shiny::reactive(NULL))
 
-warnuser_UI()
+warnuser_UI(id)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the legend will appear,
