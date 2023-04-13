@@ -71,13 +71,18 @@ place_explorer_html_links <- function(temp_folder, df, select_id, lang = NULL) {
 
   # Get the full paths of the style (header of HTML) and the place explorer HTML file
   head <- normalizePath("www/place_explorer/header.html")
-  head <- gsub("/", "\\\\", head)
   pef <- normalizePath(pe_file)
-  pef <- gsub("/", "\\\\", pef)
 
   # Concatenate both in the temporary file
-  fun <- if (Sys.info()[["sysname"]] == "Windows") "type" else "cat"
-  shell(sprintf("%s %s %s > %s", fun, head, pef, tmpfile))
+  if (Sys.info()[["sysname"]] == "Windows") {
+    # the gsub() function is used to replace forward slashes with backslashes,
+    # which is specific to Windows
+    head <- gsub("/", "\\\\", head)
+    pef <- gsub("/", "\\\\", pef)
+    shell(sprintf("type %s %s > %s", head, pef, tmpfile))
+  } else {
+    system(sprintf("cat %s %s > %s", head, pef, tmpfile))
+  }
 
   # Extract only the file name rather than all the path
   tmpfile <- s_extract("placeex_tmp.*$", tmpfile)
