@@ -5,7 +5,6 @@
 \alias{explore_text_delta_change.pct}
 \alias{explore_text_delta_change.dollar}
 \alias{explore_text_delta_change.ind}
-\alias{explore_text_delta_change.default}
 \title{Explore Text Delta Change}
 \usage{
 explore_text_delta_change(var, exp_vals, ...)
@@ -15,8 +14,6 @@ explore_text_delta_change(var, exp_vals, ...)
 \method{explore_text_delta_change}{dollar}(var, exp_vals, ...)
 
 \method{explore_text_delta_change}{ind}(var, exp_vals, ...)
-
-\method{explore_text_delta_change}{default}(var, exp_vals, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text and values need

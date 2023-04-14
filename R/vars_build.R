@@ -90,6 +90,9 @@ vars_build <- function(var_left, var_right = " ", df,
       return("q5")
     }
     if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ") {
+      if ("ind" %in% class(var_left)) {
+        return(c("bivar_ind", "bivar"))
+      }
       return("bivar")
     }
     if (length(var_left) == 2 && length(var_right) == 2) {

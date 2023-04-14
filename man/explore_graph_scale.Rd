@@ -4,6 +4,7 @@
 \alias{explore_graph_scale}
 \alias{explore_graph_scale.pct}
 \alias{explore_graph_scale.dollar}
+\alias{explore_graph_scale.ind}
 \alias{explore_graph_scale.default}
 \title{Explore graph scale based on the variable type}
 \usage{
@@ -13,11 +14,13 @@ explore_graph_scale(var, x_y, ...)
 
 \method{explore_graph_scale}{dollar}(var, x_y, data_vals, ...)
 
+\method{explore_graph_scale}{ind}(var, x_y, df, data_vals, lang = NULL, ...)
+
 \method{explore_graph_scale}{default}(var, x_y, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable with its type as a class, either "pct",
-"dollar", or any other type for the default scale.}
+"dollar" or "ind", or any other type for the default scale.}
 
 \item{x_y}{<\code{character}> x or y axis?}
 
@@ -25,6 +28,13 @@ explore_graph_scale(var, x_y, ...)
 
 \item{data_vals}{A numeric vector containing data values, required only for the
 "dollar" method.}
+
+\item{df}{<\code{character}> The combination of the region under study and the
+scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
+
+\item{lang}{<\code{character} Which language should the label be translated to.
+Defaults to NULL for no translation.}
 }
 \value{
 A list containing ggplot2 x and y-axis scale functions.
@@ -41,6 +51,8 @@ percentage scale to the x-axis.
 \item \code{explore_graph_scale(dollar)}: The method for dollar values. Applies a
 dollar scale to the x-axis with appropriate suffixes based on the magnitude
 of the data.
+
+\item \code{explore_graph_scale(ind)}: The method for ordinal values.
 
 \item \code{explore_graph_scale(default)}: The default method for unspecified variable
 types. Applies a comma scale to the x-axis.

@@ -1005,13 +1005,7 @@ explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
 #' @rdname explore_text_delta_change
 #' @export
 explore_text_delta_change.ind <- function(var, exp_vals, ...) {
-  NULL
-}
-
-#' @rdname explore_text_delta_change
-#' @export
-explore_text_delta_change.default <- function(var, exp_vals, ...) {
-  NULL
+  explore_text_delta_change.pct(var, exp_vals)
 }
 
 

@@ -56,7 +56,9 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
   # Grab the breaks from the variables table
   breaks <-
     var_get_breaks(
-      var = vars$var_left, df = df,
+      # In the cases we want to supply `var` instead of vars, ex. for graph
+      # creation in `explore_graph_scale.ordinal`
+      var = if (is.list(vars)) vars$var_left else vars, df = df,
       break_col = "rank_name_short", q3_q5 = "q5",
       pretty = TRUE, compact = TRUE, lang = NULL
     )

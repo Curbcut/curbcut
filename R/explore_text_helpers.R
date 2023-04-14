@@ -54,6 +54,7 @@ explore_context <- function(region, select_id, df, switch_DA) {
 
   # Tweaked retrieval when the `df` is part of the scales to treat as DAs.
   if (switch_DA) {
+    warning("Updates to the scale dictionaries to add dissemination area around the X")
     # Grab the DA ID and the address from the SQL database
     sql_link <- eval(parse(text = (paste0(gsub(".*_", "", df), "_conn"))))
     bs <- DBI::dbGetQuery(
@@ -329,7 +330,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
   }
 
   # Get the group in which falls the selection
-  rank <- data[[col]][data$ID == select_id]
+  rank <- data[[paste0(col, "_q5")]][data$ID == select_id]
 
   # Grab the rank name for the rank
   brks <- var_get_info(var = var, what = "breaks_q5")[[1]]
