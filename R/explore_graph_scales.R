@@ -100,7 +100,8 @@ explore_graph_scale_ind <- function(var, x_y, df, lang = NULL, ...) {
 explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals, ...) {
 
   # Grab the min and max breaks and switch them to numeric
-  data_vals <- data_vals[-find_outliers(data_vals)]
+  outliers <- find_outliers(data_vals)
+  if (length(outliers) > 0) data_vals <- data_vals[-outliers]
   breaks <- c(min(data_vals, na.rm = TRUE), max(data_vals, na.rm = TRUE))
 
   # Get the labels, same as the legends

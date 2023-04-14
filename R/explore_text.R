@@ -745,35 +745,10 @@ explore_text.delta <- function(vars, region, select_id, df, data,
     df = df
   )
 
-  # Calculate the variation change
-  change_string <- explore_text_delta_change(
-    var = vars$var_left,
-    exp_vals = exp_vals
-  )
-
-  # Did it increase or decrease? put in color
-  inc_dec <- if (change_string$pct_change > 0) {
-    cc_t("increased", lang = lang) |>
-      explore_text_color(meaning = "increase")
-  } else {
-    cc_t("decreased", lang = lang) |>
-      explore_text_color(meaning = "decrease")
-  }
-
-  # Craft the paragraphs
-  first_part <- sprintf(
-    "%s, %s changed from %s in %s to %s in %s.",
-    s_sentence(context$p_start), exp_vals$exp,
-    exp_vals$region_vals_strings[2], exp_vals$times[1],
-    exp_vals$region_vals_strings[1], exp_vals$times[2]
-  )
-  second_part <- sprintf(
-    "%s has %s by %s between these years.",
-    s_sentence(exp_vals$exp), inc_dec, change_string$text
-  )
-
-  # Bind
-  out <- sprintf("<p>%s<p>%s", first_part, second_part)
+  # Construct the first paragraph. Tweaks when `ind`, so dispatched
+  out <- explore_text_delta_first_p(var = vars$var_left, context = context,
+                                    exp_vals = exp_vals, lang = lang,
+                                    select_id)
 
   # Return the first paragraph if there are no selections
   if (is.na(select_id)) {
@@ -854,43 +829,80 @@ explore_text_delta_exp <- function(var, region, ...) {
 #' @rdname explore_text_delta_exp
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
-  # Grab the parent variable
-  parent <- var_get_info(var = var[[1]], what = "parent_vec")
 
-  # Grab the explanation
-  exp_q5 <- var_get_info(var = var[[1]], what = "exp_q5")
+  # If there is no selection
+  if (is.na(select_id)) {
+    # Grab the parent variable
+    parent <- var_get_info(var = var[[1]], what = "parent_vec")
 
-  # Sub the placeholder for the two last brackets
-  breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
-  breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-  two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
-  # If the two last brackets is recognized as the default, write a particular string
-  exp <- if (identical(two_last_ranks, c("above average", "high"))) {
-    gsub("_X_", "a higher-than-average", exp_q5)
-  } else {
-    gsub("_X_", sprintf(
-      "`%s` to `%s`", two_last_ranks[[1]],
-      two_last_ranks[[2]]
-    ), exp_q5)
+    # Grab the explanation
+    exp_q5 <- var_get_info(var = var[[1]], what = "exp_q5")
+
+    # Sub the placeholder for the two last brackets
+    breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
+    breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
+    two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
+    # If the two last brackets is recognized as the default, write a particular string
+    exp <- if (identical(two_last_ranks, c("above average", "high"))) {
+      gsub("_X_", "a higher-than-average", exp_q5)
+    } else {
+      gsub("_X_", sprintf(
+        "`%s` to `%s`", two_last_ranks[[1]],
+        two_last_ranks[[2]]
+      ), exp_q5)
+    }
+
+    # Grab the region values
+    times <- var_get_time(var)
+    region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
+    region_vals <- region_vals[region_vals$region == region, ]
+    region_vals <- region_vals$val[region_vals$year %in% times]
+    region_vals_strings <- convert_unit.pct(var,
+                                            x = region_vals,
+                                            decimal = 1
+    )
+
+    # Return
+    return(list(
+      exp = sprintf("the percentage of %s that %s", parent, exp),
+      region_vals = region_vals,
+      region_vals_strings = region_vals_strings,
+      times = times
+    ))
   }
 
-  # Grab the region values
+  # If there is a selection
+  exp <- var_get_info(var = var[[1]], what = "explanation")
   times <- var_get_time(var)
-  region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
-  region_vals <- region_vals[region_vals$region == region, ]
-  region_vals <- region_vals$val[region_vals$year %in% times]
-  region_vals_strings <- convert_unit.pct(var,
-    x = region_vals,
-    decimal = 1
-  )
+
+  # Grab both valu strings
+  rank_chr_before <- explore_text_selection_comparison(
+    var = var[1],
+    data = data,
+    select_id = select_id,
+    col = "var_left_1",
+    lang = lang
+  )$rank_chr
+
+  rank_chr_after <- explore_text_selection_comparison(
+    var = var[2],
+    data = data,
+    select_id = select_id,
+    col = "var_left_2",
+    lang = lang
+  )$rank_chr
+
+  # Did it remain in the same category, or it moved?
+  remained <- rank_chr_before == rank_chr_after
 
   # Return
   return(list(
-    exp = sprintf("the percentage of %s that %s", parent, exp),
-    region_vals = region_vals,
-    region_vals_strings = region_vals_strings,
+    exp = exp,
+    region_vals_strings = c(rank_chr_before, rank_chr_after),
+    remained = remained,
     times = times
   ))
+
 }
 
 #' @rdname explore_text_delta_exp
@@ -941,6 +953,91 @@ explore_text_delta_exp.default <- function(var, region, select_id, data, df,
     region_vals_strings = region_vals_strings,
     times = times
   ))
+}
+
+#' Generate Text for the first paragraph of Delta
+#'
+#' This function generates text for the first paragraph of delta of a given variable,
+#' comparing values at two different points in time.
+#'
+#' @param var <`character`> The variable code for which the text and values need
+#' to be generated. Usually `vars$var_left`.
+#' @param context <`list`> The output of \code{\link{explore_context}}
+#' @param exp_vals <`list`> The output of \code{\link{explore_text_delta_exp}}
+#' @param lang <`character`> Language specifying the language of the generated text.
+#' Either `fr` or `en`. Defaults to NULL for no translation.
+#' @param ... Additional arguments passed to the methods.
+#'
+#' @return A character string containing the generated text.
+#' @export
+explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, ...) {
+  UseMethod("explore_text_delta_first_p", var)
+}
+
+#' @rdname explore_text_delta_first_p
+#' @param select_id A string indicating the ID of the currently selected region
+#' (if any). Usually `r[[id]]$select_id()`
+#' @export
+explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
+                                           select_id, ...) {
+  if (is.na(select_id))
+    return(explore_text_delta_first_p.default(var, context, exp_vals, lang))
+
+  # If there is a selectio
+  # Craft the paragraphs
+  out <- if (exp_vals$remained) {
+    sprintf("%s, %s has remained %s between %s and %s.",
+            s_sentence(context$p_start), exp_vals$exp,
+            unique(exp_vals$region_vals_strings),
+            exp_vals$times[1], exp_vals$times[2])
+  } else {
+    sprintf("%s, %s changed from %s in %s to %s in %s.",
+            s_sentence(context$p_start), exp_vals$exp,
+            exp_vals$region_vals_strings[2], exp_vals$times[1],
+            exp_vals$region_vals_strings[1], exp_vals$times[2])
+  }
+
+  # Return
+  return(out)
+
+}
+
+#' @rdname explore_text_delta_first_p
+#' @export
+explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, ...) {
+
+  # Calculate the variation change
+  change_string <- explore_text_delta_change(
+    var = var,
+    exp_vals = exp_vals
+  )
+
+  # Did it increase or decrease? put in color
+  inc_dec <- if (change_string$pct_change > 0) {
+    cc_t("increased", lang = lang) |>
+      explore_text_color(meaning = "increase")
+  } else {
+    cc_t("decreased", lang = lang) |>
+      explore_text_color(meaning = "decrease")
+  }
+
+  # Craft the paragraphs
+  first_part <- sprintf(
+    "%s, %s changed from %s in %s to %s in %s.",
+    s_sentence(context$p_start), exp_vals$exp,
+    exp_vals$region_vals_strings[2], exp_vals$times[1],
+    exp_vals$region_vals_strings[1], exp_vals$times[2]
+  )
+  second_part <- sprintf(
+    "%s has %s by %s between these years.",
+    s_sentence(exp_vals$exp), inc_dec, change_string$text
+  )
+
+  # Bind
+  out <- sprintf("<p>%s<p>%s", first_part, second_part)
+
+  # Return
+  return(out)
 }
 
 #' Explore Text Delta Change

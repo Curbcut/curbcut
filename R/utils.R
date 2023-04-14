@@ -461,6 +461,8 @@ remove_outliers_df <- function(df, cols) {
   remove <- Reduce(c, outliers)
   remove <- unique(remove)
 
-  return(df[-remove, ])
+  out <- if (length(remove) > 0) df[-remove, ] else df
+
+  return(out)
 }
 

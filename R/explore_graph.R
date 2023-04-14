@@ -113,6 +113,7 @@ explore_graph.bivar <- function(vars, select_id, df, data, scales_as_DA, lang = 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(var = vars$var_right,
                                  x_y = "x",
+                                 df = df,
                                  data_vals = data$var_right)
   y_scale <- explore_graph_scale(var = vars$var_left,
                                  x_y = "y",
