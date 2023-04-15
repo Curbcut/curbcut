@@ -742,13 +742,19 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = df
+    df = df, left_right = "left", lang = lang
+  )
+
+  # Get the necessary information for the second paragraph
+  change_string <- explore_text_delta_change(
+    var = vars$var_left,
+    exp_vals = exp_vals
   )
 
   # Construct the first paragraph. Tweaks when `ind`, so dispatched
   out <- explore_text_delta_first_p(var = vars$var_left, context = context,
                                     exp_vals = exp_vals, lang = lang,
-                                    select_id)
+                                    select_id = select_id, change_string = change_string)
 
   # Return the first paragraph if there are no selections
   if (is.na(select_id)) {
@@ -758,7 +764,6 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   # Add the header for the selection
   out <- sprintf("<p><b>%s</b><p>%s", context$heading, out)
 
-  # Get the necessary information for the second paragraph
   inc_dec <- if (change_string$pct_change > 0) {
     cc_t("increase", lang = lang) |>
       explore_text_color(meaning = "increase")
@@ -780,9 +785,16 @@ explore_text.delta <- function(vars, region, select_id, df, data,
     lang = lang
   )
 
+  # If `ind` and data remained the same, we add 'slight' decrease/increase
+  subj <- if ("ind" %in% class(vars$var_left)){
+    if (exp_vals$remained) {
+      cc_t("The slight", lang = lang)
+    } else cc_t("This", lang = lang)
+  } else cc_t("This", lang = lang)
+
   # Craft the second paragraph
   first_part <- sprintf(
-    "This %s is %s for %s.", inc_dec,
+    "%s %s is %s for %s.", subj, inc_dec,
     relat$rank_chr, context$to_compare_deter
   )
   second_part <-
@@ -813,6 +825,14 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 #' Usually equivalent of `r$region()`.
 #' @param select_id A string indicating the ID of the currently selected region
 #' (if any). Usually `r[[id]]$select_id()`
+#' @param left_right <`character`> Is it a left or right variable? Possible
+#' options are "left" or "right".
+#' @param df <`character`> The combination of the region under study and the
+#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The data frame must have columns named var_left
+#' and ID. The output of \code{\link{data_get}}.
 #' @param ... Additional arguments passed to the dispatched method.
 #'
 #' @return A list with the following elements:
@@ -822,13 +842,16 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 #' \item{region_vals_strings}{A character vector with the same length as
 #' \code{region_vals}, containing the variable values formatted according
 #' to the class of `var`}
-explore_text_delta_exp <- function(var, region, ...) {
+explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
+                                   df, data, ...) {
   UseMethod("explore_text_delta_exp", var)
 }
 
 #' @rdname explore_text_delta_exp
+#' @param lang <`character`> Language for translation.
 #' @export
-explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
+explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
+                                       df, data, lang, ...) {
 
   # If there is no selection
   if (is.na(select_id)) {
@@ -875,7 +898,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
   exp <- var_get_info(var = var[[1]], what = "explanation")
   times <- var_get_time(var)
 
-  # Grab both valu strings
+  # Grab both value strings
   rank_chr_before <- explore_text_selection_comparison(
     var = var[1],
     data = data,
@@ -895,9 +918,23 @@ explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
   # Did it remain in the same category, or it moved?
   remained <- rank_chr_before == rank_chr_after
 
+  # Grab the region values
+  region_vals <-
+    lapply(var, \(x) explore_text_region_val_df(
+      var = structure(x, class = class(var)),
+      region = region,
+      select_id = select_id,
+      data = data,
+      df = df,
+      col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var))
+    )$num) |> unlist()
+  # Newest value must be first, like for the no-selection values
+  region_vals <- rev(region_vals)
+
   # Return
   return(list(
     exp = exp,
+    region_vals = region_vals,
     region_vals_strings = c(rank_chr_before, rank_chr_after),
     remained = remained,
     times = times
@@ -906,16 +943,6 @@ explore_text_delta_exp.ind <- function(var, region, select_id, ...) {
 }
 
 #' @rdname explore_text_delta_exp
-#'
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The data frame must have columns named var_left
-#' and ID. The output of \code{\link{data_get}}.
-#' @param left_right <`character`> Is it a left or right variable? Possible
-#' options are "left" or "right".
-#'
 #' @export
 explore_text_delta_exp.default <- function(var, region, select_id, data, df,
                                            left_right = "left", ...) {
@@ -966,11 +993,12 @@ explore_text_delta_exp.default <- function(var, region, select_id, data, df,
 #' @param exp_vals <`list`> The output of \code{\link{explore_text_delta_exp}}
 #' @param lang <`character`> Language specifying the language of the generated text.
 #' Either `fr` or `en`. Defaults to NULL for no translation.
+#' @param change_string <`list`> The output of \code{\link{explore_text_delta_change}}
 #' @param ... Additional arguments passed to the methods.
 #'
 #' @return A character string containing the generated text.
 #' @export
-explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, ...) {
+explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, change_string, ...) {
   UseMethod("explore_text_delta_first_p", var)
 }
 
@@ -979,9 +1007,9 @@ explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, ...)
 #' (if any). Usually `r[[id]]$select_id()`
 #' @export
 explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
-                                           select_id, ...) {
+                                           select_id, change_string, ...) {
   if (is.na(select_id))
-    return(explore_text_delta_first_p.default(var, context, exp_vals, lang))
+    return(explore_text_delta_first_p.default(var, context, exp_vals, lang, change_string))
 
   # If there is a selectio
   # Craft the paragraphs
@@ -1004,13 +1032,7 @@ explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
 
 #' @rdname explore_text_delta_first_p
 #' @export
-explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, ...) {
-
-  # Calculate the variation change
-  change_string <- explore_text_delta_change(
-    var = var,
-    exp_vals = exp_vals
-  )
+explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, change_string, ...) {
 
   # Did it increase or decrease? put in color
   inc_dec <- if (change_string$pct_change > 0) {
@@ -1135,12 +1157,12 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   exp_vals_left <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = df, left_right = "left"
+    df = df, left_right = "left", lang = lang
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
-    df = df, left_right = "right"
+    df = df, left_right = "right", lang = lang
   )
 
   # If there is a selection, return a completely different text

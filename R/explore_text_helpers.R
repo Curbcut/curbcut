@@ -340,8 +340,12 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
   # Lower letters
   out$val <- tolower(out$val)
 
+  if (!is.na(select_id))
+    out$num <- data[[col]][data$ID == select_id]
+
   # Return
   return(out)
+
 }
 
 #' Explore Text Selection Comparison

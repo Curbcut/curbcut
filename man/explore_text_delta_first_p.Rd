@@ -6,11 +6,26 @@
 \alias{explore_text_delta_first_p.default}
 \title{Generate Text for the first paragraph of Delta}
 \usage{
-explore_text_delta_first_p(var, context, exp_vals, lang = NULL, ...)
+explore_text_delta_first_p(
+  var,
+  context,
+  exp_vals,
+  lang = NULL,
+  change_string,
+  ...
+)
 
-\method{explore_text_delta_first_p}{ind}(var, context, exp_vals, lang, select_id, ...)
+\method{explore_text_delta_first_p}{ind}(
+  var,
+  context,
+  exp_vals,
+  lang,
+  select_id,
+  change_string,
+  ...
+)
 
-\method{explore_text_delta_first_p}{default}(var, context, exp_vals, lang, ...)
+\method{explore_text_delta_first_p}{default}(var, context, exp_vals, lang, change_string, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text and values need
@@ -22,6 +37,8 @@ to be generated. Usually \code{vars$var_left}.}
 
 \item{lang}{<\code{character}> Language specifying the language of the generated text.
 Either \code{fr} or \code{en}. Defaults to NULL for no translation.}
+
+\item{change_string}{<\code{list}> The output of \code{\link{explore_text_delta_change}}}
 
 \item{...}{Additional arguments passed to the methods.}
 
