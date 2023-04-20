@@ -28,6 +28,12 @@
 #' @param fill_fun <`function`> A function used to calculate the fill color of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
 #' Defaults to \code{\link{map_scale_fill}}.
+#' @param tileset_ID_color <`character`> Which is the column of the mapbox tileset
+#' that should be caught to display colours. Defaults to `ID_color`. All scales
+#' have their ID duplicated at the ID_color, except buildings, streets, and other
+#' large scales. Their ID_color is then the ID of the DA in which they fall. This
+#' can be switched to `ID` if buildings or streets have their own data (and they
+#' don't just display the value of their DA).
 #' @param fill_args <`reactive list`> List of arguments to be passed to the
 #' `fill_fun` argument.
 #' @param colour_fun <`function`> A function used to calculate the line color of
@@ -55,8 +61,9 @@
 #' \code{\link[rdeck]{get_view_state}}.
 #' @export
 map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
-                       coords, fill_fun = map_scale_fill,
-                       fill_args = shiny::reactive(list(data_colours())),
+                       coords, fill_fun = map_scale_fill, tileset_ID_color = "ID_color",
+                       fill_args = shiny::reactive(list(data_colours(),
+                                                        tileset_ID_color = tileset_ID_color)),
                        colour_fun = map_scale_colour,
                        colour_args = shiny::reactive(list(NULL)),
                        lwd_fun = map_scale_lwd,

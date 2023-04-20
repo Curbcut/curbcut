@@ -81,8 +81,8 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(scales_as_DA))
-  # stopifnot(shiny::is.reactive(graph))
-  # stopifnot(shiny::is.reactive(graph_args))
+  stopifnot(shiny::is.reactive(graph))
+  stopifnot(shiny::is.reactive(graph_args))
   stopifnot(shiny::is.reactive(table))
   stopifnot(shiny::is.reactive(table_args))
 

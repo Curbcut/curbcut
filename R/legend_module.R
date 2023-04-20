@@ -62,7 +62,7 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
         breaks = breaks()
       ), error = function(e) {
         # If does not work as intended, warn the error and return nothing
-        print(warning(e))
+        print(e)
         return(NULL)
       })
     )

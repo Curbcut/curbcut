@@ -226,3 +226,38 @@ update_df <- function(tile, zoom_string) {
   # Outside of auto_zoom, return the tile
   return(tile)
 }
+
+#' Update the vars reactive value in a given reactive list r based on changes
+#' in var_left and var_right
+#'
+#' This function is used to update the vars reactive value in a given reactive
+#' list r whenever the input var_left, var_right and/or df changes. It uses the
+#' \code{\link{vars_build}} function to determine the new vars value, and updates
+#' it only if the new value is different from the current value.
+#'
+#' @param id <`character`> The id of the element in the reactive list r where
+#' the vars reactive value is stored.
+#' @param r <`reactive list`> A reactive list where the element with the given
+#' id (the current page) contains a named list with a vars reactive value, which stores the
+#' output of the curbcut::vars_build function.
+#' @param var_left <`reactive character`> A reactive character string of the
+#' selected variable, e.g. canale_2016 or c("housing_tenant_2006",
+#' #' "housing_tenant_2016").
+#' @param var_right <`reactive character`> A reactive character string of the
+#' selected compared variable, e.g. housing_value_2016.
+#'
+#' @return An observer that updates the vars reactive value `r[[id]]$vars`
+#' whenever var_left, var_right and or df changes.
+#' @export
+update_vars <- function(id, r, var_left, var_right) {
+  shiny::observe({
+    vr <- curbcut::vars_build(
+      var_left = var_left(),
+      var_right = var_right(),
+      df = r[[id]]$df()
+    )
+
+    # If the new built variable is the same as before, don't do anything
+    if (identical(vr, r[[id]]$vars())) return() else r[[id]]$vars(vr)
+  })
+}

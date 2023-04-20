@@ -71,15 +71,36 @@ r_init <- function(server_session,
       first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", reg))[1]
       first_mzl <- names(first_mzl)
       df <- paste(reg, first_mzl, sep = "_")
+      # Grab a variable part of the module for the var_left placeholder
+      modules <- get_from_globalenv("modules")
+      tb <- modules$var_left[modules$id == i][[1]]
+      # If there are var_left in the `modules`
+      if (!is.null(tb)) {
+        var_left <- if (is.data.frame(tb)) tb$var_code[[1]] else tb[[1]]
+        variables <- get_from_globalenv("variables")
+        time <- modules$dates[modules$id == i][[1]]
+        time <- max(time)
+        var_left <- sprintf("%s_%s", var_left, time)
 
-      r[[i]] <- shiny::reactiveValues(
-        select_id = shiny::reactiveVal(NA),
-        df = shiny::reactiveVal(df),
-        zoom = shiny::reactiveVal(zoom_get(map_zoom)),
-        coords = shiny::reactiveVal(map_loc),
-        poi = shiny::reactiveVal(NULL),
-        ...
-      )
+        r[[i]] <- shiny::reactiveValues(
+          vars = shiny::reactiveVal(vars_build(var_left, df = df)),
+          select_id = shiny::reactiveVal(NA),
+          df = shiny::reactiveVal(df),
+          zoom = shiny::reactiveVal(zoom_get(map_zoom)),
+          coords = shiny::reactiveVal(map_loc),
+          poi = shiny::reactiveVal(NULL),
+          ...
+        )
+      } else {
+        r[[i]] <- shiny::reactiveValues(
+          select_id = shiny::reactiveVal(NA),
+          df = shiny::reactiveVal(df),
+          zoom = shiny::reactiveVal(zoom_get(map_zoom)),
+          coords = shiny::reactiveVal(map_loc),
+          poi = shiny::reactiveVal(NULL),
+          ...
+        )
+      }
     }
   }
 

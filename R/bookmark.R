@@ -85,22 +85,22 @@ use_bookmark <- function(r) {
         })
 
         # Followed by the sliders
-        lapply(widgets$s_text, \(widget) {
-          shinyWidgets::updateSliderTextInput(
-            session = r$server_session(),
-            inputId = ns_doubled(page_id = tab, widget[[1]]),
-            selected = widget[[2]]
-          )
-        })
-        lapply(widgets$slider, \(widget) {
-          # If there are multiple values, split at every `-`
-          value <- strsplit(widget[[2]], split = "-")[[1]]
-          shiny::updateSliderInput(
-            session = r$server_session(),
-            inputId = ns_doubled(page_id = tab, widget[[1]]),
-            value = as.numeric(value)
-          )
-        })
+          lapply(widgets$s_text, \(widget) {
+            shinyWidgets::updateSliderTextInput(
+              session = r$server_session(),
+              inputId = ns_doubled(page_id = tab, widget[[1]]),
+              selected = widget[[2]]
+            )
+          })
+          lapply(widgets$slider, \(widget) {
+            # If there are multiple values, split at every `-`
+            value <- strsplit(widget[[2]], split = "-")[[1]]
+            shiny::updateSliderInput(
+              session = r$server_session(),
+              inputId = ns_doubled(page_id = tab, widget[[1]]),
+              value = as.numeric(value)
+            )
+          })
 
         # Finish with the pickers, with a delay to make sure the rest is
         # well updated first
@@ -161,13 +161,24 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
 
   # Grab the real widget ID from bookmark_shorts
   from_short <- lapply(from_short, \(widget) {
-    code <- widget[[1]]
+    widget_full_code <- widget[[1]]
+
+    # Get the code of the widget, and the namespace before
+    # Find the positions of all hyphens
+    hyphen_positions <- gregexpr("-", widget_full_code)[[1]]
+    # Get the position of the last hyphen
+    last_hyphen_position <- tail(hyphen_positions, 1)
+    # Extract the text after the last hyphen
+    code <- substring(widget_full_code, last_hyphen_position + 1)
+    before_hyphen <- substring(widget_full_code, 1, last_hyphen_position)
+
     short <- substr(code, start = 1, stop = 2)
     id <- substr(code, start = 3, stop = nchar(code))
 
     which_widget <- which(grepl(short, curbcut::bookmark_shorts))
     code <- paste0(names(curbcut::bookmark_shorts)[which_widget], id)
-    return(c(code, widget[[2]]))
+    full_code <- sprintf("%s%s", before_hyphen, code)
+    return(c(full_code, widget[[2]]))
   })
 
   # Start with the well known widgets (bookmark_codes)

@@ -14,7 +14,8 @@ map_server(
   zoom,
   coords,
   fill_fun = map_scale_fill,
-  fill_args = shiny::reactive(list(data_colours())),
+  tileset_ID_color = "ID_color",
+  fill_args = shiny::reactive(list(data_colours(), tileset_ID_color = tileset_ID_color)),
   colour_fun = map_scale_colour,
   colour_args = shiny::reactive(list(NULL)),
   lwd_fun = map_scale_lwd,
@@ -59,6 +60,13 @@ of the map. Bookmark can have an input on it. Usually \code{r[[id]]$coords}.}
 \item{fill_fun}{<\code{function}> A function used to calculate the fill color of
 the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
 Defaults to \code{\link{map_scale_fill}}.}
+
+\item{tileset_ID_color}{<\code{character}> Which is the column of the mapbox tileset
+that should be caught to display colours. Defaults to \code{ID_color}. All scales
+have their ID duplicated at the ID_color, except buildings, streets, and other
+large scales. Their ID_color is then the ID of the DA in which they fall. This
+can be switched to \code{ID} if buildings or streets have their own data (and they
+don't just display the value of their DA).}
 
 \item{fill_args}{<\verb{reactive list}> List of arguments to be passed to the
 \code{fill_fun} argument.}

@@ -123,7 +123,6 @@ place_explorer_server <- function(id, r,
         tolower(input$address_searched) |>
         s_extract_all("\\w|\\d") |>
         paste(collapse = "")
-      print(postal_c)
 
       postal_codes <- get_from_globalenv("postal_codes")
       DA_id <- postal_codes$DA_ID[postal_codes$postal_code == postal_c]

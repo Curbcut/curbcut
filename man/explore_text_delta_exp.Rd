@@ -6,9 +6,26 @@
 \alias{explore_text_delta_exp.default}
 \title{Explore text \code{delta} explanation and values for}
 \usage{
-explore_text_delta_exp(var, region, ...)
+explore_text_delta_exp(
+  var,
+  region,
+  select_id,
+  left_right = "left",
+  df,
+  data,
+  ...
+)
 
-\method{explore_text_delta_exp}{ind}(var, region, select_id, left_right = "left", ...)
+\method{explore_text_delta_exp}{ind}(
+  var,
+  region,
+  select_id,
+  left_right = "left",
+  df,
+  data,
+  lang,
+  ...
+)
 
 \method{explore_text_delta_exp}{default}(
   var,
@@ -27,21 +44,23 @@ to be generated. Usually \code{vars$var_left}.}
 \item{region}{<\code{character}> Character string specifying the name of the region.
 Usually equivalent of \code{r$region()}.}
 
-\item{...}{Additional arguments passed to the dispatched method.}
-
 \item{select_id}{A string indicating the ID of the currently selected region
 (if any). Usually \code{r[[id]]$select_id()}}
 
 \item{left_right}{<\code{character}> Is it a left or right variable? Possible
 options are "left" or "right".}
 
+\item{df}{<\code{character}> The combination of the region under study and the
+scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
+
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The data frame must have columns named var_left
 and ID. The output of \code{\link{data_get}}.}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{...}{Additional arguments passed to the dispatched method.}
+
+\item{lang}{<\code{character}> Language for translation.}
 }
 \value{
 A list with the following elements:
