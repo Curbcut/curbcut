@@ -657,21 +657,3 @@ You should also get your employer (if you work as a programmer) or
 school, if any, to sign a "copyright disclaimer" for the program, if
 necessary. For more information on this, and how to apply and follow
 the GNU AGPL, see <https://www.gnu.org/licenses/>.
-
-# Commons Clause Addendum
-
-The following Commons Clause Addendum is applied to this project in addition to the GNU Affero General Public License v3.0 (AGPLv3) terms.
-
-“Commons Clause” License Condition v1.0
-
-The Software is provided to you by the Licensor under the License, as defined below, subject to the following condition.
-
-Without limiting other conditions in the License, the grant of rights under the License will not include, and the License does not grant to you, the right to Sell the Software.
-
-For purposes of the foregoing, “Sell” means practicing any or all of the rights granted to you under the License to provide to third parties, for a fee or other consideration (including without limitation fees for hosting or consulting/ support services related to the Software), a product or service whose value derives, entirely or substantially, from the functionality of the Software. Any license notice or attribution required by the License must also include this Commons Clause License Condition notice.
-
-Software: curbcut
-
-License: GNU Affero General Public License v3.0 (AGPLv3)
-
-Licensor: Curbcut
