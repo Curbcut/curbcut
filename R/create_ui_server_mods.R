@@ -57,6 +57,7 @@ create_ui_server_mods <- function(modules) {
       main_dropdown_title <- modules$main_dropdown_title[modules$id == id]
       default_year <- modules$dates[modules$id == id][[1]]
       default_year <- max(default_year)
+      vars_right <- modules$var_right[modules$id == id][[1]]
 
       # Initial reactives
       rv_zoom_string <- shiny::reactiveVal(
@@ -132,17 +133,7 @@ create_ui_server_mods <- function(modules) {
         id = id,
         r = r,
         var_list = curbcut::dropdown_make(
-          vars = c(
-            "inc_median_income", "inc_50", "inc_100",
-            "inc_high", "inc_limat", "iden_imm",
-            "iden_imm_new", "iden_vm", "iden_aboriginal",
-            "trans_car", "trans_walk_or_bike", "trans_transit",
-            "trans_t_15", "trans_t_45", "trans_t_45_plus",
-            "family_children", "family_one_person", "lang_french_only",
-            "lang_eng_only", "lang_french_eng", "lang_no_official",
-            "age_0_14", "age_15_64", "age_65_plus",
-            "edu_bachelor_above", "edu_no_degree"
-          ),
+          vars = vars_right,
           compare = TRUE
         ),
         time = time

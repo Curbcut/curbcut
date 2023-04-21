@@ -99,9 +99,9 @@ explore_graph_scale_ind <- function(var, x_y, df, lang = NULL, ...) {
 #' @export
 explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals, ...) {
 
-  # Grab the min and max breaks and switch them to numeric
-  outliers <- find_outliers(data_vals)
-  if (length(outliers) > 0) data_vals <- data_vals[-outliers]
+  # Grab the min and max breaks and switch them to numeric. TKTK NOT ON `IND`
+  # outliers <- find_outliers(data_vals)
+  # if (length(outliers) > 0) data_vals <- data_vals[-outliers]
   breaks <- c(min(data_vals, na.rm = TRUE), max(data_vals, na.rm = TRUE))
 
   # Get the labels, same as the legends
