@@ -43,7 +43,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
         "housing_tenant_2006",
         "housing_tenant_2016"
       ),
-      var_right = "climate_drought_2017"
+      var_right = "climate_drought_2015"
     ),
     class = "bivar_ldelta_rq3"
   )

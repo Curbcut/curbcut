@@ -14,7 +14,7 @@ assign("colours_dfs",
 
 # Variables present in the .GlobalEnv
 assign("all_choropleths",
-  value = c("CSD", "CT", "DA", "building", "grid", "cmhczone"),
+  value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250", "cmhczone"),
   envir = .GlobalEnv
 )
 
@@ -23,37 +23,6 @@ assign("translation_df",
   value = qs::qread("resources/translation_df.qs"),
   envir = .GlobalEnv
 )
-
-# Connection to the sqlite db present in the .GlobalEnv
-assign("city_CSD_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CSD.sqlite"),
-  envir = .GlobalEnv
-)
-assign("city_CT_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_CT.sqlite"),
-  envir = .GlobalEnv
-)
-assign("city_DA_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/city_DA.sqlite"),
-  envir = .GlobalEnv
-)
-assign("cmhc_cmhczone_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/cmhc_cmhczone.sqlite"),
-  envir = .GlobalEnv
-)
-
-assign("grid_grid_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/grid_grid.sqlite"),
-  envir = .GlobalEnv
-)
-
-
-# building sql connection
-assign("building_conn",
-  value = DBI::dbConnect(RSQLite::SQLite(), "resources/building.sqlite"),
-  envir = .GlobalEnv
-)
-
 
 # Map zoom levels
 qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)

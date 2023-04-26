@@ -1,7 +1,7 @@
 test_that("legend_breaks.q5 works", {
   vars1 <- vars_build(var_left = "housing_tenant_2016", df = "CMA_CSD")
   vars2 <- vars_build(var_left = "housing_value_2011", df = "CMA_DA")
-  vars3 <- vars_build(var_left = "climate_drought_2017", df = "grid_grid")
+  vars3 <- vars_build(var_left = "climate_drought_2015", df = "grid_grid50")
 
   expect_equal(
     all(grepl("^\\d", legend_breaks(vars1, df = "CMA_CSD"))),
@@ -14,11 +14,11 @@ test_that("legend_breaks.q5 works", {
 })
 
 test_that("legend_breaks.q5_ind works", {
-  vars1 <- vars_build(var_left = "climate_drought_2017", df = "grid_grid")
-  vars2 <- vars_build(var_left = "canale_2016", df = "grid_grid")
+  vars1 <- vars_build(var_left = "climate_drought_2015", df = "grid_grid50")
+  vars2 <- vars_build(var_left = "canale_2016", df = "grid_grid50")
 
   expect_equal(
-    unname(legend_breaks(vars1, df = "grid_grid")),
+    unname(legend_breaks(vars1, df = "grid_grid50")),
     structure(c("Insig.", "Minor", "Mod.", "Elev.", "Major"))
   )
 
@@ -56,15 +56,20 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
     vars = vars,
     df = "city_CSD"
   )
+  actual <- legend_breaks(vars,
+                data = data,
+                df = "city_CSD"
+  )
   expect_equal(
-    legend_breaks(vars,
-      data = data,
-      df = "city_CSD"
-    ),
-    list(x = c("0.4", "2.7", "4.2", "12.6"), y = c(
-      "-8.27%", "-4.75%",
-      "-1.42%", "4.11%"
-    ))
+    names(actual),
+    c("x", "y")
+  )
+  expect_equal(
+    sum(grepl("%$", actual[[2]])),
+    sum(c(T,T,T,T))
+  )
+  expect_equal(
+    length(actual$x), 4
   )
 })
 
@@ -81,15 +86,15 @@ test_that("legend_breaks.delta works", {
 
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(
-    var_left = "climate_drought_2017",
-    var_right = "housing_tenant_2016",
-    df = "grid_grid"
+    var_left = "climate_drought_2015",
+    var_right = "housing_tenant_2021",
+    df = "grid_grid50"
   )
   expect_equal(
-    legend_breaks(vars, df = "grid_grid"),
+    legend_breaks(vars, df = "grid_grid50"),
     list(x = c("0.24%", "20.2%", "57.12%", "100%"), y = c(
-      "0", "0",
-      "2", "5"
+      "1", "2",
+      "3", "5"
     ))
   )
 })

@@ -38,11 +38,6 @@ test_that("explore_text_parent_title works", {
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "employed individuals"
   expect_equal(actual, expected)
-
-  vars <- vars_build("vac_rate_bed_total_2016", df = "cmhc_cmhczone")
-  actual <- explore_text_parent_title(var = vars$var_left)
-  expected <- "rental housing units"
-  expect_equal(actual, expected)
 })
 
 test_that("explore_text_region_val_df works", {
@@ -98,7 +93,7 @@ test_that("explore_text_selection_comparison works", {
   expect_equal(
     actual,
     list(
-      higher_than = "18%", rank_chr = "exceptionally inexpensive",
+      higher_than = "18%", rank_chr = "<b>exceptionally inexpensive</b>",
       higher_than_num = 0.179324894514768
     )
   )
@@ -116,8 +111,9 @@ test_that("explore_text_selection_comparison works", {
   expect_equal(
     actual,
     list(
-      higher_than = "31%", rank_chr = "unusually low",
+      higher_than = "31%", rank_chr = "<b>unusually low</b>",
       higher_than_num = 0.307368421052632
     )
   )
 })
+

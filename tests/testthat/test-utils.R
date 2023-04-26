@@ -4,7 +4,7 @@ test_that("is_scale_df works", {
     TRUE
   )
   expect_equal(
-    is_scale_df(c("CSD", "CT", "DA"), "grid_grid"),
+    is_scale_df(c("CSD", "CT", "DA"), "grid_grid50"),
     FALSE
   )
 })
@@ -122,8 +122,8 @@ test_that("var_get_breaks works", {
   # SHOULD CHANGE IN FUTURE VARIABLES.QS -> THE FIRST IS NA, NOT INSIG.
   expect_equal(
     var_get_breaks(
-      var = "climate_drought_2017",
-      df = "grid_grid", q3_q5 = "q5",
+      var = "climate_drought_2015",
+      df = "grid_grid50", q3_q5 = "q5",
       break_col = "rank_name_short",
       pretty = TRUE, compact = TRUE
     ),

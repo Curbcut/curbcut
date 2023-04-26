@@ -9,10 +9,10 @@ test_that("legend_breaks.q5 (without `chr_breaks` attribute) works", {
 
 test_that("legend_breaks.q5_ind works", {
   vars <- vars_build(
-    var_left = "climate_drought_2017",
-    var_right = " ", df = "grid_grid"
+    var_left = "climate_drought_2015",
+    var_right = " ", df = "grid_grid50"
   )
-  p1 <- legend_render(vars, df = "grid_grid", font_family = NULL)
+  p1 <- legend_render(vars, df = "grid_grid50", font_family = NULL)
   expect_error(print(p1), NA)
 
   vars <- vars_build(
