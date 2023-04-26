@@ -9,7 +9,7 @@
 \arguments{
 \item{vars}{<\verb{named list}> A list object with an unknown class. For this \code{default}
 method, no need for vars to have a class. It will extract the first element of
-\code{vars} as the \code{var} argument for the  \code{\link{data_get_sql}} call.}
+\code{vars} as the \code{var} argument for the  \code{\link{data_get_qs}} call.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
@@ -27,6 +27,6 @@ A data.frame containing the raw sql table for the first element of \code{vars}.
 \description{
 This is the default data method, which simply returns the table taken out
 from the sql database. It extracts the first element of \code{vars} as the \code{var}
-argument for the  \code{\link{data_get_sql}} call. It directly outputs the
+argument for the  \code{\link{data_get_qs}} call. It directly outputs the
 output.
 }

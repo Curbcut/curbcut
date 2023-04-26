@@ -37,6 +37,29 @@ data_get_sql <- function(var, df, select = "*") {
   ))
 }
 
+#' Retrieve data from a QS file based on variable and df
+#'
+#' This function takes in a variable code and the df to retrieve data from a QS
+#' file. The function constructs the file path based on the input, then reads
+#' the data using the qs package's \code{\link[qs]{qread}} function.
+#'
+#' @param var <`character`> A string specifying the name of the table to retrieve
+#' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
+#' @param df <`character`> A string specifying the name of the database to retrieve
+#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
+#'
+#' @return A data.frame object with the selected data from the specified table.
+data_get_qs <- function(var, df) {
+  # Switch _ to / , as _ is the separation between the region and the scale.
+  df_path <- gsub("_", "/", df)
+
+  # Construct the file path
+  path <- sprintf("data/%s/%s.qs", df_path, var)
+
+  # Read the data
+  qs::qread(path)
+}
+
 #' Calculate the percentage change between two variables over two years
 #'
 #' This function takes two variables representing the same quantity measured two
@@ -54,7 +77,7 @@ data_get_sql <- function(var, df, select = "*") {
 #' change between the two variables.
 data_get_delta <- function(var_two_years, df) {
   # Retrieve
-  data <- lapply(var_two_years, \(x) data_get_sql(x, df, x))
+  data <- lapply(var_two_years, \(x) data_get_qs(x, df)[1:2])
   names(data[[1]])[2] <- "var_1"
   data[[1]]$var_2 <- data[[2]][[2]]
   data <- data[[1]]
@@ -115,7 +138,7 @@ data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Get var_left and rename
-  data <- data_get_sql(vars$var_left, df)
+  data <- data_get_qs(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
 
   # Add the `group` for the map colouring
@@ -145,11 +168,11 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Get var_left and rename
-  data <- data_get_sql(vars$var_left, df)
+  data <- data_get_qs(vars$var_left, df)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
 
   # Get var_right and rename
-  vr <- data_get_sql(vars$var_right, df)
+  vr <- data_get_qs(vars$var_right, df)
   names(vr) <- c("ID", "var_right", "var_right_q3", "var_right_q5")
 
   # Error check before binding
@@ -270,7 +293,7 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
   # Normal retrieval for var_right (single value)
-  data_vr <- data_get_sql(vars$var_right, df)[2:3]
+  data_vr <- data_get_qs(vars$var_right, df)[2:3]
   names(data_vr) <- c("var_right", "var_right_q3")
 
   # Bind vl and vr
@@ -287,12 +310,12 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' This is the default data method, which simply returns the table taken out
 #' from the sql database. It extracts the first element of `vars` as the `var`
-#' argument for the  \code{\link{data_get_sql}} call. It directly outputs the
+#' argument for the  \code{\link{data_get_qs}} call. It directly outputs the
 #' output.
 #'
 #' @param vars <`named list`> A list object with an unknown class. For this `default`
 #' method, no need for vars to have a class. It will extract the first element of
-#' `vars` as the `var` argument for the  \code{\link{data_get_sql}} call.
+#' `vars` as the `var` argument for the  \code{\link{data_get_qs}} call.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
@@ -308,7 +331,7 @@ data_get.default <- function(vars, df, scales_as_DA = c("building", "street"), .
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_sql(var = vars[[1]], df = df)
+  data <- data_get_qs(var = vars[[1]], df = df)
 
   # To keep it constant, rename with var_left
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
