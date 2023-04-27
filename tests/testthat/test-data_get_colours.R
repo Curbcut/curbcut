@@ -42,7 +42,7 @@ test_that("data_get_colours.delta works", {
 test_that("data_get_colours.delta_bivar works", {
   vars <- vars_build(
     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-    var_right = c("housing_value_1996", "housing_value_2016"),
+    var_right = c("housing_rent_1996", "housing_rent_2016"),
     df = "city_CSD"
   )
   data_colours <- data_get_colours(

@@ -113,11 +113,11 @@ explore_graph.bivar <- function(vars, select_id, df, data, scales_as_DA, lang = 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(var = vars$var_right,
                                  x_y = "x",
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  data_vals = data$var_right)
   y_scale <- explore_graph_scale(var = vars$var_left,
                                  x_y = "y",
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  data_vals = data$var_left)
 
   # Get the stat smooth line opacity
@@ -156,6 +156,13 @@ explore_graph.bivar <- function(vars, select_id, df, data, scales_as_DA, lang = 
 
 }
 
+#' @rdname explore_graph
+#' @export
+explore_graph.delta_ind <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+                                 font_family = "SourceSansPro", ...) {
+  explore_graph_delta_ind(vars, select_id, df, data, scales_as_DA, lang = NULL,
+                          font_family = "SourceSansPro", ...)
+}
 
 #' @rdname explore_graph
 #' @export
@@ -177,17 +184,13 @@ explore_graph.delta <- function(vars, select_id, df, data, scales_as_DA, lang = 
   x_scale <- explore_graph_scale(var = structure(vars$var_left[1],
                                                  class = class(vars$var_left)),
                                  x_y = "x",
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  data_vals = data$var_left_1)
   y_scale <- explore_graph_scale(var = structure(vars$var_left[2],
                                                  class = class(vars$var_left)),
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  x_y = "y",
                                  data_vals = data$var_left_2)
-
-  # Get the stat smooth line opacity
-  opac_line <- abs(stats::cor(data$var_left_1, data$var_left_2,
-                              use = "complete.obs"))
 
   # Get the point size
   point_size <- if (nrow(data) > 1000) {
@@ -340,7 +343,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
   x_scale <- explore_graph_scale(var = vars$var_left,
                                  x_y = "x",
                                  data_vals = data$var_left,
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  lang = lang)
 
   # Graph an appropriate number of bins
@@ -398,7 +401,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA
   x_scale <- explore_graph_scale(var = vars$var_left,
                                  x_y = "x",
                                  data_vals = data$var_left,
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  lang = lang)
 
   # Colors
@@ -411,6 +414,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA
   dat <- table(dat$var_left)
   dat <- data.frame(var_left = names(dat),
                     occ = as.numeric(dat))
+  dat$occ <- dat$occ / sum(dat$occ)
 
   # Draw the plot
   plot <-
@@ -418,6 +422,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA
     ggplot2::ggplot(ggplot2::aes(x = var_left, y = occ)) +
     ggplot2::geom_bar(ggplot2::aes(fill = var_left), stat = "identity", width = 1) +
     ggplot2::scale_fill_manual(breaks = 0:5, values = clr, na.translate = FALSE) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
     x_scale + shared_info$labs + shared_info$theme_default
 
   # Add selection
@@ -458,8 +463,8 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA
 #' @return A ggplot2 object representing the plot.
 #' @export
 explore_graph_bivar_ind <- function(vars, select_id, df, data,
-                                 scales_as_DA = c("building", "street"), lang = NULL,
-                                 font_family = "SourceSansPro", ...) {
+                                    scales_as_DA = c("building", "street"), lang = NULL,
+                                    font_family = "SourceSansPro", ...) {
   UseMethod("explore_graph_bivar_ind", vars)
 }
 
@@ -495,7 +500,7 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data, scales_as
   x_scale <- explore_graph_scale(var = vars$var_left,
                                  x_y = "x",
                                  data_vals = data$var_left,
-                                 df = df,
+                                 df = shared_info$treated_df,
                                  lang = lang)
   y_scale <- explore_graph_scale(var = vars$var_right,
                                  x_y = "y",
@@ -520,6 +525,110 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data, scales_as
   }
 
   # Return
+  return(plot)
+
+}
+
+#' Explore Graph Function for delta `INDEX` type
+#'
+#' This function creates a ggplot for the explore panel of Curbcut, based on the
+#' input parameters, for the index type variables.
+#'
+#' @param vars <`named list`> A list object of variable codes with classes. The
+#' output of \code{\link{vars_build}}.
+#' @param select_id <`character`> A string indicating the ID of the currently
+#' selected region (if any). Usually `r[[id]]$select_id()`
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The output of \code{\link{data_get}}.
+#' @param df <`character`> The combination of the region under study and the
+#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their graph will be the one of their DA.
+#' @param lang <`character`> A character string indicating the language to
+#' translate variable titles to.
+#' @param font_family <`character`> A string specifying the font family for the
+#' plot, default is "SourceSansPro".
+#' @param ... Additional arguments passed to the specific method.
+#'
+#' @return A ggplot2 object representing the plot.
+#' @export
+explore_graph_delta_ind <- function(vars, select_id, df, data,
+                                    scales_as_DA = c("building", "street"), lang = NULL,
+                                    font_family = "SourceSansPro", ...) {
+  UseMethod("explore_graph_delta_ind", vars)
+}
+
+#' @rdname explore_graph_delta_ind
+#' @export
+explore_graph_delta_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
+                                           lang = NULL,
+                                           font_family = "SourceSansPro", ...) {
+  explore_graph.delta(vars = vars, select_id = select_id, df = df, data = data,
+                      scales_as_DA = scales_as_DA, lang = NULL,
+                      font_family = "SourceSansPro", ...)
+}
+
+#' @rdname explore_graph_delta_ind
+#' @export
+explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA,
+                                            lang = NULL,
+                                            font_family = "SourceSansPro", ...) {
+
+  # Appease R CMD check
+  var_left_1 <- var_left_2 <- group <- frequency <-  NULL
+
+  # Grab the shared info between the graphs
+  shared_info <- explore_graph_info(vars = vars, font_family = font_family,
+                                    scales_as_DA = scales_as_DA, select_id = select_id,
+                                    data = data, lang = lang, df = df)
+
+  # Color as function
+  clr_df <- shared_info$colours_dfs$delta
+
+  # Get the scales ggplot function
+  x_scale <- explore_graph_scale(var = structure(vars$var_left[1],
+                                                 class = class(vars$var_left)),
+                                 x_y = "x",
+                                 df = shared_info$treated_df,
+                                 data_vals = data$var_left_1,
+                                 skip_na = TRUE)
+  y_scale <- explore_graph_scale(var = structure(vars$var_left[2],
+                                                 class = class(vars$var_left)),
+                                 df = shared_info$treated_df,
+                                 x_y = "y",
+                                 data_vals = data$var_left_2)
+
+  # Calculate frequency to use as opacity
+  dat <- data
+  dat$frequency <- 1
+  dat <- stats::aggregate(frequency ~ var_left_1 + var_left_2 + group, data = dat,
+                          FUN = sum)
+  dat$frequency <- scales::rescale(dat$frequency)
+
+  # clr_df$fill[5] <- "#0571B0"
+  # clr_df$fill[3] <- "#777777"
+  # clr_df$fill[1] <- "#CA0020"
+
+  # Draw plot
+  plot <-
+    dat |>
+    ggplot2::ggplot(ggplot2::aes(as.factor(var_left_1), as.factor(var_left_2))) +
+    ggplot2::geom_tile(ggplot2::aes(fill = group, alpha = frequency)) +
+    ggplot2::scale_fill_manual(values = stats::setNames(
+      clr_df$fill, clr_df$group)) +
+    x_scale + y_scale + shared_info$labs + shared_info$theme_default +
+    ggplot2::theme(panel.grid.major.y = ggplot2::element_blank())
+
+  # Add selection
+  if (!is.na(shared_info$select_id)) {
+    plot <-
+      plot +
+      ggplot2::geom_tile(data = data[data$ID == shared_info$select_id, ],
+                         color = "white", fill = "transparent", size = 1.5)
+  }
+
   return(plot)
 
 }

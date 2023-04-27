@@ -2,7 +2,7 @@ Package: curbcut
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    c(person("Curbcut-MSSI", email = "contact@curbcut.ca", role = "aut"),
+    c(person("Curbcut", email = "contact@curbcut.ca", role = "aut"),
     person("Maxime", "Bélanger De Blois", email = "maxime.belangerdeblois@mcgill.ca", role = "cre"),
     person("David", "Wachsmuth", email = "david.wachsmuth@mcgill.ca", role  = "ctb"))
 Description: The purpose of the package is to centralise the functions used by all instances of Curbcut. 
@@ -14,6 +14,7 @@ Imports:
     ggplot2,
     scales,
     stats,
+    utils,
     rdeck,
     DBI,
     shinyWidgets,

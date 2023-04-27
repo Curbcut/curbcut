@@ -1,7 +1,7 @@
 test_that("convert_unit works", {
   expect_equal(
     convert_unit(
-      var = vars_build(c("housing_value"), df = "CMA_CSD")$var_left,
+      var = vars_build(c("housing_rent"), df = "CMA_CSD")$var_left,
       x = c(250000, 500000, 1000000),
       compact = TRUE
     ),
@@ -9,7 +9,7 @@ test_that("convert_unit works", {
   )
   expect_equal(
     convert_unit(
-      var = vars_build(c("housing_value"), df = "CMA_CSD")$var_left,
+      var = vars_build(c("housing_rent"), df = "CMA_CSD")$var_left,
       x = c(25000000, 50000000, 100000000),
       compact = TRUE
     ),
@@ -17,7 +17,7 @@ test_that("convert_unit works", {
   )
   expect_equal(
     convert_unit(
-      var = vars_build(c("housing_value"), df = "CMA_CSD")$var_left,
+      var = vars_build(c("housing_rent"), df = "CMA_CSD")$var_left,
       x = c(2500000000, 5000000000, 10000000000),
       compact = TRUE
     ),

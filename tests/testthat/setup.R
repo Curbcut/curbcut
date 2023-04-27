@@ -1,47 +1,8 @@
 ### CURBCUT PACKAGE TEST SETUP #################################################
 
-# Get a minimalist variables table in the global env
-assign("variables",
-  value = qs::qread("resources/variables.qs"),
-  envir = .GlobalEnv
-)
-
-# Assign the colours list in the global environment
-assign("colours_dfs",
-  value = qs::qread("resources/colours_dfs.qs"),
-  envir = .GlobalEnv
-)
-
 # Variables present in the .GlobalEnv
 assign("all_choropleths",
   value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250", "cmhczone"),
-  envir = .GlobalEnv
-)
-
-# Translation dataframe present in the .GlobalEnv
-assign("translation_df",
-  value = qs::qread("resources/translation_df.qs"),
-  envir = .GlobalEnv
-)
-
-# Map zoom levels
-qs::qload("resources/map_zoom_levels.qsm", env = .GlobalEnv)
-
-# Scales dictionary
-assign("scales_dictionary",
-  value = qs::qread("resources/scales_dictionary.qs"),
-  envir = .GlobalEnv
-)
-
-# Regions dictionary
-assign("regions_dictionary",
-  value = qs::qread("resources/regions_dictionary.qs"),
-  envir = .GlobalEnv
-)
-
-# Modules
-assign("modules",
-  value = qs::qread("resources/modules.qs"),
   envir = .GlobalEnv
 )
 
@@ -51,23 +12,13 @@ assign("default_random_address",
   envir = .GlobalEnv
 )
 
-# Postal codes
-assign("postal_codes",
-  value = qs::qread("resources/postal_codes.qs"),
-  envir = .GlobalEnv
-)
+# All qs and qsm files
+data_files <- list.files("resources", full.names = TRUE)
+invisible(lapply(data_files[grepl("qsm$", data_files)],
+                 qs::qload, env = .GlobalEnv))
+invisible(lapply(data_files[grepl("qs$", data_files)],
+                 \(x) {
+                   object_name <- gsub("(resources/)|(\\.qs)", "", x)
+                   assign(object_name, qs::qread(x), envir = .GlobalEnv)
+                 }))
 
-# Few regions
-qs::qload("resources/city.qsm", env = .GlobalEnv)
-qs::qload("resources/island.qsm", env = .GlobalEnv)
-qs::qload("resources/cmhc.qsm", env = .GlobalEnv)
-qs::qload("resources/grid.qsm", env = .GlobalEnv)
-
-# Stories for poi test
-qs::qload("resources/stories.qsm", env = .GlobalEnv)
-
-# Add the census variables
-assign("census_variables",
-  value = qs::qread("resources/census_variables.qs"),
-  envir = .GlobalEnv
-)

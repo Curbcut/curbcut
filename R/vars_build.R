@@ -99,6 +99,9 @@ vars_build <- function(var_left, var_right = " ", df,
       return("delta_bivar")
     }
     if (length(var_left) == 2 && var_right[1] == " ") {
+      if ("ind" %in% class(var_left)) {
+        return(c("delta_ind", "delta"))
+      }
       return("delta")
     }
 

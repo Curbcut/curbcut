@@ -131,7 +131,11 @@ zoom_get_code <- function(scales_name, lang = NULL) {
   # Translate the zoom_code if it's neither NULL nor "en"
   translation_df <- get_from_globalenv("translation_df")
   translated <-
-    sapply(scales_name, \(x) translation_df$en[translation_df[[lang]] == x],
+    sapply(scales_name, \(x) {
+      out <- translation_df$en[translation_df[[lang]] == x]
+      if (length(out) == 0) return(x)
+      return(out)
+      },
       USE.NAMES = FALSE
     )
 

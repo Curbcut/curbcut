@@ -30,8 +30,10 @@ This function does not return a value. Instead, it updates the
 \code{select_id} reactive in the provided reactive environment.
 }
 \description{
-This function updates the selected ID on a Curbcut page. It uses the
+This function updates the selected ID on a Curbcut map page. It uses the
 \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+It looks if the selection has been made on a 'stories' bubble and if so,
+links to the stories page.
 If a new ID is selected, the function updates the \code{select_id} reactive to
 the newly selected ID. If the same is selected twice, it returns NA. It also
 updates the select_id reactive if a match is found with the IDs from

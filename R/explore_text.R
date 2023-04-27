@@ -57,7 +57,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   value_string <- explore_text_values_q5(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = df
+    df = context$treated_df
   )
 
   # Put it all together
@@ -390,14 +390,14 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     value_string_left <- explore_text_values_q5(
       var = vars$var_left, region = region,
       select_id = select_id, data = data,
-      df = df
+      df = context$treated_df
     )
 
     # Grab the value string
     value_string_right <- explore_text_values_q5(
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
-      df = df,
+      df = context$treated_df,
       col = "var_right"
     )
 
@@ -742,7 +742,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = df, left_right = "left", lang = lang
+    df = context$treated_df, left_right = "left", lang = lang
   )
 
   # Get the necessary information for the second paragraph
@@ -1007,7 +1007,7 @@ explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, chan
 #' (if any). Usually `r[[id]]$select_id()`
 #' @export
 explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
-                                           select_id, change_string, ...) {
+                                           change_string, select_id, ...) {
   if (is.na(select_id))
     return(explore_text_delta_first_p.default(var, context, exp_vals, lang, change_string))
 
@@ -1157,12 +1157,12 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   exp_vals_left <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = df, left_right = "left", lang = lang
+    df = context$treated_df, left_right = "left", lang = lang
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
-    df = df, left_right = "right", lang = lang
+    df = context$treated_df, left_right = "right", lang = lang
   )
 
   # If there is a selection, return a completely different text

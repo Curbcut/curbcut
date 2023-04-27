@@ -180,5 +180,46 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
           visible = show_texture()
         )
     )
+
+    # Add stories bubble with zooms higher than 14
+    stories_layer_added <- shiny::reactiveVal(FALSE)
+    stories_mapping <- get_from_globalenv("stories_mapping")
+
+    shiny::observeEvent(
+      zoom(),
+      {
+        # Check if the layer has been added and if the zoom is higher than 14
+        if (!stories_layer_added() && zoom() > 14) {
+          # Set the reactive value to TRUE to indicate the layer has been added
+          stories_layer_added(TRUE)
+
+          rdeck::rdeck_proxy("map") |>
+            rdeck::add_mvt_layer(
+              id = "stories",
+              data = tilejson(
+                mapbox_username = mapbox_username,
+                tileset_prefix = tileset_prefix,
+                tile = "stories"
+              ),
+              point_type = "icon",
+              get_icon = name,
+              icon_atlas = "stories/image_atlas.png",
+              icon_mapping = stories_mapping,
+              icon_size_scale = 60,
+              pickable = TRUE,
+              auto_highlight = TRUE,
+              highlight_color = "#FFFFFF50")
+        }
+      })
+
+    shiny::observeEvent(
+      zoom(),
+      {
+        rdeck::rdeck_proxy("map") |>
+          rdeck::update_mvt_layer(
+            id = "stories",
+            visible = zoom() > 14)
+      })
+
   })
 }

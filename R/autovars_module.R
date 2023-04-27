@@ -1,16 +1,3 @@
-#' autovars ui
-#'
-#' @export
-autovars_UI <- function(id) {
-  shiny::tagList(
-    shiny::div(
-      id = shiny::NS(id, "autovars"),
-      shiny::hr(id = shiny::NS(id, "hr_common_widgets")),
-      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets")))
-    )
-  )
-}
-
 #' autovars server
 #'
 #' @export
@@ -178,4 +165,17 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     return(shiny::reactive(list(var = final_var(), time = time())))
   })
+}
+
+#' autovars ui
+#'
+#' @export
+autovars_UI <- function(id) {
+  shiny::tagList(
+    shiny::div(
+      id = shiny::NS(id, "autovars"),
+      shiny::hr(id = shiny::NS(id, "hr_common_widgets")),
+      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets")))
+    )
+  )
 }

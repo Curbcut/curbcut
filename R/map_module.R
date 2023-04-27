@@ -25,10 +25,10 @@
 #' the zoom at which the map will initiate. Usually `r[[id]]$zoom`
 #' @param coords <`reactive numeric vector`> The current central map location
 #' of the map. Bookmark can have an input on it. Usually `r[[id]]$coords`.
-#' @param fill_fun <`function`> A function used to calculate the fill color of
+#' @param fill_fun <`reactive function`> A function used to calculate the fill color of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_color_category}}.
 #' Defaults to \code{\link{map_scale_fill}}.
-#' @param tileset_ID_color <`character`> Which is the column of the mapbox tileset
+#' @param tileset_ID_color <`reactive character`> Which is the column of the mapbox tileset
 #' that should be caught to display colours. Defaults to `ID_color`. All scales
 #' have their ID duplicated at the ID_color, except buildings, streets, and other
 #' large scales. Their ID_color is then the ID of the DA in which they fall. This
@@ -36,11 +36,11 @@
 #' don't just display the value of their DA).
 #' @param fill_args <`reactive list`> List of arguments to be passed to the
 #' `fill_fun` argument.
-#' @param colour_fun <`function`> A function used to calculate the line color of
+#' @param colour_fun <`reactive function`> A function used to calculate the line color of
 #' the polygons. \code{\link{map_scale_colour}}.
 #' @param colour_args  <`reactive list`> List of arguments to be passed to the
 #' `colour_fun` argument.
-#' @param lwd_fun <`function`> A function used to calculate the border width of
+#' @param lwd_fun <`reactive function`> A function used to calculate the border width of
 #' the polygons. It needs to be created using \code{\link[rdeck]{scale_category}}.
 #' \code{\link{map_scale_lwd}}.
 #' @param lwd_args  <`reactive list`> List of arguments to be passed to the
@@ -61,12 +61,14 @@
 #' \code{\link[rdeck]{get_view_state}}.
 #' @export
 map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
-                       coords, fill_fun = map_scale_fill, tileset_ID_color = "ID_color",
+                       coords,
+                       fill_fun = shiny::reactive(map_scale_fill),
+                       tileset_ID_color = shiny::reactive("ID_color"),
                        fill_args = shiny::reactive(list(data_colours(),
-                                                        tileset_ID_color = tileset_ID_color)),
-                       colour_fun = map_scale_colour,
+                                                        tileset_ID_color = tileset_ID_color())),
+                       colour_fun = shiny::reactive(map_scale_colour),
                        colour_args = shiny::reactive(list(NULL)),
-                       lwd_fun = map_scale_lwd,
+                       lwd_fun = shiny::reactive(map_scale_lwd),
                        lwd_args = shiny::reactive(list(
                          select_id = select_id(), tile = tile(), zoom = zoom(),
                          zoom_levels = zoom_levels(), lwd = 1
@@ -124,9 +126,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           pickable = pickable,
           auto_highlight = auto_highlight,
           highlight_color = "#FFFFFF50",
-          get_fill_color = do.call(fill_fun, fill_args()),
-          get_line_color = do.call(colour_fun, colour_args()),
-          get_line_width = do.call(lwd_fun, lwd_args()),
+          get_fill_color = do.call(fill_fun(), fill_args()),
+          get_line_color = do.call(colour_fun(), colour_args()),
+          get_line_width = do.call(lwd_fun(), lwd_args()),
           line_width_units = "pixels",
           material = FALSE,
           get_elevation = 5

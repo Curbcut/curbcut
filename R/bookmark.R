@@ -167,7 +167,7 @@ bookmark_widget_helper <- function(wgt, lang = NULL) {
     # Find the positions of all hyphens
     hyphen_positions <- gregexpr("-", widget_full_code)[[1]]
     # Get the position of the last hyphen
-    last_hyphen_position <- tail(hyphen_positions, 1)
+    last_hyphen_position <- utils::tail(hyphen_positions, 1)
     # Extract the text after the last hyphen
     code <- substring(widget_full_code, last_hyphen_position + 1)
     before_hyphen <- substring(widget_full_code, 1, last_hyphen_position)

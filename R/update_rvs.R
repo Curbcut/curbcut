@@ -94,8 +94,10 @@ update_poi <- function(id, poi, map_viewstate) {
 
 #' Update Select ID
 #'
-#' This function updates the selected ID on a Curbcut page. It uses the
+#' This function updates the selected ID on a Curbcut map page. It uses the
 #' \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+#' It looks if the selection has been made on a 'stories' bubble and if so,
+#' links to the stories page.
 #' If a new ID is selected, the function updates the `select_id` reactive to
 #' the newly selected ID. If the same is selected twice, it returns NA. It also
 #' updates the select_id reactive if a match is found with the IDs from
@@ -117,8 +119,32 @@ update_poi <- function(id, poi, map_viewstate) {
 #' @export
 update_select_id <- function(id, r, data = shiny::reactive(NULL),
                              id_map = paste0(id, "-map")) {
-  # Grab the new selected ID
-  new_ID <- shiny::reactive(rdeck::get_clicked_object(id_map)$ID)
+
+  click_init <- shiny::reactive(rdeck::get_clicked_object(id_map))
+
+  # Redirect to stories?
+  click <- shiny::eventReactive(click_init(), {
+    stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
+    id <- click_init()$ID
+    attr(id, "stories_link") <- stories_link
+    return(id)
+  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+
+  # If it is a stories click, link to the stories module
+  shiny::observeEvent(click(), {
+    if (attr(click(), "stories_link"))
+      return(link(r = r, page = "stories", select_id = click()))
+  })
+
+  # Grab the new selected ID (in the cae it's not a stories link)
+  new_ID <- shiny::eventReactive(click(), {
+    if (!attr(click(), "stories_link")) {
+      id <- click()
+      # Get rid of the attribute
+      attr(id, "stories_link") <- NULL
+      return(id)
+    } else return(NA)
+  })
 
   # If a click has been made, change then `select_id` reactive
   shiny::observeEvent(new_ID(), {
@@ -150,6 +176,7 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
     # Save the new selected ID in the reactive.
     r[[id]]$select_id(out)
   })
+
 }
 
 #' Update Select ID Helper

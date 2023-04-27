@@ -20,8 +20,8 @@ explore_text_delta_first_p(
   context,
   exp_vals,
   lang,
-  select_id,
   change_string,
+  select_id,
   ...
 )
 

@@ -34,7 +34,7 @@ test_that("legend_breaks.q5_ind works", {
 test_that("legend_render.bivar  works", {
   vars <- vars_build(
     var_left = "housing_tenant_2016",
-    var_right = "inc_limat_2016", df = "CMA_CSD"
+    var_right = "canale_2016", df = "CMA_CSD"
   )
   p <- legend_render(vars, df = "CMA_CSD", font_family = NULL)
   expect_error(print(p), NA)
@@ -61,7 +61,7 @@ test_that("legend_render.delta  works", {
 test_that("legend_render.delta_bivar  works", {
   vars <- vars_build(
     var_left = c("housing_tenant_2006", "housing_tenant_2016"),
-    var_right = c("inc_50_2006", "inc_50_2016"), df = "city_CSD"
+    var_right = c("canale_2006", "canale_2016"), df = "city_CSD"
   )
   data <- data_get(vars, df = "city_CSD")
   p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
@@ -71,7 +71,7 @@ test_that("legend_render.delta_bivar  works", {
 test_that("legend_render.bivar_ldelta_rq3  works", {
   vars <- vars_build(
     var_left = c("housing_tenant_2006", "housing_tenant_2016"),
-    var_right = "inc_limat_2016", df = "city_CSD"
+    var_right = "canale_2016", df = "city_CSD"
   )
   data <- data_get(vars, df = "city_CSD")
   p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)

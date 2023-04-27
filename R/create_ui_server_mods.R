@@ -31,20 +31,20 @@ create_ui_server_mods <- function(modules) {
       ),
 
       # Map
-      curbcut::map_UI(NS(id, id)),
+      curbcut::map_UI(shiny::NS(id, id)),
 
       # Change view (Map/Data/Place explorer)
-      curbcut::panel_view_UI(id = NS(id, id)),
+      curbcut::panel_view_UI(id = shiny::NS(id, id)),
 
       # Right panel
       curbcut::right_panel(
         id = id,
         curbcut::compare_UI(
-          id = NS(id, id),
+          id = shiny::NS(id, id),
           var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
         ),
-        curbcut::explore_UI(NS(id, id)),
-        curbcut::dyk_UI(NS(id, id))
+        curbcut::explore_UI(shiny::NS(id, id)),
+        curbcut::dyk_UI(shiny::NS(id, id))
       )
     )
   }
@@ -147,7 +147,7 @@ create_ui_server_mods <- function(modules) {
       curbcut::sidebar_server(id = id, r = r)
 
       # Data
-      data <- reactive(curbcut::data_get(
+      data <- shiny::reactive(curbcut::data_get(
         vars = r[[id]]$vars(),
         df = r[[id]]$df()
       ))
@@ -192,7 +192,7 @@ create_ui_server_mods <- function(modules) {
         tile = tile,
         data_colours = data_colours,
         select_id = r[[id]]$select_id,
-        zoom_levels = reactive(zoom_levels()$zoom_levels),
+        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
         zoom = r[[id]]$zoom,
         coords = r[[id]]$coords
       )
@@ -202,8 +202,8 @@ create_ui_server_mods <- function(modules) {
         id = id,
         tile = tile,
         zoom = r[[id]]$zoom,
-        zoom_levels = reactive(zoom_levels()$zoom_levels),
-        region = reactive(zoom_levels()$region)
+        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
+        region = shiny::reactive(zoom_levels()$region)
       )
 
       # Explore panel
@@ -211,7 +211,7 @@ create_ui_server_mods <- function(modules) {
         id = id,
         r = r,
         data = data,
-        region = reactive(zoom_levels()$region),
+        region = shiny::reactive(zoom_levels()$region),
         vars = r[[id]]$vars,
         df = r[[id]]$df,
         select_id = r[[id]]$select_id
@@ -231,7 +231,7 @@ create_ui_server_mods <- function(modules) {
         r = r,
         vars = r[[id]]$vars,
         data = data,
-        zoom_levels = reactive(zoom_levels()$zoom_levels)
+        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels)
       )
     })
   }

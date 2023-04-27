@@ -2,7 +2,7 @@ test_that("legend_labels.q5 works", {
   vars1 <- structure(list(var_left = "housing_tenant_2016", var_right = " "),
     class = "q5"
   )
-  vars2 <- structure(list(var_left = "inc_limat_2021", var_right = " "),
+  vars2 <- structure(list(var_left = "housing_rent_2021", var_right = " "),
     class = "q5"
   )
   expect_equal(
@@ -11,7 +11,7 @@ test_that("legend_labels.q5 works", {
   )
   expect_equal(
     legend_labels(vars2),
-    list(ggplot2::labs(x = "Low income", y = NULL))
+    list(ggplot2::labs(x = "Average rent ($)", y = NULL))
   )
 })
 
@@ -27,12 +27,12 @@ test_that("legend_labels.q5 works", {
 # })
 
 test_that("legend_labels.qual works", {
-  vars <- structure(list(var_left = "climate_flood_2017", var_right = " "),
+  vars <- structure(list(var_left = "climate_drought_2015", var_right = " "),
     class = "qual"
   )
   expect_equal(
     legend_labels(vars),
-    list(ggplot2::labs(x = "Flood vulnerability", y = NULL))
+    list(ggplot2::labs(x = "Drought vulnerability", y = NULL))
   )
 })
 
@@ -51,7 +51,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
     legend_labels(vars),
     list(
       ggplot2::labs(
-        x = "Drought (2017)",
+        x = "Drought (2015)",
         y = "Tenant (\u0394 2006 - 2016)"
       ),
       x_short = "Drought", y_short = "Tenant"
@@ -59,7 +59,7 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
   )
   expect_equal(
     legend_labels(vars, lang = "fr"),
-    list(structure(list(x = "Sécheresses (2017)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
+    list(structure(list(x = "Sécheresses (2015)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
       x_short = structure("Sécheresses", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
     )
   )
@@ -90,7 +90,7 @@ test_that("legend_labels.delta works", {
 test_that("legend_labels.bivar works", {
   vars <- structure(
     list(
-      var_left = "climate_flood_2017",
+      var_left = "climate_drought_2015",
       var_right = "housing_tenant_2016"
     ),
     class = "bivar"
@@ -100,10 +100,10 @@ test_that("legend_labels.bivar works", {
     list(
       ggplot2::labs(
         x = "Tenant-occupied (%) (2016)",
-        y = "Flood (2017)"
+        y = "Drought (2015)"
       ),
       x_short = "Tenant",
-      y_short = "Flood"
+      y_short = "Drought"
     )
   )
 })
@@ -111,7 +111,7 @@ test_that("legend_labels.bivar works", {
 test_that("legend_labels.delta_bivar works", {
   vars <- structure(
     list(
-      var_left = c("inc_50_2006", "inc_50_2016"),
+      var_left = c("housing_rent_2006", "housing_rent_2016"),
       var_right = c(
         "housing_tenant_2006",
         "housing_tenant_2016"
@@ -121,14 +121,10 @@ test_that("legend_labels.delta_bivar works", {
   )
   expect_equal(
     legend_labels(vars),
-    list(
-      ggplot2::labs(
-        x = "Tenant (\u0394 2006 - 2016)",
-        y = "Inc. <$50k (\u0394 2006 - 2016)"
-      ),
-      x_short = "Tenant",
-      y_short = "Inc. <$50k"
-    )
+    list(structure(list(x = "Tenant (Δ 2006 - 2016)", y = "Avg. rent (Δ 2006 - 2016)"), class = "labels"),
+         x_short = structure("Tenant", class = c("glue", "character"
+         )), y_short = structure("Avg. rent", class = c("glue", "character"
+         )))
   )
 })
 

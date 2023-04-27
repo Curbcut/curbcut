@@ -43,8 +43,10 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # Year displayed != year chosen -------------------------------------------
 
+  length_mismatch <- length(time) == 2 & length(left_year) == 1
+
   # Year displayed LEFT
-  if (length(left_year) == 1) {
+  if (length(left_year) == 1 & !length_mismatch) {
     if (left_year != unique(time)) {
       out <- c(out,
                list(cc_t(lang = lang,
@@ -55,7 +57,7 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
   }
 
   # Year displayed RIGHT
-  if (length(right_year) == 1) {
+  if (length(right_year) == 1 & !length_mismatch) {
     if (vars$var_right != " ") {
       if (all(right_year != unique(time))) {
         out <- c(out,

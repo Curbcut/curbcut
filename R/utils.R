@@ -157,7 +157,7 @@ is_scale_df <- function(scales, df, vectorized = FALSE) {
     return(grepl(scls, df))
   }
 
-  sapply(scales, grepl, df, USE.NAMES = FALSE)
+  sapply(paste0(scales, "$"), grepl, df, USE.NAMES = FALSE)
 }
 
 #' Extract substrings from a character vector that matches a regular

@@ -1,6 +1,6 @@
 test_that("legend_breaks.q5 works", {
   vars1 <- vars_build(var_left = "housing_tenant_2016", df = "CMA_CSD")
-  vars2 <- vars_build(var_left = "housing_value_2011", df = "CMA_DA")
+  vars2 <- vars_build(var_left = "housing_rent_2011", df = "CMA_DA")
   vars3 <- vars_build(var_left = "climate_drought_2015", df = "grid_grid50")
 
   expect_equal(
@@ -29,7 +29,7 @@ test_that("legend_breaks.q5_ind works", {
 })
 
 test_that("legend_breaks.q100 works", {
-  vars <- vars_build(var_left = "climate_flood_2017", df = "raster")
+  vars <- vars_build(var_left = "climate_drought_2015", df = "raster")
   expect_equal(
     legend_breaks(vars, df = "raster"),
     list(
@@ -87,21 +87,21 @@ test_that("legend_breaks.delta works", {
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(
     var_left = "climate_drought_2015",
-    var_right = "housing_tenant_2021",
-    df = "grid_grid50"
+    var_right = "housing_tenant_2016",
+    df = "city_CSD"
   )
   expect_equal(
-    legend_breaks(vars, df = "grid_grid50"),
-    list(x = c("0.24%", "20.2%", "57.12%", "100%"), y = c(
-      "1", "2",
-      "3", "5"
-    ))
+    legend_breaks(vars, df = "city_CSD"),
+
+    list(x = c("25.91%", "60.37%", "69.61%", "73.35%"),
+         y = c("1.42",
+               "3.24", "3.45", "3.81"))
   )
 })
 
 test_that("legend_breaks.delta_bivar works", {
   vars <- vars_build(
-    var_left = c("inc_50_2006", "inc_50_2016"),
+    var_left = c("housing_rent_2006", "housing_rent_2016"),
     var_right = c(
       "housing_tenant_2006",
       "housing_tenant_2016"
@@ -114,9 +114,8 @@ test_that("legend_breaks.delta_bivar works", {
   )
   expect_equal(
     legend_breaks(vars, data = data),
-    list(x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"), y = c(
-      "-27.63%",
-      "-21.92%", "-18.54%", "-15.97%"
-    ))
+    list(x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"),
+         y = c("20.93%",
+               "26.08%", "31.48%", "38.09%"))
   )
 })

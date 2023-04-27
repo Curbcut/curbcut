@@ -50,20 +50,14 @@ explore_context <- function(region, select_id, df, switch_DA) {
     name_2 <- dat$name_2
     name <- dat$name
     heading <- glue::glue(scale$place_heading)
+    treated_df <- df
   }
 
   # Tweaked retrieval when the `df` is part of the scales to treat as DAs.
   if (switch_DA) {
-    warning("Updates to the scale dictionaries to add dissemination area around the X")
     # Grab the DA ID and the address from the SQL database
-    sql_link <- eval(parse(text = (paste0(gsub(".*_", "", df), "_conn"))))
-    bs <- DBI::dbGetQuery(
-      sql_link,
-      sprintf(
-        "SELECT name, DA_ID FROM %s WHERE ID = '%s'",
-        df, select_id
-      )
-    )
+    dat <- get_from_globalenv(df)
+    bs <- dat[dat$ID == select_id, ]
 
     # If the selection ID is not in the SQL database, return the region only text
     # with an empty NA. The text that will be showed is the basic one for the region.
@@ -74,11 +68,18 @@ explore_context <- function(region, select_id, df, switch_DA) {
     }
 
     # Get the heading
-    name <- bs$name
-    heading <- glue::glue(scale$place_heading)
+    name <- sprintf("around %s", bs$name)
+    heading <- sprintf("Dissemination area around %s", scale$place_heading)
 
     # Switch the select_id, to be able to use the data values of the `DA`
     select_id <- bs$DA_ID
+
+    # Switch df to DA
+    treated_df <- sprintf("%s_DA", region)
+
+    # Switch the scale
+    scale <- scales_dictionary[is_scale_df(scales_dictionary$scale,
+                                           treated_df, vectorized = TRUE), ]
   }
 
   # Get the sentence start (In Borough or In dissemination area XYZ, )
@@ -92,7 +93,8 @@ explore_context <- function(region, select_id, df, switch_DA) {
     to_compare_determ = region_df$to_compare_determ,
     to_compare_short = region_df$to_compare_short,
     scale_plur = scale$plur,
-    select_id = select_id
+    select_id = select_id,
+    treated_df = treated_df
   ))
 }
 

@@ -5,6 +5,7 @@
 \alias{explore_graph.q5_ind}
 \alias{explore_graph.q5}
 \alias{explore_graph.bivar}
+\alias{explore_graph.delta_ind}
 \alias{explore_graph.delta}
 \alias{explore_graph.delta_bivar}
 \alias{explore_graph.bivar_ind}
@@ -44,6 +45,17 @@ explore_graph(
 )
 
 \method{explore_graph}{bivar}(
+  vars,
+  select_id,
+  df,
+  data,
+  scales_as_DA,
+  lang = NULL,
+  font_family = "SourceSansPro",
+  ...
+)
+
+\method{explore_graph}{delta_ind}(
   vars,
   select_id,
   df,
