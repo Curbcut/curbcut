@@ -106,14 +106,14 @@ test_that("var_get_title works", {
 
 test_that("var_get_breaks works", {
   actual <- var_get_breaks(
-    var = vars_build("housing_tenant_2016", df = "CMA_CSD")$var_left,
+    var = vars_build("housing_tenant_2016", df = "city_CSD")$var_left,
     df = "CMA_CSD", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE
   )
   expect_equal(all(grepl("^\\d.*%$", actual)), TRUE)
 
   actual <- var_get_breaks(
-    var = vars_build("housing_value_2016", df = "CMA_CSD")$var_left,
+    var = vars_build("housing_rent_2016", df = "city_CSD")$var_left,
     df = "CMA_CSD", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE
   )
@@ -185,7 +185,7 @@ test_that("widget_id_verif throws an error when the widget ID contains more than
 test_that("widget_id_verif hrows an error when the widget ID has more than 3 characters", {
   expect_error(
     widget_id_verif("abcd"),
-    "Widget ID can contain no more than 4 characters to reduce bookmark URL size."
+    "Widget ID can contain no more than 3 characters to reduce bookmark URL size."
   )
 })
 

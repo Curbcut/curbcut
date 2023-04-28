@@ -14,14 +14,14 @@ Imports:
     ggplot2,
     scales,
     stats,
-    utils,
     rdeck,
     DBI,
     shinyWidgets,
     DT,
     utils,
     sf,
-    qs
+    qs,
+    urltools
 Remotes:
     qfes/rdeck
 License: AGPL (>= 3)

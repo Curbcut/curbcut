@@ -31,9 +31,9 @@ explore_text_delta_exp(
   var,
   region,
   select_id,
-  data,
-  df,
   left_right = "left",
+  df,
+  data,
   ...
 )
 }

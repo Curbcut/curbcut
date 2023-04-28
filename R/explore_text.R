@@ -944,8 +944,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 
 #' @rdname explore_text_delta_exp
 #' @export
-explore_text_delta_exp.default <- function(var, region, select_id, data, df,
-                                           left_right = "left", ...) {
+explore_text_delta_exp.default <- function(var, region, select_id,
+                                           left_right = "left", df, data, ...) {
   # Grab the explanation
   exp <- var_get_info(var[[1]], what = "explanation")
 

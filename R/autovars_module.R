@@ -1,5 +1,23 @@
-#' autovars server
+#' Auto-vars module
 #'
+#' This Shiny module allows for the automatic generation and control of pickers and
+#' sliders within Curbcut. It uses the entries in the `modules` table to draw
+#' the necessary pickers and sliders. It prepares global settings, creates
+#' common widgets, handles their reactivity, and sets up the main dropdown.
+#' It also updates the UI dynamically based on selected values, and finally,
+#' generates the final variable code using all of these values.
+#'
+#' @param id <`character`> The ID of the page in which the legend will appear,
+#' e.g. `canale`.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param main_dropdown_title <`character`> A character string to be used as the
+#' title of the main dropdown selector.
+#' @param default_year <`numeric`> An optional numeric value specifying the default
+#' year for time widgets. If not provided, these widgets will not be initialized.
+#'
+#' @return A reactive list with the final variable ('var') and the selected
+#' time ('time').
 #' @export
 autovars_server <- function(id, r, main_dropdown_title, default_year) {
   shiny::moduleServer(id, function(input, output, session) {
@@ -16,38 +34,68 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Common widgets ----------------------------------------------------------
 
+    common_widgets <- shiny::reactiveVal(autovars_common_widgets(id = id))
+
     # If some widgets are alike in all the variables to be picked through,
     # make these widgets in top in priority. e.g. `time`
-    observe({
-      common_widgets <- autovars_common_widgets(id = id)
-      # Time widgets
+    shiny::observe({
+      # Time widgets, if there are date times
       shiny::insertUI(
-        selector = html_ns("hr_common_widgets"),
+        selector = html_ns("common_widgets"),
         where = "beforeBegin",
         ui = {
-          min_ <- common_widgets$time |> min()
-          max_ <- common_widgets$time |> max()
-          step_ <- unique(diff(common_widgets$time))[1]
-          double_value_ <- common_widgets$time[ceiling(length(common_widgets$time) / 2)]
-          double_value_ <- c(double_value_, max_)
-          shiny::tagList(
-            slider_UI(id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
-                      step = step_, label = cc_t("Select a year")),
-            slider_UI(id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
-                      step = step_, label = cc_t("Select two years"), value = double_value_),
-            checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates"), value = FALSE)
-          )
+          if (!is.null(default_year)) {
+            min_ <- common_widgets()$time |> min()
+            max_ <- common_widgets()$time |> max()
+            step_ <- unique(diff(common_widgets()$time))[1]
+            double_value_ <- common_widgets()$time[ceiling(length(common_widgets()$time) / 2)]
+            double_value_ <- c(double_value_, max_)
+            shiny::tagList(
+              slider_UI(id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
+                        step = step_, label = cc_t("Select a year")),
+              slider_UI(id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
+                        step = step_, label = cc_t("Select two years"), value = double_value_),
+              checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates"), value = FALSE)
+            )
+          }
         })
-      # Other widgets
-      if (length(common_widgets$widgets) > 0)
-        lapply(widgets, \(w) {
-          shiny::insertUI(selector = html_ns("additional_widgets"),
-                          where = "afterEnd",
-                          ui = {
-                            curbcut::picker_UI(id = widget_ns(id),
-                                               ...)
-                          })
-        })
+      # Other widgets that are common between all groups, if there are any
+      if (length(common_widgets()$widgets) > 0)
+        shiny::insertUI(
+          selector = html_ns("common_widgets"),
+          where = "beforeBegin",
+          ui = {
+            do.call(shiny::tagList, mapply(function(w, l, n) {
+              w <- list(w)
+              names(w) <- n
+              is_num <- all(is_numeric(unlist(w)))
+              if (!is_num) {
+                # If the values are not numeric, do a picker
+                curbcut::picker_UI(id = widget_ns(id),
+                                   picker_id = sprintf("p%s", l),
+                                   var_list = w,
+                                   label = n)
+              } else {
+                # If the values are numeric, do a slider
+                vals <- unlist(w)
+                vals <- as.numeric(vals)
+                min_ <- min(vals)
+                max_ <- max(vals)
+                step_ <- unique(diff(vals))[1]
+                value_ <- vals[floor(length(vals)/2)]
+                curbcut::slider_UI(id = widget_ns(id),
+                                   slider_id = sprintf("s%s", l),
+                                   step = step_,
+                                   min = min_,
+                                   max = max_,
+                                   value = value_,
+                                   label = n)
+              }
+
+            }, common_widgets()$widgets, seq_along(common_widgets()$widgets),
+            names(common_widgets()$widgets), SIMPLIFY = FALSE))
+          }
+        )
     })
     # Grab the time values
     slider_uni <- slider_server(id = id, slider_id = "slu")
@@ -59,27 +107,46 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch())
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch())
     })
+
     # Grab the right time
     time <- shiny::reactive({
       # In the case the UIs are not initiated.
+      if (is.null(default_year)) return(NULL)
       if (is.null(slider_switch())) return(default_year)
       if (slider_switch()) slider_bi() else slider_uni()
+    })
+
+    # Grab the common widgets' value
+    common_vals <- shiny::reactive({
+      common_vals <- list()
+      for (i in seq_along(common_widgets()$widgets)) {
+        picker_id <- sprintf("ccpicker_p%s", i)
+        val <- input[[shiny::NS(id, picker_id)]]
+        if (!is.null(val)) common_vals[[i]] <- val
+      }
+      for (i in seq_along(common_widgets()$widgets)) {
+        slider_id <- sprintf("ccslider_s%s", i)
+        val <- input[[shiny::NS(id, slider_id)]]
+        if (!is.null(val)) common_vals[[i]] <- val
+      }
+
+      if (length(common_vals) > 0) names(common_vals) <- names(common_widgets()$widgets)
+      return(unlist(common_vals))
     })
 
     # Main dropdown -----------------------------------------------------------
 
     # Draw and get value from the first dropdown
-    observe({
-      shiny::insertUI(
-        selector = html_ns("hr_common_widgets"),
-        where = "afterEnd",
-        ui = {
-          if (is.na(main_dropdown_title)) main_dropdown_title <- NULL
-          curbcut::picker_UI(id = widget_ns(id),
-                             picker_id = "mnd",
-                             var_list = autovars_groupnames(id = id),
-                             label = main_dropdown_title)
-        })
+    shiny::observe({
+      shiny::insertUI(selector = html_ns("common_widgets"),
+                      where = "afterEnd",
+                      ui = {
+                        if (is.na(main_dropdown_title)) main_dropdown_title <- NULL
+                        curbcut::picker_UI(id = widget_ns(id),
+                                           picker_id = "mnd",
+                                           var_list = autovars_groupnames(id = id),
+                                           label = main_dropdown_title)
+                      })
     })
 
     # Grab the main dropdown's info
@@ -94,21 +161,16 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     mnd <- curbcut::picker_server(id = id, r = r, picker_id = "mnd",
                                   var_list = mnd_list)
 
-    # To not add unnecessary complexities, still have the dropdown but hide it
-    # if it is a single variable page
+    # Detect the variables that are under the main dropdown value. Only update them
+    # if there are actual changes in the new widgets (not only when common_vals change)
+    widgets <- shiny::reactiveVal(list())
     shiny::observe({
-      # Wait for the picker to be initiated
-      shinyjs::delay(500,
-                     if (sum(lengths(autovars_groupnames(id = id))) == 1) {
-                       shinyjs::hide(shiny::NS(id, "ccpicker_mnd"))
-                       shinyjs::hide("hr_common_widgets")
-                     }
-      )
+      new_widgets <- autovars_widgets(
+        id = id, group_name = mnd(),
+        common_vals = common_vals())
+
+      if (!identical(widgets(), new_widgets)) return(widgets(new_widgets))
     })
-
-    # Detect the variables that are under the main dropdown value
-    widgets <- shiny::reactive(autovars_widgets(id = id, group_name = mnd()))
-
 
     # Additional widgets ------------------------------------------------------
 
@@ -130,10 +192,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               w <- list(w)
               names(w) <- n
               curbcut::picker_UI(id = widget_ns(id),
-                                 picker_id = sprintf("d%s", l),
+                                 picker_id = sprintf("p%s", l),
                                  var_list = w,
                                  label = n)
-            }, widgets(), seq_along(widgets()), names(widgets()), SIMPLIFY = FALSE))
+            }, widgets(), seq_along(widgets()) + length(common_widgets()$widgets),
+            names(widgets()), SIMPLIFY = FALSE))
           )
         })
       # Update the number of picker values to be retrieved
@@ -143,15 +206,24 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Make the final variable -------------------------------------------------
 
+    # Retrieve the values of ALL the pickers and sliders
     picker_vals <- shiny::reactive({
       picker_vals <- list()
-      for (i in seq_along(additional_picker_count())) {
-        picker_id <- sprintf("ccpicker_d%s", i)
-        picker_vals[[i]] <- input[[shiny::NS(id, picker_id)]]
+      length_all <- length(common_widgets()$widgets) + length(additional_picker_count())
+      for (i in seq_len(length_all)) {
+        picker_id <- sprintf("ccpicker_p%s", i)
+        val <- input[[shiny::NS(id, picker_id)]]
+        if (!is.null(val)) picker_vals[[i]] <- val
+      }
+      for (i in seq_len(length_all)) {
+        slider_id <- sprintf("ccslider_s%s", i)
+        val <- input[[shiny::NS(id, slider_id)]]
+        if (!is.null(val)) picker_vals[[i]] <- val
       }
       return(unlist(picker_vals))
     })
 
+    # Using all the values of pickers and sliders, get the final value
     shiny::observe({
       z <- autovars_final_value(id = id, group_name = mnd(),
                                 picker_vals = picker_vals(),
@@ -159,7 +231,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       out_var(z[[1]])
     })
 
+    # If there is a `time` value, attach it to the variable
     final_var <- shiny::reactive({
+      if (is.null(time())) return(out_var())
       sprintf("%s_%s", out_var(), time())
     })
 
@@ -167,14 +241,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
   })
 }
 
-#' autovars ui
-#'
+#' @describeIn autovars_server Create the UI for the autovars module
 #' @export
 autovars_UI <- function(id) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "autovars"),
-      shiny::hr(id = shiny::NS(id, "hr_common_widgets")),
+      shiny::hr(id = shiny::NS(id, "common_widgets")),
       shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets")))
     )
   )

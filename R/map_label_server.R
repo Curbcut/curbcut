@@ -202,7 +202,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
                 tile = "stories"
               ),
               point_type = "icon",
-              get_icon = name,
+              # get_icon = name,
               icon_atlas = "stories/image_atlas.png",
               icon_mapping = stories_mapping,
               icon_size_scale = 60,

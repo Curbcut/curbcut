@@ -206,7 +206,11 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       )
 
       for (i in datas()$title_vars) {
-        dat <- panel_view_style_cols(var = i, table = dat)
+        # Is the column in the data? (Sometimes population and households are
+        # missing, but they are automatically added as counts as the default is
+        # that they will be present)
+        if (i %in% names(dat$x$data))
+          dat <- panel_view_style_cols(var = i, table = dat)
       }
 
       return(dat)

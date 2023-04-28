@@ -79,8 +79,11 @@ r_init <- function(server_session,
         var_left <- if (is.data.frame(tb)) tb$var_code[[1]] else tb[[1]]
         variables <- get_from_globalenv("variables")
         time <- modules$dates[modules$id == i][[1]]
-        time <- max(time)
-        var_left <- sprintf("%s_%s", var_left, time)
+        if (!is.null(time)) {
+          time <- max(time)
+          var_left <- sprintf("%s_%s", var_left, time)
+        }
+
 
         r[[i]] <- shiny::reactiveValues(
           vars = shiny::reactiveVal(vars_build(var_left, df = df)),

@@ -36,8 +36,8 @@ test_that("zoom_get_name returns the expected output for a single input", {
 })
 
 test_that("zoom_get_name returns the expected output for multiple inputs", {
-  input <- c("CT", "DA", "grid")
-  expected_output <- c("Census tract", "Dissemination area", "250-m")
+  input <- c("CT", "DA", "grid250")
+  expected_output <- c("Census tract", "Dissemination area", "250m")
   output <- zoom_get_name(input)
   expect_equal(output, expected_output)
 })
@@ -129,7 +129,7 @@ test_that("zoom_get_levels returns the correct map_zoom_levels and region with a
 })
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region when region is different from the one supplied", {
-  result <- zoom_get_levels(id = "vac_rate", region = "city")
+  result <- zoom_get_levels(id = "vacancyrate", region = "city")
   expect_equal(
     result,
     list(zoom_levels = c(cmhczone = 0), region = "cmhc")

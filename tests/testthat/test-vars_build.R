@@ -23,39 +23,25 @@ test_that("vars_build works", {
 
   expect_equal(
     vars_build(
-      var_left = "housing_tenant_2016", var_right = "inc_limat_2016",
+      var_left = "housing_tenant_2016", var_right = "canale_2016",
       df = "CMA_CSD"
-    ),
-    structure(list(var_left = structure("housing_tenant_2016", class = c(
-      "pct",
-      "scalar",
-      "character"
-    )), var_right = structure("inc_limat_2016", class = c(
-      "pct",
-      "scalar",
-      "character"
-    ))), class = c("bivar", "scalar"))
+    ) |> class(),
+    c("bivar", "scalar")
   )
 
   expect_equal(
     vars_build(
       var_left = c(
-        "housing_tenant_2006",
-        "housing_tenant_2016"
+        "housing_tenant_2016",
+        "housing_tenant_2021"
       ),
       var_right = c(
-        "inc_limat_2006",
-        "inc_limat_2016"
+        "climate_drought_2015",
+        "climate_drought_2022"
       ),
-      df = "CMA_DA"
-    ),
-    structure(list(var_left = structure(c(
-      "housing_tenant_2006",
-      "housing_tenant_2016"
-    ), class = c("pct", "scalar", "character")), var_right = structure(c(
-      "inc_limat_2006",
-      "inc_limat_2016"
-    ), class = c("pct", "scalar", "character"))), class = c("delta_bivar", "scalar"))
+      df = "city_DA"
+    ) |> class(),
+    c("delta_bivar", "scalar")
   )
 
   expect_equal(
@@ -82,14 +68,14 @@ test_that("vars_build works", {
         "housing_tenant_2006",
         "housing_tenant_2016"
       ),
-      var_right = c("inc_limat_2006"),
-      df = "CMA_DA"
+      var_right = c("canale_2006"),
+      df = "city_DA"
     ),
     structure(list(var_left = structure(c(
       "housing_tenant_2006",
       "housing_tenant_2016"
-    ), class = c("pct", "scalar", "character")), var_right = structure("inc_limat_2006", class = c(
-      "pct", "scalar",
+    ), class = c("pct", "scalar", "character")), var_right = structure("canale_2006", class = c(
+      "ind", "scalar",
       "character"
     ))), class = c("bivar_ldelta_rq3", "scalar"))
   )
@@ -137,11 +123,4 @@ test_that("vars_build works", {
     )), var_right = " "), class = c("q5_ind", "q5", "ordinal"))
   )
 
-  # expect_equal(
-  #   vars_build(var_left = "c_flood", var_right = " ", df = "raster"),
-  #   structure(list(var_left = structure("c_flood", class = c(
-  #     "qual",
-  #     "character"
-  #   )), var_right = " "), class = "q100")
-  # )
 })

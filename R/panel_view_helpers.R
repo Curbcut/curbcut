@@ -40,11 +40,14 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
 
   # Bind the `df` data to the real data
   df_dat <- get_from_globalenv(df)
-  df_dat <- df_dat[c("ID", "name", "name_2", "population", "households")]
+  default_cols <- c("ID", "name", "name_2", "population", "households")
+  default_cols <- names(df_dat)[names(df_dat) %in% default_cols]
+  df_dat <- df_dat[default_cols]
   dat <- cbind(df_dat, dat[names(dat) != "ID"])
 
   # Order data by population
-  dat <- dat[order(dat$population, decreasing = TRUE), ]
+  if ("population" %in% names(dat))
+    dat <- dat[order(dat$population, decreasing = TRUE), ]
 
 
   # About the data information ----------------------------------------------

@@ -2,7 +2,7 @@
 % Please edit documentation in R/test_helpers.R
 \name{test_assign_q5_ind_ord}
 \alias{test_assign_q5_ind_ord}
-\title{Assign a ind q5 vars/data to the global environment}
+\title{Assign a ind ordinal q5 vars/data to the global environment}
 \usage{
 test_assign_q5_ind_ord()
 }
@@ -11,5 +11,5 @@ Assigns \code{df}, \code{vars}, \code{data} corresponding to a q5 index ordinal
 variable to the global environment
 }
 \description{
-Assign a ind q5 vars/data to the global environment
+Assign a ind ordinal q5 vars/data to the global environment
 }

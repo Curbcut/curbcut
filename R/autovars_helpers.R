@@ -1,4 +1,18 @@
-
+#' Retrieve Group Names for a Specific Module
+#'
+#' This function retrieves the group names associated with a specific module ID.
+#' The group names are retrieved from a global environment object named 'modules'.
+#' They are used to populate the main dropdown.
+#'
+#' @param id <`character`> Identifying the module in modules$id
+#'
+#' If 'var_lefts' (the variables left to be selected) is a data frame,
+#' it returns the unique group names from the 'group_name' column.
+#'
+#' If 'var_lefts' is a character vector, it returns a fully prepared dropdown list.
+#'
+#' @return A character vector of group names or a list prepared for a dropdown selection,
+#' depending on the type of 'var_lefts'.
 autovars_groupnames <- function(id) {
   modules <- get_from_globalenv("modules")
 
@@ -13,6 +27,23 @@ autovars_groupnames <- function(id) {
   return(dropdown_make(vars = var_lefts))
 }
 
+#' Get the Common Widgets for a Specific Module ID
+#'
+#' This function retrieves the common widgets (time and other widgets)
+#' associated with a specific module ID. The information is retrieved from
+#' global environment objects named 'modules' and 'variables'.
+#'
+#' @param id <`character`> Identifying the module in modules$id
+#'
+#' If 'var_lefts' (the variables left to be selected) is a data frame,
+#' it retrieves the variable list from the 'var_code' column.
+#'
+#' It retrieves time information from 'variables' object and other widgets
+#' by subsetting the 'group_diff' column of the 'variables' object.
+#'
+#' @return A list with two components. The first component is a numeric vector
+#' of unique time points, and the second component is a list of other widgets.
+#' The list of other widgets will be empty if no other widgets are common to all variables.
 autovars_common_widgets <- function(id) {
   modules <- get_from_globalenv("modules")
   variables <- get_from_globalenv("variables")
@@ -45,7 +76,7 @@ autovars_common_widgets <- function(id) {
       # Does ALL variable need this widget?
       if (length(widg) != length(var_list)) return(NULL)
 
-      return(unname(groups[names(groups) == n]))
+      return(unique(unname(groups[names(groups) == n])))
     }, simplify = FALSE, USE.NAMES = TRUE)
 
     widgets <- widgets[!sapply(widgets, is.null)]
@@ -57,7 +88,21 @@ autovars_common_widgets <- function(id) {
   return(list(time = time, widgets = list()))
 }
 
-autovars_widgets <- function(id, group_name) {
+#' Get the Widgets for a Specific Module ID and Group Name
+#'
+#' This function retrieves the widgets associated with a specific module ID and
+#' group name. The widgets are retrieved from a global environment object named
+#' 'modules'. Only widgets that share the same values as the common widgets are
+#' returned.
+#'
+#' @param id <`character`> Identifying the module in modules$id
+#' @param group_name <`character`> String identifying the group name to only filter
+#' the widgets of the same group.
+#' @param common_vals <`named list`> A list of common widget values. Usually
+#' `common_vals()` from the autovars module.
+#'
+#' @return A list of widgets. If `tb` is not a data frame, an empty list is returned.
+autovars_widgets <- function(id, group_name, common_vals) {
   modules <- get_from_globalenv("modules")
 
   # Grab the correct tibble
@@ -69,16 +114,55 @@ autovars_widgets <- function(id, group_name) {
 
   # Grab the difference between the variables
   groups <- tb$group_diff[tb$group_name == group_name]
+
+  # Filter in only the groups that share the common widgets' values
+  if (!is.null(common_vals)) {
+    share_common_values_index <- sapply(groups, \(g) {
+
+      # For all the values in `common_vals`, which are the same as the observed
+      # row?
+      share_common_values <- sapply(names(common_vals), \(cv) {
+        same_feat_val <- g[names(g) == cv]
+        unlist(same_feat_val) == common_vals[cv]
+      })
+
+      # If ALL the values are the same
+      all(share_common_values)
+    })
+
+    # Filter in only the observations sharing the values of the common values
+    groups <- groups[share_common_values_index]
+  }
   groups <- unlist(groups)
 
+  # Filter out groups that are already part of the common widgets
+  groups <- groups[!names(groups) %in% names(common_vals)]
+
   widgets <- sapply(unique(names(groups)), \(n) {
-    unname(groups[names(groups) == n])
+    unique(unname(groups[names(groups) == n]))
   }, simplify = FALSE, USE.NAMES = TRUE)
 
   return(widgets)
 }
 
-
+#' Determine Final Value
+#'
+#' This function returns a final value based on an id, group name, selected values
+#' from a picker, and a previously selected variable. It operates in the context
+#' of a global object named 'modules'.
+#'
+#' @param id <`character`> Identifying the module in modules$id
+#' @param group_name <`character`> String identifying the group name to only filter
+#' the widgets of the same group.
+#' @param picker_vals <`list`> Selected values from pickers and sliders in a list.
+#' Used to check which of the 'group_diff' values are included.
+#' @param previous_var <`character`> A previously selected variable. It's returned
+#' if the tibble is not a dataframe or there are no fits for the picker values.
+#'
+#' @return If the retrieved tibble is not a data frame, the function simply returns
+#' the group name (if it isn't null), or the previous variable. If the tibble is a
+#' data frame, the function returns the 'var_code' associated with
+#' the maximum sum of fits.
 autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   modules <- get_from_globalenv("modules")
 
@@ -104,6 +188,16 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   return(out)
 }
 
+#' Generate Placeholder Variable
+#'
+#' This function retrieves the first variable of a specified module.
+#' The module is selected by its ID from a global object named 'modules'.
+#'
+#' @param id <`character`> Identifying the module in modules$id#'
+#'
+#' @return If the 'var_left' of the module is a data frame, the function returns
+#' the first element of the 'var_code' column. If 'var_left' is a character
+#' vector, the function returns its first element.
 autovars_placeholder_var <- function(id) {
   modules <- get_from_globalenv("modules")
 

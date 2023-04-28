@@ -14,6 +14,8 @@ test_resources_creation <- function() {
   p_v <- variables$parent_vec[variables$var_code %in% vars]
   p_v <- p_v[!is.na(p_v)]
   vars <- c(p_v, vars)
+  vars <- unique(vars)
+  vars <- paste0("\\/", vars)
 
   region <- "city"
 
@@ -53,7 +55,7 @@ test_resources_creation <- function() {
       dir.create(dir_path, recursive = TRUE)
     }
     file.copy(from, to)
-  }, data_files, gsub("data", "data/resources", data_files))
+  }, data_files, gsub("data", "resources/data", data_files))
 
   variables <- variables[variables$var_code %in% vars, ]
 
@@ -75,7 +77,7 @@ test_resources_creation <- function() {
 test_assign_delta_ind_ord <- function() {
   df <- "grid_grid250"
   vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"), df = df)
-  data <- data_get(var = vars, df = df)
+  data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = .GlobalEnv)
   assign("vars", vars, envir = .GlobalEnv)
@@ -89,7 +91,7 @@ test_assign_delta_ind_ord <- function() {
 test_assign_q5_ind_ord <- function() {
   df <- "grid_grid250"
   vars <- vars_build(c("climate_drought_2022"), df = df)
-  data <- data_get(var = vars, df = df)
+  data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = .GlobalEnv)
   assign("vars", vars, envir = .GlobalEnv)
@@ -103,7 +105,7 @@ test_assign_q5_ind_ord <- function() {
 test_assign_bivar_ind_ord <- function() {
   df <- "grid_grid250"
   vars <- vars_build(c("climate_drought_2022"), "housing_tenant_2021", df = df)
-  data <- data_get(var = vars, df = df)
+  data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = .GlobalEnv)
   assign("vars", vars, envir = .GlobalEnv)

@@ -52,11 +52,12 @@ create_ui_server_mods <- function(modules) {
   # Create the basic server function
   server <- function(id, r) {
     shiny::moduleServer(id, function(input, output, session) {
+      map_zoom <- get_from_globalenv("map_zoom")
       default_region <- modules$regions[modules$id == id][[1]][1]
       mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
       main_dropdown_title <- modules$main_dropdown_title[modules$id == id]
       default_year <- modules$dates[modules$id == id][[1]]
-      default_year <- max(default_year)
+      default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
 
       # Initial reactives
