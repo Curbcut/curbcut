@@ -4,7 +4,11 @@
 \alias{test_assign_delta_ind_ord}
 \title{Assign a ind ordinal delta vars/data to the global environment}
 \usage{
-test_assign_delta_ind_ord()
+test_assign_delta_ind_ord(pos = 1)
+}
+\arguments{
+\item{pos}{<\code{numeric}> Defaults to 1, the environment in which to assign the
+values. This argument is to appease RMD check.}
 }
 \value{
 Assigns \code{df}, \code{vars}, \code{data} corresponding to a delta index ordinal

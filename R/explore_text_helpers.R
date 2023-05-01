@@ -113,7 +113,8 @@ explore_text_parent_title <- function(var) {
 
   # Grab the title of that parent_vec
   # If the parent vector is all population/individuals or households, return it
-  if (parent_string %in% c("individuals", "households")) {
+  if (parent_string %in% c("individuals", "households", "population")) {
+    if (parent_string == "population") return("individuals")
     return(parent_string)
   }
   parent_string <- var_get_info(
@@ -165,7 +166,7 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
     region_values <- region_values[region_values$region == region, ]
 
     # If year, filter the right row
-    if ("year" %in% names(region_values)) {
+    if (all(region_values$year != "")) {
       time <- var_get_time(var)
       if (is.na(time)) stop(sprintf("var `%s` needs an appended time.", var))
       region_values <- region_values[region_values[["year"]] == time, ]
@@ -344,6 +345,37 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 
   if (!is.na(select_id))
     out$num <- data[[col]][data$ID == select_id]
+
+  # Return
+  return(out)
+
+}
+
+#' @rdname explore_text_select_val
+#'
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param data <`data.frame`>The output of \code{\link{data_get}}.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#'
+#' @export
+explore_text_select_val.avg<- function(var, data, df, select_id, col = "var_left",
+                                        ...) {
+  # Create empty vector
+  out <- c()
+
+  # Throw error if the selected ID is not in the data.
+  if (!select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
+
+  # Add the value for the selection
+  out$val <- data[[col]][data$ID == select_id]
 
   # Return
   return(out)

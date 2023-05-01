@@ -4,10 +4,14 @@
 \alias{create_ui_server_mods}
 \title{Assigns UI and server functions in the global environment for all pages in \code{modules}}
 \usage{
-create_ui_server_mods(modules)
+create_ui_server_mods(modules, pos = 1)
 }
 \arguments{
 \item{modules}{<\code{data.frame}> The data.frame containing all the pages information.}
+
+\item{pos}{<\code{numeric}> Environment position in which to assign the UIs and
+servers. Defaults to 1, the global environment. This is an argument to appease RMD
+check.}
 }
 \value{
 This function assigns UI and server functions to the global

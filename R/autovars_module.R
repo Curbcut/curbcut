@@ -136,6 +136,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Main dropdown -----------------------------------------------------------
 
+    trigger_hide <- shiny::reactiveVal(NULL)
+
     # Draw and get value from the first dropdown
     shiny::observe({
       shiny::insertUI(selector = html_ns("common_widgets"),
@@ -171,6 +173,15 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
       if (!identical(widgets(), new_widgets)) return(widgets(new_widgets))
     })
+
+    # If there's only one option in the var_left, hide it
+    shiny::observeEvent(mnd(), {
+      modules <- get_from_globalenv("modules")
+      var_lefts <- modules$var_left[modules$id == id][[1]]
+      if (is.character(var_lefts) & length(var_lefts) == 1) {
+        shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
+      }
+    }, ignoreInit = TRUE)
 
     # Additional widgets ------------------------------------------------------
 
@@ -209,7 +220,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Retrieve the values of ALL the pickers and sliders
     picker_vals <- shiny::reactive({
       picker_vals <- list()
-      length_all <- length(common_widgets()$widgets) + length(additional_picker_count())
+      length_all <- length(common_widgets()$widgets) + additional_picker_count()
       for (i in seq_len(length_all)) {
         picker_id <- sprintf("ccpicker_p%s", i)
         val <- input[[shiny::NS(id, picker_id)]]

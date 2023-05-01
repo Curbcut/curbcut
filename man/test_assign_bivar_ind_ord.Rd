@@ -4,11 +4,14 @@
 \alias{test_assign_bivar_ind_ord}
 \title{Assign a ind ordinal bivar vars/data to the global environment}
 \usage{
-test_assign_bivar_ind_ord()
+test_assign_bivar_ind_ord(pos = 1)
+}
+\arguments{
+\item{pos}{<\code{numeric}> Defaults to 1, the environment in which to assign the
+values. This argument is to appease RMD check.}
 }
 \value{
-Assigns \code{df}, \code{vars}, \code{data} corresponding to a q5 index ordinal
-variable to the global environment
+Assigns a constructed \code{df}, \code{vars}, \code{data} in the global environment
 }
 \description{
 Assign a ind ordinal bivar vars/data to the global environment

@@ -43,30 +43,34 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # Year displayed != year chosen -------------------------------------------
 
-  length_mismatch <- length(time) == 2 & length(left_year) == 1
+  if (time != "") {
 
-  # Year displayed LEFT
-  if (length(left_year) == 1 & !length_mismatch) {
-    if (left_year != unique(time)) {
-      out <- c(out,
-               list(cc_t(lang = lang,
-                         "Displayed data for <b>{var_left_title}</b> is for the ",
-                         "closest available year <b>({left_year})</b>.")
-               ))
-    }
-  }
+    length_mismatch <- length(time) == 2 & length(left_year) == 1
 
-  # Year displayed RIGHT
-  if (length(right_year) == 1 & !length_mismatch) {
-    if (vars$var_right != " ") {
-      if (all(right_year != unique(time))) {
+    # Year displayed LEFT
+    if (length(left_year) == 1 & !length_mismatch) {
+      if (left_year != unique(time)) {
         out <- c(out,
                  list(cc_t(lang = lang,
-                           "Displayed data for <b>{var_right_title}</b> is for the ",
-                           "closest available year <b>({right_year})</b>.")
+                           "Displayed data for <b>{var_left_title}</b> is for the ",
+                           "closest available year <b>({left_year})</b>.")
                  ))
       }
     }
+
+    # Year displayed RIGHT
+    if (length(right_year) == 1 & !length_mismatch) {
+      if (vars$var_right != " ") {
+        if (all(right_year != unique(time))) {
+          out <- c(out,
+                   list(cc_t(lang = lang,
+                             "Displayed data for <b>{var_right_title}</b> is for the ",
+                             "closest available year <b>({right_year})</b>.")
+                   ))
+        }
+      }
+    }
+
   }
 
 

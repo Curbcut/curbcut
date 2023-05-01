@@ -192,6 +192,9 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
         if (!stories_layer_added() && zoom() > 14) {
           # Set the reactive value to TRUE to indicate the layer has been added
           stories_layer_added(TRUE)
+#
+#           # Appease RMD check
+#           name <- NULL
 
           rdeck::rdeck_proxy("map") |>
             rdeck::add_mvt_layer(
@@ -202,7 +205,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
                 tile = "stories"
               ),
               point_type = "icon",
-              # get_icon = name,
+              get_icon = as.symbol("name"),
               icon_atlas = "stories/image_atlas.png",
               icon_mapping = stories_mapping,
               icon_size_scale = 60,

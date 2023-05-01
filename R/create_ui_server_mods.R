@@ -7,11 +7,14 @@
 #' to the global environment, using the page ID as the function name.
 #'
 #' @param modules <`data.frame`> The data.frame containing all the pages information.
+#' @param pos <`numeric`> Environment position in which to assign the UIs and
+#' servers. Defaults to 1, the global environment. This is an argument to appease RMD
+#' check.
 #'
 #' @return This function assigns UI and server functions to the global
 #' environment and returns \code{invisible()}.
 #' @export
-create_ui_server_mods <- function(modules) {
+create_ui_server_mods <- function(modules, pos = 1) {
 
   # Create the `basic` function
   ui <- function(id) {
@@ -127,7 +130,7 @@ create_ui_server_mods <- function(modules) {
           default_year = default_year)
 
       var_left <- shiny::reactive(autovars()$var)
-      time <- shiny::reactive(autovars()$time)
+      time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
 
       # Right variable / compare panel
       var_right <- curbcut::compare_server(
@@ -137,7 +140,9 @@ create_ui_server_mods <- function(modules) {
           vars = vars_right,
           compare = TRUE
         ),
-        time = time
+        # If there are no time in the page, use the latest census for date of
+        # comparisons
+        time = if (time() != "") time else shiny::reactive(2021)
       )
 
       # Update the `r[[id]]$vars` reactive
@@ -239,11 +244,12 @@ create_ui_server_mods <- function(modules) {
 
   # Only keep the modules that can be worked using autovars (with var_left)
   create <- sapply(modules$id, \(i) !is.null(modules$var_left[modules$id == i][[1]]))
+  create <- create[create]
   ids <- names(create)
 
   # Iterate over the ids to assign the functions in the global environment
-  lapply(ids, \(id) assign(sprintf("%s_UI", id), ui, envir = .GlobalEnv))
-  lapply(ids, \(id) assign(sprintf("%s_server", id), server, envir = .GlobalEnv))
+  lapply(ids, \(id) assign(sprintf("%s_UI", id), ui, envir = as.environment(pos)))
+  lapply(ids, \(id) assign(sprintf("%s_server", id), server, envir = as.environment(pos)))
 
   return(invisible())
 }

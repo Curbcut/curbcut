@@ -52,6 +52,7 @@ r_init <- function(server_session,
   # Loop over all modules to add the rest of the needed reactives
   modules <- get_from_globalenv("modules")
 
+
   for (i in modules$id) {
     reg <- modules$regions[modules$id == i]
     reg <- unlist(reg)[1]

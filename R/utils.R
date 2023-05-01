@@ -337,7 +337,7 @@ get_dist <- function(x, y) {
 #' @export
 tilejson <- function(mapbox_username, tileset_prefix, tile) {
   # urltools is necessary for tile_json use
-  requireNamespace("urltools")
+  requireNamespace("urltools", quietly = TRUE)
   tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
   out <- tryCatch(
     suppressWarnings(rdeck::tile_json(tile_link)),
