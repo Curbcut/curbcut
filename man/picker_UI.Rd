@@ -24,7 +24,7 @@ e.g. \code{canale}.}
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.
 It needs to be unique in the page. The default value is \code{"var"}.}
 
-\item{var_list}{<\verb{character vector}> Choices to display in the picker input.
+\item{var_list}{<\verb{reactive list}> Choices to display in the picker input.
 Normally made using \code{\link{dropdown_make}}.}
 
 \item{label}{A character string giving the label for the picker input control.

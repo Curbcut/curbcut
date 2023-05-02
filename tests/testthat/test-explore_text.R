@@ -19,7 +19,8 @@ test_explores <- function(var_right, select_id, df) {
                        select_id = select_id)
 
   # Ind scalar
-  # test_explores_helper("access_25_food_grocery", var_right = var_right, df = "city_DA", select_id = select_id)
+  test_explores_helper("access_foot_20_food_grocery_2023", var_right = var_right,
+                       df = "city_DA", select_id = select_id)
 
   # Ind scalar
   test_explores_helper("canale_2021", var_right = var_right, df = df, select_id = select_id)
@@ -65,7 +66,7 @@ test_explores_delta <- function(var_right, select_id, df) {
                        df = df, select_id = select_id)
 
   # # Ind scalar
-  # test_explores_helper("access_25_food_grocery", var_right = var_right, df = "city_DA",
+  # test_explores_helper("access_foot_20_food_grocery_2023", var_right = var_right, df = "city_DA",
   # select_id = select_id)
 
   # Ind scalar
@@ -96,7 +97,7 @@ test_explores_delta <- function(var_right, select_id, df) {
                        df = df, select_id = select_id)
 
   # # Ind scalar TKTK NO SCALAR YET WITH 2 YEARS
-  # test_explores_helper("access_25_food_grocery", var_right = var_right,
+  # test_explores_helper("access_foot_20_food_grocery_2023", var_right = var_right,
   # df = "city_DA", select_id = select_id)
 
   # Ind scalar

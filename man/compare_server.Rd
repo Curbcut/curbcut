@@ -22,7 +22,7 @@ e.g. \code{canale}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{var_list}{<\verb{named list}> Choices to display in the picker input. Normally
+\item{var_list}{<\verb{reactive list}> Choices to display in the picker input. Normally
 made using \code{\link{dropdown_make}}.}
 
 \item{time}{<\verb{reactive numeric vector}> Vector of time values to use for
