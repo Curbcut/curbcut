@@ -32,7 +32,7 @@
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param table <`reactive function`> A reactive expression for the function used
+#' @param table_fun <`reactive function`> A reactive expression for the function used
 #' to generate the info table in the explore module. The default value is
 #' `shiny::reactive(explore_text)`, which is a reactive expression that
 #' evaluates to the `explore_text` function. If you want to use a different
@@ -45,7 +45,7 @@
 #' expression for this argument. The reactive expression should evaluate to a
 #' list of arguments to be passed to the info table function, including any
 #' additional arguments required by your custom table function.
-#' @param graph <`reactive function`> A reactive expression for the function used
+#' @param graph_fun <`reactive function`> A reactive expression for the function used
 #' to generate the explore graph in the explore module. The default value is
 #' `shiny::reactive(explore_graph)`, which is a reactive expression that
 #' evaluates to the `explore_graph` function. If you want to use a different
@@ -63,12 +63,12 @@
 #' @export
 explore_server <- function(id, r, data, vars, region, df, select_id,
                            scales_as_DA = shiny::reactive(c("building", "street")),
-                           graph = shiny::reactive(explore_graph),
+                           graph_fun = shiny::reactive(explore_graph),
                            graph_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), df = df(),
                              select_id = select_id(), region = region(),
                              scales_as_DA = scales_as_DA(), lang = r$lang())),
-                           table = shiny::reactive(explore_text),
+                           table_fun = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(),
                              select_id = select_id(), region = region(),
@@ -81,16 +81,16 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(scales_as_DA))
-  stopifnot(shiny::is.reactive(graph))
+  stopifnot(shiny::is.reactive(graph_fun))
   stopifnot(shiny::is.reactive(graph_args))
-  stopifnot(shiny::is.reactive(table))
+  stopifnot(shiny::is.reactive(table_fun))
   stopifnot(shiny::is.reactive(table_args))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Make info table. If fails, returns NULL
     table_out <- shiny::reactive(
       tryCatch(
-        do.call(table(), table_args()),
+        do.call(table_fun(), table_args()),
         error = function(e) {
           print(e)
           return(NULL)
@@ -104,7 +104,7 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     # Make graph
     graph_out <- shiny::reactive(
       tryCatch(
-        do.call(graph(), graph_args()),
+        do.call(graph_fun(), graph_args()),
         error = function(e) {
           print(e)
           return(NULL)

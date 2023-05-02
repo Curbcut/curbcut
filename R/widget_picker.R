@@ -33,17 +33,17 @@
 picker_server <- function(id, r, picker_id = "var", var_list,
                           time = shiny::reactive(NULL), ...) {
   stopifnot(shiny::is.reactive(time))
-  stopifnot(!shiny::is.reactive(var_list))
+  stopifnot(shiny::is.reactive(var_list))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Fails if `var_list` isn't a list.
-    if (!is.list(var_list)) stop("`var_list` must be a list.")
+    if (!is.list(var_list())) stop("`var_list` must be a list.")
 
     # Reformat the picker_id to make it obvious it's a picker (for bookmark)
     picker_id <- paste0("ccpicker_", picker_id)
 
     # Translate var_list
-    var_list_t <- shiny::reactive(cc_t(var_list, lang = r$lang()))
+    var_list_t <- shiny::reactive(cc_t(var_list(), lang = r$lang()))
 
     # Get the `divs` with the explanation on hover (translated)
     hovers <- shiny::reactive(picker_hover_divs(
@@ -58,7 +58,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     # of the dropdown.
     shiny::observeEvent(time(), multi_year(length(time()) > 1))
     disable <- shiny::reactive(picker_multi_year_disable(
-      var_list = var_list,
+      var_list = var_list(),
       disable = multi_year()
     ))
 
@@ -106,7 +106,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @param picker_id <`character`> string giving the identifier for the picker input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
 #' It needs to be unique in the page. The default value is `"var"`.
-#' @param var_list <`character vector`> Choices to display in the picker input.
+#' @param var_list <`reactive list`> Choices to display in the picker input.
 #' Normally made using \code{\link{dropdown_make}}.
 #' @param label A character string giving the label for the picker input control.
 #' If `NULL`, no label will be displayed.
@@ -142,13 +142,11 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   # If forgot to drop parent vectors from the list of variables to pick
   variables <- get_from_globalenv("variables")
   if (all(unlist(var_list) %in% variables$var_code)) {
-    parent_vecs <- variables$parent_vec[variables$var_code %in% unlist(var_list)]
-    if (sum(is.na(parent_vecs)) > 0) {
-      stop(sprintf(paste0(
-        "Parent vectors were included in the variable list ",
-        "for the picker `%s-%s`. They can't be used ",
-        "front-facing yet."
-      ), id, picker_id))
+    are_parents <- unlist(var_list) %in% variables$parent_vec
+    if (sum(are_parents) > 0) {
+      stop(sprintf(paste0("Parent vectors were included in the variable list ",
+                          "for the picker `%s-%s`. They can't be used ",
+                          "front-facing yet."), id, picker_id))
     }
   }
 

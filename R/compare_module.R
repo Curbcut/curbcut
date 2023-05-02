@@ -7,7 +7,7 @@
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param var_list <`named list`> Choices to display in the picker input. Normally
+#' @param var_list <`reactive list`> Choices to display in the picker input. Normally
 #' made using \code{\link{dropdown_make}}.
 #' @param time <`reactive numeric vector`> Vector of time values to use for
 #' appending a time to the variables picked. The returned vector will be the
@@ -26,7 +26,7 @@
 #' @export
 compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
                            show_panel = shiny::reactive(TRUE)) {
-  stopifnot(!shiny::is.reactive(var_list))
+  stopifnot(shiny::is.reactive(var_list))
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(show_panel))
 

@@ -63,7 +63,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
 
-      # Initial reactives
+      # Initial zoom string reactive value
       rv_zoom_string <- shiny::reactiveVal(
         curbcut::zoom_get_string(
           zoom = map_zoom,
@@ -131,15 +131,16 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
       var_left <- shiny::reactive(autovars()$var)
       time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
+      observe(print(autovars()$time))
 
       # Right variable / compare panel
       var_right <- curbcut::compare_server(
         id = id,
         r = r,
-        var_list = curbcut::dropdown_make(
+        var_list = shiny::reactive(curbcut::dropdown_make(
           vars = vars_right,
           compare = TRUE
-        ),
+        )),
         # If there are no time in the page, use the latest census for date of
         # comparisons
         time = if (time() != "") time else shiny::reactive(2021)

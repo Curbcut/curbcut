@@ -104,8 +104,10 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                                      label = shiny::reactive("Compare dates"))
     # Enable or disable first and second slider
     shiny::observeEvent(slider_switch(), {
-      shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch())
-      shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch())
+      single_year <- length(common_widgets()$time) == 1
+      shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
+      shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
+      shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
     })
 
     # Grab the right time
@@ -161,7 +163,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       mnd_list
     }
     mnd <- curbcut::picker_server(id = id, r = r, picker_id = "mnd",
-                                  var_list = mnd_list)
+                                  var_list = shiny::reactive(mnd_list))
 
     # Detect the variables that are under the main dropdown value. Only update them
     # if there are actual changes in the new widgets (not only when common_vals change)
