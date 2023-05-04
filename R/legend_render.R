@@ -316,8 +316,8 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro",
 #' @return A ggplot object that represents the bivariate legend.
 #' @export
 legend_render.bivar <- function(vars, font_family = "SourceSansPro",
-                                lang = NULL, scales_as_DA = c("building", "street"),
-                                df, ...) {
+                                scales_as_DA = c("building", "street"),
+                                df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
@@ -500,8 +500,8 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro",
 #' @return A ggplot object that represents the `delta_bivar` legend.
 #' @export
 legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
-                                      lang = NULL, scales_as_DA = c("building", "street"),
-                                      df, ...) {
+                                      scales_as_DA = c("building", "street"),
+                                      df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
@@ -567,11 +567,9 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the `bivar_ldelta_rq3` legend.
 #' @export
-legend_render.bivar_ldelta_rq3 <- function(vars,
-                                           font_family = "SourceSansPro",
-                                           lang = NULL,
+legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "SourceSansPro",
                                            scales_as_DA = c("building", "street"),
-                                           df, ...) {
+                                           df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL

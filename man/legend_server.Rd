@@ -13,7 +13,11 @@ legend_server(
   data,
   hide = shiny::reactive(FALSE),
   breaks = shiny::reactive(NULL),
-  scales_as_DA = shiny::reactive(c("building", "street"))
+  scales_as_DA = shiny::reactive(c("building", "street")),
+  legend_fun = shiny::reactive(legend_render),
+  legend_args = shiny::reactive(list(vars = vars(), lang = r$lang(), df = df(), data =
+    data(), breaks = breaks(), scales_as_DA = scales_as_DA())),
+  force_height = shiny::reactive(NULL)
 )
 
 legend_UI(id)
@@ -45,6 +49,16 @@ supplied to the legend module.}
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{legend_fun}{<\verb{reactive function}> A function of which the output is a \code{ggplot}
+that will be placed as the legend. Defaults to \code{\link{legend_render}}.}
+
+\item{legend_args}{<\verb{reactive list}> List of arguments to be passed to the
+\code{legend_fun} argument.}
+
+\item{force_height}{<\verb{reactive numeric}> Optional argument. Use to overwrite
+the height of the legend. Default height is 60 pixels, and 150 on a \code{bivar}
+class.}
 }
 \value{
 The legend Shiny UI and server module functions

@@ -4,7 +4,14 @@
 \alias{legend_render.delta_bivar}
 \title{Render the legend for a \code{delta_bivar} class}
 \usage{
-\method{legend_render}{delta_bivar}(vars, font_family = "SourceSansPro", lang = NULL, ...)
+\method{legend_render}{delta_bivar}(
+  vars,
+  font_family = "SourceSansPro",
+  scales_as_DA = c("building", "street"),
+  df,
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a \code{delta_bivar} class. The
@@ -13,6 +20,14 @@ output of \code{\link{vars_build}}.}
 \item{font_family}{<\code{character}> Which font family should be used to render
 the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
 the default font family og ggplot2, use \code{NULL}.}
+
+\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
+
+\item{df}{<\verb{reactive character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
 
 \item{lang}{<\code{character}> The language to use for the text labels. Defaults
 to NULL for no translation.}
