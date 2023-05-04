@@ -8,15 +8,24 @@
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_labels}}
 #' and \code{\link{legend_breaks}}, such as `lang`, `df`, ...
 #'
 #' @return A list with the legend labels and breaks computed by
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
-legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
+legend_get_info <- function(vars, font_family = "SourceSansPro", scales_as_DA,
+                            df, ...) {
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
   labs_xy <- legend_labels(vars, ...)
-  break_labs <- legend_breaks(vars, ...)
+  break_labs <- legend_breaks(vars, df = df, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
@@ -30,7 +39,8 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
   return(list(
     labs_xy = labs_xy, break_labs = break_labs,
     theme_default = theme_default,
-    colours_dfs = colours_dfs
+    colours_dfs = colours_dfs,
+    df = df
   ))
 }
 
@@ -45,11 +55,19 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", ...) {
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#'
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns a ggplot object
 #' @export
-legend_render <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render <- function(vars, font_family = "SourceSansPro",
+                          scales_as_DA = c("building", "street"), df, ...) {
   UseMethod("legend_render", vars)
 }
 
@@ -69,17 +87,25 @@ legend_render <- function(vars, font_family = "SourceSansPro", ...) {
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.q5 <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render.q5 <- function(vars, font_family = "SourceSansPro",
+                             scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$left_5[1:6, ]
@@ -138,17 +164,25 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro", ...) {
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.q5_ind <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render.q5_ind <- function(vars, font_family = "SourceSansPro",
+                                 scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$left_5[1:6, ]
@@ -205,17 +239,25 @@ legend_render.q5_ind <- function(vars, font_family = "SourceSansPro", ...) {
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.qual <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render.qual <- function(vars, font_family = "SourceSansPro",
+                               scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Cut for the number of breaks
   leg_info$break_labs <- leg_info$break_labs[!is.na(leg_info$break_labs)]
@@ -263,18 +305,26 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro", ...) {
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the bivariate legend.
 #' @export
 legend_render.bivar <- function(vars, font_family = "SourceSansPro",
-                                lang = NULL, ...) {
+                                lang = NULL, scales_as_DA = c("building", "street"),
+                                df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
+                              scales_as_DA = scales_as_DA, df = df, ...)
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]
@@ -320,17 +370,25 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
-legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render.delta <- function(vars, font_family = "SourceSansPro",
+                                scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- rbind(
@@ -375,17 +433,25 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro", ...) {
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
 #' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `q100` legend.
 #' @export
-legend_render.q100 <- function(vars, font_family = "SourceSansPro", ...) {
+legend_render.q100 <- function(vars, font_family = "SourceSansPro",
+                               scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Adapt breaks
   leg <- leg_info$colours_dfs$viridis
@@ -423,18 +489,26 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro", ...) {
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta_bivar` legend.
 #' @export
 legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
-                                      lang = NULL, ...) {
+                                      lang = NULL, scales_as_DA = c("building", "street"),
+                                      df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
+                              scales_as_DA = scales_as_DA, df = df, ...)
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]
@@ -483,19 +557,28 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `bivar_ldelta_rq3` legend.
 #' @export
 legend_render.bivar_ldelta_rq3 <- function(vars,
                                            font_family = "SourceSansPro",
-                                           lang = NULL, ...) {
+                                           lang = NULL,
+                                           scales_as_DA = c("building", "street"),
+                                           df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family, ...)
+  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
+                              scales_as_DA = scales_as_DA, df = df, ...)
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]

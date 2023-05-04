@@ -34,33 +34,39 @@
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param legend_fun <`reactive function`> A function of which the output is a `ggplot`
+#' that will be placed as the legend. Defaults to \code{\link{legend_render}}.
+#' @param legend_args <`reactive list`> List of arguments to be passed to the
+#' `legend_fun` argument.
+#' @param force_height <`reactive numeric`> Optional argument. Use to overwrite
+#' the height of the legend. Default height is 60 pixels, and 150 on a `bivar`
+#' class.
 #'
 #' @return The legend Shiny UI and server module functions
 #' @export
 legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
                           breaks = shiny::reactive(NULL),
-                          scales_as_DA = shiny::reactive(c("building", "street"))) {
+                          scales_as_DA = shiny::reactive(c("building", "street")),
+                          legend_fun = shiny::reactive(legend_render),
+                          legend_args = shiny::reactive(list(
+                            vars = vars(), lang = r$lang(), df = df(),
+                            data = data(), breaks = breaks(),
+                            scales_as_DA = scales_as_DA())),
+                          force_height = shiny::reactive(NULL)) {
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(hide))
   stopifnot(shiny::is.reactive(breaks))
   stopifnot(shiny::is.reactive(scales_as_DA))
+  stopifnot(shiny::is.reactive(legend_fun))
+  stopifnot(shiny::is.reactive(legend_args))
 
   shiny::moduleServer(id, function(input, output, session) {
-    # Switch scales to DA if necessary
-    treated_df <-
-      shiny::reactive(treat_to_DA(scales_as_DA = scales_as_DA(), df = df()))
 
     # Make legend
     legend <- shiny::reactive(
-      tryCatch(legend_render(
-        vars = vars(),
-        lang = r$lang(),
-        df = treated_df(),
-        data = data(),
-        breaks = breaks()
-      ), error = function(e) {
+      tryCatch(do.call(legend_fun(), legend_args()), error = function(e) {
         # If does not work as intended, warn the error and return nothing
         print(e)
         return(NULL)
@@ -69,10 +75,10 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
 
     # Define plot height
     plot_height <- function() {
+      # If the height is to be override
+      if (!is.null(force_height())) return(force_height())
       # If there's the `bivar` string detected in one of the classes
-      if (sum(grepl("bivar", attr(vars(), "class"))) > 0) {
-        return(150)
-      }
+      if (sum(grepl("bivar", attr(vars(), "class"))) > 0) return(150)
       return(60)
     }
 
