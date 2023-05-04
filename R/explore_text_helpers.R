@@ -213,8 +213,19 @@ explore_get_parent_data <- function(var, select_id, df, col = "var_left") {
   # If so, add it to the parent string
   if (!is.na(time)) parent_string <- paste(parent_string, time, sep = "_")
 
-  # Grab the parent data
-  parent_data <- data_get(parent_string, df)
+  # Grab the parent data, usually through data_get. If it fails, try to grab
+  # the data from the global df in the global environment (this is useful for
+  # place explorer generation.)
+  parent_data <- tryCatch(data_get(parent_string, df),
+                          error = function(e) {
+                            data <- get_from_globalenv(df)
+                            if (!parent_string %in% names(data)) {
+                              return(print(paste0(parent_string, " not found in the data files.")))
+                            }
+                            data <- data[c("ID", parent_string)]
+                            names(data)[2] <- "var_left"
+                            data
+                          })
 
   # Get the parent value for the zone
   all_count <- parent_data[[col]][parent_data$ID == select_id]
