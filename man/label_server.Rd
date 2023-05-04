@@ -10,6 +10,7 @@ label_server(
   zoom,
   zoom_levels,
   region,
+  show = shiny::reactive(TRUE),
   mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
   tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv)
 )
@@ -34,6 +35,8 @@ is last (so it makes sense on an auto-zoom).}
 
 \item{region}{<\verb{reactive character}> representing the current region displayed
 on the map. Usually one of the output of \code{\link{zoom_get_levels}}.}
+
+\item{show}{<\verb{reactive logical}> Should there be texture (streets, buildings, ...)?}
 
 \item{mapbox_username}{<\code{character}> Mapbox account username. Defaults to
 grabbing the \code{mapbox_username} object from the global environment.}

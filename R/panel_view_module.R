@@ -321,7 +321,7 @@ panel_view_UI <- function(id) {
       class = "floating-panel",
       shiny::tags$div(
         class = "floating-panel-content",
-        id = "floating-panel-content",
+        id = shiny::NS(id, "floating-panel-content"),
         # Map
         action_button(
           classes = c(

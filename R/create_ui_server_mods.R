@@ -131,7 +131,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
       var_left <- shiny::reactive(autovars()$var)
       time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
-      observe(print(autovars()$time))
 
       # Right variable / compare panel
       var_right <- curbcut::compare_server(

@@ -23,7 +23,16 @@ test_explores <- function(var_right, select_id, df) {
                        df = "city_DA", select_id = select_id)
 
   # Ind scalar
-  test_explores_helper("canale_2021", var_right = var_right, df = df, select_id = select_id)
+  test_explores_helper("canale_2021", var_right = var_right, df = df,
+                       select_id = select_id)
+
+  # sqkm
+  test_explores_helper("alley_sqkm_2023", var_right = var_right, df = df,
+                       select_id = select_id)
+
+  # per1k
+  test_explores_helper("alley_per1k_2023", var_right = var_right, df = df,
+                       select_id = select_id)
 }
 
 

@@ -22,8 +22,9 @@ map_server(
   lwd_fun = shiny::reactive(map_scale_lwd),
   lwd_args = shiny::reactive(list(select_id = select_id(), tile = tile(), zoom = zoom(),
     zoom_levels = zoom_levels(), lwd = 1)),
-  auto_highlight = TRUE,
-  pickable = TRUE,
+  auto_highlight = shiny::reactive(TRUE),
+  pickable = shiny::reactive(TRUE),
+  extrude = shiny::reactive(TRUE),
   mapbox_username = get_from_globalenv("mapbox_username"),
   tileset_prefix = get_from_globalenv("tileset_prefix"),
   map_base_style = get_from_globalenv("map_base_style")
@@ -85,11 +86,14 @@ the polygons. It needs to be created using \code{\link[rdeck]{scale_category}}.
 \item{lwd_args}{<\verb{reactive list}> List of arguments to be passed to the
 \code{lwd_fun} argument.}
 
-\item{auto_highlight}{<\code{logical}> When TRUE, the current object hovered by
+\item{auto_highlight}{<\verb{reactive logical}> When TRUE, the current object hovered by
 the cursor is highlighted.}
 
-\item{pickable}{<\code{logical}> Determines if the layer responds to pointer /
+\item{pickable}{<\verb{reactive logical}> Determines if the layer responds to pointer /
 touch events.}
+
+\item{extrude}{<\verb{reactive logical}> Whether to use \code{\link[map_label_show_texture]}
+to determine if polygons should be extrude.}
 
 \item{mapbox_username}{<\code{character}> Mapbox account username. Defaults to
 grabbing the \code{mapbox_username} object from the global environment.}

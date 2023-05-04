@@ -414,6 +414,96 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   ))
 }
 
+#' Generate text for the given variables and region - Q5 version using sqkm
+#'
+#' This function generates text for the given variables and region using the
+#' q5 version and avg. It returns the resulting text.
+#'
+#' @param var <`character`> The variable name for which the text needs to be
+#' generated. Usually `vars$var_left`
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param data <`data.frame`> The output of \code{\link{data_get}}.
+#' @param df <`character`>The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#' @param ... Additional arguments passed to the function.
+#'
+#' @return The resulting text.
+#' @export
+explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
+                                        col = "var_left", ...) {
+
+  # Grab the region values
+  region_values <- explore_text_region_val_df(
+    var = var,
+    region = region,
+    data = data,
+    select_id = select_id,
+    col = col
+  )
+
+  # NA message
+  if (is.na(region_values$val)) {
+    exp <- var_get_info(var = var, what = "explanation")
+    out <- sprintf("we currently don't have information regarding %s", exp)
+    return(list(
+      text = out,
+      na = TRUE
+    ))
+  }
+
+  # Construct the region values
+  count_string <- convert_unit(x = region_values$val, decimal = 1)
+
+  # Grab the explanation
+  exp_q5 <- var_get_info(var = var, what = "exp_q5")
+
+  # If the two last brackets is recognized as the default, write a particular string
+  out <- gsub("_X_", count_string, exp_q5)
+
+  # Return
+  return(list(
+    text = out,
+    na = FALSE
+  ))
+
+}
+
+#' Generate text for the given variables and region - Q5 version using per1k
+#'
+#' This function generates text for the given variables and region using the
+#' q5 version and avg. It returns the resulting text. It is mirroring the `sqkm`
+#' method.
+#'
+#' @param var <`character`> The variable name for which the text needs to be
+#' generated. Usually `vars$var_left`
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param data <`data.frame`> The output of \code{\link{data_get}}.
+#' @param df <`character`>The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#' @param ... Additional arguments passed to the function.
+#'
+#' @return The resulting text.
+#' @export
+explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
+                                        col = "var_left", ...) {
+  explore_text_values_q5.sqkm(var = var, region = region, select_id = select_id,
+                              data = data, df = df, col = col, ...)
+}
+
 
 # BIVAR -------------------------------------------------------------------
 

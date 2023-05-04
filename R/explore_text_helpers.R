@@ -287,33 +287,6 @@ explore_text_select_val.pct <- function(var, select_id, data, df, col = "var_lef
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#'
-#' @export
-explore_text_select_val.dollar <- function(var, data, select_id, col = "var_left",
-                                           ...) {
-  # Create empty vector
-  out <- c()
-
-  # Throw error if the selected ID is not in the data.
-  if (!select_id %in% data$ID) {
-    stop(sprintf("`%s` is not in the data.", select_id))
-  }
-
-  # Add the value for the selection
-  out$val <- data[[col]][data$ID == select_id]
-
-  # Return
-  return(out)
-}
-
-#' @rdname explore_text_select_val
-#'
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param data <`data.frame`>The output of \code{\link{data_get}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
@@ -364,7 +337,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #' `var_left_1` in delta.
 #'
 #' @export
-explore_text_select_val.avg<- function(var, data, df, select_id, col = "var_left",
+explore_text_select_val.default <- function(var, data, df, select_id, col = "var_left",
                                         ...) {
   # Create empty vector
   out <- c()

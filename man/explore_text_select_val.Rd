@@ -3,20 +3,17 @@
 \name{explore_text_select_val}
 \alias{explore_text_select_val}
 \alias{explore_text_select_val.pct}
-\alias{explore_text_select_val.dollar}
 \alias{explore_text_select_val.ind}
-\alias{explore_text_select_val.avg}
+\alias{explore_text_select_val.default}
 \title{Generate values for the given variable and selection}
 \usage{
 explore_text_select_val(var, ...)
 
 \method{explore_text_select_val}{pct}(var, select_id, data, df, col = "var_left", ...)
 
-\method{explore_text_select_val}{dollar}(var, data, select_id, col = "var_left", ...)
-
 \method{explore_text_select_val}{ind}(var, data, df, select_id, col = "var_left", ...)
 
-\method{explore_text_select_val}{avg}(var, data, df, select_id, col = "var_left", ...)
+\method{explore_text_select_val}{default}(var, data, df, select_id, col = "var_left", ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code of the variable for which the

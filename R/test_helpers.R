@@ -9,7 +9,7 @@
 #' @export
 test_resources_creation <- function() {
   vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
-            "climate_drought", "canale")
+            "climate_drought", "canale", "alley_sqkm", "alley_per1k")
   variables <- qs::qread("data/variables.qs")
   p_v <- variables$parent_vec[variables$var_code %in% vars]
   p_v <- p_v[!is.na(p_v)]
@@ -144,6 +144,38 @@ test_assign_q5_avg <- function(pos = 1) {
 test_assign_bivar_avg <- function(pos = 1) {
   df <- "city_CSD"
   vars <- vars_build("access_foot_20_food_grocery", "housing_tenant_2021", df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a sqkm bivar vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
+test_assign_q5_sqkm <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("alley_sqkm_2023", df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a per1k bivar vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
+test_assign_q5_per1k <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("alley_per1k_2023", df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))

@@ -45,10 +45,12 @@
 #' \code{\link{map_scale_lwd}}.
 #' @param lwd_args  <`reactive list`> List of arguments to be passed to the
 #' `lwd_fun` argument.
-#' @param auto_highlight <`logical`> When TRUE, the current object hovered by
+#' @param auto_highlight <`reactive logical`> When TRUE, the current object hovered by
 #' the cursor is highlighted.
-#' @param pickable <`logical`> Determines if the layer responds to pointer /
+#' @param pickable <`reactive logical`> Determines if the layer responds to pointer /
 #' touch events.
+#' @param extrude <`reactive logical`> Whether to use \code{\link[map_label_show_texture]}
+#' to determine if polygons should be extrude.
 #' @param mapbox_username <`character`> Mapbox account username. Defaults to
 #' grabbing the `mapbox_username` object from the global environment.
 #' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
@@ -73,8 +75,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                          select_id = select_id(), tile = tile(), zoom = zoom(),
                          zoom_levels = zoom_levels(), lwd = 1
                        )),
-                       auto_highlight = TRUE,
-                       pickable = TRUE,
+                       auto_highlight = shiny::reactive(TRUE),
+                       pickable = shiny::reactive(TRUE),
+                       extrude = shiny::reactive(TRUE),
                        mapbox_username = get_from_globalenv("mapbox_username"),
                        tileset_prefix = get_from_globalenv("tileset_prefix"),
                        map_base_style = get_from_globalenv("map_base_style")) {
@@ -86,6 +89,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(colour_args))
   stopifnot(shiny::is.reactive(lwd_args))
   stopifnot(shiny::is.reactive(coords))
+  stopifnot(shiny::is.reactive(auto_highlight))
+  stopifnot(shiny::is.reactive(pickable))
+  stopifnot(shiny::is.reactive(extrude))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Map
@@ -119,12 +125,12 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     ## TKTK find ways so that ALL reactives doesn't necessarily trigger this.
     ## Should every change in zoom trigger this? Or only the threshold where
     ## the zoom actually has an impact on the aesthetics.
-    shiny::observe(
+    shiny::observe({
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = id,
-          pickable = pickable,
-          auto_highlight = auto_highlight,
+          pickable = pickable(),
+          auto_highlight = auto_highlight(),
           highlight_color = "#FFFFFF50",
           get_fill_color = do.call(fill_fun(), fill_args()),
           get_line_color = do.call(colour_fun(), colour_args()),
@@ -133,25 +139,25 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           material = FALSE,
           get_elevation = 5
         )
-    )
+    })
 
     # Show the buildings extrude at the same moment texture is off.
     # A change in the extrude reactive only triggers the `extrude` change.
     # Attempt to improve user experience between auto-zoom DA and building level.
-    extrude <- shiny::reactive({
+    extrude_final <- shiny::reactive({
       !map_label_show_texture(
         zoom = zoom(),
         zoom_levels = zoom_levels(),
         tile = tile(),
         map_module = TRUE
-      )
+      ) & extrude()
     })
     shiny::observeEvent(
       extrude(),
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = id,
-          extruded = extrude()
+          extruded = extrude_final()
         )
     )
 

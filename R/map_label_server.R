@@ -19,6 +19,7 @@
 #' is last (so it makes sense on an auto-zoom).
 #' @param region <`reactive character`> representing the current region displayed
 #' on the map. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' @param show <`reactive logical`> Should there be texture (streets, buildings, ...)?
 #' @param mapbox_username <`character`> Mapbox account username. Defaults to
 #' grabbing the `mapbox_username` object from the global environment.
 #' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
@@ -27,7 +28,7 @@
 #'
 #' @return A module server for the label and texture server.
 #' @export
-label_server <- function(id, tile, zoom, zoom_levels, region,
+label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reactive(TRUE),
                          mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
                          tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv)) {
   stopifnot(shiny::is.reactive(tile))
@@ -165,19 +166,19 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_building"),
-          visible = show_texture()
+          visible = show_texture() & show()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_1"),
-          visible = show_texture()
+          visible = show_texture() & show()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_2"),
-          visible = show_texture()
+          visible = show_texture() & show()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_3"),
-          visible = show_texture()
+          visible = show_texture() & show()
         )
     )
 
@@ -186,15 +187,11 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
     stories_mapping <- get_from_globalenv("stories_mapping")
 
     shiny::observeEvent(
-      zoom(),
-      {
+      zoom(), {
         # Check if the layer has been added and if the zoom is higher than 14
         if (!stories_layer_added() && zoom() > 14) {
           # Set the reactive value to TRUE to indicate the layer has been added
           stories_layer_added(TRUE)
-#
-#           # Appease RMD check
-#           name <- NULL
 
           rdeck::rdeck_proxy("map") |>
             rdeck::add_mvt_layer(
@@ -221,7 +218,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
         rdeck::rdeck_proxy("map") |>
           rdeck::update_mvt_layer(
             id = "stories",
-            visible = zoom() > 14)
+            visible = zoom() > 14 & show())
       })
 
   })
