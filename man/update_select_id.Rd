@@ -39,4 +39,7 @@ the newly selected ID. If the same is selected twice, it returns NA. It also
 updates the select_id reactive if a match is found with the IDs from
 \code{r$default_select_ids()} if the user has decided to lock in a default location
 in the advanced options.
+The function also takes care of if a stories is clicked on the map. It displays
+a modal with the HTML file of the stories in it, and listens to the click of a
+button in the modal to redirect the user to the stories page.
 }

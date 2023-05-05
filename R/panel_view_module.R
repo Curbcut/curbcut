@@ -82,14 +82,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       )
     })
 
-    # If the 'Portrait' button is clicked, bring to place explorer
+    # If the 'Portrait' button is clicked, show the portrait and invite to
+    # the place explorer
     shiny::observeEvent(input$panel_selection, {
-      # Adjust the height of the modal
-      # Request window height using shinyjs
-      shinyjs::runjs("Shiny.setInputValue('window_height', window.innerHeight);")
-      window_height <- input$window_height
-      modal_height <- window_height - 100
-
       # Get the place explorer HTML document
       pe_src <- place_explorer_html_links(
         temp_folder = temp_folder,

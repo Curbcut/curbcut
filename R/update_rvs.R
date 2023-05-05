@@ -92,9 +92,9 @@ update_poi <- function(id, poi, map_viewstate) {
   return(new_pois)
 }
 
-#' Update Select ID
+#' Update Select ID module
 #'
-#' This function updates the selected ID on a Curbcut map page. It uses the
+#' This module function updates the selected ID on a Curbcut map page. It uses the
 #' \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
 #' It looks if the selection has been made on a 'stories' bubble and if so,
 #' links to the stories page.
@@ -103,6 +103,9 @@ update_poi <- function(id, poi, map_viewstate) {
 #' updates the select_id reactive if a match is found with the IDs from
 #' `r$default_select_ids()` if the user has decided to lock in a default location
 #' in the advanced options.
+#' The function also takes care of if a stories is clicked on the map. It displays
+#' a modal with the HTML file of the stories in it, and listens to the click of a
+#' button in the modal to redirect the user to the stories page.
 #'
 #' @param id <`character`> Indicates the ID of the current page.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
@@ -111,72 +114,111 @@ update_poi <- function(id, poi, map_viewstate) {
 #' checked for any match with the `r$default_select_ids()` changed in
 #' the advanced options.
 #' @param id_map <`character`> Indicates the ID of the object map, usually
-#' created by \code{\link{map_server}}. Defaults to `paste0(id, "-map")` as
+#' created by \code{\link{map_server}}. Defaults to `"map"` as it is
 #' the default of the `map_server` function.
 #'
 #' @return This function does not return a value. Instead, it updates the
 #' `select_id` reactive in the provided reactive environment.
 #' @export
 update_select_id <- function(id, r, data = shiny::reactive(NULL),
-                             id_map = paste0(id, "-map")) {
+                             id_map = "map") {
 
-  click_init <- shiny::reactive(rdeck::get_clicked_object(id_map))
+  # Must be its own module for the use of the button on the stories modal
+  shiny::moduleServer(id, function(input, output, session) {
 
-  # Redirect to stories?
-  click <- shiny::eventReactive(click_init(), {
-    stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
-    id <- click_init()$ID
-    attr(id, "stories_link") <- stories_link
-    return(id)
-  }, ignoreInit = TRUE, ignoreNULL = TRUE)
+    click_init <- shiny::reactive(rdeck::get_clicked_object(id_map))
 
-  # If it is a stories click, link to the stories module
-  shiny::observeEvent(click(), {
-    if (attr(click(), "stories_link"))
-      return(link(r = r, page = "stories", select_id = click()))
-  })
-
-  # Grab the new selected ID (in the cae it's not a stories link)
-  new_ID <- shiny::eventReactive(click(), {
-    if (!attr(click(), "stories_link")) {
-      id <- click()
-      # Get rid of the attribute
-      attr(id, "stories_link") <- NULL
+    # Redirect to stories?
+    click <- shiny::eventReactive(click_init(), {
+      stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
+      id <- click_init()$ID
+      attr(id, "stories_link") <- stories_link
       return(id)
-    } else return(NA)
+    }, ignoreInit = TRUE, ignoreNULL = TRUE)
+
+    # If it is a stories click, show the modal with the story
+    shiny::observeEvent(click(), {
+      if (attr(click(), "stories_link")) {
+
+        # Get the stories HTML document source
+        stories <- get_from_globalenv("stories")
+        story_name <- stories$name_id[stories$ID == click()]
+        story_src <- sprintf("stories/%s_%s.html", story_name, r$lang())
+
+        modules <- get_from_globalenv("modules")
+        stories_page <- cc_t(modules$nav_title[modules$id == "stories"], lang = r$lang())
+
+        # Popup the modal
+        shiny::showModal(shiny::modalDialog(
+          # Hack the namespace of the button so that it's detectable from within
+          # this module (nested in another page, so double ns)
+          action_button(
+            classes = c("floating-bar-btn", "visit-place-ex"),
+            id = shiny::NS(id, shiny::NS(id, "go_stories")),
+            icon = "auto_stories",
+            text_class = "floating-panel-text",
+            text = cc_t("Visit the {stories_page} page", lang = r$lang())
+          ),
+          shiny::tags$iframe(
+            style = "width:100%;height:calc(100vh - 260px)",
+            title = "story",
+            src = story_src,
+            frameborder = 0
+          ),
+          footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
+          size = "xl",
+          easyClose = TRUE
+        ))
+      }
+    })
+
+    # If the user click on the 'visit the stories page' button from the previous modal
+    shiny::observeEvent(input$go_stories, {
+      shiny::removeModal()
+      link(r = r, page = "stories")
+    })
+
+    # Grab the new selected ID (in the cae it's not a stories link)
+    new_ID <- shiny::eventReactive(click(), {
+      if (!attr(click(), "stories_link")) {
+        id <- click()
+        # Get rid of the attribute
+        attr(id, "stories_link") <- NULL
+        return(id)
+      } else return(NA)
+    })
+
+    # If a click has been made, change then `select_id` reactive
+    shiny::observeEvent(new_ID(), {
+      # If the same ID has been selected twice, return NA. If not, return the
+      # newly selected ID
+      out <- update_select_id_helper(
+        new_ID = new_ID(),
+        select_id = r[[id]]$select_id()
+      )
+
+      # Save the new selected ID in the reactive.
+      r[[id]]$select_id(out)
+    })
+
+    # Update selected ID if there are default selections (from the advanced options,
+    # stored in `r$default_select_ids()`)
+    shiny::observe({
+      if (is.null(data())) {
+        return(NULL)
+      }
+
+      # At the current `data()`, which is the ID that fits
+      out <- update_select_id_from_default(
+        data = data(),
+        default_select_ids = r$default_select_ids(),
+        select_id = shiny::isolate(r[[id]]$select_id())
+      )
+
+      # Save the new selected ID in the reactive.
+      r[[id]]$select_id(out)
+    })
   })
-
-  # If a click has been made, change then `select_id` reactive
-  shiny::observeEvent(new_ID(), {
-    # If the same ID has been selected twice, return NA. If not, return the
-    # newly selected ID
-    out <- update_select_id_helper(
-      new_ID = new_ID(),
-      select_id = r[[id]]$select_id()
-    )
-
-    # Save the new selected ID in the reactive.
-    r[[id]]$select_id(out)
-  })
-
-  # Update selected ID if there are default selections (from the advanced options,
-  # stored in `r$default_select_ids()`)
-  shiny::observe({
-    if (is.null(data())) {
-      return(NULL)
-    }
-
-    # At the current `data()`, which is the ID that fits
-    out <- update_select_id_from_default(
-      data = data(),
-      default_select_ids = r$default_select_ids(),
-      select_id = shiny::isolate(r[[id]]$select_id())
-    )
-
-    # Save the new selected ID in the reactive.
-    r[[id]]$select_id(out)
-  })
-
 }
 
 #' Update Select ID Helper

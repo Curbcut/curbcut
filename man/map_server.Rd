@@ -92,7 +92,7 @@ the cursor is highlighted.}
 \item{pickable}{<\verb{reactive logical}> Determines if the layer responds to pointer /
 touch events.}
 
-\item{extrude}{<\verb{reactive logical}> Whether to use \code{\link[map_label_show_texture]}
+\item{extrude}{<\verb{reactive logical}> Whether to use \code{\link{map_label_show_texture}}
 to determine if polygons should be extrude.}
 
 \item{mapbox_username}{<\code{character}> Mapbox account username. Defaults to

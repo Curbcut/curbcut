@@ -49,7 +49,7 @@
 #' the cursor is highlighted.
 #' @param pickable <`reactive logical`> Determines if the layer responds to pointer /
 #' touch events.
-#' @param extrude <`reactive logical`> Whether to use \code{\link[map_label_show_texture]}
+#' @param extrude <`reactive logical`> Whether to use \code{\link{map_label_show_texture}}
 #' to determine if polygons should be extrude.
 #' @param mapbox_username <`character`> Mapbox account username. Defaults to
 #' grabbing the `mapbox_username` object from the global environment.
