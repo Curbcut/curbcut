@@ -81,6 +81,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
                        mapbox_username = get_from_globalenv("mapbox_username"),
                        tileset_prefix = get_from_globalenv("tileset_prefix"),
                        map_base_style = get_from_globalenv("map_base_style")) {
+
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
   stopifnot(shiny::is.reactive(select_id))
@@ -125,7 +126,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     ## TKTK find ways so that ALL reactives doesn't necessarily trigger this.
     ## Should every change in zoom trigger this? Or only the threshold where
     ## the zoom actually has an impact on the aesthetics.
-    shiny::observe({
+    shiny::observe(
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = id,
@@ -139,7 +140,7 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
           material = FALSE,
           get_elevation = 5
         )
-    })
+    )
 
     # Show the buildings extrude at the same moment texture is off.
     # A change in the extrude reactive only triggers the `extrude` change.

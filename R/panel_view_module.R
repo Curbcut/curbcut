@@ -64,10 +64,20 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
     # Bring the user to the place explorer when there is a selection and that
     # selection is in `data`
     shiny::observe({
+      pe_docs <- get_from_globalenv("pe_docs")
+      # When to show the place portrait button?
+      show <- (\(x) {
+        if (is.na(r[[id]]$select_id())) return(FALSE)
+        if (!r[[id]]$select_id() %in% data()$ID) return(FALSE)
+        pe_link <- sprintf("%s_%s_%s.html", r[[id]]$df(), r[[id]]$select_id(),
+                           r$lang())
+        if (!pe_link %in% pe_docs) return(FALSE)
+        return(TRUE)
+      })()
+
       shinyjs::toggle(
         id = "panel_selection",
-        condition = !is.na(r[[id]]$select_id()) &&
-          r[[id]]$select_id() %in% data()$ID,
+        condition = show,
         anim = TRUE, animType = "fade"
       )
     })
@@ -339,7 +349,7 @@ panel_view_UI <- function(id) {
           id = shiny::NS(id, "panel_data"),
           icon = "table_view",
           text_class = "floating-panel-text",
-          text = cc_t("Data")
+          text = cc_t("Table")
         ),
         # Explore data link
         shinyjs::hidden(action_button(
