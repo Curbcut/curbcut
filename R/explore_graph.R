@@ -31,7 +31,8 @@ explore_graph <- function(vars, select_id, df, data,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.q5_ind <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.q5_ind <- function(vars, select_id, df, data,
+                                 scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "SourceSansPro", ...) {
   explore_graph_q5_ind(vars, select_id, df, data, scales_as_DA, lang = NULL,
                        font_family = "SourceSansPro", ...)
@@ -39,7 +40,8 @@ explore_graph.q5_ind <- function(vars, select_id, df, data, scales_as_DA, lang =
 
 #' @rdname explore_graph
 #' @export
-explore_graph.q5 <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.q5 <- function(vars, select_id, df, data,
+                             scales_as_DA = c("building", "street"), lang = NULL,
                              font_family = "SourceSansPro", ...) {
 
   # Appease R CMD check
@@ -97,7 +99,8 @@ explore_graph.q5 <- function(vars, select_id, df, data, scales_as_DA, lang = NUL
 
 #' @rdname explore_graph
 #' @export
-explore_graph.bivar <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.bivar <- function(vars, select_id, df, data,
+                                scales_as_DA= c("building", "street"), lang = NULL,
                                 font_family = "SourceSansPro", ...) {
 
   # Appease R CMD check
@@ -158,7 +161,8 @@ explore_graph.bivar <- function(vars, select_id, df, data, scales_as_DA, lang = 
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta_ind <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.delta_ind <- function(vars, select_id, df, data,
+                                    scales_as_DA= c("building", "street"), lang = NULL,
                                  font_family = "SourceSansPro", ...) {
   explore_graph_delta_ind(vars, select_id, df, data, scales_as_DA, lang = NULL,
                           font_family = "SourceSansPro", ...)
@@ -166,7 +170,8 @@ explore_graph.delta_ind <- function(vars, select_id, df, data, scales_as_DA, lan
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.delta <- function(vars, select_id, df, data,
+                                scales_as_DA= c("building", "street"), lang = NULL,
                                 font_family = "SourceSansPro", ...) {
 
   # Appease R CMD check
@@ -205,7 +210,7 @@ explore_graph.delta <- function(vars, select_id, df, data, scales_as_DA, lang = 
     remove_outliers_df(cols = c("var_left_1", "var_left_2")) |>
     ggplot2::ggplot(ggplot2::aes(var_left_1, var_left_2)) +
     ggplot2::geom_smooth(se = FALSE, method = "lm", formula = y ~ x,
-                colour = "black", size = 0.5) +
+                colour = "black", linewidth = 0.5) +
     ggplot2::geom_point(ggplot2::aes(colour = group)) +
       ggplot2::scale_colour_manual(values = stats::setNames(
         clr_df$fill, clr_df$group)) +
@@ -226,7 +231,8 @@ explore_graph.delta <- function(vars, select_id, df, data, scales_as_DA, lang = 
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta_bivar <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.delta_bivar <- function(vars, select_id, df, data,
+                                      scales_as_DA= c("building", "street"), lang = NULL,
                                       font_family = "SourceSansPro", ...) {
 
   # Appease R CMD check
@@ -282,7 +288,8 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data, scales_as_DA, l
 
 #' @rdname explore_graph
 #' @export
-explore_graph.bivar_ind <- function(vars, select_id, df, data, scales_as_DA, lang = NULL,
+explore_graph.bivar_ind <- function(vars, select_id, df, data,
+                                    scales_as_DA= c("building", "street"), lang = NULL,
                                     font_family = "SourceSansPro", ...) {
 
   explore_graph_bivar_ind(vars, select_id, df, data, scales_as_DA, lang = NULL,
@@ -323,7 +330,8 @@ explore_graph_q5_ind <- function(vars, select_id, df, data,
 
 #' @rdname explore_graph_q5_ind
 #' @export
-explore_graph_q5_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
+                                        scales_as_DA= c("building", "street"),
                                          lang = NULL,
                                          font_family = "SourceSansPro", ...) {
 
@@ -385,7 +393,8 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
 
 #' @rdname explore_graph_q5_ind
 #' @export
-explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data,
+                                         scales_as_DA = c("building", "street"),
                                          lang = NULL,
                                          font_family = "SourceSansPro", ...) {
 
@@ -470,7 +479,8 @@ explore_graph_bivar_ind <- function(vars, select_id, df, data,
 
 #' @rdname explore_graph_bivar_ind
 #' @export
-explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data,
+                                           scales_as_DA = c("building", "street"),
                                            lang = NULL,
                                            font_family = "SourceSansPro", ...) {
   explore_graph.bivar(vars = vars, select_id = select_id, df = df, data = data,
@@ -480,7 +490,8 @@ explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data, scales_as_
 
 #' @rdname explore_graph_bivar_ind
 #' @export
-explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
+                                            scales_as_DA = c("building", "street"),
                                             lang = NULL,
                                             font_family = "SourceSansPro", ...) {
 
@@ -562,7 +573,8 @@ explore_graph_delta_ind <- function(vars, select_id, df, data,
 
 #' @rdname explore_graph_delta_ind
 #' @export
-explore_graph_delta_ind.scalar <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_delta_ind.scalar <- function(vars, select_id, df, data,
+                                           scales_as_DA = c("building", "street"),
                                            lang = NULL,
                                            font_family = "SourceSansPro", ...) {
   explore_graph.delta(vars = vars, select_id = select_id, df = df, data = data,
@@ -572,7 +584,8 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, df, data, scales_as_
 
 #' @rdname explore_graph_delta_ind
 #' @export
-explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data, scales_as_DA,
+explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
+                                            scales_as_DA = c("building", "street"),
                                             lang = NULL,
                                             font_family = "SourceSansPro", ...) {
 

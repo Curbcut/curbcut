@@ -27,7 +27,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -38,7 +38,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -49,7 +49,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -60,7 +60,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -71,7 +71,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -82,7 +82,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...
@@ -93,7 +93,7 @@ explore_graph(
   select_id,
   df,
   data,
-  scales_as_DA,
+  scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "SourceSansPro",
   ...

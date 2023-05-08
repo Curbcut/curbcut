@@ -261,6 +261,7 @@ colours_get <- function() {
 #' current scale, and returns the new name. If not, the original `df` is returned.
 #' @export
 treat_to_DA <- function(scales_as_DA, df) {
+  if (length(scales_as_DA) == 0) return(df)
   if (is_scale_df(scales_as_DA, df)) {
     return(paste0(s_extract(".*(?=_)", df), "_DA"))
   }

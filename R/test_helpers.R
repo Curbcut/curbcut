@@ -9,7 +9,7 @@
 #' @export
 test_resources_creation <- function() {
   vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
-            "climate_drought", "canale", "alley_sqkm", "alley_per1k")
+            "climate_drought", "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed")
   variables <- qs::qread("data/variables.qs")
   p_v <- variables$parent_vec[variables$var_code %in% vars]
   p_v <- p_v[!is.na(p_v)]
@@ -17,49 +17,35 @@ test_resources_creation <- function() {
   vars <- unique(vars)
   vars_pth <- paste0("\\/", vars)
 
-  region <- "city"
-
-  path_to_data <- sprintf("data/%s", region)
-
-  all_files <- list.files(path_to_data, recursive = T, full.names = TRUE)
-
-  data_files <- all_files[grepl(paste0(vars_pth, collapse = "|"), all_files)]
 
   # Create the destination folder if it doesn't exist
   if (!dir.exists("resources")) {
     dir.create("resources")
   }
+  regions_to_extract <- c("city", "grid", "cmhc")
 
-  # Copy all the data files
-  mapply(\(from, to) {
-    dir_path <- dirname(to)
-    if (!dir.exists(dir_path)) {
-      dir.create(dir_path, recursive = TRUE)
-    }
-    file.copy(from, to)
-  }, data_files, gsub("data", "resources/data", data_files))
+  lapply(regions_to_extract, \(region) {
 
+    path_to_data <- sprintf("data/%s", region)
 
-  region <- "grid"
+    all_files <- list.files(path_to_data, recursive = T, full.names = TRUE)
 
-  path_to_data <- sprintf("data/%s", region)
+    data_files <- all_files[grepl(paste0(vars_pth, collapse = "|"), all_files)]
 
-  all_files <- list.files(path_to_data, recursive = T, full.names = TRUE)
+    # Copy all the data files
+    mapply(\(from, to) {
+      dir_path <- dirname(to)
+      if (!dir.exists(dir_path)) {
+        dir.create(dir_path, recursive = TRUE)
+      }
+      file.copy(from, to)
 
-  data_files <- all_files[grepl(paste0(vars_pth, collapse = "|"), all_files)]
-
-  # Copy all the data files
-  mapply(\(from, to) {
-    dir_path <- dirname(to)
-    if (!dir.exists(dir_path)) {
-      dir.create(dir_path, recursive = TRUE)
-    }
-    file.copy(from, to)
-  }, data_files, gsub("data", "resources/data", data_files))
+    }, data_files, gsub("data", "resources/data", data_files))
+  })
 
   variables <- variables[variables$var_code %in% vars, ]
 
-  other_files <- c("census_variables.qs", "city.qsm", "map_zoom_levels.qsm", "grid.qsm",
+  other_files <- c("census_variables.qs", "city.qsm", "map_zoom_levels.qsm", "grid.qsm", "cmhc.qsm",
                    "modules.qs", "postal_codes.qs", "regions_dictionary.qs", "scales_dictionary.qs",
                    "stories.qsm", "translation_df.qs", "colours_dfs.qs")
 

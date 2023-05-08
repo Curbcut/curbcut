@@ -2,14 +2,9 @@
 % Please edit documentation in R/update_rvs.R
 \name{update_select_id}
 \alias{update_select_id}
-\title{Update Select ID}
+\title{Update Select ID module}
 \usage{
-update_select_id(
-  id,
-  r,
-  data = shiny::reactive(NULL),
-  id_map = paste0(id, "-map")
-)
+update_select_id(id, r, data = shiny::reactive(NULL), id_map = "map")
 }
 \arguments{
 \item{id}{<\code{character}> Indicates the ID of the current page.}
@@ -22,7 +17,7 @@ checked for any match with the \code{r$default_select_ids()} changed in
 the advanced options.}
 
 \item{id_map}{<\code{character}> Indicates the ID of the object map, usually
-created by \code{\link{map_server}}. Defaults to \code{paste0(id, "-map")} as
+created by \code{\link{map_server}}. Defaults to \code{"map"} as it is
 the default of the \code{map_server} function.}
 }
 \value{
@@ -30,7 +25,7 @@ This function does not return a value. Instead, it updates the
 \code{select_id} reactive in the provided reactive environment.
 }
 \description{
-This function updates the selected ID on a Curbcut map page. It uses the
+This module function updates the selected ID on a Curbcut map page. It uses the
 \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
 It looks if the selection has been made on a 'stories' bubble and if so,
 links to the stories page.

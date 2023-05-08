@@ -44,3 +44,4 @@ vignettes/*.pdf
 # Test folders
 data/city/
 data/grid/
+data/cmhc/
