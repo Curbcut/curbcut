@@ -43,7 +43,7 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # Year displayed != year chosen -------------------------------------------
 
-  if (time != "") {
+  if (time[[1]] != "") {
 
     length_mismatch <- length(time) == 2 & length(left_year) == 1
 
@@ -70,7 +70,6 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
         }
       }
     }
-
   }
 
 

@@ -30,6 +30,7 @@
 #' displayed on the map.
 #' @export
 zoom_server <- function(id, r = r, zoom_string, zoom_levels,
+                        suffix_zoom_levels = NA,
                         no_autozoom = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(zoom_string))
   stopifnot(shiny::is.reactive(zoom_levels))
@@ -77,7 +78,9 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
     tile <- shiny::reactive({
       # On auto-zoom, return the auto_zoom
       if (zoom_auto() && !no_autozoom()) {
-        return(paste(zoom_levels()$region, "auto_zoom", sep = "_"))
+        out <- paste(zoom_levels()$region, "auto_zoom", sep = "_")
+        if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
+        return(out)
       }
 
       scale <- zoom_get_code(zoom_slider(), lang = r$lang())

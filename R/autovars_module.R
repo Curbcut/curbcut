@@ -55,7 +55,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                         step = step_, label = cc_t("Select a year")),
               slider_UI(id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
                         step = step_, label = cc_t("Select two years"), value = double_value_),
-              checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates"), value = FALSE)
+              checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates"), value = FALSE),
+              if (length(common_widgets()$widgets) > 1) shiny::hr(id = widget_ns("time_hr"))
             )
           }
         })
@@ -66,17 +67,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           where = "beforeBegin",
           ui = {
             do.call(shiny::tagList, mapply(function(w, l, n) {
-              w <- list(w)
-              names(w) <- n
-              is_num <- all(is_numeric(unlist(w)))
-              if (!is_num) {
-                # If the values are not numeric, do a picker
-                curbcut::picker_UI(id = widget_ns(id),
-                                   picker_id = sprintf("p%s", l),
-                                   var_list = w,
-                                   label = n)
-              } else {
-                # If the values are numeric, do a slider
+              if ("slider_text" %in% class(w)) {
+                selected <- w[floor(length(w) / 2)]
+                curbcut::slider_text_UI(id = widget_ns(id),
+                                        slider_text_id = sprintf("st%s", l),
+                                        choices = w,
+                                        selected = selected,
+                                        label = n)
+              } else if ("slider" %in% class(w))  {
                 vals <- unlist(w)
                 vals <- as.numeric(vals)
                 min_ <- min(vals)
@@ -89,6 +87,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                                    min = min_,
                                    max = max_,
                                    value = value_,
+                                   label = n)
+              } else {
+                w <- list(w)
+                names(w) <- n
+                curbcut::picker_UI(id = widget_ns(id),
+                                   picker_id = sprintf("p%s", l),
+                                   var_list = w,
                                    label = n)
               }
 
@@ -108,6 +113,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
+      shinyjs::toggle("time_hr", condition = !single_year)
     })
 
     # Grab the right time
@@ -129,6 +135,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       for (i in seq_along(common_widgets()$widgets)) {
         slider_id <- sprintf("ccslider_s%s", i)
         val <- input[[shiny::NS(id, slider_id)]]
+        if (!is.null(val)) common_vals[[i]] <- val
+      }
+      for (i in seq_along(common_widgets()$widgets)) {
+        slider_text_id <- sprintf("ccslidertext_st%s", i)
+        val <- input[[shiny::NS(id, slider_text_id)]]
         if (!is.null(val)) common_vals[[i]] <- val
       }
 
@@ -231,6 +242,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       for (i in seq_len(length_all)) {
         slider_id <- sprintf("ccslider_s%s", i)
         val <- input[[shiny::NS(id, slider_id)]]
+        if (!is.null(val)) picker_vals[[i]] <- val
+      }
+      for (i in seq_along(common_widgets()$widgets)) {
+        slider_text_id <- sprintf("ccslidertext_st%s", i)
+        val <- input[[shiny::NS(id, slider_text_id)]]
         if (!is.null(val)) picker_vals[[i]] <- val
       }
       return(unlist(picker_vals))

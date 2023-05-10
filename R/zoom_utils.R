@@ -160,14 +160,14 @@ zoom_get_code <- function(scales_name, lang = NULL) {
 #' usually one of the output of \code{\link{zoom_get_levels}}.
 #' @param suffix_zoom_levels <`character`> A suffix to the zoom level to determine
 #' if there are additional or fewer levels beyond or under the desired level. If
-#' the levels should stop at `CT`, then `_max_CT` would be a valid `suffi_zoom_levels`.
+#' the levels should stop at `CT`, then `max_CT` would be a valid `suffix_zoom_levels`.
 #' The zoom level needs to live as a `map_zoom_levels_x` in the global environment,
 #' e.g. `map_zoom_levels_city_max_CT`.
 #'
 #' @return A list containing the zoom levels for the specified region and the
 #' region itself.
 #' @export
-zoom_get_levels <- function(id, region, suffix_zoom_levels = "") {
+zoom_get_levels <- function(id, region, suffix_zoom_levels = NA) {
   # Get the modules df
   modules <- get_from_globalenv("modules")
 
@@ -183,10 +183,11 @@ zoom_get_levels <- function(id, region, suffix_zoom_levels = "") {
   # `suffix_zoom_levels`, which lets the user decide if there's more to the
   # zoom level. Some modules can have a limit at CT and don't go to DA, meaning
   # the zoom level they are looking for might end with 'max_CT'.
-  get_mzl <- \(reg) return(get_from_globalenv(paste0(
-    "map_zoom_levels_", reg,
-    suffix_zoom_levels
-  )))
+  get_mzl <- \(reg) {
+    out <- paste0("map_zoom_levels_", reg)
+    if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
+    return(get_from_globalenv(out))
+  }
 
   # If the wanted region is not part of the available regions for the module,
   # grab the first in the list of possible regions as they are ordered in

@@ -62,6 +62,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       default_year <- modules$dates[modules$id == id][[1]]
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
+      suffix_zoom_levels <- modules$suffix_zoom_levels[modules$id == id]
 
       # Initial zoom string reactive value
       rv_zoom_string <- shiny::reactiveVal(
@@ -83,7 +84,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
       # Map zoom levels change depending on r$region()
       zoom_levels <-
-        shiny::reactive(curbcut::zoom_get_levels(id = id, region = r$region()))
+        shiny::reactive(curbcut::zoom_get_levels(
+          id = id,
+          region = r$region(),
+          suffix_zoom_levels = suffix_zoom_levels))
 
       # Zoom string reactive
       shiny::observe({
@@ -104,7 +108,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         zoom_string = rv_zoom_string,
-        zoom_levels = zoom_levels
+        zoom_levels = zoom_levels,
+        suffix_zoom_levels = suffix_zoom_levels
       )
 
       # Get df

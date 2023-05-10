@@ -67,17 +67,37 @@ autovars_common_widgets <- function(id) {
   # Fish for other widgets only when `tb` is a list
   if (is.list(tb)) {
     groups <- variables$group_diff[variables$var_code %in% var_list]
-    groups <- unlist(groups)
+    wdg_names <- names(unlist(groups)) |> unique()
 
-    widgets <- sapply(unique(names(groups)), \(n) {
+    widgets <- sapply(wdg_names, \(x) {
       # All entries that need this widget
-      widg <- groups[names(groups) == n]
+      values <- lapply(groups, `[[`, x)
+      values <- values[!sapply(values, is.null)]
 
       # Does ALL variable need this widget?
-      if (length(widg) != length(var_list)) return(NULL)
+      if (length(values) != length(groups)) return(NULL)
 
-      return(unique(unname(groups[names(groups) == n])))
-    }, simplify = FALSE, USE.NAMES = TRUE)
+      # Grab the unique values. If it's a numeric or factor (slider), output
+      # it with a class
+      values <- unique(values)
+      unlisted_vals <- unlist(values)
+
+      if (!is.null(attr(values[[1]], "levels"))) {
+        out <- attr(values[[1]], "levels")
+        # If the class slider is appended to the values, make it a slider
+        if (!is.null(attr(values[[1]], "class")) & attr(values[[1]], "class") == "slider") {
+          return(structure(out, class = "slider_text"))
+        }
+        return(out)
+      }
+
+      if (all(is_numeric(unlisted_vals))) {
+        return(structure(as.numeric(unlisted_vals), class = "slider"))
+      }
+
+      return(unlisted_vals)
+    },
+    simplify = FALSE, USE.NAMES = TRUE)
 
     widgets <- widgets[!sapply(widgets, is.null)]
 
@@ -179,8 +199,15 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   var_codes <- tb$var_code[tb$group_name == group_name]
 
   # Which
-  included_vals <- lapply(groups, \(x) x %in% picker_vals)
-  sum_fits <- sapply(included_vals, sum)
+  ordered_val_fit <- mapply(\(val, i) {
+    sapply(groups, \(x) {
+      v <- x[[i]]
+      if (!is.null(attr(v, "levels"))) v <- attr(v, "levels")[[v]]
+      return(v == val)
+    })
+  }, picker_vals, seq_along(picker_vals))
+  if (length(ordered_val_fit) == 0) return(previous_var)
+  sum_fits <- rowSums(ordered_val_fit)
   if (length(sum_fits) == 0) return(previous_var)
   out <- var_codes[which(sum_fits == max(sum_fits))]
 
