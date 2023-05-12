@@ -36,6 +36,9 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Map
       curbcut::map_UI(shiny::NS(id, id)),
 
+      # Tutorial
+      curbcut::tutorial_UI(id = shiny::NS(id, id)),
+
       # Change view (Map/Data/Place explorer)
       curbcut::panel_view_UI(id = shiny::NS(id, id)),
 
@@ -177,6 +180,12 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars,
         time = time,
         data = data
+      )
+
+      # Tutorial
+      curbcut::tutorial_server(
+        id = id,
+        r = r
       )
 
       # Legend

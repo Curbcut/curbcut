@@ -21,7 +21,8 @@ Imports:
     utils,
     sf,
     qs,
-    urltools
+    urltools,
+    rintrojs
 Remotes:
     qfes/rdeck
 License: AGPL (>= 3)

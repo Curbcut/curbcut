@@ -18,6 +18,10 @@
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param zoom_string <`reactive character`> A reactive object representing the
 #' current zoom level, e.g. `CSD`.
+#' @param suffix_zoom_levels <`character`> Suffix that should be appended at the
+#' end of an auto-zoom. If the maximum zoom possible is CT and we previously created
+#' such a tileset, we could have the suffix_zoom_levels `max_CT`, which would
+#' be appended at the end of the auto-zoom tile name. Defaults to NA for none.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
@@ -109,19 +113,22 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
 zoom_UI <- function(id, zoom_levels) {
   shiny::tagList(
     shiny::div(
-      class = "sus-sidebar-control",
-      checkbox_UI(
-        id = shiny::NS(id, "zoom_auto"),
-        label = "Auto-zoom",
-        value = TRUE
-      )
-    ),
-    shiny::div(
-      class = "sus-sidebar-control",
-      slider_text_UI(
-        id = shiny::NS(id, "zoom_slider"),
-        label = NULL,
-        choices = zoom_get_label(zoom_levels)
+      id = shiny::NS(id, "zoom_div"),
+      shiny::div(
+        class = "sus-sidebar-control",
+        checkbox_UI(
+          id = shiny::NS(id, "zoom_auto"),
+          label = "Auto-zoom",
+          value = TRUE
+        )
+      ),
+      shiny::div(
+        class = "sus-sidebar-control",
+        slider_text_UI(
+          id = shiny::NS(id, "zoom_slider"),
+          label = NULL,
+          choices = zoom_get_label(zoom_levels)
+        )
       )
     )
   )

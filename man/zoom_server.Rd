@@ -10,6 +10,7 @@ zoom_server(
   r = r,
   zoom_string,
   zoom_levels,
+  suffix_zoom_levels = NA,
   no_autozoom = shiny::reactive(FALSE)
 )
 
@@ -30,6 +31,11 @@ levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-zoom).}
+
+\item{suffix_zoom_levels}{<\code{character}> Suffix that should be appended at the
+end of an auto-zoom. If the maximum zoom possible is CT and we previously created
+such a tileset, we could have the suffix_zoom_levels \code{max_CT}, which would
+be appended at the end of the auto-zoom tile name. Defaults to NA for none.}
 
 \item{no_autozoom}{<\verb{reactive logical}> Whether the output tile() reactive
 should include autozooms or not.}

@@ -7,9 +7,10 @@
 #' @return NULL. The function operates by creating and modifying folders and files
 #' in the working directory.
 #' @export
-test_resources_creation <- function() {
+test_resources_creation <- function(additional_vars = c()) {
   vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
-            "climate_drought", "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed")
+            "climate_drought", "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
+            additional_vars)
   variables <- qs::qread("data/variables.qs")
   p_v <- variables$parent_vec[variables$var_code %in% vars]
   p_v <- p_v[!is.na(p_v)]

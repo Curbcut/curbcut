@@ -21,6 +21,7 @@
 #' @export
 autovars_server <- function(id, r, main_dropdown_title, default_year) {
   shiny::moduleServer(id, function(input, output, session) {
+
     # Global preparation ------------------------------------------------------
 
     # Selector function. Retrieve the namespace function associated with the

@@ -4,7 +4,7 @@
 \alias{test_resources_creation}
 \title{Create resources folder for testing in curbcut package}
 \usage{
-test_resources_creation()
+test_resources_creation(additional_vars = c())
 }
 \value{
 NULL. The function operates by creating and modifying folders and files
