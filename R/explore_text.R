@@ -605,7 +605,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     } else out
 
     # Final check if there are bullet point lists, add a ellipsis
-    gsub("</ul></span> ", "</ul></span> ...", out)
+    gsub("</ul></span> ", "</ul></span><p>...", out)
   }
 
   # Detect if we should switch the scale for DAs in the case the `df` is part
@@ -1000,7 +1000,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   # Return the first paragraph if there are no selections
   if (is.na(select_id)) {
     # Add ellipsis if there are bullet points
-    out <- gsub("</ul> ", "</ul> ...", out)
+    out <- gsub("</ul> ", "</ul><p>...", out)
     return(out)
   }
 
@@ -1054,7 +1054,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 
   # Return
   # Add ellipsis if there are bullet points
-  out <- gsub("</ul> ", "</ul> ...", out)
+  out <- gsub("</ul> ", "</ul><p>...", out)
   return(out)
 }
 
@@ -1288,6 +1288,13 @@ explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, cha
       explore_text_color(meaning = "decrease")
   }
 
+  # Separate the explanation of the second part to switch it if there are
+  # bullet points
+  s_explanation <- s_sentence(exp_vals$exp)
+  if (grepl("</ul>$", s_explanation)) {
+    s_explanation <- "This number"
+  }
+
   # Craft the paragraphs
   first_part <- sprintf(
     "%s, %s changed from %s in %s to %s in %s.",
@@ -1297,7 +1304,7 @@ explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, cha
   )
   second_part <- sprintf(
     "%s has %s by %s between these years.",
-    s_sentence(exp_vals$exp), inc_dec, change_string$text
+    s_explanation, inc_dec, change_string$text
   )
 
   # Bind
@@ -1501,7 +1508,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
     out <- sprintf("%s<p>%s %s", out, first_s, second_s)
 
     # Add ellipsis if there are bullet points
-    out <- gsub("</ul></span> ", "</ul></span> ...", out)
+    out <- gsub("</ul></span> ", "</ul></span><p>...", out)
 
     # Return
     return(out)
@@ -1530,7 +1537,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
     )
 
     # Add ellipsis if there are bullet points
-    out <- gsub("</ul></span> ", "</ul></span> ...", out)
+    out <- gsub("</ul></span> ", "</ul></span><p>...", out)
 
     # Return
     return(out)
@@ -1589,7 +1596,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   }
 
   # Add ellipsis if there are bullet points
-  out <- gsub("</ul></span> ", "</ul></span> ...", out)
+  out <- gsub("</ul></span> ", "</ul></span><p>...", out)
 
   # Return
   return(out)

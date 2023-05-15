@@ -41,7 +41,7 @@ language_server <- function(id = "language", r) {
 
     # Update label of the button based on current language
     shiny::observeEvent(r$lang(), {
-      new_label <- if (r$lang() == "fr") "English" else "Français"
+      new_label <- if (r$lang() == "fr") "English" else "Fran\u00e7ais"
       shiny::updateActionLink(
         session = session,
         inputId = "language_button",

@@ -18,6 +18,7 @@
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
 table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
+
   # Reformat data -----------------------------------------------------------
 
   # Take out the `q3`, `q5` and `group`
@@ -53,6 +54,7 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   # About the data information ----------------------------------------------
 
   text <- panel_view_prepare_text(vars = vars, df = df, dat = dat, lang = lang)
+
 
   # Update column names so it's more 'friendly' -----------------------------
 
@@ -165,9 +167,9 @@ panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, ...) {
   names(dat)[grepl(var_code, names(dat))] <- new_names
 
   # Prepare the colum names for styling
-  title_vars <- structure(new_names[1:2], class = class(vars$var_left))
+  title_vars <- lapply(new_names[1:2], \(x) structure(x, class = class(vars$var_left)))
   variation <- structure(new_names[3], class = "pct")
-  title_vars <- list(title_vars, variation)
+  title_vars <- c(title_vars, list(variation))
 
   # Return
   return(list(data = dat, title_vars = title_vars))
@@ -220,13 +222,15 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
   names(dat)[grepl(var_codes, names(dat))] <- unlist(new_names)
 
   # Prepare the colum names for styling
-  title_vars1 <- structure(new_names$var_left[1:2], class = class(vars$var_left))
+  title_vars1 <- lapply(new_names$var_left[1:2],
+                        \(x) structure(x, class = class(vars$var_left)))
   variation1 <- structure(new_names$var_left[3], class = "pct")
-  title_vars1 <- list(title_vars1, variation1)
+  title_vars1 <- c(title_vars1, list(variation1))
 
-  title_vars2 <- structure(new_names$var_right[1:2], class = class(vars$var_right))
+  title_vars2 <- lapply(new_names$var_right[1:2],
+                        \(x) structure(x, class = class(vars$var_right)))
   variation2 <- structure(new_names$var_right[3], class = "pct")
-  title_vars2 <- list(title_vars2, variation2)
+  title_vars2 <- c(title_vars2, list(variation2))
 
   title_vars <- c(title_vars1, title_vars2)
 
@@ -256,9 +260,10 @@ panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, lang = NULL, ...)
   names(dat)[grepl(var_codes, names(dat))] <- unlist(new_names)
 
   # Prepare the column names for styling
-  title_vars1 <- structure(new_names$var_left[1:2], class = class(vars$var_left))
+  title_vars1 <- lapply(new_names$var_left[1:2],
+                        \(x) structure(x, class = class(vars$var_left)))
   variation1 <- structure(new_names$var_left[3], class = "pct")
-  title_vars1 <- list(title_vars1, variation1)
+  title_vars1 <- c(title_vars1, list(variation1))
 
   title_vars2 <- structure(new_names$var_right, class = class(vars$var_right))
 
@@ -521,6 +526,12 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
   return(titles_texts)
 }
 
+#' @rdname panel_view_prepare_text
+#' @export
+panel_view_prepare_text.default <- function(vars, df, dat, lang = NULL, ...) {
+  return(list(""))
+}
+
 #' Prepare Text Helper for Panel View
 #'
 #' This function creates a formatted HTML text containing statistics for a given
@@ -547,10 +558,15 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
 panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
                                            title_color = "#73AE80", lang = NULL) {
   # Title
-  out_title <- shiny::h4(
-    style = sprintf("color:%s !important", title_color),
-    sprintf("%s: %s", title, explanation)
-  )
+  out_title <-
+    if (!grepl("<ul>", explanation)) {
+      shiny::h4(
+        style = sprintf("color:%s !important", title_color),
+        sprintf("%s: %s", title, explanation)
+      )
+    } else {
+      shiny::h4(style = sprintf("color:%s !important", title_color), title)
+    }
 
   # Text variables
   min_val <- min(dat[[var]], na.rm = TRUE)
@@ -563,6 +579,11 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
     \(x) convert_unit(var = var, x = x)
   )
   values <- lapply(values, shiny::strong)
+
+  # If there are bullet points, switch to generic
+  if (grepl("<ul>", explanation)) {
+    explanation <- "this value"
+  }
 
   # Create the text
   text <-

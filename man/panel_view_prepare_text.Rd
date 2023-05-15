@@ -6,6 +6,7 @@
 \alias{panel_view_prepare_text.delta}
 \alias{panel_view_prepare_text.bivar}
 \alias{panel_view_prepare_text.delta_bivar}
+\alias{panel_view_prepare_text.default}
 \title{Prepare the panel view text for the given variables.}
 \usage{
 panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
@@ -17,6 +18,8 @@ panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
 \method{panel_view_prepare_text}{bivar}(vars, df, dat, lang = NULL, ...)
 
 \method{panel_view_prepare_text}{delta_bivar}(vars, df, dat, lang = NULL, ...)
+
+\method{panel_view_prepare_text}{default}(vars, df, dat, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}

@@ -542,6 +542,11 @@ explore_text_color <- function(x, meaning) {
   # Add the text in a span with the color
   x_colored <- sprintf("<span style='color:%s'>%s</span>", hex, x)
 
+  # Add the color to the bullet point lists if there are
+  x_colored <- gsub("<li>",
+                    sprintf("<li style='color:%s'>", hex),
+                    x_colored)
+
   # Return
   return(x_colored)
 }

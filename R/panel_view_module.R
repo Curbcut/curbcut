@@ -51,6 +51,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       shinyjs::hide(id = "view_data", anim = TRUE, animType = "fade")
       shinyjs::removeClass(id = "panel_data", class = "selection")
       shinyjs::addClass(id = "panel_map", class = "selection")
+
+      # Show the tutorial bubble
+      shinyjs::show(id = "tutorial")
     })
 
     # Hide the map and show the data when the right button is clicked
@@ -59,6 +62,10 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       shinyjs::show(id = "view_data", anim = TRUE, animType = "fade")
       shinyjs::removeClass(id = "panel_map", class = "selection")
       shinyjs::addClass(id = "panel_data", class = "selection")
+
+
+      # Hide the tutorial bubble
+      shinyjs::hide(id = "tutorial")
     })
 
     # Bring the user to the place explorer when there is a selection and that
@@ -287,6 +294,8 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
               shiny::incProgress(0.3)
 
+              print(file)
+
               # Set file names
               tmp_path <- dirname(file)
               name_base <- file.path(tmp_path, paste0(id, "_data"))
@@ -299,12 +308,12 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
               # Write the data to a shapefile
               sf::st_write(data,
-                dsn = name_shp, driver = "ESRI Shapefile",
-                quiet = TRUE
+                           dsn = name_shp, driver = "ESRI Shapefile",
+                           quiet = TRUE
               )
 
               # Zip the shapefile and copy to the desired location
-              utils::zip(zipfile = name_zip, files = Sys.glob(name_glob))
+              zip::zipr(zipfile = name_zip, files = Sys.glob(name_glob))
               shiny::req(file.copy(name_zip, file))
 
               shiny::incProgress(0.3)
@@ -313,7 +322,8 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
               if (length(Sys.glob(name_glob)) > 0) file.remove(Sys.glob(name_glob))
             }
           )
-        }
+        },
+        contentType = "application/zip"
       )
   })
 }

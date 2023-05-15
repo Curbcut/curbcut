@@ -30,9 +30,9 @@ ordinal_form <- function(lang, x, en_first = "first") {
   if (lang == "fr") {
     return(switch(as.character(x),
       "1" = "",
-      "2" = "deuxième",
-      "3" = "troisième",
-      paste0(as.character(x), "ième")
+      "2" = "deuxi\u00e8me",
+      "3" = "troisi\u00e8me",
+      paste0(as.character(x), "i\u00e8me")
     ))
   }
 
@@ -335,6 +335,8 @@ get_dist <- function(x, y) {
 #' @return A JSON list if succesfull. If missing tile, returns NULL preventing
 #' the app from crashing. If the tile is missing and it's a _building tile,
 #' grab the first region of the regions_dictionary and show buildings for those.
+#'
+#' @importFrom urltools
 #' @export
 tilejson <- function(mapbox_username, tileset_prefix, tile) {
   # urltools is necessary for tile_json use
