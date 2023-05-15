@@ -63,6 +63,9 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   # Put it all together
   out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), value_string$text)
 
+  # Switch the final comma when there are bullet points
+  out <- gsub("</ul>.$", ".</ul>", out)
+
   # Add the second paragraph if there is a selection
   if (!is.na(select_id) && !value_string$na) {
     # Add header
@@ -179,6 +182,70 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 
   # Build the return
   out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
+
+  # Return
+  return(list(
+    text = out,
+    na = FALSE
+  ))
+}
+
+#' Generate text for the given variables and region - q5 version using count
+#'
+#' This function generates text for the given variables and region using the
+#' q5 version and count. It returns the resulting text.
+#'
+#' @param var <`character`> The variable name for which the text needs to be
+#' generated. Usually `vars$var_left`
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param data <`data.frame`> The output of \code{\link{data_get}}.
+#' @param df <`character`>The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#' @param ... Additional arguments passed to the function.
+#'
+#' @return The resulting text.
+#' @export
+explore_text_values_q5.count <- function(var, region, data, df, select_id,
+                                       col = "var_left", ...) {
+
+  # Grab the parent variable
+  parent_string <- explore_text_parent_title(var)
+
+  # Grab the q5 explanation
+  exp <- var_get_info(var = var, what = "exp_q5")
+
+  # Grab the region values
+  region_values <- explore_text_region_val_df(
+    var = var,
+    region = region,
+    data = data,
+    df = df,
+    select_id = select_id,
+    col = col
+  )
+
+  # NA message
+  if (is.na(region_values$val)) {
+    exp <- var_get_info(var = var, what = "explanation")
+    out <- sprintf("we currently don't have information regarding %s", exp)
+    return(list(
+      text = out,
+      na = TRUE
+    ))
+  }
+
+  # Make the region values as characters
+  count_string <- convert_unit(x = region_values$val, decimal = 1)
+
+  # Build the return
+  out <- sprintf("%s %s %s", count_string, parent_string, exp)
 
   # Return
   return(list(
@@ -531,9 +598,14 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
         explore_text_color(date_2, "right")
       )
     }
-    if (!is.na(date)) {
+
+    # Add the date
+    out <- if (!is.na(date)) {
       sprintf("%s <i>(Data from %s.)</i>", out, date)
-    }
+    } else out
+
+    # Final check if there are bullet point lists, add a ellipsis
+    gsub("</ul></span> ", "</ul></span> ...", out)
   }
 
   # Detect if we should switch the scale for DAs in the case the `df` is part
@@ -927,6 +999,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 
   # Return the first paragraph if there are no selections
   if (is.na(select_id)) {
+    # Add ellipsis if there are bullet points
+    out <- gsub("</ul> ", "</ul> ...", out)
     return(out)
   }
 
@@ -979,6 +1053,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   out <- sprintf("%s<p>%s %s", out, first_part, second_part)
 
   # Return
+  # Add ellipsis if there are bullet points
+  out <- gsub("</ul> ", "</ul> ...", out)
   return(out)
 }
 
@@ -1292,6 +1368,27 @@ explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
 
 #' @rdname explore_text_delta_change
 #' @export
+explore_text_delta_change.count <- function(var, exp_vals, ...) {
+  # Calculate the absolute and variation changes
+  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
+  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+
+  # Get the percentage change as percentage points
+  abs_change_string <- convert_unit(x = abs_change)
+
+  # Pretty pct change
+  pretty_pct_change <- convert_unit.pct(x = pct_change, decimal = 1)
+
+  out <- sprintf("%s (%s)", abs_change_string, pretty_pct_change)
+
+  return(list(
+    pct_change = pct_change,
+    text = out
+  ))
+}
+
+#' @rdname explore_text_delta_change
+#' @export
 explore_text_delta_change.ind <- function(var, exp_vals, ...) {
   explore_text_delta_change.pct(var, exp_vals)
 }
@@ -1403,6 +1500,10 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
     # Bind it all
     out <- sprintf("%s<p>%s %s", out, first_s, second_s)
 
+    # Add ellipsis if there are bullet points
+    out <- gsub("</ul></span> ", "</ul></span> ...", out)
+
+    # Return
     return(out)
   }
 
@@ -1427,6 +1528,11 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
       exp_vals_left$times[2], relation$relation_text, relation$corr,
       exp_vals_left$exp, exp_vals_right$exp, scale_plur
     )
+
+    # Add ellipsis if there are bullet points
+    out <- gsub("</ul></span> ", "</ul></span> ...", out)
+
+    # Return
     return(out)
   }
 
@@ -1482,6 +1588,10 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
     out <- sprintf("<p><b>STRONG CORRELATION</b>%s", out)
   }
 
+  # Add ellipsis if there are bullet points
+  out <- gsub("</ul></span> ", "</ul></span> ...", out)
+
+  # Return
   return(out)
 }
 

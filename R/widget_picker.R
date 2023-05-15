@@ -45,22 +45,22 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     # Translate var_list
     var_list_t <- shiny::reactive(cc_t(var_list(), lang = r$lang()))
 
-    # # Get the `divs` with the explanation on hover (translated)
-    # hovers <- shiny::reactive(picker_hover_divs(
-    #   var_list = var_list_t(),
-    #   lang = r$lang()
-    # ))
-    #
-    # # If the picking is made while in a `delta` mode (comparing two years),
-    # # we disable the variables that are not present at all years.
-    # multi_year <- shiny::reactiveVal(FALSE)
-    # # Make sure we don't create unwanted reactivity that triggers the reset
-    # # of the dropdown.
-    # shiny::observeEvent(time(), multi_year(length(time()) > 1))
-    # disable <- shiny::reactive(picker_multi_year_disable(
-    #   var_list = var_list(),
-    #   disable = multi_year()
-    # ))
+    # Get the `divs` with the explanation on hover (translated)
+    hovers <- shiny::reactive(picker_hover_divs(
+      var_list = var_list_t(),
+      lang = r$lang()
+    ))
+
+    # If the picking is made while in a `delta` mode (comparing two years),
+    # we disable the variables that are not present at all years.
+    multi_year <- shiny::reactiveVal(FALSE)
+    # Make sure we don't create unwanted reactivity that triggers the reset
+    # of the dropdown.
+    shiny::observeEvent(time(), multi_year(length(time()) > 1))
+    disable <- shiny::reactive(picker_multi_year_disable(
+      var_list = var_list(),
+      disable = multi_year()
+    ))
 
     # Style the disable (dark gray for the unpickable)
     disable_style <- shiny::reactive({
@@ -73,13 +73,13 @@ picker_server <- function(id, r, picker_id = "var", var_list,
         session = session,
         inputId = picker_id,
         choices = var_list_t(),
-        # choicesOpt = c(
-        #   if (!is.null(hovers())) hovers(),
-        #   list(
-        #     disabled = disable(),
-        #     style = disable_style()
-        #   )
-        # ),
+        choicesOpt = c(
+          if (!is.null(hovers())) hovers(),
+          list(
+            disabled = disable(),
+            style = disable_style()
+          )
+        ),
         ...
       )
     })

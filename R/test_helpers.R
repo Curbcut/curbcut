@@ -4,6 +4,9 @@
 #' the "data" directory to a newly created "resources" directory. The resources
 #' folder can then be cut in the curbcut test/ folder.
 #'
+#' @param additional_vars <`character vector`> Additional var codes to include
+#' in the testing resources.
+#'
 #' @return NULL. The function operates by creating and modifying folders and files
 #' in the working directory.
 #' @export
@@ -70,6 +73,7 @@ test_assign_delta_ind_ord <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "grid", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
@@ -86,6 +90,7 @@ test_assign_q5_ind_ord <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "grid", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
@@ -102,6 +107,7 @@ test_assign_bivar_ind_ord <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "grid", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
@@ -118,6 +124,7 @@ test_assign_q5_avg <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
@@ -134,6 +141,7 @@ test_assign_bivar_avg <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
@@ -150,11 +158,12 @@ test_assign_q5_sqkm <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
 
-#' Assign a per1k bivar vars/data to the global environment
+#' Assign a per1k q5 vars/data to the global environment
 #'
 #' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
 #' values. This argument is to appease RMD check.
@@ -166,6 +175,61 @@ test_assign_q5_per1k <- function(pos = 1) {
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a q5 count vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
+test_assign_q5_count <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("afford_tenant_sc30_total_total_total_count_2021", df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a count bivar vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
+test_assign_bivar_count <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("afford_tenant_sc30_total_total_total_count_2021",
+                     "housing_tenant_2021", df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a count delta vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
+test_assign_delta_count <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build(c("afford_tenant_sc30_total_total_total_count_2016",
+                       "afford_tenant_sc30_total_total_total_count_2021"),
+                     df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }

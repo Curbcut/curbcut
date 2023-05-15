@@ -6,6 +6,10 @@
 \usage{
 test_resources_creation(additional_vars = c())
 }
+\arguments{
+\item{additional_vars}{<\verb{character vector}> Additional var codes to include
+in the testing resources.}
+}
 \value{
 NULL. The function operates by creating and modifying folders and files
 in the working directory.

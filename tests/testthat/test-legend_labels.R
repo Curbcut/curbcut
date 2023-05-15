@@ -134,8 +134,8 @@ test_that("legend_labels translation works", {
   )
   expect_equal(
     legend_labels(vars, lang = "fr"),
-    list(structure(list(x = "Indice AVA-Can (2016)", y = "Locataire (2016)"), class = "labels"),
-      x_short = structure("AVA-Can", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
+    list(structure(list(x = "Potentiel de vie active (2016)", y = "Locataire (2016)"), class = "labels"),
+      x_short = structure("Vie active", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
     )
   )
 })

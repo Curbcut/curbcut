@@ -184,10 +184,14 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
 
     # Add stories bubble with zooms higher than 14
     stories_layer_added <- shiny::reactiveVal(FALSE)
-    stories_mapping <- get_from_globalenv("stories_mapping")
+    stories_mapping <- get0("stories_mapping", envir = .GlobalEnv)
+    if (is.null(stories_mapping)) {
+      return(NULL)
+    }
 
     shiny::observeEvent(
       zoom(), {
+        if (is.null(stories_mapping)) return(NULL)
         # Check if the layer has been added and if the zoom is higher than 14
         if (!stories_layer_added() && zoom() > 14) {
           # Set the reactive value to TRUE to indicate the layer has been added
@@ -215,6 +219,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
     shiny::observeEvent(
       zoom(),
       {
+        if (is.null(stories_mapping)) return(NULL)
         rdeck::rdeck_proxy("map") |>
           rdeck::update_mvt_layer(
             id = "stories",

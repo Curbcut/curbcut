@@ -20,6 +20,9 @@ place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
   # Grab modules from the global environment
   modules <- get_from_globalenv("modules")
 
+  if (!"place_explorer" %in% modules$id)
+    stop("`place_explorer` is missing as an id in the modules table.")
+
   # Get the default region and the map zoom levels
   default_region <- modules$regions[modules$id == "place_explorer"][[1]][1]
   map_zoom_levels <- get_from_globalenv(paste0("map_zoom_levels_", default_region))
