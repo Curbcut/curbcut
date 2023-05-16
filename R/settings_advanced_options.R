@@ -30,7 +30,7 @@ adv_opt_region <- function(id, region, lang = NULL) {
   # Get the shiny input
   shiny::radioButtons(
     inputId = shiny::NS(id, "region_change"),
-    label = cc_t(lang = lang, "Change default geometry"),
+    label = cc_t(lang = lang, "Change default region"),
     inline = TRUE,
     selected = region,
     choiceNames = choices_txt,
