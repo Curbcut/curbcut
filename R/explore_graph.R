@@ -74,6 +74,7 @@ explore_graph.q5 <- function(vars, select_id, df, data,
   # Draw the plot
   plot <-
     data[!is.na(data$var_left), ] |>
+    remove_outliers_df(cols = c("var_left")) |>
     ggplot2::ggplot(ggplot2::aes(var_left)) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
                             bins = bin_number) +

@@ -112,11 +112,13 @@ explore_text_parent_title <- function(var) {
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
   # Grab the title of that parent_vec
-  # If the parent vector is all population/individuals or households, return it
-  if (parent_string %in% c("individuals", "households", "population")) {
+  # If the parent vector is not in the variables table, return it
+  variables <- get_from_globalenv("variables")
+  if (!parent_string %in% variables$var_code) {
     if (parent_string == "population") return("individuals")
     return(parent_string)
   }
+
   parent_string <- var_get_info(
     var = parent_string, what = "var_title",
     check_year = FALSE

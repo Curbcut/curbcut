@@ -115,6 +115,10 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
       shinyjs::toggle("time_hr", condition = !single_year)
+
+      # If there's a single year and there are no common widgets
+      shinyjs::toggle("common_widgets",
+                      condition = !single_year & {length(common_widgets()$widgets) != 0})
     })
 
     # Grab the right time
