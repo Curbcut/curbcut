@@ -4,11 +4,14 @@
 \alias{explore_text_parent_title}
 \title{Get parent title of a variable}
 \usage{
-explore_text_parent_title(var)
+explore_text_parent_title(var, lang = NULL)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the parent title needs
 to be retrieved.}
+
+\item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
+for no translation.}
 }
 \value{
 The title of the parent variable in lowercase.

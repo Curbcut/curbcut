@@ -281,7 +281,7 @@ treat_to_DA <- function(scales_as_DA, df) {
 get_from_globalenv <- function(x) {
   out <- get0(x, envir = .GlobalEnv)
   if (is.null(out)) {
-    stop(glue::glue("`{x}` object not found in the global environment."))
+    stop(glue::glue_safe("`{x}` object not found in the global environment."))
   }
   return(out)
 }

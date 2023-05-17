@@ -60,8 +60,9 @@ zoom_get_name <- function(dfs, lang = NULL) {
 
   # Error check
   if (sum(!scales %in% scales_dictionary$scale) > 0) {
-    stop(glue::glue(
-      "One ore multiple of `{paste0(scales, collapse = ',  ')}` ",
+    scales_collapsed <- paste0(scales, collapse = ',  ')
+    stop(glue::glue_safe(
+      "One ore multiple of `{scales_collapsed}` ",
       "is not present in the `scales_dictionary$scale`."
     ))
   }
@@ -173,7 +174,7 @@ zoom_get_levels <- function(id, region, suffix_zoom_levels = NA) {
 
   # Error check
   if (!id %in% modules$id) {
-    stop(glue::glue("`{id}` is not a valid `id` in the `modules` dataframe."))
+    stop(glue::glue_safe("`{id}` is not a valid `id` in the `modules` dataframe."))
   }
 
   # Grab the possible regions for the module

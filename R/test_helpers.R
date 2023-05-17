@@ -13,6 +13,7 @@
 test_resources_creation <- function(additional_vars = c()) {
   vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
             "access_transit_nwd_30_cultural_artcentre", "climate_drought",
+            "afford_tenant_sc30_total_total_total_count_2021",
             "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
             additional_vars)
   variables <- qs::qread("data/variables.qs")
@@ -65,11 +66,28 @@ test_resources_creation <- function(additional_vars = c()) {
 #' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
 #' values. This argument is to appease RMD check.
 #'
-#' @return Assigns `df`, `vars`, `data` corresponding to a delta index ordinal
-#' variable to the global environment
+#' @return Assigns `df`, `vars`, `data`
 test_assign_delta_ind_ord <- function(pos = 1) {
   df <- "grid_grid250"
   vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"), df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "grid", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a ind ordinal delta_bivar vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns `df`, `vars`, `data`
+test_assign_delta_bivar_ind_ord <- function(pos = 1) {
+  df <- "grid_grid250"
+  vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"),
+                     c("housing_rent_2016", "housing_rent_2021"), df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -120,7 +138,7 @@ test_assign_bivar_ind_ord <- function(pos = 1) {
 #' @return Assigns a constructed `df`, `vars`, `data` in the global environment
 test_assign_q5_avg <- function(pos = 1) {
   df <- "city_CSD"
-  vars <- vars_build("access_foot_20_food_grocery", df = df)
+  vars <- vars_build("access_foot_20_food_grocery_2023", df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -137,7 +155,7 @@ test_assign_q5_avg <- function(pos = 1) {
 #' @return Assigns a constructed `df`, `vars`, `data` in the global environment
 test_assign_bivar_avg <- function(pos = 1) {
   df <- "city_CSD"
-  vars <- vars_build("access_foot_20_food_grocery", "housing_tenant_2021", df = df)
+  vars <- vars_build("access_foot_20_food_grocery_2023", "housing_tenant_2021", df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -226,6 +244,41 @@ test_assign_delta_count <- function(pos = 1) {
   vars <- vars_build(c("afford_tenant_sc30_total_total_total_count_2016",
                        "afford_tenant_sc30_total_total_total_count_2021"),
                      df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a dollar q5 vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns `df`, `vars`, `data` corresponding to a delta index ordinal
+#' variable to the global environment
+test_assign_q5_dollar <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("housing_rent_2021", df = df)
+  data <- data_get(vars = vars, df = df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", "city", envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+}
+
+#' Assign a dollar bivar vars/data to the global environment
+#'
+#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
+#' values. This argument is to appease RMD check.
+#'
+#' @return Assigns `df`, `vars`, `data`
+test_assign_bivar_dollar <- function(pos = 1) {
+  df <- "city_CSD"
+  vars <- vars_build("housing_rent_2021", "canale_2021", df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))

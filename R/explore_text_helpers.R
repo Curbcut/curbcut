@@ -14,9 +14,11 @@
 #' \code{\link{update_df}}.
 #' @param switch_DA <`logical`> Is the `df` part of the scales that should be
 #' switched as DAs instead.
+#' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
+#' for no translation.
 #'
 #' @return A list containing multiple texts used for the explore text panel.
-explore_context <- function(region, select_id, df, switch_DA) {
+explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   region_df <- regions_dictionary[regions_dictionary$region == region, ]
@@ -24,7 +26,7 @@ explore_context <- function(region, select_id, df, switch_DA) {
   # Prepare a return when there is no selection
   region_only_return <- \(region_df) {
     # Grab the region text
-    to_compare <- region_df$to_compare
+    to_compare <- cc_t(region_df$to_compare, lang = lang)
 
     # Return as a sentence
     return(list(p_start = to_compare))
@@ -47,9 +49,9 @@ explore_context <- function(region, select_id, df, switch_DA) {
     # Get the place heading and glue it
     dat <- get_from_globalenv(df)
     dat <- dat[dat$ID == select_id, ]
-    name_2 <- dat$name_2
     name <- dat$name
-    heading <- glue::glue(scale$place_heading)
+    name_2 <- cc_t(dat$name_2, lang = lang)
+    heading <- cc_t(scale$place_heading, lang = lang)
     treated_df <- df
   }
 
@@ -68,8 +70,9 @@ explore_context <- function(region, select_id, df, switch_DA) {
     }
 
     # Get the heading
-    name <- sprintf("around %s", bs$name)
-    heading <- sprintf("Dissemination area around %s", scale$place_heading)
+    name <- sprintf(cc_t("around %s", lang = lang), bs$name)
+    heading <- sprintf(cc_t("Dissemination area around %s", lang = lang),
+                       cc_t(scale$place_heading, lang = lang))
 
     # Switch the select_id, to be able to use the data values of the `DA`
     select_id <- bs$DA_ID
@@ -88,11 +91,11 @@ explore_context <- function(region, select_id, df, switch_DA) {
   # Return
   return(list(
     heading = heading,
-    p_start = cc_t("in {p_start}"),
-    name = cc_t("in {name}"),
-    to_compare_determ = region_df$to_compare_determ,
-    to_compare_short = region_df$to_compare_short,
-    scale_plur = scale$plur,
+    p_start = cc_t("in {p_start}", lang = lang),
+    name = cc_t("in {name}", lang = lang),
+    to_compare_determ = cc_t(region_df$to_compare_determ, lang = lang),
+    to_compare_short = cc_t(region_df$to_compare_short, lang = lang),
+    scale_plur = cc_t(scale$plur, lang = lang),
     select_id = select_id,
     treated_df = treated_df
   ))
@@ -105,9 +108,11 @@ explore_context <- function(region, select_id, df, switch_DA) {
 #'
 #' @param var <`character`> The variable name for which the parent title needs
 #' to be retrieved.
+#' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
+#' for no translation.
 #'
 #' @return The title of the parent variable in lowercase.
-explore_text_parent_title <- function(var) {
+explore_text_parent_title <- function(var, lang = NULL) {
   # Get the parent_vec of the current variable
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
@@ -116,12 +121,12 @@ explore_text_parent_title <- function(var) {
   variables <- get_from_globalenv("variables")
   if (!parent_string %in% variables$var_code) {
     if (parent_string == "population") return("individuals")
-    return(parent_string)
+    return(cc_t(parent_string, lang = lang))
   }
 
   parent_string <- var_get_info(
     var = parent_string, what = "var_title",
-    check_year = FALSE
+    check_year = FALSE, translate = TRUE, lang = lang
   )
 
   # To lowercase
@@ -478,8 +483,8 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data,
                                                          lang = NULL, ...) {
   # Correlation
   corr <- stats::cor(data$var_left, data$var_right, use = "complete.obs")
-  corr_string <- sprintf("Pearson's r: %s", round(corr, digits = 2))
-  corr_string <- cc_t(corr_string, lang = lang)
+  corr_string <- sprintf(cc_t("Pearson's r: %s", lang = lang),
+                         round(corr, digits = 2))
 
   return(list(
     corr = corr,
@@ -495,8 +500,8 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
   corr <- stats::cor(data$var_left, data$var_right,
     use = "complete.obs", method = "spearman"
   )
-  corr_string <- sprintf("Spearman's rho: %s", round(corr, digits = 2))
-  corr_string <- cc_t(corr_string, lang = lang)
+  corr_string <- sprintf(cc_t("Spearman's rho: %s", lang = lang),
+                         round(corr, digits = 2))
 
   return(list(
     corr = corr,

@@ -199,9 +199,191 @@ add_row(en = "Population",
   add_row(en = paste0("Displayed data for <b>{var_right_title}</b> is for the ",
                       "closest available year <b>({right_year})</b>."),
           fr = paste0("Les données affichées pour <b>{var_right_title}</b> ",
-                      "correspondent à l'année la plus proche <b>({right_year})</b>."))
+                      "correspondent à l'année la plus proche <b>({right_year})</b>.")) |>
+
+
+# Explore panel -----------------------------------------------------------
+
+# Context and q5
+add_row(en = "This is %s for %s",
+        fr = "C'est %s pour %s") |>
+  add_row(en = "%s %s is higher than in %s of other %s %s",
+          fr = "%s %s est plus élevé que dans %s des autres %s %s") |>
+  add_row(en = "%s <i>(Data from %s.)</i>",
+          fr = "%s <i>(Données de %s.)</i>") |>
+  add_row(en = "around %s",
+          fr = "autour du %s") |>
+  add_row(en = "Dissemination area around %s",
+          fr = "Aire de diffusion autour du %s") |>
+  add_row(en = "in {p_start}",
+          fr = "dans {p_start}") |>
+  add_row(en = "in {name}",
+          fr = "dans {name}") |>
+  add_row(en = "{name_2} of {name}",
+          fr = "{name_2} {name}") |>
+  add_row(en = "we currently don't have information regarding %s",
+          fr = "nous n'avons présentement pas d'informations concernant %s") |>
+  add_row(en = "`%s` to `%s`",
+          fr = "`%s` à `%s`") |>
+
+  add_row(en = "a higher-than-average",
+          fr = "un niveau plus élevé que la moyenne en matière de") |>
+  add_row(en = "%s is %s",
+          fr = "%s est %s") |>
+
+
+# bivar -------------------------------------------------------------------
+
+  add_row(en = "Pearson's r: %s",
+          fr = "r de Pearson : %s") |>
+  add_row(en = "Spearman's rho: %s",
+          fr = "rho de Spearman : %s") |>
+  add_row(en = "%s and %s",
+          fr = "%s et %s") |>
+  add_row(en = "positive",
+          fr = "positive") |>
+  add_row(en = "negative",
+          fr = "négative") |>
+  add_row(en = "%s %s correlation",
+          fr = "corrélation %s et %s") |>
+  add_row(en = "almost always have",
+          fr = "ont presque toujours") |>
+  add_row(en = "tend to have",
+          fr = "tendent à avoir") |>
+  add_row(en = "often have _X_, although with many exceptions",
+          fr = "ont souvent _X_, bien qu'à de nombreuses exceptions près") |>
+  add_row(en = "strong",
+          fr = "forte") |>
+  add_row(en = "moderate",
+          fr = "modérée") |>
+  add_row(en = "weak",
+          fr = "faible") |>
+  add_row(en = "effectively no relationship",
+          fr = "aucune relation effective") |>
+  add_row(en = "effectively no correlation",
+          fr = "pas de corrélation effective") |>
+  add_row(en = "higher",
+          fr = "un niveau plus élevé de") |>
+  add_row(en = "lower",
+          fr = "un niveau plus bas de") |>
+  add_row(en = "a higher",
+          fr = "un niveau plus élevé de") |>
+  add_row(en = "a lower",
+          fr = "un niveau plus bas de") |>
+  add_row(en = "%s, %s with %s %s %s.",
+          fr = "%s, %s avec %s %s %s.") |>
+  add_row(en = "%s, %s with %s %s %s %s %s.",
+          fr = "%s, %s avec %s %s %s %s %s.") |>
+  add_row(en = "There is a %s (%s) between these two variables.",
+          fr = "Il existe une %s (%s) entre ces deux variables.") |>
+  add_row(en = "<p><b>STRONG CORRELATION</b>%s",
+          fr = "<p><b>FORTE CORRÉLATION</b>%s") |>
+  add_row(en = "%s<p>%s, %s and %s.",
+          fr = "%s<p>%s, %s et %s.") |>
+  add_row(en = "%s is higher than in %s of other %s",
+          fr = "%s est plus élevé que dans %s des autres %s") |>
+  add_row(en = "which is %s for %s",
+          fr = "ce qui est %s pour %s") |>
+  add_row(en = "By contrast",
+          fr = "En revanche") |>
+  add_row(en = "Similarly",
+          fr = "De même") |>
+  add_row(en = "%s, there is %s (%s) between %s and %s in %s.",
+          fr = "%s, il existe une %s (%s) entre %s et %s en %s.") |>
+
+
+# Delta -------------------------------------------------------------------
+
+
+  add_row(en = "%s percentage points (%sx)",
+          fr = "%s points de pourcentage (%sx)") |>
+  add_row(en = "This number",
+          fr = "Ce nombre") |>
+  add_row(en = "increased",
+          fr = "augmenté") |>
+  add_row(en = "decrease",
+          fr = "diminué") |>
+  add_row(en = "%s, %s changed from %s in %s to %s in %s.",
+          fr = "%s, %s a changé de %s en %s à %s en %s.") |>
+  add_row(en = "%s has %s by %s between these years.",
+          fr = "%s a %s de %s entre ces deux années.") |>
+  add_row(en = "%s, %s has remained %s between %s and %s.",
+          fr = "%s, %s est resté de %s entre %s et %s.") |>
+  add_row(en = "the percentage of %s that %s",
+          fr = "le pourcentage de %s qui %s") |>
+  add_row(en = "increase",
+          fr = "augmentation") |>
+  add_row(en = "decrease",
+          fr = "diminution") |>
+  add_row(en = "exceptionally small",
+          fr = "exceptionnellement faible") |>
+  add_row(en = "unusually small",
+          fr = "très faible") |>
+  add_row(en = "just about average",
+          fr = "à peu près dans la moyenne") |>
+  add_row(en = "unusually large",
+          fr = "très forte") |>
+  add_row(en = "exceptionnally large",
+          fr = "exceptionnellement forte") |>
+  add_row(en = "The slight",
+          fr = "La légère") |>
+  add_row(en = "This",
+          fr = "Cette") |>
+  add_row(en = "%s %s is %s for %s.",
+          fr = "%s %s est %s pour %s.") |>
+  add_row(en = "The change in %s %s between %s and %s is larger than in %s of other %s between the same years.",
+          fr = "La variation de la/du %s entre %s et %s est plus élevé que dans %s des autres %s entre les mêmes années.") |>
+
+
+  # Delta bivar -------------------------------------------------------------
+
+add_row(en = "%s from %s to %s, there is %s (%s) between the change in %s and the change in %s in %s.",
+        fr = "%s de %s à %s, il n'existe %s (%s) entre la variation dans %s et la variation dans %s dans %s.") |>
+  add_row(en = " change</b>",
+          fr = " variation</b>") |>
+  add_row(en = "%s in %s",
+          fr = "%s dans %s") |>
+  add_row(en = "%s from %s to %s, %s with %s in %s %s.",
+          fr = "%s de %s à %s, %s avec %s dans %s %s.") |>
+  add_row(en = "%s from %s to %s, %s with %s in %s %s have had %s in %s.",
+          fr = "%s de %s à %s, %s avec %s dans %s %s %s dams %s.") |>
+  add_row(en = "There is a %s (%s) between the change in these two variables between these years.",
+          fr = "Il existe une %s (%s) entre l'évolution de ces deux variables entre ces années.") |>
+  add_row(en = "%s<p>%s, %s changed from %s in %s to %s in %s.",
+          fr = "%s<p>%s, %s est passé de %s en %s à %s en %s.") |>
+  add_row(en = "%s %s changed from %s in %s to %s in %s.",
+          fr = "%s %s est passé de %s en %s à %s en %s.") |>
+  add_row(en = "an exceptionally small change",
+          fr = "un changement exceptionnellement faible") |>
+  add_row(en = "an unusually small change",
+          fr = "un changement très faible") |>
+  add_row(en = "a just about average change",
+          fr = "un changement à peu près dans la moyenne") |>
+  add_row(en = "an unusually large change",
+          fr = "un changement très fort") |>
+  add_row(en = "an exceptionnally large change",
+          fr = "un changement exceptionnellement fort") |>
+  add_row(en = "The change in %s %s from %s to %s is larger than %s other %s, which is %s for %s.",
+          fr = "Le changement dans %s %s de %s à %s est plus élevé que dans %s des autres %s, ce qui est %s pour %s.") |>
+  add_row(en = "%s, the change in %s between the same years is larger than %s of other %s, which is %s for %s.",
+          fr = "%s, le changement dans %s entre ces deux mêmes années est plus élevés que %s des autres %s, ce qui est %s pour %s.") |>
+  add_row(en = "larger change",
+          fr = "une variation plus élevée") |>
+  add_row(en = "smaller change",
+          fr = "une variation plus faible") |>
+  add_row(en = "a larger change",
+          fr = "une variation plus élevée") |>
+  add_row(en = "a smaller change",
+          fr = "une variation plus faible") |>
+  add_row(en = "",
+          fr = "") |>
+  add_row(en = "",
+          fr = "") |>
+  add_row(en = "",
+          fr = "") |>
+  add_row(en = "",
+          fr = "")
 
 
 usethis::use_data(cc_translation_df, overwrite = TRUE)
-
 

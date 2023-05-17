@@ -4,7 +4,15 @@
 \alias{explore_text_values_q5.dollar}
 \title{Generate text for the given variables and region - q5 version using dollar}
 \usage{
-\method{explore_text_values_q5}{dollar}(var, region, data, select_id, col = "var_left", ...)
+\method{explore_text_values_q5}{dollar}(
+  var,
+  region,
+  data,
+  select_id,
+  col = "var_left",
+  lang = lang,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the text needs to be
@@ -21,6 +29,9 @@ Usually equivalent of \code{r$region()}.}
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{lang}{<\code{character}> A string indicating the language in which to
+translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{...}{Additional arguments passed to the function.}
 }

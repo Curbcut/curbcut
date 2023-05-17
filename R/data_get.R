@@ -24,7 +24,7 @@ data_get_sql <- function(var, df, select = "*") {
   # Grab connection from the .GlobalEnv
   conn <- paste0(df, "_conn")
   if (is.null(get0(conn, envir = .GlobalEnv))) {
-    stop(glue::glue(
+    stop(glue::glue_safe(
       "Connection to the sqlite database `{conn}` does not ",
       "exist in the global environment."
     ))
@@ -33,7 +33,7 @@ data_get_sql <- function(var, df, select = "*") {
   # Get from the sqlite connection
   do.call(DBI::dbGetQuery, list(
     as.name(conn),
-    glue::glue("SELECT {select} FROM {var} ORDER BY ID")
+    glue::glue_safe("SELECT {select} FROM {var} ORDER BY ID")
   ))
 }
 
@@ -177,7 +177,7 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...
 
   # Error check before binding
   if (!identical(data$ID, vr$ID)) {
-    stop(glue::glue(
+    stop(glue::glue_safe(
       "The `ID` vector from the `{var_left}` table is not ",
       "identical to the `ID` vector in the `{var_right}` table in ",
       "the sqlite `{df}` connection. Tables can't be binded."

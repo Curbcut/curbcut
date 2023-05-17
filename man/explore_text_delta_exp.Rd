@@ -34,6 +34,7 @@ explore_text_delta_exp(
   left_right = "left",
   df,
   data,
+  lang,
   ...
 )
 }

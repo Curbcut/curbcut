@@ -43,7 +43,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
   # Deal with colours
   colours <- colours_get()
   if (!colours_table %in% names(colours)) {
-    stop(glue::glue(
+    stop(glue::glue_safe(
       "{colours_table} is not a table part of the `colours_dfs` ",
       "list."
     ))

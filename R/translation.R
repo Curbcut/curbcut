@@ -72,7 +72,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
 
   # Helper functions only used for translation
   cc_glue <- function(x) {
-    glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)
+    glue::glue_safe(x, .na = character(1), .null = character(1), .envir = .envir)
   }
   return_raw <- function(x) {
     if (is.list(x)) {

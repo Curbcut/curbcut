@@ -60,7 +60,7 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
   variables <- get_from_globalenv("variables")
 
   if (!what %in% names(variables)) {
-    stop(glue::glue("`{what}` is not a column of the `variables` table."))
+    stop(glue::glue_safe("`{what}` is not a column of the `variables` table."))
   }
 
   subset_vector <- if (check_year) {
@@ -68,7 +68,7 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 
     # If the latter is not present in the `variables` table
     if (sum(sub) == 0) {
-      stop(glue::glue(
+      stop(glue::glue_safe(
         "`{var_remove_time(var)}` is not a variable code in the ",
         "`variables` table."
       ))
@@ -80,7 +80,7 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 
     # If the latter is not present in the `variables` table
     if (length(sub) == 0) {
-      stop(glue::glue(
+      stop(glue::glue_safe(
         "`{var}` is not a variable code in the ",
         "`variables` table."
       ))
@@ -89,7 +89,7 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
   }
 
   out <- variables[[what]][subset_vector]
-  if (translate) out <- cc_t(lang = lang, out)
+  if (translate) out <- cc_t(out, lang = lang)
 
   return(out)
 }

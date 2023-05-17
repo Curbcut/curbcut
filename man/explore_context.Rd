@@ -4,7 +4,7 @@
 \alias{explore_context}
 \title{Get region text info}
 \usage{
-explore_context(region, select_id, df, switch_DA)
+explore_context(region, select_id, df, switch_DA, lang = NULL)
 }
 \arguments{
 \item{region}{<\code{character}> String specifying the code of the region to
@@ -20,6 +20,9 @@ scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 
 \item{switch_DA}{<\code{logical}> Is the \code{df} part of the scales that should be
 switched as DAs instead.}
+
+\item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
+for no translation.}
 }
 \value{
 A list containing multiple texts used for the explore text panel.

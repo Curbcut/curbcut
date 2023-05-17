@@ -4,7 +4,16 @@
 \alias{explore_text_values_q5.ind}
 \title{Generate text for the given variables and region - Q5 version using indices}
 \usage{
-\method{explore_text_values_q5}{ind}(var, region, select_id, data, df, col = "var_left", ...)
+\method{explore_text_values_q5}{ind}(
+  var,
+  region,
+  select_id,
+  data,
+  df,
+  col = "var_left",
+  lang = lang,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable name for which the text needs to be
@@ -25,6 +34,9 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{lang}{<\code{character}> A string indicating the language in which to
+translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{...}{Additional arguments passed to the function.}
 }
