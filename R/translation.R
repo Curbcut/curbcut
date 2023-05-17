@@ -69,6 +69,7 @@ cc_t_list <- function(x, translation_df) {
 #'
 #' @export
 cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
+
   # Helper functions only used for translation
   cc_glue <- function(x) {
     glue::glue(x, .na = character(1), .null = character(1), .envir = .envir)
@@ -79,7 +80,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     }
     cc_glue(x)
   }
-  french_translation <- function(x) {
+  french_translation <- function(x, translation_df) {
     # French
     if (is.list(x)) {
       return(cc_t_list(x, translation_df))
@@ -111,11 +112,6 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   x <- c(...)
   if (!is.list(x)) x <- paste0(..., collapse = "")
 
-  # # Return input if there lang is NULL
-  # if (is.null(lang)) {
-  #   return(return_raw(x))
-  # }
-
   # Grab translation_df and return input if missing
   translation_df <- get0("translation_df", .GlobalEnv)
   if (is.null(translation_df)) {
@@ -135,7 +131,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     if (is.null(lang) || lang == "en") {
       return(return_raw(x))
     } else {
-      return(french_translation(x))
+      return(french_translation(x, translation_df))
     }
   }
 
@@ -146,7 +142,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
         shiny::span(class = "lang-en", x),
         shiny::span(class = "lang-fr", {
           translated <- translation_df[translation_df$en == x, ]$fr
-          if (length(translated) != 0 && !is.na(translated)) {
+          if (length(translated) != 0 & !is.na(translated)) {
             translated
           } else {
             warning("No translation text found for `", x, "`.",
@@ -169,5 +165,5 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   }
 
   # Return french
-  return(french_translation(x))
+  return(french_translation(x, translation_df))
 }
