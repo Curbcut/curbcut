@@ -4,4 +4,4 @@
 ^data-raw$
 ^\.github$
 ^inst/tests$
-^data/translation_df.rda$
+^data/cc_translation_df.rda$

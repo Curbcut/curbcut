@@ -2,7 +2,7 @@
 library(tibble)
 
 
-translation_df <-
+cc_translation_df <-
 
 # General UI --------------------------------------------------------------
 
@@ -202,6 +202,6 @@ add_row(en = "Population",
                       "correspondent à l'année la plus proche <b>({right_year})</b>."))
 
 
-usethis::use_data(translation_df, overwrite = TRUE)
+usethis::use_data(cc_translation_df, overwrite = TRUE)
 
 

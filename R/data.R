@@ -20,10 +20,10 @@
 
 #' Translation dataframe (of front-facing Curbcut strings)
 #'
-#' @format ## `translation_df`
+#' @format ## `cc_translation_df`
 #' A data.frame:
 #' \describe{
 #'   \item{en}{The english version of all the front-facing strings present in the Curbcut package}
 #'   \item{fr}{The french translation of these strings}
 #' }
-"translation_df"
+"cc_translation_df"
