@@ -12,7 +12,8 @@
 #' @export
 test_resources_creation <- function(additional_vars = c()) {
   vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
-            "climate_drought", "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
+            "access_transit_nwd_30_cultural_artcentre", "climate_drought",
+            "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
             additional_vars)
   variables <- qs::qread("data/variables.qs")
   p_v <- variables$parent_vec[variables$var_code %in% vars]
@@ -20,7 +21,6 @@ test_resources_creation <- function(additional_vars = c()) {
   vars <- c(p_v, vars)
   vars <- unique(vars)
   vars_pth <- paste0("\\/", vars)
-
 
   # Create the destination folder if it doesn't exist
   if (!dir.exists("resources")) {

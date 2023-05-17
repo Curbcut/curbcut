@@ -198,6 +198,11 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   groups <- tb$group_diff[tb$group_name == group_name]
   var_codes <- tb$var_code[tb$group_name == group_name]
 
+  # Keep only the groups that are the same length as the picked values
+  if (length(groups) == 0) return(previous_var)
+  groups <- groups[sapply(groups, \(x) length(x) == length(picker_vals))]
+  if (all(lengths(groups) == 0)) return(previous_var)
+
   # Which
   ordered_val_fit <- mapply(\(val, i) {
     sapply(groups, \(x) {

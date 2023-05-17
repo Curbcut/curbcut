@@ -336,7 +336,6 @@ get_dist <- function(x, y) {
 #' the app from crashing. If the tile is missing and it's a _building tile,
 #' grab the first region of the regions_dictionary and show buildings for those.
 #'
-#' @importFrom urltools
 #' @export
 tilejson <- function(mapbox_username, tileset_prefix, tile) {
   # urltools is necessary for tile_json use
