@@ -102,18 +102,12 @@ add_row(en = paste0("Curbcut is designed as a series of pages that explore ",
                       "il vous suffit de cliquer sur ce bouton.")) |>
   add_row(en = "Title text",
           fr = "Intitulé") |>
-  add_row(en = "Map",
-          fr = "Carte") |>
   add_row(en = "Left-hand widgets",
           fr = "Éléments (widgets)") |>
-  add_row(en = "Legend",
-          fr = "Légende") |>
   add_row(en = "Zoom",
           fr = "Zoom") |>
   add_row(en = "Compare menu",
           fr = "Menu de comparaison") |>
-  add_row(en = "Explore",
-          fr = "Explorez") |>
   add_row(en = "View switch",
           fr = "Changer de vue") |>
   add_row(en = "Tutorial",
@@ -301,7 +295,7 @@ add_row(en = "This is %s for %s",
           fr = "Ce nombre") |>
   add_row(en = "increased",
           fr = "augmenté") |>
-  add_row(en = "decrease",
+  add_row(en = "decreased",
           fr = "diminué") |>
   add_row(en = "%s, %s changed from %s in %s to %s in %s.",
           fr = "%s, %s a changé de %s en %s à %s en %s.") |>
@@ -376,6 +370,14 @@ add_row(en = "%s from %s to %s, there is %s (%s) between the change in %s and th
   add_row(en = "a smaller change",
           fr = "une variation plus faible")
 
+# Check test
+en_length <- length(unique(cc_translation_df$en))
+if (en_length != nrow(cc_translation_df)) {
+  cts <- table(cc_translation_df$en)
+  dplc <- names(cts)[cts > 1]
+  stop(paste0("`", dplc, "`is an english dupplicate in `cc_translation_df`"))
+}
 
+# Save
 usethis::use_data(cc_translation_df, overwrite = TRUE)
 

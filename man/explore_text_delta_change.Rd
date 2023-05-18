@@ -10,13 +10,13 @@
 \usage{
 explore_text_delta_change(var, exp_vals, ...)
 
-\method{explore_text_delta_change}{pct}(var, exp_vals, ...)
+\method{explore_text_delta_change}{pct}(var, exp_vals, lang = NULL, ...)
 
 \method{explore_text_delta_change}{dollar}(var, exp_vals, ...)
 
 \method{explore_text_delta_change}{count}(var, exp_vals, ...)
 
-\method{explore_text_delta_change}{ind}(var, exp_vals, ...)
+\method{explore_text_delta_change}{ind}(var, exp_vals, lang, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text and values need
@@ -26,6 +26,8 @@ to be generated. Usually \code{vars$var_left}.}
 \code{\link{explore_text_delta_exp}}}
 
 \item{...}{Additional arguments passed to the method functions.}
+
+\item{lang}{<\code{character}> Active language. Defaults to NULL for no translation}
 }
 \value{
 A character string with the formatted delta change text.
