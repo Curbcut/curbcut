@@ -59,6 +59,9 @@ cc_t_list <- function(x, translation_df) {
 #' \code{\link[glue]{glue}}. Defaults to `parent.frame()`
 #' @param lang <`character`> Language to use for translation. Must be one of
 #' en' or 'fr'. Defaults to NULL which is no translation.
+#' @param force_span <`logical`> If we should use the `UI` method of translation
+#' (two spans, lang-en and lang=fr always present). Necessary to use when using
+#' \code{\link[shiny]{instertUI}}.
 #'
 #' @return If running in a Shiny context (UI), then return spans in both languages.
 #' If in a Shiny context and in server side, returns translation depending on
@@ -68,7 +71,7 @@ cc_t_list <- function(x, translation_df) {
 #' objects
 #'
 #' @export
-cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
+cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) {
 
   # Helper functions only used for translation
   cc_glue <- function(x) {
@@ -140,7 +143,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   }
 
   # If not in a reactive shiny context (is in UI), return 2 spans.
-  if (is.null(shiny::getDefaultReactiveDomain())) {
+  if (is.null(shiny::getDefaultReactiveDomain()) || force_span) {
     return(
       shiny::tagList(
         shiny::span(class = "lang-en", x),

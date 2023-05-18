@@ -157,7 +157,8 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
   parent_string <- explore_text_parent_title(var, lang = lang)
 
   # Grab the q5 explanation
-  exp <- var_get_info(var = var, what = "exp_q5")
+  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
+                      lang = lang)
 
   # Grab the region values
   region_values <- explore_text_region_val_df(

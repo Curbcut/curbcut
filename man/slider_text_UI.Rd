@@ -7,7 +7,7 @@
 slider_text_UI(
   id,
   slider_text_id = "slt",
-  label = "Select a year",
+  label = cc_t("Select a year"),
   choices,
   selected = NULL,
   force_edges = TRUE,

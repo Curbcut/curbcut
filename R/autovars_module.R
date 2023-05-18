@@ -53,10 +53,12 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             double_value_ <- c(double_value_, max_)
             shiny::tagList(
               slider_UI(id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
-                        step = step_, label = cc_t("Select a year")),
+                        step = step_, label = cc_t("Select a year", force_span = TRUE)),
               slider_UI(id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
-                        step = step_, label = cc_t("Select two years"), value = double_value_),
-              checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates"), value = FALSE),
+                        step = step_, label = cc_t("Select two years", force_span = TRUE),
+                        value = double_value_),
+              checkbox_UI(id = widget_ns(id), label = cc_t("Compare dates", force_span = TRUE),
+                          value = FALSE),
               if (length(common_widgets()$widgets) > 1) shiny::hr(id = widget_ns("time_hr"))
             )
           }
@@ -165,7 +167,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                         curbcut::picker_UI(id = widget_ns(id),
                                            picker_id = "mnd",
                                            var_list = autovars_groupnames(id = id),
-                                           label = main_dropdown_title)
+                                           label = cc_t(main_dropdown_title, force_span = TRUE))
                       })
     })
 
@@ -223,7 +225,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               curbcut::picker_UI(id = widget_ns(id),
                                  picker_id = sprintf("p%s", l),
                                  var_list = w,
-                                 label = n)
+                                 label = cc_t(n, force_span = TRUE))
             }, widgets(), seq_along(widgets()) + length(common_widgets()$widgets),
             names(widgets()), SIMPLIFY = FALSE))
           )

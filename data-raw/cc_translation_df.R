@@ -22,6 +22,8 @@ tibble(en = character(),
           fr = "Le saviez-vous?") |>
   add_row(en = "Explore",
           fr = "Explorez") |>
+  add_row(en = "Auto-zoom",
+          fr = "Auto-zoom") |>
   add_row(en = "Curbcut does not currently support mobile phones. Please visit from a computer.",
           fr = "Curbcut ne supporte pas actuellement les téléphones mobiles. Veuillez visiter le site à partir d'un ordinateur.") |>
 

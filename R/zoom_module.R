@@ -118,7 +118,7 @@ zoom_UI <- function(id, zoom_levels) {
         class = "sus-sidebar-control",
         checkbox_UI(
           id = shiny::NS(id, "zoom_auto"),
-          label = "Auto-zoom",
+          label = cc_t("Auto-zoom"),
           value = TRUE
         )
       ),

@@ -4,7 +4,7 @@
 \alias{cc_t}
 \title{Translate an object between English and French}
 \usage{
-cc_t(..., .envir = parent.frame(), lang = NULL)
+cc_t(..., .envir = parent.frame(), lang = NULL, force_span = FALSE)
 }
 \arguments{
 \item{...}{<\verb{character objects}> Any objects, including lists or atomic vectors}
@@ -15,6 +15,10 @@ cc_t(..., .envir = parent.frame(), lang = NULL)
 
 \item{lang}{<\code{character}> Language to use for translation. Must be one of
 en' or 'fr'. Defaults to NULL which is no translation.}
+
+\item{force_span}{<\code{logical}> If we should use the \code{UI} method of translation
+(two spans, lang-en and lang=fr always present). Necessary to use when using
+\code{\link[shiny]{instertUI}}.}
 }
 \value{
 If running in a Shiny context (UI), then return spans in both languages.
