@@ -32,6 +32,10 @@ use_curbcut_css <- function(lang_init = FALSE) {
       rel = "stylesheet", type = "text/css",
       href = "curbcut_css/place_explorer.css"
     )),
+    shiny::tags$head(shiny::tags$link(
+      rel = "stylesheet", type = "text/css",
+      href = "curbcut_css/tutorial.css"
+    )),
     if (lang_init) shiny::tags$body(class = "user-lang-fr")
   )
 }
