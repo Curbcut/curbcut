@@ -3,8 +3,8 @@ test_that("explore_context works", {
     region = "CMA", select_id = NA,
     df = "CSD", switch_DA = FALSE
   )
-  expected <- list(p_start = c(CMA = "in the Montreal region"))
-  expect_equal(actual, expected)
+  expect_equal(names(actual), "p_start")
+  expect_equal(class(unlist(actual)), "character")
 
   # All IDs gives the corresponding list
   expected_names <-

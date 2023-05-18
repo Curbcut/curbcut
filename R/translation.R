@@ -74,12 +74,20 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
   cc_glue <- function(x) {
     glue::glue_safe(x, .na = character(1), .null = character(1), .envir = .envir)
   }
+
   return_raw <- function(x) {
     if (is.list(x)) {
       return(x)
     }
     cc_glue(x)
   }
+
+  return_warning <- function(x) {
+    warning("No translation text found for `", x, "`.",
+            call. = FALSE)
+    cc_glue(x)
+  }
+
   french_translation <- function(x, translation_df) {
     # French
     if (is.list(x)) {
@@ -90,11 +98,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     translated <- translation_df$fr[translation_df$en == x]
     # In case there is no translations:
     if (length(translated) == 0 || is.na(translated)) {
-      return({
-        warning("No translation text found for `", x, "`.", call. = FALSE)
-        # x <- sub("<<.>>", "", x)
-        cc_glue(x)
-      })
+      return(return_warning(x))
     }
 
     # For vectors with names (such as used for x axis of some modules' graph)
@@ -140,17 +144,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL) {
     return(
       shiny::tagList(
         shiny::span(class = "lang-en", x),
-        shiny::span(class = "lang-fr", {
-          translated <- translation_df[translation_df$en == x, ]$fr
-          if (length(translated) != 0 & !is.na(translated)) {
-            translated
-          } else {
-            warning("No translation text found for `", x, "`.",
-              call. = FALSE
-            )
-            x
-          }
-        })
+        shiny::span(class = "lang-fr", french_translation(x, translation_df))
       )
     )
   }

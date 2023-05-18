@@ -374,15 +374,7 @@ add_row(en = "%s from %s to %s, there is %s (%s) between the change in %s and th
   add_row(en = "a larger change",
           fr = "une variation plus élevée") |>
   add_row(en = "a smaller change",
-          fr = "une variation plus faible") |>
-  add_row(en = "",
-          fr = "") |>
-  add_row(en = "",
-          fr = "") |>
-  add_row(en = "",
-          fr = "") |>
-  add_row(en = "",
-          fr = "")
+          fr = "une variation plus faible")
 
 
 usethis::use_data(cc_translation_df, overwrite = TRUE)
