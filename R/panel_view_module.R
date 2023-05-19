@@ -248,7 +248,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
         r[[id]]$select_id(new_id)
 
         # If there is a selection, update the central coordinates of the map
-        df_data <- get_from_globalenv(treated_df())
+        df_data <- grab_df_from_bslike(df = treated_df())
+        # Skip the zoom update if the 'centroid' is not in the df
+        if (!"centroid" %in% names(df_data)) return(NULL)
         coords <- df_data$centroid[df_data$ID == new_id][[1]]
         coords <- sapply(coords, round, digits = 2)
         rdeck::rdeck_proxy(

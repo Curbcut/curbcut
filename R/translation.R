@@ -56,12 +56,12 @@ cc_t_list <- function(x, translation_df) {
 #' @param ... <`character objects`> Any objects, including lists or atomic vectors
 #' @param .envir The parent environment for evaluating the expressions in
 #' \code{...}. Necessary to grab the correct value of variables handled by
-#' \code{\link[glue]{glue}}. Defaults to `parent.frame()`
+#' \code{\link[glue]{glue_safe}}. Defaults to `parent.frame()`
 #' @param lang <`character`> Language to use for translation. Must be one of
 #' en' or 'fr'. Defaults to NULL which is no translation.
 #' @param force_span <`logical`> If we should use the `UI` method of translation
 #' (two spans, lang-en and lang=fr always present). Necessary to use when using
-#' \code{\link[shiny]{instertUI}}.
+#' \code{\link[shiny]{insertUI}}.
 #'
 #' @return If running in a Shiny context (UI), then return spans in both languages.
 #' If in a Shiny context and in server side, returns translation depending on

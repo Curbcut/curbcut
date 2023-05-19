@@ -1,4 +1,10 @@
 test_that("bookmark_build_url works", {
+  translation_df <-
+    rbind(translation_df,
+          tibble::tibble(en = c("Borough/City", "Census tract", "Dissemination area"),
+                         fr = c("Arrondissement/ville", "Secteur de recensement", "Aire de diffusion")))
+  translation_df <- unique(translation_df)
+  assign("translation_df", translation_df, envir = .GlobalEnv)
   widgets <- list(
     `compare-ccpicker_var` = " ",
     `zoom_slider-ccslidertext_slt` = "Secteur de recensement",

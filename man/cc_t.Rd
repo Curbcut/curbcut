@@ -11,14 +11,14 @@ cc_t(..., .envir = parent.frame(), lang = NULL, force_span = FALSE)
 
 \item{.envir}{The parent environment for evaluating the expressions in
 \code{...}. Necessary to grab the correct value of variables handled by
-\code{\link[glue]{glue}}. Defaults to \code{parent.frame()}}
+\code{\link[glue]{glue_safe}}. Defaults to \code{parent.frame()}}
 
 \item{lang}{<\code{character}> Language to use for translation. Must be one of
 en' or 'fr'. Defaults to NULL which is no translation.}
 
 \item{force_span}{<\code{logical}> If we should use the \code{UI} method of translation
 (two spans, lang-en and lang=fr always present). Necessary to use when using
-\code{\link[shiny]{instertUI}}.}
+\code{\link[shiny]{insertUI}}.}
 }
 \value{
 If running in a Shiny context (UI), then return spans in both languages.

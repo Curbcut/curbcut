@@ -8,6 +8,8 @@ cc_translation_df <-
 
 tibble(en = character(),
        fr = character()) |>
+  add_row(en = "----",
+          fr = "----") |>
   add_row(en = "Select a year",
           fr = "Sélectionnez une année") |>
   add_row(en = "Select two years",
@@ -24,6 +26,8 @@ tibble(en = character(),
           fr = "Explorez") |>
   add_row(en = "Auto-zoom",
           fr = "Auto-zoom") |>
+  add_row(en = "No postal code found for `{address}`",
+          fr = "Pas de code postal trouvé pour `{address}`") |>
   add_row(en = "Curbcut does not currently support mobile phones. Please visit from a computer.",
           fr = "Curbcut ne supporte pas actuellement les téléphones mobiles. Veuillez visiter le site à partir d'un ordinateur.") |>
 

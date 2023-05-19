@@ -50,9 +50,11 @@ test_resources_creation <- function(additional_vars = c()) {
 
   variables <- variables[variables$var_code %in% vars, ]
 
-  other_files <- c("census_variables.qs", "city.qsm", "map_zoom_levels.qsm", "grid.qsm", "cmhc.qsm",
-                   "modules.qs", "postal_codes.qs", "regions_dictionary.qs", "scales_dictionary.qs",
-                   "stories.qsm", "translation_df.qs", "colours_dfs.qs")
+  other_files <- c("census_variables.qs", "city.qsm", "map_zoom_levels.qsm",
+                   "grid.qsm", "cmhc.qsm", "modules.qs", "postal_codes.qs",
+                   "regions_dictionary.qs", "scales_dictionary.qs", "stories.qsm",
+                   "translation_df.qs", "colours_dfs.qs", "building.sqlite",
+                   "grid100.sqlite")
 
   # Save the variables
   qs::qsave(variables, "resources/variables.qs")

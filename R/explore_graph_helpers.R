@@ -42,8 +42,7 @@ explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
 
   # In the case where the selected ID must be updated
   if (curbcut::is_scale_df(scales_as_DA, df) & !is.na(select_id)) {
-    dat <- get_from_globalenv(df)
-    select_id <- dat$DA_ID[dat$ID == select_id]
+   select_id <- grab_DA_ID_from_bslike(df = df, select_id = select_id)
   }
 
   # df treatment if it's in the scales as DA

@@ -47,8 +47,8 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # DA.
   if (!switch_DA) {
     # Get the place heading and glue it
-    dat <- get_from_globalenv(df)
-    dat <- dat[dat$ID == select_id, ]
+    dat <- grab_row_from_bslike(df = df, select_id = select_id,
+                                cols = c("name", "name_2"))
     name <- dat$name
     name_2 <- cc_t(dat$name_2, lang = lang)
     heading <- cc_t(scale$place_heading, lang = lang)
@@ -58,8 +58,8 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # Tweaked retrieval when the `df` is part of the scales to treat as DAs.
   if (switch_DA) {
     # Grab the DA ID and the address from the SQL database
-    dat <- get_from_globalenv(df)
-    bs <- dat[dat$ID == select_id, ]
+    bs <- grab_row_from_bslike(df = df, select_id = select_id,
+                               cols = c("name", "DA_ID"))
 
     # If the selection ID is not in the SQL database, return the region only text
     # with an empty NA. The text that will be showed is the basic one for the region.

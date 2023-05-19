@@ -40,7 +40,7 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   names(dat)[grepl("var_right", names(dat))] <- vars_$var_right
 
   # Bind the `df` data to the real data
-  df_dat <- get_from_globalenv(df)
+  df_dat <- grab_df_from_bslike(df)
   default_cols <- c("ID", "name", "name_2", "population", "households")
   default_cols <- names(df_dat)[names(df_dat) %in% default_cols]
   df_dat <- df_dat[default_cols]

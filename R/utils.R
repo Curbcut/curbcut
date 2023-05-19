@@ -470,3 +470,101 @@ remove_outliers_df <- function(df, cols) {
   return(out)
 }
 
+#' Grab DA_ID from a building-street-like dataframe (large!)
+#'
+#' This function fetches the DA_ID matching with the selected ID from a given
+#' dataframe `df` based on a provided `select_id`. It can also fetch the DA_ID
+#' from a connected database when the `df` is not found in the global environment
+#' but is identified as a scales_as_DA'. In such cases, it uses the established
+#' connection and fetches the DA_ID via a SQL query.
+#'
+#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' for DA_ID. The dataframe should be in the global environment, and if it isn't,
+#' there must be an established sqlite connection to it.
+#' @param select_id <`character`> A value representing the ID that needs to be
+#' selected in order to fetch the corresponding DA_ID.
+#'
+#' @return The DA_ID corresponding to the given `select_id`. If
+#' `select_id` is found in the `df` in the global environment, the corresponding
+#' DA_ID is returned. If `df` is a 'scales_as_DA' and not in the global
+#' environment, the function fetches DA_ID from the connected database.
+grab_DA_ID_from_bslike <- function(df, select_id) {
+  dat <- get0(df, envir = .GlobalEnv)
+  # If it's a 'scales_as_DA', and the `df` is not in the global environment,
+  # search for a connection.
+  if (is.null(dat)) {
+    scale <- gsub(".*_", "", df)
+    db_df <- sprintf("%s_conn", scale)
+    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", df, select_id)
+    out <- do.call("dbGetQuery", list(as.name(db_df), call))
+    out <- unname(unlist(out))
+  } else {
+    out <- dat$DA_ID[dat$ID == select_id]
+  }
+
+  return(out)
+}
+
+#' Grab row from a building-street-like dataframe (large!)
+#'
+#' This function fetches the row matching with the selected ID from a given
+#' dataframe `df` based on a provided `select_id`. It can also fetch the row
+#' from a connected database when the `df` is not found in the global environment
+#' but is identified as a scales_as_DA'. In such cases, it uses the established
+#' connection and fetches the row via a SQL query.
+#'
+#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' for row. The dataframe should be in the global environment, and if it isn't,
+#' there must be an established sqlite connection to it.
+#' @param select_id <`character`> A value representing the ID that needs to be
+#' selected in order to fetch the corresponding row.
+#' @param cols <`character vector`> Which columns to retrieve. Defaults to `'*'` for
+#' all columns.
+#'
+#' @return The row corresponding to the given `select_id`. If
+#' `select_id` is found in the `df` in the global environment, the corresponding
+#' row is returned. If `df` is a 'scales_as_DA' and not in the global
+#' environment, the function fetches row from the connected database.
+grab_row_from_bslike <- function(df, select_id, cols = "*") {
+  dat <- get0(df, envir = .GlobalEnv)
+  # If it's a 'scales_as_DA', and the `df` is not in the global environment,
+  # search for a connection.
+  if (is.null(dat)) {
+    scale <- gsub(".*_", "", df)
+    db_df <- sprintf("%s_conn", scale)
+    cols <- paste0(cols, collapse = ", ")
+    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, df, select_id)
+    out <- do.call("dbGetQuery", list(as.name(db_df), call))
+  } else {
+    out <- dat[dat$ID == select_id, ]
+  }
+
+  return(out)
+}
+
+#' Grab full dataframe from a building-street-like dataframe (large!)
+#'
+#' This function fetches the full dataframe matching with `df`. It can also fetch
+#' the full dataframe from a connected database when the `df` is not found in the
+#' global environment.
+#'
+#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' for full dataframe. The dataframe should be in the global environment, and if it isn't,
+#' there must be an established sqlite connection to it.
+#'
+#' @return The full datraframe corresponding to the given `df`. If
+#' `select_id` is found in the `df` in the global environment, the corresponding
+#' table is returned. If `df` is not in the global
+#' environment, the function fetches the dataframe from the connected database.
+grab_df_from_bslike <- function(df) {
+  dat <- get0(df, envir = .GlobalEnv)
+  if (!is.null(dat)) return(dat)
+
+  # If not in the global environment
+  scale <- gsub(".*_", "", df)
+  db_df <- sprintf("%s_conn", scale)
+  call <- sprintf("SELECT * FROM %s", df)
+  out <- do.call("dbGetQuery", list(as.name(db_df), call))
+
+  return(out)
+}
