@@ -119,28 +119,29 @@ place_explorer_server <- function(id, r,
     # Postal code search ------------------------------------------------------
 
     shiny::observeEvent(input$search_button, {
-      postal_c <-
-        tolower(input$address_searched) |>
-        s_extract_all("\\w|\\d") |>
-        paste(collapse = "")
+      postal_c <- tolower(input$address_searched)
+      postal_c <- s_extract_all("\\w|\\d", postal_c)
+      postal_c <- paste(postal_c, collapse = "")
 
-      postal_codes <- get_from_globalenv("postal_codes")
+      postal_codes <- curbcut:::get_from_globalenv("postal_codes")
       DA_id <- postal_codes$DA_ID[postal_codes$postal_code == postal_c]
 
       if (length(DA_id) == 0) {
+        address <- input$address_searched
         shiny::showNotification(
           cc_t(
             lang = r$lang(),
-            paste0("No postal code found for `{input$address_searched}`")
+            paste0("No postal code found for `{address}`")
           ),
           type = "error"
         )
       } else {
-        DA_table <- get_from_globalenv(paste0(r$region(), "_DA"))
+        DA_table <- curbcut:::get_from_globalenv(paste0(r$region(), "_DA"))
         if (is.null(DA_table)) {
           return(NULL)
         }
-        right_id <- DA_table[[paste0(r[[id]]$df(), "_ID")]][DA_table$ID == DA_id]
+        scale <- gsub(".*_", "", r[[id]]$df())
+        right_id <- DA_table[[paste0(scale, "_ID")]][DA_table$ID == DA_id]
         r[[id]]$select_id(right_id)
       }
     })
