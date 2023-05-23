@@ -153,8 +153,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         map_module = TRUE
       )} & extrude()
     })
+
     shiny::observeEvent(
-      extrude(),
+      extrude_final(),
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = id,
