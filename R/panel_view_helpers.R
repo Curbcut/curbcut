@@ -349,7 +349,8 @@ panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
   title_color <- colours$fill[colours$group == "3 - 1"]
 
   # Grab the necesary values for the text
-  explanation <- var_get_info(vars$var_left, what = "explanation")
+  explanation <- var_get_info(vars$var_left, what = "explanation",
+                              translate = TRUE, lang = lang)
 
   # Get the text for the single left variable
   out <- panel_view_prepare_text_helper(
@@ -386,13 +387,17 @@ panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
 
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(titles, \(x) {
-    explanation <- var_get_info(vars$var_left, what = "explanation")
+    explanation <- var_get_info(vars$var_left, what = "explanation",
+                                translate = TRUE, lang = lang)
 
     if (!grepl("_variation$", x)) {
-      return(var_get_info(vars$var_left, what = "explanation"))
+      return(var_get_info(vars$var_left, what = "explanation",
+                          translate = TRUE, lang = lang))
     }
-    explanation <- var_get_info(vars$var_left, what = "explanation_nodet")
-    sprintf("the change in %s between %s and %s", explanation, time[1], time[2])
+    explanation <- var_get_info(vars$var_left, what = "explanation_nodet",
+                                translate = TRUE, lang = lang)
+    sprintf(cc_t("the change in %s between %s and %s", lang = lang),
+            explanation, time[1], time[2])
   })
 
   # Title colour
@@ -443,7 +448,8 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
   title_colours <- c(left_color, right_color)
 
   # Grab the necesary values for the text
-  explanations <- lapply(var_codes, var_get_info, what = "explanation")
+  explanations <- lapply(var_codes, var_get_info, what = "explanation",
+                         translate = TRUE, lang = lang)
 
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color) {
@@ -500,13 +506,16 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(var_codes, \(x) {
     if (!grepl("_variation$", x)) {
-      return(var_get_info(x, what = "explanation"))
+      return(var_get_info(x, what = "explanation",
+                          translate = TRUE, lang = lang))
     }
 
     code <- gsub("_variation", "", x)
-    exp <- var_get_info(code, what = "explanation")
+    exp <- var_get_info(code, what = "explanation",
+                        translate = TRUE, lang = lang)
     times <- var_codes[grepl(code, var_codes)][1:2] |> var_get_time()
-    sprintf("the change in %s between %s and %s", exp, times[1], times[2])
+    sprintf(cc_t("the change in %s between %s and %s", lang = lang),
+            exp, times[1], times[2])
   })
 
   # Get the text for the single left variable
@@ -588,12 +597,12 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
   # Create the text
   text <-
     sprintf(
-      paste0(
+      cc_t(
         "<p>The minimum and maximum values for %s are respectively %s and %s. ",
         "The data points have an average value (mean) of %s. Additionally, ",
         "the standard deviation, which measures the dispersion or spread ",
         "around this mean, is %s. (Approximately two thirds of data points ",
-        "lie within one standard deviation of the mean.)</p>"
+        "lie within one standard deviation of the mean.)</p>", lang = lang
       ),
       explanation, values[[1]], values[[2]], values[[3]], values[[4]]
     )
@@ -608,13 +617,13 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
       if (source == "Canadian census") {
         date <- var_get_time(var)
         s <- sprintf(
-          paste0(
+          cc_t(
             "The data comes from the %s Canadian census and has ",
             "been retrieved from <a href = 'https://censusma",
             "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
             "using the R <a href = 'https://cran.r-project.org",
             "/web/packages/cancensus/', target = '_blank'>canc",
-            "ensus</a> package."
+            "ensus</a> package.", lang = lang
           ),
           date
         )
@@ -632,19 +641,21 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
           collapse = ", "
         )
         v <- if (length(info$vec) > 1) "vectors and their" else "vector and its"
-        source_vec <- sprintf("%s %s", source_vec, v)
+        v <- cc_t(v, lang = lang)
+        source_vec <- cc_t("{source_vec} {v}", lang = lang)
 
         total_vec <- paste0("<b>", info$parent_vec, "</b> (", info$parent_vec_label, ")",
           collapse = ", "
         )
         v <- if (length(info$parent_vec) > 1) "parent vectors" else "parent vector"
+        v <- cc_t(v, lang = lang)
         total_vec <- sprintf("%s %s", v, total_vec)
         e <- sprintf(
-          paste0(
+          cc_t(
             "To calculate %s, we extract the %s corresponding ",
             "%s. Here, the term 'parent vector' refers to ",
             "the data source that represents %s, which we use ",
-            "as a basis to compute %s."
+            "as a basis to compute %s.", lang = lang
           ),
           explanation, source_vec, total_vec,
           par_exp, explanation
@@ -653,7 +664,7 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         # Bind two parts
         sprintf("%s %s", s, e)
       } else {
-        sprintf("The source of the data is `%s`.", source)
+        sprintf(cc_t("The source of the data is `%s`.", lang = lang), source)
       }
     out <- paste0(out, sprintf("<p>%s</p>", source_bit))
   }
@@ -671,7 +682,7 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
 
       scale_inter_str <- tolower(cc_t(scale_inter_str, lang = lang))
       inter_str <- sprintf(
-        "%s has been spatially interpolated from %s.",
+        cc_t("%s has been spatially interpolated from %s.", lang = lang),
         title, scale_inter_str
       )
       # Bind the title and the text

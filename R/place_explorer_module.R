@@ -123,7 +123,7 @@ place_explorer_server <- function(id, r,
       postal_c <- s_extract_all("\\w|\\d", postal_c)
       postal_c <- paste(postal_c, collapse = "")
 
-      postal_codes <- curbcut:::get_from_globalenv("postal_codes")
+      postal_codes <- get_from_globalenv("postal_codes")
       DA_id <- postal_codes$DA_ID[postal_codes$postal_code == postal_c]
 
       if (length(DA_id) == 0) {
@@ -136,7 +136,7 @@ place_explorer_server <- function(id, r,
           type = "error"
         )
       } else {
-        DA_table <- curbcut:::get_from_globalenv(paste0(r$region(), "_DA"))
+        DA_table <- get_from_globalenv(paste0(r$region(), "_DA"))
         if (is.null(DA_table)) {
           return(NULL)
         }

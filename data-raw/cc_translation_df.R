@@ -4,7 +4,7 @@ library(tibble)
 
 cc_translation_df <-
 
-# General UI --------------------------------------------------------------
+  # General UI --------------------------------------------------------------
 
 tibble(en = character(),
        fr = character()) |>
@@ -202,7 +202,7 @@ add_row(en = "Population",
                       "correspondent à l'année la plus proche <b>({right_year})</b>.")) |>
 
 
-# Explore panel -----------------------------------------------------------
+  # Explore panel -----------------------------------------------------------
 
 # Context and q5
 add_row(en = "This is %s for %s",
@@ -232,10 +232,10 @@ add_row(en = "This is %s for %s",
           fr = "%s est %s") |>
 
 
-# bivar -------------------------------------------------------------------
+  # bivar -------------------------------------------------------------------
 
-  add_row(en = "Pearson's r: %s",
-          fr = "r de Pearson : %s") |>
+add_row(en = "Pearson's r: %s",
+        fr = "r de Pearson : %s") |>
   add_row(en = "Spearman's rho: %s",
           fr = "rho de Spearman : %s") |>
   add_row(en = "%s and %s",
@@ -292,11 +292,11 @@ add_row(en = "This is %s for %s",
           fr = "%s, il existe une %s (%s) entre %s et %s en %s.") |>
 
 
-# Delta -------------------------------------------------------------------
+  # Delta -------------------------------------------------------------------
 
 
-  add_row(en = "%s percentage points (%sx)",
-          fr = "%s points de pourcentage (%sx)") |>
+add_row(en = "%s percentage points (%sx)",
+        fr = "%s points de pourcentage (%sx)") |>
   add_row(en = "This number",
           fr = "Ce nombre") |>
   add_row(en = "increased",
@@ -374,7 +374,52 @@ add_row(en = "%s from %s to %s, there is %s (%s) between the change in %s and th
   add_row(en = "a larger change",
           fr = "une variation plus élevée") |>
   add_row(en = "a smaller change",
-          fr = "une variation plus faible")
+          fr = "une variation plus faible") |>
+
+
+  # Panel view --------------------------------------------------------------
+
+add_row(en = "the change in %s between %s and %s",
+        fr = "le changement dans %s entre %s et %s") |>
+  add_row(en = paste0("<p>The minimum and maximum values for %s are respectively %s and %s. ",
+                      "The data points have an average value (mean) of %s. Additionally, ",
+                      "the standard deviation, which measures the dispersion or spread ",
+                      "around this mean, is %s. (Approximately two thirds of data points ",
+                      "lie within one standard deviation of the mean.)</p>"),
+          fr = paste0(
+            "<p>Les valeurs minimale et maximale pour %s sont respectivement %s et ",
+            "%s. Les points de données ont une valeur moyenne de %s. De plus, l'éca",
+            "rt type, qui mesure la dispersion ou l'étendue autour de cette moyenne",
+            ", est de %s. (Environ deux tiers des points de données se situent à mo",
+            "ins d'un écart-type de la moyenne).</p>"
+          )) |>
+  add_row(en = paste0("The data comes from the %s Canadian census and has ",
+                      "been retrieved from <a href = 'https://censusma",
+                      "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
+                      "using the R <a href = 'https://cran.r-project.org",
+                      "/web/packages/cancensus/', target = '_blank'>canc",
+                      "ensus</a> package."),
+          fr = "Les données proviennent du recensement canadien de %s et ont été extraites de <a href = 'https://censusmapper.ca/', target = '_blank'>censusmapper.ca</a> à l'aide de la librairie R <a href = 'https://cran.r-project.org/web/packages/cancensus/', target = '_blank'>cancensus</a>.") |>
+  add_row(en = "vectors and their",
+          fr = "vecteurs") |>
+  add_row(en = "vector and its",
+          fr = "le vecteur") |>
+  add_row(en = "parent vectors",
+          fr = "vecteurs parents") |>
+  add_row(en = "parent vector",
+          fr = "vecteur parent") |>
+  add_row(en = paste0("To calculate %s, we extract the %s corresponding ",
+                      "%s. Here, the term 'parent vector' refers to ",
+                      "the data source that represents %s, which we use ",
+                      "as a basis to compute %s."),
+          fr = "Pour calculer %s, nous extrayons %s et son/ses correspondant %s. Ici, le terme `vecteur parent` fait référence à la source de données qui représente %s, que nous utilisons comme base pour calculer %s.") |>
+  add_row(en = "The source of the data is `%s`.",
+          fr = "La donnée provient de `%s`.") |>
+  add_row(en = "%s has been spatially interpolated from %s.",
+          fr = "%s a été spatialement interpolé à partir des %s.") |>
+  add_row(en = "{source_vec} {v}",
+          fr = "{v} {source_vec}")
+
 
 # Check test
 en_length <- length(unique(cc_translation_df$en))

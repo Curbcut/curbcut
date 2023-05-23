@@ -123,7 +123,10 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
   translation_df <- get0("translation_df", .GlobalEnv)
   if (is.null(translation_df)) {
     return({
-      if (is.null(shiny::getDefaultReactiveDomain())) {
+      if (!shiny::isRunning())  {
+        # If shiny is not running
+        return_raw(x)
+      } else if (is.null(shiny::getDefaultReactiveDomain())) {
         # UI side
         shiny::tagList(shiny::span(class = "lang-en", x))
       } else {
