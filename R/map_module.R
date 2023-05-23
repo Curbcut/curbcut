@@ -146,12 +146,12 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     # A change in the extrude reactive only triggers the `extrude` change.
     # Attempt to improve user experience between auto-zoom DA and building level.
     extrude_final <- shiny::reactive({
-      !map_label_show_texture(
+      {!map_label_show_texture(
         zoom = zoom(),
         zoom_levels = zoom_levels(),
         tile = tile(),
         map_module = TRUE
-      ) & extrude()
+      )} & extrude()
     })
     shiny::observeEvent(
       extrude(),
