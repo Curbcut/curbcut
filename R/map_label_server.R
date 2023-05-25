@@ -115,11 +115,11 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
     # Show labels on top of everything (crated last)
     rdeck::rdeck_proxy("map") |>
       rdeck::add_mvt_layer(
-        id = paste0(id, "_CSD_label"),
+        id = paste0(id, "_label"),
         data = tilejson(
           mapbox_username = mapbox_username,
           tileset_prefix = tileset_prefix,
-          tile = "CSD_label"
+          tile = paste0(region(), "_label")
         ),
         visible = TRUE,
         point_type = "text",
