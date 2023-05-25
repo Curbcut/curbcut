@@ -186,14 +186,12 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
     })
 
     shiny::observeEvent(
-      building_line_color(), {
-        print("touched?")
-        rdeck::rdeck_proxy("map") |>
-          rdeck::update_mvt_layer(
-            id = id,
-            get_line_color = building_line_color()
-          )
-      }
+      building_line_color(),
+      rdeck::rdeck_proxy("map") |>
+        rdeck::update_mvt_layer(
+          id = id,
+          get_line_color = building_line_color()
+        )
     )
 
     # Return the viewstate
