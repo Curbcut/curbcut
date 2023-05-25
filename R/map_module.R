@@ -142,16 +142,24 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         )
     )
 
+    # Get the map view state as a reactive
+    map_view_state <- shiny::reactive(rdeck::get_view_state("map"))
+
     # Show the buildings extrude at the same moment texture is off.
     # A change in the extrude reactive only triggers the `extrude` change.
     # Attempt to improve user experience between auto-zoom DA and building level.
     extrude_final <- shiny::reactive({
-      {!map_label_show_texture(
+      if (is.null(map_view_state())) return(FALSE)
+      if (map_view_state()$pitch < 25) return(FALSE)
+      if (!extrude()) return(FALSE)
+
+      # Return TRUE or FALSE depending if the textures are present or not
+      !map_label_show_texture(
         zoom = zoom(),
         zoom_levels = zoom_levels(),
         tile = tile(),
         map_module = TRUE
-      )} & extrude()
+      )
     })
 
     shiny::observeEvent(
@@ -163,8 +171,33 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         )
     )
 
+    # Show a different line colors when the texture is off (building scale)
+    building_line_color <- shiny::reactive({
+      if (!map_label_show_texture(
+        zoom = zoom(),
+        zoom_levels = zoom_levels(),
+        tile = tile(),
+        map_module = TRUE
+      )) {
+        "#63666A"
+      } else {
+        do.call(colour_fun(), colour_args())
+      }
+    })
+
+    shiny::observeEvent(
+      building_line_color(), {
+        print("touched?")
+        rdeck::rdeck_proxy("map") |>
+          rdeck::update_mvt_layer(
+            id = id,
+            get_line_color = building_line_color()
+          )
+      }
+    )
+
     # Return the viewstate
-    return(shiny::reactive(rdeck::get_view_state("map")))
+    return(map_view_state)
   })
 }
 
