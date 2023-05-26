@@ -35,5 +35,4 @@ conn <- DBI::dbConnect(RSQLite::SQLite(), "resources/building.sqlite")
 tbs <- DBI::dbListTables(conn)
 tbs <- tbs[!grepl("city_", tbs)]
 lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
-DBI::dbRemoveTable(conn, "")
 suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))

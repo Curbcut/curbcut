@@ -7,6 +7,7 @@
 \usage{
 map_server(
   id,
+  r,
   tile,
   data_colours,
   select_id,

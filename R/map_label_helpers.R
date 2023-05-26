@@ -32,7 +32,7 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
   }
 
   # In no case we show texture under 11
-  if (zoom < 11.5 && !map_module) {
+  if (zoom < 14 && !map_module) {
     return(FALSE)
   }
 
@@ -44,4 +44,38 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
 
   # If not on the known choropleths, do not show buildings
   return(FALSE)
+}
+
+#' Extrude polygons on map
+#'
+#' This function determines if polygons should be extruded on a map. It
+#' considers parameters like zoom level, tile, and a boolean 'extrude'.
+#'
+#' @param map_view_state <`list`> A list containing the current state of the map view.
+#' Usually rdeck::get_view_state("map")
+#' @param zoom <`numeric`> Value representing the current zoom level. Usually
+#' is `r[[id]]$zoom()`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' will sort them to make sure the lower zoom level is first, and the highest
+#' is last (so it makes sense on an auto-zoom).
+#' @param tile <`character`> String representing the tile name.
+#' @param extrude <`logical`> Indicates whether to extrude or not.
+#' If FALSE, the function will immediately return FALSE.
+#'
+#' @return Returns TRUE if the polygons should be extruded on the map. Otherwise,
+#' returns FALSE.
+map_label_extrude <- function(map_view_state, zoom, zoom_levels, tile, extrude) {
+  if (is.null(map_view_state)) return(FALSE)
+  if (map_view_state$pitch < 25) return(FALSE)
+  if (!extrude) return(FALSE)
+
+  # Return TRUE or FALSE depending if the textures are present or not
+  !map_label_show_texture(
+    zoom = zoom,
+    zoom_levels = zoom_levels,
+    tile = tile,
+    map_module = TRUE
+  )
 }

@@ -8,6 +8,8 @@
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param tile <`reactive character`> A reactive string with the map tile to
 #' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)
 #' or a combination of a region and a scale (e.g. `city_DA`). The output of
@@ -62,7 +64,7 @@
 #' @return The server function returns the map viewstate coming from
 #' \code{\link[rdeck]{get_view_state}}.
 #' @export
-map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
+map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
                        coords,
                        fill_fun = shiny::reactive(map_scale_fill),
                        tileset_ID_color = shiny::reactive("ID_color"),
@@ -95,6 +97,9 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(extrude))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # Appease
+
     # Map
     output$map <- rdeck::renderRdeck({
       rdeck::rdeck(
@@ -122,6 +127,57 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         )
     })
 
+
+    # UPDATE MAP ARGUMENTS USING REACTIVE VALUES SO THAT update_mvt_layer DOES
+    # NOT GET TRIGGER BY ANY SMALL CHANGE THAT DOESN'T IMPACT CHANGES IN STYLING
+
+    # Show a different line colors when the texture is off (building scale)
+    new_line_color <-  shiny::reactive({
+      if (!map_label_show_texture(
+        zoom = zoom(),
+        zoom_levels = zoom_levels(),
+        tile = tile(),
+        map_module = TRUE
+      )) {
+        "#63666A"
+      } else {
+        do.call(colour_fun(), colour_args())
+      }
+    })
+    update_map_rv(id = id, r = r, rv_name = "map_line_color_reactive",
+                  default_val = "#FFFFFF", new_val = new_line_color)
+
+    # Get fill color
+    update_map_rv(id = id, r = r, rv_name = "map_fill_color",
+                  default_val = do.call(fill_fun(), fill_args()),
+                  new_val = shiny::reactive(do.call(fill_fun(), fill_args())))
+
+    # Get line width
+    update_map_rv(id = id, r = r, rv_name = "map_line_width",
+                  default_val = do.call(lwd_fun(), lwd_args()),
+                  new_val = shiny::reactive(do.call(lwd_fun(), lwd_args())))
+
+    # Building extrusion when pitch changes on building layer
+    extrude_final <- shiny::reactive({
+      map_label_extrude(map_view_state = map_view_state(),
+                        zoom = zoom(),
+                        zoom_levels = zoom_levels(),
+                        tile = tile(),
+                        extrude = extrude())
+    })
+    update_map_rv(id = id, r = r, rv_name = "map_extrude", default_val = FALSE,
+                  new_val = extrude_final)
+
+    # Pickable? Buildings are not pickable under a zoom of 12
+    pickable_final <- shiny::reactive({
+      if (!pickable()) return(FALSE)
+      if (!is_scale_df("building", tile())) return(TRUE)
+      if (zoom() < 12) return(FALSE)
+    })
+    update_map_rv(id = id, r = r, rv_name = "map_pickable", default_val = TRUE,
+                  new_val = pickable_final)
+
+
     # Update layer aesthetics on change of any aesthetic
     ## TKTK find ways so that ALL reactives doesn't necessarily trigger this.
     ## Should every change in zoom trigger this? Or only the threshold where
@@ -130,15 +186,16 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = id,
-          pickable = pickable(),
+          pickable = r[[id]]$map_pickable(),
           auto_highlight = auto_highlight(),
           highlight_color = "#FFFFFF50",
-          get_fill_color = do.call(fill_fun(), fill_args()),
-          get_line_color = do.call(colour_fun(), colour_args()),
-          get_line_width = do.call(lwd_fun(), lwd_args()),
+          get_fill_color = r[[id]]$map_fill_color(),
+          get_line_color = r[[id]]$map_line_color_reactive(),
+          get_line_width = r[[id]]$map_line_width(),
           line_width_units = "pixels",
           material = FALSE,
-          get_elevation = 5
+          get_elevation = 5,
+          extruded = r[[id]]$map_extrude()
         )
     )
 
@@ -161,38 +218,6 @@ map_server <- function(id, tile, data_colours, select_id, zoom_levels, zoom,
         map_module = TRUE
       )
     })
-
-    shiny::observeEvent(
-      extrude_final(),
-      rdeck::rdeck_proxy("map") |>
-        rdeck::update_mvt_layer(
-          id = id,
-          extruded = extrude_final()
-        )
-    )
-
-    # Show a different line colors when the texture is off (building scale)
-    building_line_color <- shiny::reactive({
-      if (!map_label_show_texture(
-        zoom = zoom(),
-        zoom_levels = zoom_levels(),
-        tile = tile(),
-        map_module = TRUE
-      )) {
-        "#63666A"
-      } else {
-        do.call(colour_fun(), colour_args())
-      }
-    })
-
-    shiny::observeEvent(
-      building_line_color(),
-      rdeck::rdeck_proxy("map") |>
-        rdeck::update_mvt_layer(
-          id = id,
-          get_line_color = building_line_color()
-        )
-    )
 
     # Return the viewstate
     return(map_view_state)

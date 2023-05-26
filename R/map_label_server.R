@@ -161,24 +161,28 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
       )
     )
 
-    shiny::observeEvent(
-      show_texture(),
+    shiny::observe(
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_building"),
           visible = show_texture() & show()
-        ) |>
+        )
+    )
+
+    shiny::observeEvent(
+      show(),
+      rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_1"),
-          visible = show_texture() & show()
+          visible = show()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_2"),
-          visible = show_texture() & show()
+          visible = show()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_3"),
-          visible = show_texture() & show()
+          visible = show()
         )
     )
 

@@ -443,8 +443,8 @@ is_numeric <- function(x) {
 #'
 #' @export
 find_outliers <- function(x) {
-  q1 <- stats::quantile(x, 0.25, na.rm = TRUE)
-  q3 <- stats::quantile(x, 0.75, na.rm = TRUE)
+  q1 <- stats::quantile(x, 0.02, na.rm = TRUE)
+  q3 <- stats::quantile(x, 0.98, na.rm = TRUE)
   iqr <- (q3 - q1) * 1.5
   which(x < q1 - iqr | x > q3 + iqr)
 }
@@ -496,7 +496,7 @@ grab_DA_ID_from_bslike <- function(df, select_id) {
     scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
     call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", df, select_id)
-    out <- do.call("dbGetQuery", list(as.name(db_df), call))
+    out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
     out <- unname(unlist(out))
   } else {
     out <- dat$DA_ID[dat$ID == select_id]
@@ -534,7 +534,7 @@ grab_row_from_bslike <- function(df, select_id, cols = "*") {
     db_df <- sprintf("%s_conn", scale)
     cols <- paste0(cols, collapse = ", ")
     call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, df, select_id)
-    out <- do.call("dbGetQuery", list(as.name(db_df), call))
+    out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
   } else {
     out <- dat[dat$ID == select_id, ]
   }
@@ -564,7 +564,7 @@ grab_df_from_bslike <- function(df) {
   scale <- gsub(".*_", "", df)
   db_df <- sprintf("%s_conn", scale)
   call <- sprintf("SELECT * FROM %s", df)
-  out <- do.call("dbGetQuery", list(as.name(db_df), call))
+  out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
 
   return(out)
 }

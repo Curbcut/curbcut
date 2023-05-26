@@ -30,7 +30,7 @@ map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
 #' @return Returns the hex of the white colour.
 #' @export
 map_scale_colour <- function(...) {
-  "#FFFFFF"
+  "#63666A"
 }
 
 #' Map scale line width
@@ -69,7 +69,7 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
       if (length(normal_zoom) == 0) {
         lwd
       } else {
-        if (zoom > (normal_zoom - 1)) lwd else 0
+        if (zoom > (normal_zoom - 2)) lwd else 0
       }
   }
 
@@ -81,4 +81,39 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
     levels = c(select_id, "NA"),
     legend = FALSE
   )
+}
+
+#' Update a reactive value object
+#'
+#' This function updates a reactive value object and does not trigger a change
+#' in the reactive value if the new value is the same as the previous value. It
+#' observes a new value, and if this new value is different from the current one,
+#' the function updates the rv. It uses the reactive programming features of Shiny.
+#'
+#' @param id <`character`> The ID of the page in which this module will appear,
+#' e.g. `canale`.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param rv_name <`character`> A character string specifying the name of the
+#' reactive value to create and update.
+#' @param default_val <`vector`> A vector of length one. This parameter is used
+#' to initialize the rv.
+#' @param new_val <`reactive`> A reactive expression returning the new value to
+#' assign to the rv. If the new value is the same as the current one, the function
+#' does nothing.
+#'
+#' @return
+#' This function does not return a value. It updates the reactive value in place.
+#' The updated value can be accessed using the rv object and the rv_name parameter.
+#' If the new value is the same as the current one, the function does nothing and
+#' returns NULL.
+update_map_rv <- function(id, r, rv_name, default_val, new_val) {
+  r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+
+  shiny::observe({
+    if (identical(new_val(), shiny::isolate(r[[id]][[rv_name]]()))) {
+      return(NULL)
+    }
+    r[[id]][[rv_name]](new_val())
+  })
 }
