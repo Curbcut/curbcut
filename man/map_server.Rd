@@ -19,7 +19,7 @@ map_server(
   fill_args = shiny::reactive(list(data_colours(), tileset_ID_color =
     tileset_ID_color())),
   colour_fun = shiny::reactive(map_scale_colour),
-  colour_args = shiny::reactive(list(NULL)),
+  colour_args = shiny::reactive(list(select_id = select_id())),
   lwd_fun = shiny::reactive(map_scale_lwd),
   lwd_args = shiny::reactive(list(select_id = select_id(), tile = tile(), zoom = zoom(),
     zoom_levels = zoom_levels(), lwd = 1)),
@@ -36,6 +36,9 @@ map_UI(id)
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
 e.g. \code{canale}.}
+
+\item{r}{<\code{reactiveValues}> The reactive values shared between modules and
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{tile}{<\verb{reactive character}> A reactive string with the map tile to
 be used. Either a combination of a region with auto-zoom (e.g. \code{city_auto_zoom})

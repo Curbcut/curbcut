@@ -71,7 +71,7 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
                        fill_args = shiny::reactive(list(data_colours(),
                                                         tileset_ID_color = tileset_ID_color())),
                        colour_fun = shiny::reactive(map_scale_colour),
-                       colour_args = shiny::reactive(list(NULL)),
+                       colour_args = shiny::reactive(list(select_id = select_id())),
                        lwd_fun = shiny::reactive(map_scale_lwd),
                        lwd_args = shiny::reactive(list(
                          select_id = select_id(), tile = tile(), zoom = zoom(),

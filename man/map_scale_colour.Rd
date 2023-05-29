@@ -2,16 +2,31 @@
 % Please edit documentation in R/map_scales.R
 \name{map_scale_colour}
 \alias{map_scale_colour}
-\title{Map scale colour}
+\title{Map scale colour for borders}
 \usage{
-map_scale_colour(...)
+map_scale_colour(
+  select_ID,
+  border_color = "#63666A",
+  selection_color = "#000000"
+)
 }
 \arguments{
-\item{...}{Unused arguments.}
+\item{select_ID}{<\code{character}> The ID of the feature to highlight. The specified
+colour will be applied to this feature.}
+
+\item{border_color}{<\code{hex}> The colour to apply to the features not equal to \code{select_ID}.
+Default is "#63666A" (a dark grey).}
+
+\item{selection_color}{The colour to apply to the feature equal to \code{select_ID}.
+Default s "#000000" (black).}
 }
 \value{
-Returns the hex of the white colour.
+A categorical scale for colours, generated using
+\code{rdeck::scale_color_category}. The scale maps the \code{select_ID} to the \code{selection_color},
+and all other features to the \code{border_color}. Unmapped IDs are also coloured
+with \code{border_color}.
 }
 \description{
-Map scale colour
+This function assigns a specific colour to the selected ID and a different
+colour to all other IDs.
 }

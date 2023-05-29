@@ -23,14 +23,33 @@ map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
   )
 }
 
-#' Map scale colour
+#' Map scale colour for borders
 #'
-#' @param ... Unused arguments.
+#' This function assigns a specific colour to the selected ID and a different
+#' colour to all other IDs.
 #'
-#' @return Returns the hex of the white colour.
+#' @param select_id <`character`> The ID of the feature to highlight. The specified
+#' colour will be applied to this feature.
+#' @param border_color <`hex`> The colour to apply to the features not equal to `select_ID`.
+#' Default is "#63666A" (a dark grey).
+#' @param selection_color The colour to apply to the feature equal to `select_ID`.
+#' Default s "#000000" (black).
+#'
+#' @return A categorical scale for colours, generated using
+#' `rdeck::scale_color_category`. The scale maps the `select_ID` to the `selection_color`,
+#' and all other features to the `border_color`. Unmapped IDs are also coloured
+#' with `border_color`.
 #' @export
-map_scale_colour <- function(...) {
-  "#63666A"
+map_scale_colour <- function(select_id, border_color = "#63666A",
+                             selection_color = "#000000") {
+  # Return the categorical scale
+  rdeck::scale_color_category(
+    col = !!as.name("ID"),
+    palette = c(selection_color, border_color),
+    unmapped_color = border_color,
+    levels = c(select_id, "NA"),
+    legend = FALSE
+  )
 }
 
 #' Map scale line width
@@ -76,7 +95,7 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
   # Return the categorical scale
   rdeck::scale_category(
     col = !!as.name("ID"),
-    range = c(10, lwd),
+    range = c(5, lwd),
     unmapped_value = lwd,
     levels = c(select_id, "NA"),
     legend = FALSE
