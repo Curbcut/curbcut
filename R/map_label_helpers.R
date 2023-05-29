@@ -31,8 +31,8 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
     return(FALSE)
   }
 
-  # In no case we show texture under 11
-  if (zoom < 14 && !map_module) {
+  # In no case we show texture under 14.5
+  if (zoom < 14.5 && !map_module) {
     return(FALSE)
   }
 

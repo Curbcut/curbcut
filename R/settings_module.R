@@ -31,15 +31,12 @@ settings_server <- function(id = "settings", r) {
 
     # If the region cookie is already in and it differs from default. Intended
     # to run only once at startup.
-    shiny::observeEvent(cookie_retrieve(input, "region"),
-      {
-        r$region(cookie_update_value(
-          input = input, name = "region",
-          current_value = r$region()
-        ))
-      },
-      once = TRUE
-    )
+    region_cookie <- shiny::reactive(cookie_retrieve(
+      input = r$server_session()$input,
+      name = "region"
+    ))
+    shiny::observeEvent(region_cookie(), r$region(region_cookie()),
+                        once = TRUE)
 
     # Change the default region and save the cookie at a change of the region.
     shiny::observeEvent(input$region_change, {

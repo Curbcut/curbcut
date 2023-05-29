@@ -76,7 +76,7 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
   # Return the categorical scale
   rdeck::scale_category(
     col = !!as.name("ID"),
-    range = c(5, lwd),
+    range = c(10, lwd),
     unmapped_value = lwd,
     levels = c(select_id, "NA"),
     legend = FALSE
