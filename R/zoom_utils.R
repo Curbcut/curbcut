@@ -60,7 +60,7 @@ zoom_get_name <- function(dfs, lang = NULL) {
 
   # Error check
   if (sum(!scales %in% scales_dictionary$scale) > 0) {
-    scales_collapsed <- paste0(scales, collapse = ',  ')
+    scales_collapsed <- paste0(scales, collapse = ",  ")
     stop(glue::glue_safe(
       "One ore multiple of `{scales_collapsed}` ",
       "is not present in the `scales_dictionary$scale`."
@@ -134,10 +134,12 @@ zoom_get_code <- function(scales_name, lang = NULL) {
   translated <-
     sapply(scales_name, \(x) {
       out <- translation_df$en[translation_df[[lang]] == x]
-      if (length(out) == 0) return(x)
+      if (length(out) == 0) {
+        return(x)
+      }
       return(out)
-      },
-      USE.NAMES = FALSE
+    },
+    USE.NAMES = FALSE
     )
 
   # Get matching indices in desired order

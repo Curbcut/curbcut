@@ -72,7 +72,6 @@ cc_t_list <- function(x, translation_df) {
 #'
 #' @export
 cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) {
-
   # Helper functions only used for translation
   cc_glue <- function(x) {
     glue::glue_safe(x, .na = character(1), .null = character(1), .envir = .envir)
@@ -87,7 +86,8 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
 
   return_warning <- function(x) {
     warning("No translation text found for `", x, "`.",
-            call. = FALSE)
+      call. = FALSE
+    )
     cc_glue(x)
   }
 
@@ -123,7 +123,7 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
   translation_df <- get0("translation_df", .GlobalEnv)
   if (is.null(translation_df)) {
     return({
-      if (!shiny::isRunning())  {
+      if (!shiny::isRunning()) {
         # If shiny is not running
         return_raw(x)
       } else if (is.null(shiny::getDefaultReactiveDomain())) {

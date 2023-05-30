@@ -261,7 +261,9 @@ colours_get <- function() {
 #' current scale, and returns the new name. If not, the original `df` is returned.
 #' @export
 treat_to_DA <- function(scales_as_DA, df) {
-  if (length(scales_as_DA) == 0) return(df)
+  if (length(scales_as_DA) == 0) {
+    return(df)
+  }
   if (is_scale_df(scales_as_DA, df)) {
     return(paste0(s_extract(".*(?=_)", df), "_DA"))
   }
@@ -347,8 +349,10 @@ tilejson <- function(mapbox_username, tileset_prefix, tile) {
       if (curbcut::is_scale_df("building", tile)) {
         regions_dictionary <- get_from_globalenv("regions_dictionary")
         base_building_tile <-
-          sprintf("%s.%s_%s_building", mapbox_username, tileset_prefix,
-                  regions_dictionary$region[1])
+          sprintf(
+            "%s.%s_%s_building", mapbox_username, tileset_prefix,
+            regions_dictionary$region[1]
+          )
         rdeck::tile_json(base_building_tile)
       } else {
         print(e)
@@ -558,7 +562,9 @@ grab_row_from_bslike <- function(df, select_id, cols = "*") {
 #' environment, the function fetches the dataframe from the connected database.
 grab_df_from_bslike <- function(df) {
   dat <- get0(df, envir = .GlobalEnv)
-  if (!is.null(dat)) return(dat)
+  if (!is.null(dat)) {
+    return(dat)
+  }
 
   # If not in the global environment
   scale <- gsub(".*_", "", df)

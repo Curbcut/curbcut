@@ -75,7 +75,9 @@ autovars_common_widgets <- function(id) {
       values <- values[!sapply(values, is.null)]
 
       # Does ALL variable need this widget?
-      if (length(values) != length(groups)) return(NULL)
+      if (length(values) != length(groups)) {
+        return(NULL)
+      }
 
       # Grab the unique values. If it's a numeric or factor (slider), output
       # it with a class
@@ -97,7 +99,8 @@ autovars_common_widgets <- function(id) {
 
       return(unlisted_vals)
     },
-    simplify = FALSE, USE.NAMES = TRUE)
+    simplify = FALSE, USE.NAMES = TRUE
+    )
 
     widgets <- widgets[!sapply(widgets, is.null)]
 
@@ -130,7 +133,9 @@ autovars_widgets <- function(id, group_name, common_vals) {
 
   # If `tb` is not a dataframe, return an empty list. There are no additional
   # widgets to be added.
-  if (!is.data.frame(tb)) return(list())
+  if (!is.data.frame(tb)) {
+    return(list())
+  }
 
   # Grab the difference between the variables
   groups <- tb$group_diff[tb$group_name == group_name]
@@ -138,7 +143,6 @@ autovars_widgets <- function(id, group_name, common_vals) {
   # Filter in only the groups that share the common widgets' values
   if (!is.null(common_vals)) {
     share_common_values_index <- sapply(groups, \(g) {
-
       # For all the values in `common_vals`, which are the same as the observed
       # row?
       share_common_values <- sapply(names(common_vals), \(cv) {
@@ -191,17 +195,22 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
 
   # If it's not a dataframe, then the output value is simply the choice of the
   # first dropdown.
-  if (!is.data.frame(tb))
+  if (!is.data.frame(tb)) {
     return(if (is.null(group_name)) previous_var else group_name)
+  }
 
   # Grab the difference between the variables
   groups <- tb$group_diff[tb$group_name == group_name]
   var_codes <- tb$var_code[tb$group_name == group_name]
 
   # Keep only the groups that are the same length as the picked values
-  if (length(groups) == 0) return(previous_var)
+  if (length(groups) == 0) {
+    return(previous_var)
+  }
   groups <- groups[sapply(groups, \(x) length(x) == length(picker_vals))]
-  if (all(lengths(groups) == 0)) return(previous_var)
+  if (all(lengths(groups) == 0)) {
+    return(previous_var)
+  }
 
   # Which
   ordered_val_fit <- mapply(\(val, i) {
@@ -211,9 +220,13 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
       return(v == val)
     })
   }, picker_vals, seq_along(picker_vals))
-  if (length(ordered_val_fit) == 0) return(previous_var)
+  if (length(ordered_val_fit) == 0) {
+    return(previous_var)
+  }
   sum_fits <- rowSums(ordered_val_fit)
-  if (length(sum_fits) == 0) return(previous_var)
+  if (length(sum_fits) == 0) {
+    return(previous_var)
+  }
   out <- var_codes[which(sum_fits == max(sum_fits))]
 
   # Return()
@@ -242,5 +255,4 @@ autovars_placeholder_var <- function(id) {
 
   # If it's a character vector, grab the first element
   return(var_lefts[[1]])
-
 }

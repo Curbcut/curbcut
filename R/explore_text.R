@@ -84,8 +84,10 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     )
 
     # Grab the explanation and capitalize the first letter
-    exp <- var_get_info(vars$var_left, what = "explanation", translate = TRUE,
-                        lang = lang) |>
+    exp <- var_get_info(vars$var_left,
+      what = "explanation", translate = TRUE,
+      lang = lang
+    ) |>
       s_sentence()
 
     # Plug the right elements for the final sentence
@@ -157,8 +159,10 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
   parent_string <- explore_text_parent_title(var, lang = lang)
 
   # Grab the q5 explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
-                      lang = lang)
+  exp <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE,
+    lang = lang
+  )
 
   # Grab the region values
   region_values <- explore_text_region_val_df(
@@ -219,8 +223,7 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.count <- function(var, region, data, df, select_id,
-                                       col = "var_left", lang = lang, ...) {
-
+                                         col = "var_left", lang = lang, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -239,10 +242,13 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -296,10 +302,13 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -362,10 +371,13 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -379,8 +391,10 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     count_string <- convert_unit(x = region_values$count, decimal = 1)
 
     # Grab the explanation
-    exp_q5 <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
-                           lang = lang)
+    exp_q5 <- var_get_info(
+      var = var, what = "exp_q5", translate = TRUE,
+      lang = lang
+    )
 
     # Sub the placeholder for the two last brackets
     breaks <- var_get_info(var = var, what = "breaks_q5")[[1]]
@@ -408,8 +422,10 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
   }
 
   # If there is a selection
-  exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                      lang = lang)
+  exp <- var_get_info(
+    var = var, what = "explanation", translate = TRUE,
+    lang = lang
+  )
 
   # Build the return
   out <- sprintf("%s is %s", exp, region_values$val)
@@ -462,10 +478,13 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -478,8 +497,10 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
     count_string <- convert_unit(x = region_values$val, decimal = 1)
 
     # Grab the explanation
-    exp_q5 <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
-                           lang = lang)
+    exp_q5 <- var_get_info(
+      var = var, what = "exp_q5", translate = TRUE,
+      lang = lang
+    )
 
     # If the two last brackets is recognized as the default, write a particular string
     out <- gsub("_X_", count_string, exp_q5)
@@ -492,8 +513,10 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   }
 
   # If there is a selection
-  exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                      lang = lang)
+  exp <- var_get_info(
+    var = var, what = "explanation", translate = TRUE,
+    lang = lang
+  )
 
   # Build the return
   count_string <- convert_unit(x = region_values$val, decimal = 1)
@@ -532,7 +555,6 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
 #' @export
 explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
                                         col = "var_left", lang = lang, ...) {
-
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -544,10 +566,13 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -558,8 +583,10 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
   count_string <- convert_unit(x = region_values$val, decimal = 1)
 
   # Grab the explanation
-  exp_q5 <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
-                         lang = lang)
+  exp_q5 <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE,
+    lang = lang
+  )
 
   # If the two last brackets is recognized as the default, write a particular string
   out <- gsub("_X_", count_string, exp_q5)
@@ -569,7 +596,6 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
     text = out,
     na = FALSE
   ))
-
 }
 
 #' Generate text for the given variables and region - Q5 version using per1k
@@ -598,9 +624,11 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
-                                        col = "var_left", lang = lang, ...) {
-  explore_text_values_q5.sqkm(var = var, region = region, select_id = select_id,
-                              data = data, df = df, col = col, lang = lang, ...)
+                                         col = "var_left", lang = lang, ...) {
+  explore_text_values_q5.sqkm(
+    var = var, region = region, select_id = select_id,
+    data = data, df = df, col = col, lang = lang, ...
+  )
 }
 
 #' Generate text for the given variables and region - Q5 version using ppo
@@ -629,7 +657,6 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
 #' @export
 explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
                                        col = "var_left", lang = lang, ...) {
-
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -641,10 +668,13 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang)
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     return(list(
       text = out,
       na = TRUE
@@ -655,19 +685,21 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
   count_string <- convert_unit(x = region_values$val, decimal = 1)
 
   # Grab the explanation
-  exp_q5 <- var_get_info(var = var, what = "exp_q5", translate = TRUE,
-                         lang = lang)
+  exp_q5 <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE,
+    lang = lang
+  )
 
   # If the two last brackets is recognized as the default, write a particular string
   out <- cc_t(sprintf("there are %s people for every %s", count_string, exp_q5),
-              lang = lang)
+    lang = lang
+  )
 
   # Return
   return(list(
     text = out,
     na = FALSE
   ))
-
 }
 
 
@@ -701,7 +733,9 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     # Add the date
     out <- if (!is.na(date)) {
       sprintf(cc_t("%s <i>(Data from %s.)</i>", lang = lang), out, date)
-    } else out
+    } else {
+      out
+    }
 
     # Final check if there are bullet point lists, add a ellipsis
     gsub("</ul></span> ", "</ul></span><p>...", out)
@@ -730,7 +764,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     value_string_left <- explore_text_values_q5(
       var = vars$var_left, region = region,
       select_id = select_id, data = data,
-      df = context$treated_df, lang  = lang
+      df = context$treated_df, lang = lang
     )
 
     # Grab the value string
@@ -738,7 +772,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
       df = context$treated_df,
-      col = "var_right", lang  = lang
+      col = "var_right", lang = lang
     )
 
     # Add the coloring
@@ -967,22 +1001,28 @@ explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
     strength <- cc_t("strong", lang = lang)
     strong <- TRUE
 
-    corr_strength <- sprintf(cc_t("%s %s correlation", lang = lang), strength,
-                             positive_string)
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
   } else if (absolute > 0.3) {
     relation_text <- cc_t("tend to have", lang = lang)
     strength <- cc_t("moderate", lang = lang)
 
-    corr_strength <- sprintf(cc_t("%s %s correlation", lang = lang), strength,
-                             positive_string)
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
   } else if (absolute > 0.1) {
     relation_text <- cc_t("often have _X_, although with many exceptions",
       lang = lang
     )
     strength <- cc_t("weak", lang = lang)
 
-    corr_strength <- sprintf(cc_t("%s %s correlation", lang = lang), strength,
-                             positive_string)
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
   } else {
     relation_text <- cc_t("effectively no relationship", lang = lang)
     strength <- cc_t("effectively no correlation", lang = lang)
@@ -1099,9 +1139,11 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   )
 
   # Construct the first paragraph. Tweaks when `ind`, so dispatched
-  out <- explore_text_delta_first_p(var = vars$var_left, context = context,
-                                    exp_vals = exp_vals, lang = lang,
-                                    select_id = select_id, change_string = change_string)
+  out <- explore_text_delta_first_p(
+    var = vars$var_left, context = context,
+    exp_vals = exp_vals, lang = lang,
+    select_id = select_id, change_string = change_string
+  )
 
   # Return the first paragraph if there are no selections
   if (is.na(select_id)) {
@@ -1120,8 +1162,10 @@ explore_text.delta <- function(vars, region, select_id, df, data,
     cc_t("decrease", lang = lang) |>
       explore_text_color(meaning = "decrease")
   }
-  exp_nodet <- var_get_info(vars$var_left, what = "explanation_nodet", translate = TRUE,
-                            lang =)
+  exp_nodet <- var_get_info(vars$var_left,
+    what = "explanation_nodet", translate = TRUE,
+    lang =
+    )
   relat <- explore_text_selection_comparison(
     var = vars$var_left,
     data = data,
@@ -1136,11 +1180,15 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   )
 
   # If `ind` and data remained the same, we add 'slight' decrease/increase
-  subj <- if ("ind" %in% class(vars$var_left)){
+  subj <- if ("ind" %in% class(vars$var_left)) {
     if (exp_vals$remained) {
       cc_t("The slight", lang = lang)
-    } else cc_t("This", lang = lang)
-  } else cc_t("This", lang = lang)
+    } else {
+      cc_t("This", lang = lang)
+    }
+  } else {
+    cc_t("This", lang = lang)
+  }
 
   # Craft the second paragraph
   first_part <- sprintf(
@@ -1204,15 +1252,16 @@ explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
                                        df, data, lang, ...) {
-
   # If there is no selection
   if (is.na(select_id)) {
     # Grab the parent variable
     parent <- var_get_info(var = var[[1]], what = "parent_vec")
 
     # Grab the explanation
-    exp_q5 <- var_get_info(var = var[[1]], what = "exp_q5", translate = TRUE,
-                           lang = lang)
+    exp_q5 <- var_get_info(
+      var = var[[1]], what = "exp_q5", translate = TRUE,
+      lang = lang
+    )
 
     # Sub the placeholder for the two last brackets
     breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
@@ -1235,8 +1284,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     region_vals <- region_vals[region_vals$region == region, ]
     region_vals <- region_vals$val[region_vals$year %in% times]
     region_vals_strings <- convert_unit.pct(var,
-                                            x = region_vals,
-                                            decimal = 1
+      x = region_vals,
+      decimal = 1
     )
 
     # Return
@@ -1249,8 +1298,10 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
   }
 
   # If there is a selection
-  exp <- var_get_info(var = var[[1]], what = "explanation", translate = TRUE,
-                      lang = lang)
+  exp <- var_get_info(
+    var = var[[1]], what = "explanation", translate = TRUE,
+    lang = lang
+  )
   times <- var_get_time(var)
 
   # Grab both value strings
@@ -1294,7 +1345,6 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     remained = remained,
     times = times
   ))
-
 }
 
 #' @rdname explore_text_delta_exp
@@ -1303,8 +1353,10 @@ explore_text_delta_exp.default <- function(var, region, select_id,
                                            left_right = "left", df, data,
                                            lang, ...) {
   # Grab the explanation
-  exp <- var_get_info(var[[1]], what = "explanation", translate = TRUE,
-                      lang = lang)
+  exp <- var_get_info(var[[1]],
+    what = "explanation", translate = TRUE,
+    lang = lang
+  )
 
   # Grab the region values
   times <- var_get_time(var)
@@ -1365,32 +1417,35 @@ explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, chan
 #' @export
 explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
                                            change_string, select_id, ...) {
-  if (is.na(select_id))
+  if (is.na(select_id)) {
     return(explore_text_delta_first_p.default(var, context, exp_vals, lang, change_string))
+  }
 
   # If there is a selectio
   # Craft the paragraphs
   out <- if (exp_vals$remained) {
-    sprintf(cc_t("%s, %s has remained %s between %s and %s.", lang = lang),
-            s_sentence(context$p_start), exp_vals$exp,
-            unique(exp_vals$region_vals_strings),
-            exp_vals$times[1], exp_vals$times[2])
+    sprintf(
+      cc_t("%s, %s has remained %s between %s and %s.", lang = lang),
+      s_sentence(context$p_start), exp_vals$exp,
+      unique(exp_vals$region_vals_strings),
+      exp_vals$times[1], exp_vals$times[2]
+    )
   } else {
-    sprintf(cc_t("%s, %s changed from %s in %s to %s in %s.", lang = lang),
-            s_sentence(context$p_start), exp_vals$exp,
-            exp_vals$region_vals_strings[2], exp_vals$times[1],
-            exp_vals$region_vals_strings[1], exp_vals$times[2])
+    sprintf(
+      cc_t("%s, %s changed from %s in %s to %s in %s.", lang = lang),
+      s_sentence(context$p_start), exp_vals$exp,
+      exp_vals$region_vals_strings[2], exp_vals$times[1],
+      exp_vals$region_vals_strings[1], exp_vals$times[2]
+    )
   }
 
   # Return
   return(out)
-
 }
 
 #' @rdname explore_text_delta_first_p
 #' @export
 explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, change_string, ...) {
-
   # Did it increase or decrease? put in color
   inc_dec <- if (change_string$pct_change > 0) {
     cc_t("increased", lang = lang) |>
@@ -1522,7 +1577,6 @@ explore_text_delta_change.ind <- function(var, exp_vals, lang, ...) {
 explore_text.delta_bivar <- function(vars, region, select_id, df, data,
                                      scales_as_DA = c("building", "street"),
                                      lang = NULL, ...) {
-
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
   switch_DA <- is_scale_df(scales_as_DA, df)
@@ -1554,7 +1608,6 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
 
   # If there is a selection, return a completely different text
   if (!is.na(select_id)) {
-
     # Start with the header
     out <- sprintf("<p><b>%s</b>", context$heading)
 
@@ -1564,7 +1617,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
       cc_t("%s<p>%s, %s changed from %s in %s to %s in %s.", lang = lang),
       out, s_sentence(context$p_start), exp_vals_left$exp,
       exp_vals_left$region_vals_strings[2], exp_vals_left$times[1],
-      exp_vals_left$region_vals_strings[1], exp_vals_left$times[2])
+      exp_vals_left$region_vals_strings[1], exp_vals_left$times[2]
+    )
 
     # Right value
     right_sentenced <-
@@ -1573,7 +1627,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
       cc_t("%s %s changed from %s in %s to %s in %s.", lang = lang),
       out, right_sentenced,
       exp_vals_right$region_vals_strings[2], exp_vals_right$times[1],
-      exp_vals_right$region_vals_strings[1], exp_vals_right$times[2])
+      exp_vals_right$region_vals_strings[1], exp_vals_right$times[2]
+    )
     exp_vals_right$exp <- explore_text_color(exp_vals_right$exp, meaning = "right")
 
     # Get the information on how the selection compares
@@ -1608,16 +1663,24 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
 
     # Craft the left side of the second paragraph
     first_s <-
-      sprintf(cc_t("The change in %s %s from %s to %s is larger than %s ",
-                     "other %s, which is %s for %s.", lang = lang),
-              exp_vals_left$exp, context$name, exp_vals_left$times[1],
-              exp_vals_left$times[2], relat_left$higher_than, context$scale_plur,
-              relat_left$rank_chr, context$to_compare_determ)
+      sprintf(
+        cc_t("The change in %s %s from %s to %s is larger than %s ",
+          "other %s, which is %s for %s.",
+          lang = lang
+        ),
+        exp_vals_left$exp, context$name, exp_vals_left$times[1],
+        exp_vals_left$times[2], relat_left$higher_than, context$scale_plur,
+        relat_left$rank_chr, context$to_compare_determ
+      )
     second_s <-
-      sprintf(cc_t("%s, the change in %s between the same years is larger ",
-                     "than %s of other %s, which is %s for %s.", lang = lang),
-              connector, exp_vals_right$exp, relat_right$higher_than,
-              context$scale_plur, relat_right$rank_chr, context$to_compare_determ)
+      sprintf(
+        cc_t("%s, the change in %s between the same years is larger ",
+          "than %s of other %s, which is %s for %s.",
+          lang = lang
+        ),
+        connector, exp_vals_right$exp, relat_right$higher_than,
+        context$scale_plur, relat_right$rank_chr, context$to_compare_determ
+      )
 
     # Bind it all
     out <- sprintf("%s<p>%s %s", out, first_s, second_s)
@@ -1645,7 +1708,9 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   if (relation$no_correlation) {
     out <- sprintf(
       cc_t("%s from %s to %s, there is %s (%s) between the change in %s and ",
-           "the change in %s in %s.", lang = lang),
+        "the change in %s in %s.",
+        lang = lang
+      ),
       s_sentence(context$p_start), exp_vals_left$times[1],
       exp_vals_left$times[2], relation$relation_text, relation$corr,
       exp_vals_left$exp, exp_vals_right$exp, scale_plur
@@ -1690,15 +1755,21 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
         relation_right_ajd_exp
       )
     } else {
-      sprintf(cc_t("%s from %s to %s, %s with %s in %s ",
-                     "%s have had %s in %s.", lang = lang),
-              s_sentence(context$p_start), exp_vals_left$times[1],
-              exp_vals_left$times[2], scale_plur, left_adj, exp_vals_left$exp,
-              relation$relation_text, right_adj, exp_vals_right$exp)
+      sprintf(
+        cc_t("%s from %s to %s, %s with %s in %s ",
+          "%s have had %s in %s.",
+          lang = lang
+        ),
+        s_sentence(context$p_start), exp_vals_left$times[1],
+        exp_vals_left$times[2], scale_plur, left_adj, exp_vals_left$exp,
+        relation$relation_text, right_adj, exp_vals_right$exp
+      )
     }
   second_p <- sprintf(
     cc_t("There is a %s (%s) between the change in these two variables ",
-           "between these years.", lang = lang),
+      "between these years.",
+      lang = lang
+    ),
     relation$corr_strength, relation$corr
   )
 
@@ -1744,7 +1815,7 @@ explore_text_delta_bivar_adjective <- function(var, left, positive, lang = NULL,
 #' @rdname explore_text_delta_bivar_adjective
 #' @export
 explore_text_delta_bivar_adjective.dollar <- function(var, left, positive, lang,
-                                                ...) {
+                                                      ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("larger change", lang = lang))
@@ -1761,7 +1832,7 @@ explore_text_delta_bivar_adjective.dollar <- function(var, left, positive, lang,
 #' @rdname explore_text_delta_bivar_adjective
 #' @export
 explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang,
-                                                 ...) {
+                                                       ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("a larger change", lang = lang))

@@ -24,15 +24,17 @@
 #' @return A list containing the default theme and color data frames.
 explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
                                df, scales_as_DA, select_id, data, ...) {
-
   # Create the theme
   theme_default <- list(
     ggplot2::theme_minimal(),
-    ggplot2::theme(text = ggplot2::element_text(family = font_family, size = 12),
-                   legend.position = "none",
-                   panel.grid.minor.x = ggplot2::element_blank(),
-                   panel.grid.major.x = ggplot2::element_blank(),
-                   panel.grid.minor.y = ggplot2::element_blank()))
+    ggplot2::theme(
+      text = ggplot2::element_text(family = font_family, size = 12),
+      legend.position = "none",
+      panel.grid.minor.x = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      panel.grid.minor.y = ggplot2::element_blank()
+    )
+  )
 
   # Use the legend labels
   labs <- explore_graph_labels(vars = vars, lang = lang)
@@ -42,7 +44,7 @@ explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
 
   # In the case where the selected ID must be updated
   if (curbcut::is_scale_df(scales_as_DA, df) & !is.na(select_id)) {
-   select_id <- grab_DA_ID_from_bslike(df = df, select_id = select_id)
+    select_id <- grab_DA_ID_from_bslike(df = df, select_id = select_id)
   }
 
   # df treatment if it's in the scales as DA

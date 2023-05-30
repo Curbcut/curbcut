@@ -29,8 +29,10 @@ test_that("map_scale_colour works", {
 
   expect_equal(
     names(actual),
-    c("scale_type", "trans", "legend", "col", "get_palette", "unmapped_color",
-      "levels", "tick_format", "col_label")
+    c(
+      "scale_type", "trans", "legend", "col", "get_palette", "unmapped_color",
+      "levels", "tick_format", "col_label"
+    )
   )
 })
 

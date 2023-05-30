@@ -21,8 +21,10 @@ time_slider_server <- function(id, r) {
     # function on the server side.
     slider_uni <- slider_server(id = shiny::NS(id, id), slider_id = "slu")
     slider_bi <- slider_server(id = shiny::NS(id, id), slider_id = "slb")
-    slider_switch <- checkbox_server(id = shiny::NS(id, id), r = r,
-                                     label = shiny::reactive("Compare dates"))
+    slider_switch <- checkbox_server(
+      id = shiny::NS(id, id), r = r,
+      label = shiny::reactive("Compare dates")
+    )
 
     # Enable or disable first and second slider
     shiny::observeEvent(slider_switch(), {
@@ -54,10 +56,14 @@ time_slider_UI <- function(id, min, max, step, double_value) {
     stop("length of `double_value` must be 2.")
   }
   shiny::tagList(
-    slider_UI(id = shiny::NS(id, id), slider_id = "slu", min = min, max = max,
-              step = step, label = cc_t("Select a year")),
-    slider_UI(id = shiny::NS(id, id), slider_id = "slb", min = min, max = max,
-              step = step, label = cc_t("Select two years"), value = double_value),
+    slider_UI(
+      id = shiny::NS(id, id), slider_id = "slu", min = min, max = max,
+      step = step, label = cc_t("Select a year")
+    ),
+    slider_UI(
+      id = shiny::NS(id, id), slider_id = "slb", min = min, max = max,
+      step = step, label = cc_t("Select two years"), value = double_value
+    ),
     checkbox_UI(id = shiny::NS(id, id), label = cc_t("Compare dates"), value = FALSE)
   )
 }

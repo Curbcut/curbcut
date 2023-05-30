@@ -67,7 +67,8 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
                            graph_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), df = df(),
                              select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), lang = r$lang())),
+                             scales_as_DA = scales_as_DA(), lang = r$lang()
+                           )),
                            table_fun = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(),
@@ -108,7 +109,9 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
         error = function(e) {
           print(e)
           return(NULL)
-        }))
+        }
+      )
+    )
 
     # Display graph
     output$explore_graph <- shiny::renderPlot(graph_out())
@@ -143,8 +146,10 @@ explore_UI <- function(id) {
     shiny::div(
       id = shiny::NS(id, "explore_content"),
       shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
-      shiny::plotOutput(outputId = shiny::NS(id, "explore_graph"),
-                        height = 150),
+      shiny::plotOutput(
+        outputId = shiny::NS(id, "explore_graph"),
+        height = 150
+      ),
       shinyjs::hidden(
         shiny::actionLink(
           inputId = shiny::NS(id, "clear_selection"),

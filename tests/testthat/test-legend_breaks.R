@@ -57,8 +57,8 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
     df = "city_CSD"
   )
   actual <- legend_breaks(vars,
-                data = data,
-                df = "city_CSD"
+    data = data,
+    df = "city_CSD"
   )
   expect_equal(
     names(actual),
@@ -66,7 +66,7 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
   )
   expect_equal(
     sum(grepl("%$", actual[[2]])),
-    sum(c(T,T,T,T))
+    sum(c(T, T, T, T))
   )
   expect_equal(
     length(actual$x), 4
@@ -92,10 +92,13 @@ test_that("legend_breaks.bivar works", {
   )
   expect_equal(
     legend_breaks(vars, df = "city_CSD"),
-
-    list(x = c("25.91%", "60.37%", "69.61%", "73.35%"),
-         y = c("1.42",
-               "3.24", "3.45", "3.81"))
+    list(
+      x = c("25.91%", "60.37%", "69.61%", "73.35%"),
+      y = c(
+        "1.42",
+        "3.24", "3.45", "3.81"
+      )
+    )
   )
 })
 
@@ -114,8 +117,12 @@ test_that("legend_breaks.delta_bivar works", {
   )
   expect_equal(
     legend_breaks(vars, data = data),
-    list(x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"),
-         y = c("20.93%",
-               "26.08%", "31.48%", "38.09%"))
+    list(
+      x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"),
+      y = c(
+        "20.93%",
+        "26.08%", "31.48%", "38.09%"
+      )
+    )
   )
 })

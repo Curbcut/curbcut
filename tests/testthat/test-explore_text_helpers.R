@@ -15,7 +15,8 @@ test_that("explore_context works", {
   actual_names <-
     explore_context(
       region = "city", select_id = "4620003.00", df = "city_CT",
-      switch_DA = FALSE)
+      switch_DA = FALSE
+    )
   expect_equal(all(names(actual_names) == expected_names), TRUE)
 })
 
@@ -112,4 +113,3 @@ test_that("explore_text_selection_comparison works", {
     )
   )
 })
-

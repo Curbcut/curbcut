@@ -5,7 +5,8 @@ test_that("dropdown_make generates a dropdown list for variables in one theme", 
   actual_output <- dropdown_make(vars, compare)
   expect_identical(as.numeric(vec_dep(actual_output)), 3)
   expect_identical(unname(unlist(actual_output))[
-    order(unname(unlist(actual_output)))], vars[order(vars)])
+    order(unname(unlist(actual_output)))
+  ], vars[order(vars)])
 })
 
 # Test generating a dropdown list with 'no comparison' option
@@ -15,7 +16,8 @@ test_that("dropdown_make generates a dropdown list with 'no comparison' option",
   actual_output <- dropdown_make(vars, compare)
   expect_identical(as.numeric(vec_dep(actual_output)), 3)
   expect_identical(unname(unlist(actual_output))[
-    order(unname(unlist(actual_output)))], c(" ", vars[order(vars)]))
+    order(unname(unlist(actual_output)))
+  ], c(" ", vars[order(vars)]))
 })
 
 # Test generating a dropdown list with no variables selected

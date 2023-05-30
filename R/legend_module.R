@@ -51,7 +51,8 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
                           legend_args = shiny::reactive(list(
                             vars = vars(), lang = r$lang(), df = df(),
                             data = data(), breaks = breaks(),
-                            scales_as_DA = scales_as_DA())),
+                            scales_as_DA = scales_as_DA()
+                          )),
                           force_height = shiny::reactive(NULL)) {
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(data))
@@ -63,7 +64,6 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
   stopifnot(shiny::is.reactive(legend_args))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Make legend
     legend <- shiny::reactive(
       tryCatch(do.call(legend_fun(), legend_args()), error = function(e) {
@@ -76,9 +76,13 @@ legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
     # Define plot height
     plot_height <- function() {
       # If the height is to be override
-      if (!is.null(force_height())) return(force_height())
+      if (!is.null(force_height())) {
+        return(force_height())
+      }
       # If there's the `bivar` string detected in one of the classes
-      if (sum(grepl("bivar", attr(vars(), "class"))) > 0) return(150)
+      if (sum(grepl("bivar", attr(vars(), "class"))) > 0) {
+        return(150)
+      }
       return(60)
     }
 

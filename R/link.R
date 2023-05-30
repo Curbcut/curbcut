@@ -59,7 +59,9 @@ link <- function(r, page, select_id = NA, df = NULL) {
       # Location
       df_data <- get_from_globalenv(df)
       # Skip the zoom/coords if the centroid is not in the dataframe
-      if (!"centroid" %in% names(df_data)) return(NULL)
+      if (!"centroid" %in% names(df_data)) {
+        return(NULL)
+      }
       coords <- df_data$centroid[df_data$ID == select_id][[1]]
       coords <- sapply(coords, round, digits = 2)
 

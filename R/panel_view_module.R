@@ -74,11 +74,19 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       pe_docs <- get_from_globalenv("pe_docs")
       # When to show the place portrait button?
       show <- (\(x) {
-        if (is.na(r[[id]]$select_id())) return(FALSE)
-        if (!r[[id]]$select_id() %in% data()$ID) return(FALSE)
-        pe_link <- sprintf("%s_%s_%s.html", r[[id]]$df(), r[[id]]$select_id(),
-                           r$lang())
-        if (!pe_link %in% pe_docs) return(FALSE)
+        if (is.na(r[[id]]$select_id())) {
+          return(FALSE)
+        }
+        if (!r[[id]]$select_id() %in% data()$ID) {
+          return(FALSE)
+        }
+        pe_link <- sprintf(
+          "%s_%s_%s.html", r[[id]]$df(), r[[id]]$select_id(),
+          r$lang()
+        )
+        if (!pe_link %in% pe_docs) {
+          return(FALSE)
+        }
         return(TRUE)
       })()
 
@@ -221,8 +229,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
         # Is the column in the data? (Sometimes population and households are
         # missing, but they are automatically added as counts as the default is
         # that they will be present)
-        if (i %in% names(dat$x$data))
+        if (i %in% names(dat$x$data)) {
           dat <- panel_view_style_cols(var = i, table = dat)
+        }
       }
 
       return(dat)
@@ -250,7 +259,9 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
         # If there is a selection, update the central coordinates of the map
         df_data <- grab_df_from_bslike(df = treated_df())
         # Skip the zoom update if the 'centroid' is not in the df
-        if (!"centroid" %in% names(df_data)) return(NULL)
+        if (!"centroid" %in% names(df_data)) {
+          return(NULL)
+        }
         coords <- df_data$centroid[df_data$ID == new_id][[1]]
         coords <- sapply(coords, round, digits = 2)
         rdeck::rdeck_proxy(
@@ -310,8 +321,8 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
 
               # Write the data to a shapefile
               sf::st_write(data,
-                           dsn = name_shp, driver = "ESRI Shapefile",
-                           quiet = TRUE
+                dsn = name_shp, driver = "ESRI Shapefile",
+                quiet = TRUE
               )
 
               # Zip the shapefile and copy to the desired location

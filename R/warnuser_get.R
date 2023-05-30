@@ -16,7 +16,6 @@
 #'
 #' @return A string containing the warning message in HTML format.
 warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
-
   out <- list()
 
   # Unique years
@@ -24,37 +23,47 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
   right_year <- var_get_time(vars$var_right) |> unique()
 
   # Vars title
-  var_left_title <- var_get_title(var = vars$var_left,
-                                  short_treshold = 50,
-                                  translate = TRUE, lang = lang)
-  var_right_title <- var_get_title(var = vars$var_right,
-                                   short_treshold = 50,
-                                   translate = TRUE, lang = lang)
+  var_left_title <- var_get_title(
+    var = vars$var_left,
+    short_treshold = 50,
+    translate = TRUE, lang = lang
+  )
+  var_right_title <- var_get_title(
+    var = vars$var_right,
+    short_treshold = 50,
+    translate = TRUE, lang = lang
+  )
 
 
   # Same year selected ------------------------------------------------------
 
   if (length(left_year) == 2 && left_year[1] == left_year[2]) {
-    out <- c(out,
-             list(cc_t(lang = lang,
-                       "Comparison requires two different dates.")))
+    out <- c(
+      out,
+      list(cc_t(
+        lang = lang,
+        "Comparison requires two different dates."
+      ))
+    )
   }
 
 
   # Year displayed != year chosen -------------------------------------------
 
   if (time[[1]] != "") {
-
     length_mismatch <- length(time) == 2 & length(left_year) == 1
 
     # Year displayed LEFT
     if (length(left_year) == 1 & !length_mismatch) {
       if (left_year != unique(time)) {
-        out <- c(out,
-                 list(cc_t(lang = lang,
-                           "Displayed data for <b>{var_left_title}</b> is for the ",
-                           "closest available year <b>({left_year})</b>.")
-                 ))
+        out <- c(
+          out,
+          list(cc_t(
+            lang = lang,
+            "Displayed data for <b>{var_left_title}</b> is for the ",
+            "closest available year <b>({left_year})</b>."
+          ))
+        )
       }
     }
 
@@ -62,11 +71,14 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
     if (length(right_year) == 1 & !length_mismatch) {
       if (vars$var_right != " ") {
         if (all(right_year != unique(time))) {
-          out <- c(out,
-                   list(cc_t(lang = lang,
-                             "Displayed data for <b>{var_right_title}</b> is for the ",
-                             "closest available year <b>({right_year})</b>.")
-                   ))
+          out <- c(
+            out,
+            list(cc_t(
+              lang = lang,
+              "Displayed data for <b>{var_right_title}</b> is for the ",
+              "closest available year <b>({right_year})</b>."
+            ))
+          )
         }
       }
     }
@@ -75,8 +87,9 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # More condition for more disclaimers -------------------------------------
 
-  if (!all(is.null(more_text)))
+  if (!all(is.null(more_text))) {
     out <- c(out, lapply(more_text, cc_t, lang = lang))
+  }
 
 
   # Make it an HTML paragraph -----------------------------------------------
@@ -90,5 +103,4 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
   # Return ------------------------------------------------------------------
 
   return(out)
-
 }

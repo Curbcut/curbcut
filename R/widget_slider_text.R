@@ -29,12 +29,14 @@ slider_text_server <- function(id, r, slider_text_id = "slt",
     # on the climate risk module of Curbcut Montreal (for an unknown reason).
     # By updating it after the pickers are initiated, we fix the issue.
     shiny::observeEvent(choices(), {
-      shinyjs::delay(500,
-                     shinyWidgets::updateSliderTextInput(
-                       session = session,
-                       inputId = slider_text_id,
-                       choices = choices()
-                     ))
+      shinyjs::delay(
+        500,
+        shinyWidgets::updateSliderTextInput(
+          session = session,
+          inputId = slider_text_id,
+          choices = choices()
+        )
+      )
     })
 
     # Update selected if it changes

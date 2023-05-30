@@ -17,7 +17,6 @@
 #' @return A logical value indicating whether or not to show texture for the given
 #' zoom level and tile name
 map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) {
-
   # In no case we show empty buildings on a building scale
   if (is_scale_df("building", tile)) {
     return(FALSE)
@@ -67,9 +66,15 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
 #' @return Returns TRUE if the polygons should be extruded on the map. Otherwise,
 #' returns FALSE.
 map_label_extrude <- function(map_view_state, zoom, zoom_levels, tile, extrude) {
-  if (is.null(map_view_state)) return(FALSE)
-  if (map_view_state$pitch < 25) return(FALSE)
-  if (!extrude) return(FALSE)
+  if (is.null(map_view_state)) {
+    return(FALSE)
+  }
+  if (map_view_state$pitch < 25) {
+    return(FALSE)
+  }
+  if (!extrude) {
+    return(FALSE)
+  }
 
   # Return TRUE or FALSE depending if the textures are present or not
   !map_label_show_texture(

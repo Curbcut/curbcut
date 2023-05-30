@@ -96,7 +96,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
         error = function(e) c(missing = "missing")
       )
       if (!scale %in% names(mzl)) {
-         scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
+        scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
       }
 
       return(paste(zoom_levels()$region, scale, sep = "_"))

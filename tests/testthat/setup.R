@@ -15,12 +15,16 @@ assign("default_random_address",
 # All qs and qsm files
 data_files <- list.files("resources", full.names = TRUE)
 invisible(lapply(data_files[grepl("qsm$", data_files)],
-                 qs::qload, env = .GlobalEnv))
-invisible(lapply(data_files[grepl("qs$", data_files)],
-                 \(x) {
-                   object_name <- gsub("(resources/)|(\\.qs)", "", x)
-                   assign(object_name, qs::qread(x), envir = .GlobalEnv)
-                 }))
+  qs::qload,
+  env = .GlobalEnv
+))
+invisible(lapply(
+  data_files[grepl("qs$", data_files)],
+  \(x) {
+    object_name <- gsub("(resources/)|(\\.qs)", "", x)
+    assign(object_name, qs::qread(x), envir = .GlobalEnv)
+  }
+))
 
 # All sqlite files
 dbs <- list.files("resources", full.names = TRUE)

@@ -122,5 +122,4 @@ test_that("vars_build works", {
       "character"
     )), var_right = " "), class = c("q5_ind", "q5", "ordinal"))
   )
-
 })

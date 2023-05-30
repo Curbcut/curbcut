@@ -30,7 +30,6 @@ explore_graph_scale.pct <- function(var, x_y, ...) {
 #' "dollar" method.
 #' @export
 explore_graph_scale.dollar <- function(var, x_y, data_vals, ...) {
-
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(data_vals)
 
@@ -60,8 +59,10 @@ explore_graph_scale.dollar <- function(var, x_y, data_vals, ...) {
 #' "dollar" method.
 #' @export
 explore_graph_scale.ind <- function(var, x_y, df, data_vals, lang = NULL, ...) {
-  explore_graph_scale_ind(var = var, x_y = x_y, df = df,
-                          data_vals = data_vals, lang = lang, ...)
+  explore_graph_scale_ind(
+    var = var, x_y = x_y, df = df,
+    data_vals = data_vals, lang = lang, ...
+  )
 }
 
 #' @describeIn explore_graph_scale The default method for unspecified variable
@@ -98,7 +99,6 @@ explore_graph_scale_ind <- function(var, x_y, df, lang = NULL, ...) {
 #' @param data_vals <`numeric vector`> containing data values
 #' @export
 explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals, ...) {
-
   # Grab the min and max breaks and switch them to numeric. TKTK NOT ON `IND`
   # outliers <- find_outliers(data_vals)
   # if (length(outliers) > 0) data_vals <- data_vals[-outliers]
@@ -115,18 +115,22 @@ explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals,
 
   # Return the scale as a list
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
-  list(do.call(eval(parse(text = scale)), list(labels = labels,
-                                               breaks = breaks)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = labels,
+    breaks = breaks
+  )))
 }
 
 #' @describeIn explore_graph_scale_ind ordinal method for index values
 #' @export
 explore_graph_scale_ind.ordinal <- function(var, x_y, df, lang = NULL, ...) {
   breaks <- var_get_breaks(var, df = df)
-  labels <-  c(NA_character_, legend_breaks.q5_ind(var, df = df, lang = lang))
+  labels <- c(NA_character_, legend_breaks.q5_ind(var, df = df, lang = lang))
   names(labels) <- as.character(breaks)
 
   scale <- sprintf("ggplot2::scale_%s_discrete", x_y)
-  list(do.call(eval(parse(text = scale)), list(labels = labels,
-                                               breaks = breaks)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = labels,
+    breaks = breaks
+  )))
 }

@@ -69,11 +69,14 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
                        fill_fun = shiny::reactive(map_scale_fill),
                        tileset_ID_color = shiny::reactive("ID_color"),
                        fill_args = shiny::reactive(list(data_colours(),
-                                                        tileset_ID_color = tileset_ID_color())),
+                         tileset_ID_color = tileset_ID_color()
+                       )),
                        colour_fun = shiny::reactive(map_scale_colour),
-                       colour_args = shiny::reactive(list(select_id = select_id(),
-                                                          data_colours(),
-                                                          tileset_ID_color = tileset_ID_color())),
+                       colour_args = shiny::reactive(list(
+                         select_id = select_id(),
+                         data_colours(),
+                         tileset_ID_color = tileset_ID_color()
+                       )),
                        lwd_fun = shiny::reactive(map_scale_lwd),
                        lwd_args = shiny::reactive(list(
                          select_id = select_id(), tile = tile(), zoom = zoom(),
@@ -85,7 +88,6 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
                        mapbox_username = get_from_globalenv("mapbox_username"),
                        tileset_prefix = get_from_globalenv("tileset_prefix"),
                        map_base_style = get_from_globalenv("map_base_style")) {
-
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
   stopifnot(shiny::is.reactive(select_id))
@@ -99,7 +101,6 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
   stopifnot(shiny::is.reactive(extrude))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Appease
 
     # Map
@@ -134,7 +135,7 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
     # NOT GET TRIGGER BY ANY SMALL CHANGE THAT DOESN'T IMPACT CHANGES IN STYLING
 
     # Show a different line colors when the texture is off (building scale)
-    new_line_color <-  shiny::reactive({
+    new_line_color <- shiny::reactive({
       if (!map_label_show_texture(
         zoom = zoom(),
         zoom_levels = zoom_levels(),
@@ -146,38 +147,56 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
         do.call(colour_fun(), colour_args())
       }
     })
-    update_map_rv(id = id, r = r, rv_name = "map_line_color_reactive",
-                  default_val = "#FFFFFF", new_val = new_line_color)
+    update_map_rv(
+      id = id, r = r, rv_name = "map_line_color_reactive",
+      default_val = "#FFFFFF", new_val = new_line_color
+    )
 
     # Get fill color
-    update_map_rv(id = id, r = r, rv_name = "map_fill_color",
-                  default_val = do.call(fill_fun(), fill_args()),
-                  new_val = shiny::reactive(do.call(fill_fun(), fill_args())))
+    update_map_rv(
+      id = id, r = r, rv_name = "map_fill_color",
+      default_val = do.call(fill_fun(), fill_args()),
+      new_val = shiny::reactive(do.call(fill_fun(), fill_args()))
+    )
 
     # Get line width
-    update_map_rv(id = id, r = r, rv_name = "map_line_width",
-                  default_val = do.call(lwd_fun(), lwd_args()),
-                  new_val = shiny::reactive(do.call(lwd_fun(), lwd_args())))
+    update_map_rv(
+      id = id, r = r, rv_name = "map_line_width",
+      default_val = do.call(lwd_fun(), lwd_args()),
+      new_val = shiny::reactive(do.call(lwd_fun(), lwd_args()))
+    )
 
     # Building extrusion when pitch changes on building layer
     extrude_final <- shiny::reactive({
-      map_label_extrude(map_view_state = map_view_state(),
-                        zoom = zoom(),
-                        zoom_levels = zoom_levels(),
-                        tile = tile(),
-                        extrude = extrude())
+      map_label_extrude(
+        map_view_state = map_view_state(),
+        zoom = zoom(),
+        zoom_levels = zoom_levels(),
+        tile = tile(),
+        extrude = extrude()
+      )
     })
-    update_map_rv(id = id, r = r, rv_name = "map_extrude", default_val = FALSE,
-                  new_val = extrude_final)
+    update_map_rv(
+      id = id, r = r, rv_name = "map_extrude", default_val = FALSE,
+      new_val = extrude_final
+    )
 
     # Pickable? Buildings are not pickable under a zoom of 12
     pickable_final <- shiny::reactive({
-      if (!pickable()) return(FALSE)
-      if (!is_scale_df("building", tile())) return(TRUE)
-      if (zoom() < 12) return(FALSE)
+      if (!pickable()) {
+        return(FALSE)
+      }
+      if (!is_scale_df("building", tile())) {
+        return(TRUE)
+      }
+      if (zoom() < 12) {
+        return(FALSE)
+      }
     })
-    update_map_rv(id = id, r = r, rv_name = "map_pickable", default_val = TRUE,
-                  new_val = pickable_final)
+    update_map_rv(
+      id = id, r = r, rv_name = "map_pickable", default_val = TRUE,
+      new_val = pickable_final
+    )
 
 
     # Update layer aesthetics on change of any aesthetic

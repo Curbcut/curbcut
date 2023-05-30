@@ -11,11 +11,13 @@
 #' in the working directory.
 #' @export
 test_resources_creation <- function(additional_vars = c()) {
-  vars <- c("housing_tenant", "housing_rent", "access_foot_20_food_grocery",
-            "access_transit_nwd_30_cultural_artcentre", "climate_drought",
-            "afford_tenant_sc30_total_total_total_count_2021",
-            "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
-            additional_vars)
+  vars <- c(
+    "housing_tenant", "housing_rent", "access_foot_20_food_grocery",
+    "access_transit_nwd_30_cultural_artcentre", "climate_drought",
+    "afford_tenant_sc30_total_total_total_count_2021",
+    "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
+    additional_vars
+  )
   variables <- qs::qread("data/variables.qs")
   p_v <- variables$parent_vec[variables$var_code %in% vars]
   p_v <- p_v[!is.na(p_v)]
@@ -30,7 +32,6 @@ test_resources_creation <- function(additional_vars = c()) {
   regions_to_extract <- c("city", "grid", "cmhc")
 
   lapply(regions_to_extract, \(region) {
-
     path_to_data <- sprintf("data/%s", region)
 
     all_files <- list.files(path_to_data, recursive = T, full.names = TRUE)
@@ -44,17 +45,18 @@ test_resources_creation <- function(additional_vars = c()) {
         dir.create(dir_path, recursive = TRUE)
       }
       file.copy(from, to)
-
     }, data_files, gsub("data", "resources/data", data_files))
   })
 
   variables <- variables[variables$var_code %in% vars, ]
 
-  other_files <- c("census_variables.qs", "city.qsm", "map_zoom_levels.qsm",
-                   "grid.qsm", "cmhc.qsm", "modules.qs", "postal_codes.qs",
-                   "regions_dictionary.qs", "scales_dictionary.qs", "stories.qsm",
-                   "translation_df.qs", "colours_dfs.qs", "building.sqlite",
-                   "grid100.sqlite")
+  other_files <- c(
+    "census_variables.qs", "city.qsm", "map_zoom_levels.qsm",
+    "grid.qsm", "cmhc.qsm", "modules.qs", "postal_codes.qs",
+    "regions_dictionary.qs", "scales_dictionary.qs", "stories.qsm",
+    "translation_df.qs", "colours_dfs.qs", "building.sqlite",
+    "grid100.sqlite"
+  )
 
   # Save the variables
   qs::qsave(variables, "resources/variables.qs")
@@ -89,7 +91,9 @@ test_assign_delta_ind_ord <- function(pos = 1) {
 test_assign_delta_bivar_ind_ord <- function(pos = 1) {
   df <- "grid_grid250"
   vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"),
-                     c("housing_rent_2016", "housing_rent_2021"), df = df)
+    c("housing_rent_2016", "housing_rent_2021"),
+    df = df
+  )
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -226,7 +230,9 @@ test_assign_q5_count <- function(pos = 1) {
 test_assign_bivar_count <- function(pos = 1) {
   df <- "city_CSD"
   vars <- vars_build("afford_tenant_sc30_total_total_total_count_2021",
-                     "housing_tenant_2021", df = df)
+    "housing_tenant_2021",
+    df = df
+  )
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -243,9 +249,13 @@ test_assign_bivar_count <- function(pos = 1) {
 #' @return Assigns a constructed `df`, `vars`, `data` in the global environment
 test_assign_delta_count <- function(pos = 1) {
   df <- "city_CSD"
-  vars <- vars_build(c("afford_tenant_sc30_total_total_total_count_2016",
-                       "afford_tenant_sc30_total_total_total_count_2021"),
-                     df = df)
+  vars <- vars_build(
+    c(
+      "afford_tenant_sc30_total_total_total_count_2016",
+      "afford_tenant_sc30_total_total_total_count_2021"
+    ),
+    df = df
+  )
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))

@@ -15,7 +15,6 @@
 #' environment and returns \code{invisible()}.
 #' @export
 create_ui_server_mods <- function(modules, pos = 1) {
-
   # Create the `basic` function
   ui <- function(id) {
     default_region <- modules$regions[modules$id == id][[1]][1]
@@ -90,7 +89,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         shiny::reactive(curbcut::zoom_get_levels(
           id = id,
           region = r$region(),
-          suffix_zoom_levels = suffix_zoom_levels))
+          suffix_zoom_levels = suffix_zoom_levels
+        ))
 
       # Zoom string reactive
       shiny::observe({
@@ -135,7 +135,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
           id = id,
           r = r,
           main_dropdown_title = main_dropdown_title,
-          default_year = default_year)
+          default_year = default_year
+        )
 
       var_left <- shiny::reactive(autovars()$var)
       time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
@@ -154,8 +155,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
       )
 
       # Update the `r[[id]]$vars` reactive
-      curbcut::update_vars(id = id, r = r, var_left = var_left,
-                           var_right = var_right)
+      curbcut::update_vars(
+        id = id, r = r, var_left = var_left,
+        var_right = var_right
+      )
 
       # Sidebar
       curbcut::sidebar_server(id = id, r = r)

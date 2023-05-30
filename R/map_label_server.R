@@ -194,8 +194,11 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
     }
 
     shiny::observeEvent(
-      zoom(), {
-        if (is.null(stories_mapping)) return(NULL)
+      zoom(),
+      {
+        if (is.null(stories_mapping)) {
+          return(NULL)
+        }
         # Check if the layer has been added and if the zoom is higher than 14
         if (!stories_layer_added() && zoom() > 14) {
           # Set the reactive value to TRUE to indicate the layer has been added
@@ -216,19 +219,24 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
               icon_size_scale = 60,
               pickable = TRUE,
               auto_highlight = TRUE,
-              highlight_color = "#FFFFFF50")
+              highlight_color = "#FFFFFF50"
+            )
         }
-      })
+      }
+    )
 
     shiny::observeEvent(
       zoom(),
       {
-        if (is.null(stories_mapping)) return(NULL)
+        if (is.null(stories_mapping)) {
+          return(NULL)
+        }
         rdeck::rdeck_proxy("map") |>
           rdeck::update_mvt_layer(
             id = "stories",
-            visible = zoom() > 14 & show())
-      })
-
+            visible = zoom() > 14 & show()
+          )
+      }
+    )
   })
 }

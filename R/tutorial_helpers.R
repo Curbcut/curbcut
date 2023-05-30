@@ -36,49 +36,75 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
   # Default elements which need the tutorial
   default_elements <-
     data.frame(
-      element = c(build_element("title_texts"),
-                  build_element("map_div"),
-                  build_element("left_widgets"),
-                  build_element("legend_div"),
-                  build_element("zoom_div"),
-                  build_element("compare_panel"),
-                  build_element("explore_content"),
-                  build_element("floating-panel-content"),
-                  build_element("tutorial")),
-      intro = c(cc_t("Curbcut is designed as a series of pages that explore ",
-                     "a given theme. Here you will find information about the ",
-                     "theme and the data used on the page.", lang = lang),
-                cc_t("All the maps within Curbcut are interactive and let users ",
-                     "scroll, zoom in and out, and click into areas for more ",
-                     "information.", lang = lang),
-                cc_t("The interactive nature of our maps means that you can ",
-                     "choose which variables you wish to explore through the ",
-                     "widgets located here.", lang = lang),
-                cc_t("The legend displays how the selected variable(s) is ",
-                     "being visually represented on the map with different ",
-                     "colours.", lang = lang),
-                cc_t("The level of zoom determines the spatial scale of what ",
-                     "you see or you can click off \u2018autozoom\u2019 and manually ",
-                     "choose the spatial scale with the slider.",
-                     lang = lang),
-                cc_t("This function allows you to select a variable to compare ",
-                     "with the one selected on the left-hand panel. We will show ",
-                     "you the potential relationship between the variables of ",
-                     "your choice.", lang = lang),
-                cc_t("You will see meaningful information here about the variables ",
-                     "selected and any potential relationships between them.",
-                     lang = lang),
-                cc_t("These buttons allow you to switch between map view and ",
-                     "data view. Both show the same information, either ",
-                     "spatialized or in table form.", lang = lang),
-                cc_t("Congratulations on completing the tutorial! If you wouldd like ",
-                     "to revisit any part of it, or run through the entire ",
-                     "tutorial again, simply click on this button.", lang = lang)),
-      position = c("right", "auto", "right", "autto", "auto", "left", "left",
-                   "auto", "auto"),
-      title = sapply(c("Title text", "Map", "Left-hand widgets", "Legend", "Zoom",
-                       "Compare menu", "Explore", "View switch", "Tutorial"), cc_t,
-                     lang = lang, USE.NAMES = FALSE)
+      element = c(
+        build_element("title_texts"),
+        build_element("map_div"),
+        build_element("left_widgets"),
+        build_element("legend_div"),
+        build_element("zoom_div"),
+        build_element("compare_panel"),
+        build_element("explore_content"),
+        build_element("floating-panel-content"),
+        build_element("tutorial")
+      ),
+      intro = c(
+        cc_t("Curbcut is designed as a series of pages that explore ",
+          "a given theme. Here you will find information about the ",
+          "theme and the data used on the page.",
+          lang = lang
+        ),
+        cc_t("All the maps within Curbcut are interactive and let users ",
+          "scroll, zoom in and out, and click into areas for more ",
+          "information.",
+          lang = lang
+        ),
+        cc_t("The interactive nature of our maps means that you can ",
+          "choose which variables you wish to explore through the ",
+          "widgets located here.",
+          lang = lang
+        ),
+        cc_t("The legend displays how the selected variable(s) is ",
+          "being visually represented on the map with different ",
+          "colours.",
+          lang = lang
+        ),
+        cc_t("The level of zoom determines the spatial scale of what ",
+          "you see or you can click off \u2018autozoom\u2019 and manually ",
+          "choose the spatial scale with the slider.",
+          lang = lang
+        ),
+        cc_t("This function allows you to select a variable to compare ",
+          "with the one selected on the left-hand panel. We will show ",
+          "you the potential relationship between the variables of ",
+          "your choice.",
+          lang = lang
+        ),
+        cc_t("You will see meaningful information here about the variables ",
+          "selected and any potential relationships between them.",
+          lang = lang
+        ),
+        cc_t("These buttons allow you to switch between map view and ",
+          "data view. Both show the same information, either ",
+          "spatialized or in table form.",
+          lang = lang
+        ),
+        cc_t("Congratulations on completing the tutorial! If you wouldd like ",
+          "to revisit any part of it, or run through the entire ",
+          "tutorial again, simply click on this button.",
+          lang = lang
+        )
+      ),
+      position = c(
+        "right", "auto", "right", "autto", "auto", "left", "left",
+        "auto", "auto"
+      ),
+      title = sapply(
+        c(
+          "Title text", "Map", "Left-hand widgets", "Legend", "Zoom",
+          "Compare menu", "Explore", "View switch", "Tutorial"
+        ), cc_t,
+        lang = lang, USE.NAMES = FALSE
+      )
     )
 
   # Skip elements from the argument
@@ -94,7 +120,8 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
     steps = default_elements,
     nextLabel = cc_t("Next", lang = lang),
     prevLabel = cc_t("Back", lang = lang),
-    doneLabel = cc_t("Done", lang = lang)))
+    doneLabel = cc_t("Done", lang = lang)
+  ))
 
   # Set a cookie for the last time the tutorial was seen
   cookie_set(

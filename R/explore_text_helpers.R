@@ -47,8 +47,10 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # DA.
   if (!switch_DA) {
     # Get the place heading and glue it
-    dat <- grab_row_from_bslike(df = df, select_id = select_id,
-                                cols = c("name", "name_2"))
+    dat <- grab_row_from_bslike(
+      df = df, select_id = select_id,
+      cols = c("name", "name_2")
+    )
     name <- dat$name
     name_2 <- cc_t(dat$name_2, lang = lang)
     heading <- cc_t(scale$place_heading, lang = lang)
@@ -58,8 +60,10 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # Tweaked retrieval when the `df` is part of the scales to treat as DAs.
   if (switch_DA) {
     # Grab the DA ID and the address from the SQL database
-    bs <- grab_row_from_bslike(df = df, select_id = select_id,
-                               cols = c("name", "DA_ID"))
+    bs <- grab_row_from_bslike(
+      df = df, select_id = select_id,
+      cols = c("name", "DA_ID")
+    )
 
     # If the selection ID is not in the SQL database, return the region only text
     # with an empty NA. The text that will be showed is the basic one for the region.
@@ -71,8 +75,10 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
 
     # Get the heading
     name <- sprintf(cc_t("around %s", lang = lang), bs$name)
-    heading <- sprintf(cc_t("Dissemination area around %s", lang = lang),
-                       cc_t(scale$place_heading, lang = lang))
+    heading <- sprintf(
+      cc_t("Dissemination area around %s", lang = lang),
+      cc_t(scale$place_heading, lang = lang)
+    )
 
     # Switch the select_id, to be able to use the data values of the `DA`
     select_id <- bs$DA_ID
@@ -82,7 +88,9 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
 
     # Switch the scale
     scale <- scales_dictionary[is_scale_df(scales_dictionary$scale,
-                                           treated_df, vectorized = TRUE), ]
+      treated_df,
+      vectorized = TRUE
+    ), ]
   }
 
   # Get the sentence start (In Borough or In dissemination area XYZ, )
@@ -120,7 +128,9 @@ explore_text_parent_title <- function(var, lang = NULL) {
   # If the parent vector is not in the variables table, return it
   variables <- get_from_globalenv("variables")
   if (!parent_string %in% variables$var_code) {
-    if (parent_string == "population") return("individuals")
+    if (parent_string == "population") {
+      return("individuals")
+    }
     return(cc_t(parent_string, lang = lang))
   }
 
@@ -224,15 +234,16 @@ explore_get_parent_data <- function(var, select_id, df, col = "var_left") {
   # the data from the global df in the global environment (this is useful for
   # place explorer generation.)
   parent_data <- tryCatch(data_get(parent_string, df),
-                          error = function(e) {
-                            data <- get_from_globalenv(df)
-                            if (!parent_string %in% names(data)) {
-                              return(print(paste0(parent_string, " not found in the data files.")))
-                            }
-                            data <- data[c("ID", parent_string)]
-                            names(data)[2] <- "var_left"
-                            data
-                          })
+    error = function(e) {
+      data <- get_from_globalenv(df)
+      if (!parent_string %in% names(data)) {
+        return(print(paste0(parent_string, " not found in the data files.")))
+      }
+      data <- data[c("ID", parent_string)]
+      names(data)[2] <- "var_left"
+      data
+    }
+  )
 
   # Get the parent value for the zone
   all_count <- parent_data[[col]][parent_data$ID == select_id]
@@ -334,12 +345,12 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
   # Lower letters
   out$val <- tolower(out$val)
 
-  if (!is.na(select_id))
+  if (!is.na(select_id)) {
     out$num <- data[[col]][data$ID == select_id]
+  }
 
   # Return
   return(out)
-
 }
 
 #' @rdname explore_text_select_val
@@ -356,7 +367,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #'
 #' @export
 explore_text_select_val.default <- function(var, data, df, select_id, col = "var_left",
-                                        ...) {
+                                            ...) {
   # Create empty vector
   out <- c()
 
@@ -370,7 +381,6 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 
   # Return
   return(out)
-
 }
 
 #' Explore Text Selection Comparison
@@ -483,8 +493,10 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data,
                                                          lang = NULL, ...) {
   # Correlation
   corr <- stats::cor(data$var_left, data$var_right, use = "complete.obs")
-  corr_string <- sprintf(cc_t("Pearson's r: %s", lang = lang),
-                         round(corr, digits = 2))
+  corr_string <- sprintf(
+    cc_t("Pearson's r: %s", lang = lang),
+    round(corr, digits = 2)
+  )
 
   return(list(
     corr = corr,
@@ -500,8 +512,10 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
   corr <- stats::cor(data$var_left, data$var_right,
     use = "complete.obs", method = "spearman"
   )
-  corr_string <- sprintf(cc_t("Spearman's rho: %s", lang = lang),
-                         round(corr, digits = 2))
+  corr_string <- sprintf(
+    cc_t("Spearman's rho: %s", lang = lang),
+    round(corr, digits = 2)
+  )
 
   return(list(
     corr = corr,
@@ -550,9 +564,11 @@ explore_text_color <- function(x, meaning) {
   x_colored <- sprintf("<span style='color:%s'>%s</span>", hex, x)
 
   # Add the color to the bullet point lists if there are
-  x_colored <- gsub("<li>",
-                    sprintf("<li style='color:%s'>", hex),
-                    x_colored)
+  x_colored <- gsub(
+    "<li>",
+    sprintf("<li style='color:%s'>", hex),
+    x_colored
+  )
 
   # Return
   return(x_colored)

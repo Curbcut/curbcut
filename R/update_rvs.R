@@ -122,24 +122,25 @@ update_poi <- function(id, poi, map_viewstate) {
 #' @export
 update_select_id <- function(id, r, data = shiny::reactive(NULL),
                              id_map = "map") {
-
   # Must be its own module for the use of the button on the stories modal
   shiny::moduleServer(id, function(input, output, session) {
-
     click_init <- shiny::reactive(rdeck::get_clicked_object(id_map))
 
     # Redirect to stories?
-    click <- shiny::eventReactive(click_init(), {
-      stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
-      id <- click_init()$ID
-      attr(id, "stories_link") <- stories_link
-      return(id)
-    }, ignoreInit = TRUE, ignoreNULL = TRUE)
+    click <- shiny::eventReactive(click_init(),
+      {
+        stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
+        id <- click_init()$ID
+        attr(id, "stories_link") <- stories_link
+        return(id)
+      },
+      ignoreInit = TRUE,
+      ignoreNULL = TRUE
+    )
 
     # If it is a stories click, show the modal with the story
     shiny::observeEvent(click(), {
       if (attr(click(), "stories_link")) {
-
         # Get the stories HTML document source
         stories <- get_from_globalenv("stories")
         story_name <- stories$name_id[stories$ID == click()]
@@ -185,7 +186,9 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
         # Get rid of the attribute
         attr(id, "stories_link") <- NULL
         return(id)
-      } else return(NA)
+      } else {
+        return(NA)
+      }
     })
 
     # If a click has been made, change then `select_id` reactive
@@ -327,6 +330,10 @@ update_vars <- function(id, r, var_left, var_right) {
     )
 
     # If the new built variable is the same as before, don't do anything
-    if (identical(vr, r[[id]]$vars())) return() else r[[id]]$vars(vr)
+    if (identical(vr, r[[id]]$vars())) {
+      return()
+    } else {
+      r[[id]]$vars(vr)
+    }
   })
 }

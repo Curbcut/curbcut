@@ -36,7 +36,8 @@ settings_server <- function(id = "settings", r) {
       name = "region"
     ))
     shiny::observeEvent(region_cookie(), r$region(region_cookie()),
-                        once = TRUE)
+      once = TRUE
+    )
 
     # Change the default region and save the cookie at a change of the region.
     shiny::observeEvent(input$region_change, {

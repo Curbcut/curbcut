@@ -41,7 +41,6 @@ map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
 #' @export
 map_scale_colour <- function(select_id, data_colours,
                              tileset_ID_color = "ID_color") {
-
   # The colour of the selection should be black
   if (!is.na(select_id)) {
     data_colours$fill[data_colours$ID == select_id] <- "#000000"
@@ -81,7 +80,6 @@ map_scale_colour <- function(select_id, data_colours,
 #' @export
 map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
                           zoom_levels = NULL, lwd = 1) {
-
   if (all(!sapply(list(tile, zoom, zoom_levels), is.null))) {
     # If we are one zoom below the threshold at which the scale would have
     # appeared on an auto-zoom, do not display any borders around the polygons

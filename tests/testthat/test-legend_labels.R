@@ -122,9 +122,8 @@ test_that("legend_labels.delta_bivar works", {
   expect_equal(
     legend_labels(vars),
     list(structure(list(x = "Tenant (Δ 2006 - 2016)", y = "Avg. rent (Δ 2006 - 2016)"), class = "labels"),
-         x_short = structure("Tenant", class = c("glue", "character"
-         )), y_short = structure("Avg. rent", class = c("glue", "character"
-         )))
+      x_short = structure("Tenant", class = c("glue", "character")), y_short = structure("Avg. rent", class = c("glue", "character"))
+    )
   )
 })
 

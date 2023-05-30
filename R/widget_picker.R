@@ -144,9 +144,11 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
   if (all(unlist(var_list) %in% variables$var_code)) {
     are_parents <- unlist(var_list) %in% variables$parent_vec
     if (sum(are_parents) > 0) {
-      stop(sprintf(paste0("Parent vectors were included in the variable list ",
-                          "for the picker `%s-%s`. They can't be used ",
-                          "front-facing yet."), id, picker_id))
+      stop(sprintf(paste0(
+        "Parent vectors were included in the variable list ",
+        "for the picker `%s-%s`. They can't be used ",
+        "front-facing yet."
+      ), id, picker_id))
     }
   }
 

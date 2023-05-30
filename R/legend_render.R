@@ -104,8 +104,10 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
-                              df = df, ...)
+  leg_info <- legend_get_info(vars,
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df, ...
+  )
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$left_5[1:6, ]
@@ -181,8 +183,10 @@ legend_render.q5_ind <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
-                              df = df, ...)
+  leg_info <- legend_get_info(vars,
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df, ...
+  )
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$left_5[1:6, ]
@@ -256,8 +260,10 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
-                              df = df, ...)
+  leg_info <- legend_get_info(vars,
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df, ...
+  )
 
   # Cut for the number of breaks
   leg_info$break_labs <- leg_info$break_labs[!is.na(leg_info$break_labs)]
@@ -323,8 +329,10 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
-                              scales_as_DA = scales_as_DA, df = df, ...)
+  leg_info <- legend_get_info(vars,
+    lang = lang, font_family = font_family,
+    scales_as_DA = scales_as_DA, df = df, ...
+  )
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]
@@ -387,8 +395,10 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
-                              df = df, ...)
+  leg_info <- legend_get_info(vars,
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df, ...
+  )
 
   # Adapt breaks to add the `NA` bar
   leg <- rbind(
@@ -450,8 +460,10 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, font_family = font_family, scales_as_DA = scales_as_DA,
-                              df = df, ...)
+  leg_info <- legend_get_info(vars,
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df, ...
+  )
 
   # Adapt breaks
   leg <- leg_info$colours_dfs$viridis
@@ -507,8 +519,10 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
-                              scales_as_DA = scales_as_DA, df = df, ...)
+  leg_info <- legend_get_info(vars,
+    lang = lang, font_family = font_family,
+    scales_as_DA = scales_as_DA, df = df, ...
+  )
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]
@@ -575,8 +589,10 @@ legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "SourceSansPro",
   x <- y <- fill <- label <- label_colour <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars, lang = lang, font_family = font_family,
-                              scales_as_DA = scales_as_DA, df = df, ...)
+  leg_info <- legend_get_info(vars,
+    lang = lang, font_family = font_family,
+    scales_as_DA = scales_as_DA, df = df, ...
+  )
 
   # Prepare the grid's labels location and the colours
   leg <- leg_info$colours_dfs$bivar[1:9, ]

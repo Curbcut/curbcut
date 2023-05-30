@@ -21,8 +21,10 @@ explore_graph_labels <- function(vars, lang = NULL, ...) {
 explore_graph_labels.delta <- function(vars, lang = NULL, ...) {
   # For the delta, use the bivar legend function as the delta legend label only
   # uses the x axis
-  legend_labels.bivar(vars = list(var_left = vars$var_left[2],
-                                  var_right = vars$var_left[1]))[[1]]
+  legend_labels.bivar(vars = list(
+    var_left = vars$var_left[2],
+    var_right = vars$var_left[1]
+  ))[[1]]
 }
 
 #' @rdname explore_graph_labels
@@ -30,4 +32,3 @@ explore_graph_labels.delta <- function(vars, lang = NULL, ...) {
 explore_graph_labels.default <- function(vars, lang = NULL, ...) {
   legend_labels(vars = vars, lang = lang)[[1]]
 }
-

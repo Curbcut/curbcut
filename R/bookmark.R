@@ -85,22 +85,22 @@ use_bookmark <- function(r) {
         })
 
         # Followed by the sliders
-          lapply(widgets$s_text, \(widget) {
-            shinyWidgets::updateSliderTextInput(
-              session = r$server_session(),
-              inputId = ns_doubled(page_id = tab, widget[[1]]),
-              selected = widget[[2]]
-            )
-          })
-          lapply(widgets$slider, \(widget) {
-            # If there are multiple values, split at every `-`
-            value <- strsplit(widget[[2]], split = "-")[[1]]
-            shiny::updateSliderInput(
-              session = r$server_session(),
-              inputId = ns_doubled(page_id = tab, widget[[1]]),
-              value = as.numeric(value)
-            )
-          })
+        lapply(widgets$s_text, \(widget) {
+          shinyWidgets::updateSliderTextInput(
+            session = r$server_session(),
+            inputId = ns_doubled(page_id = tab, widget[[1]]),
+            selected = widget[[2]]
+          )
+        })
+        lapply(widgets$slider, \(widget) {
+          # If there are multiple values, split at every `-`
+          value <- strsplit(widget[[2]], split = "-")[[1]]
+          shiny::updateSliderInput(
+            session = r$server_session(),
+            inputId = ns_doubled(page_id = tab, widget[[1]]),
+            value = as.numeric(value)
+          )
+        })
 
         # Finish with the pickers, with a delay to make sure the rest is
         # well updated first

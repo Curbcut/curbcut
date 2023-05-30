@@ -18,7 +18,6 @@
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
 table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
-
   # Reformat data -----------------------------------------------------------
 
   # Take out the `q3`, `q5` and `group`
@@ -47,8 +46,9 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   dat <- cbind(df_dat, dat[names(dat) != "ID"])
 
   # Order data by population
-  if ("population" %in% names(dat))
+  if ("population" %in% names(dat)) {
     dat <- dat[order(dat$population, decreasing = TRUE), ]
+  }
 
 
   # About the data information ----------------------------------------------
@@ -222,13 +222,17 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
   names(dat)[grepl(var_codes, names(dat))] <- unlist(new_names)
 
   # Prepare the colum names for styling
-  title_vars1 <- lapply(new_names$var_left[1:2],
-                        \(x) structure(x, class = class(vars$var_left)))
+  title_vars1 <- lapply(
+    new_names$var_left[1:2],
+    \(x) structure(x, class = class(vars$var_left))
+  )
   variation1 <- structure(new_names$var_left[3], class = "pct")
   title_vars1 <- c(title_vars1, list(variation1))
 
-  title_vars2 <- lapply(new_names$var_right[1:2],
-                        \(x) structure(x, class = class(vars$var_right)))
+  title_vars2 <- lapply(
+    new_names$var_right[1:2],
+    \(x) structure(x, class = class(vars$var_right))
+  )
   variation2 <- structure(new_names$var_right[3], class = "pct")
   title_vars2 <- c(title_vars2, list(variation2))
 
@@ -260,8 +264,10 @@ panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, lang = NULL, ...)
   names(dat)[grepl(var_codes, names(dat))] <- unlist(new_names)
 
   # Prepare the column names for styling
-  title_vars1 <- lapply(new_names$var_left[1:2],
-                        \(x) structure(x, class = class(vars$var_left)))
+  title_vars1 <- lapply(
+    new_names$var_left[1:2],
+    \(x) structure(x, class = class(vars$var_left))
+  )
   variation1 <- structure(new_names$var_left[3], class = "pct")
   title_vars1 <- c(title_vars1, list(variation1))
 
@@ -349,8 +355,10 @@ panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
   title_color <- colours$fill[colours$group == "3 - 1"]
 
   # Grab the necesary values for the text
-  explanation <- var_get_info(vars$var_left, what = "explanation",
-                              translate = TRUE, lang = lang)
+  explanation <- var_get_info(vars$var_left,
+    what = "explanation",
+    translate = TRUE, lang = lang
+  )
 
   # Get the text for the single left variable
   out <- panel_view_prepare_text_helper(
@@ -387,17 +395,25 @@ panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
 
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(titles, \(x) {
-    explanation <- var_get_info(vars$var_left, what = "explanation",
-                                translate = TRUE, lang = lang)
+    explanation <- var_get_info(vars$var_left,
+      what = "explanation",
+      translate = TRUE, lang = lang
+    )
 
     if (!grepl("_variation$", x)) {
-      return(var_get_info(vars$var_left, what = "explanation",
-                          translate = TRUE, lang = lang))
+      return(var_get_info(vars$var_left,
+        what = "explanation",
+        translate = TRUE, lang = lang
+      ))
     }
-    explanation <- var_get_info(vars$var_left, what = "explanation_nodet",
-                                translate = TRUE, lang = lang)
-    sprintf(cc_t("the change in %s between %s and %s", lang = lang),
-            explanation, time[1], time[2])
+    explanation <- var_get_info(vars$var_left,
+      what = "explanation_nodet",
+      translate = TRUE, lang = lang
+    )
+    sprintf(
+      cc_t("the change in %s between %s and %s", lang = lang),
+      explanation, time[1], time[2]
+    )
   })
 
   # Title colour
@@ -448,8 +464,10 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
   title_colours <- c(left_color, right_color)
 
   # Grab the necesary values for the text
-  explanations <- lapply(var_codes, var_get_info, what = "explanation",
-                         translate = TRUE, lang = lang)
+  explanations <- lapply(var_codes, var_get_info,
+    what = "explanation",
+    translate = TRUE, lang = lang
+  )
 
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color) {
@@ -506,16 +524,22 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(var_codes, \(x) {
     if (!grepl("_variation$", x)) {
-      return(var_get_info(x, what = "explanation",
-                          translate = TRUE, lang = lang))
+      return(var_get_info(x,
+        what = "explanation",
+        translate = TRUE, lang = lang
+      ))
     }
 
     code <- gsub("_variation", "", x)
-    exp <- var_get_info(code, what = "explanation",
-                        translate = TRUE, lang = lang)
+    exp <- var_get_info(code,
+      what = "explanation",
+      translate = TRUE, lang = lang
+    )
     times <- var_codes[grepl(code, var_codes)][1:2] |> var_get_time()
-    sprintf(cc_t("the change in %s between %s and %s", lang = lang),
-            exp, times[1], times[2])
+    sprintf(
+      cc_t("the change in %s between %s and %s", lang = lang),
+      exp, times[1], times[2]
+    )
   })
 
   # Get the text for the single left variable
@@ -602,7 +626,8 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         "The data points have an average value (mean) of %s. Additionally, ",
         "the standard deviation, which measures the dispersion or spread ",
         "around this mean, is %s. (Approximately two thirds of data points ",
-        "lie within one standard deviation of the mean.)</p>", lang = lang
+        "lie within one standard deviation of the mean.)</p>",
+        lang = lang
       ),
       explanation, values[[1]], values[[2]], values[[3]], values[[4]]
     )
@@ -623,7 +648,8 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
             "pper.ca/', target = '_blank'>censusmapper.ca</a> ",
             "using the R <a href = 'https://cran.r-project.org",
             "/web/packages/cancensus/', target = '_blank'>canc",
-            "ensus</a> package.", lang = lang
+            "ensus</a> package.",
+            lang = lang
           ),
           date
         )
@@ -655,7 +681,8 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
             "To calculate %s, we extract the %s corresponding ",
             "%s. Here, the term 'parent vector' refers to ",
             "the data source that represents %s, which we use ",
-            "as a basis to compute %s.", lang = lang
+            "as a basis to compute %s.",
+            lang = lang
           ),
           explanation, source_vec, total_vec,
           par_exp, explanation

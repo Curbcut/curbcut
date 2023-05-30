@@ -80,15 +80,17 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
                 shiny::uiOutput(shiny::NS(id, "title")),
                 shiny::p(shiny::uiOutput(shiny::NS(id, "title_main"))),
                 shiny::p(shiny::actionLink(shiny::NS(id, "more_info"),
-                                           class = "sus-small-link",
-                                           cc_t(
-                                             "Learn more"
-                                           )
+                  class = "sus-small-link",
+                  cc_t(
+                    "Learn more"
+                  )
                 ))
               ),
               shinyjs::hidden(shiny::uiOutput(outputId = shiny::NS(id, "title_extra"))),
-              shiny::div(class = "sus-sidebar-widgets",
-                         id = shiny::NS(id, "left_widgets"), ...)
+              shiny::div(
+                class = "sus-sidebar-widgets",
+                id = shiny::NS(id, "left_widgets"), ...
+              )
             )
           )
         ),

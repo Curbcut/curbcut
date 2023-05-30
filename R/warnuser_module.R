@@ -21,7 +21,6 @@
 #' @export
 warnuser_server <- function(id, r, vars, time, data,
                             more_text = shiny::reactive(NULL)) {
-
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(time))
@@ -29,10 +28,11 @@ warnuser_server <- function(id, r, vars, time, data,
   stopifnot(shiny::is.reactive(more_text))
 
   shiny::moduleServer(id, function(input, output, session) {
-
-    warn <- shiny::reactive(warnuser_get(vars = vars(), data = data(),
-                                         time = time(), more_text = more_text(),
-                                         lang = r$lang()))
+    warn <- shiny::reactive(warnuser_get(
+      vars = vars(), data = data(),
+      time = time(), more_text = more_text(),
+      lang = r$lang()
+    ))
 
     output$warnuser <- shiny::renderText(shiny::HTML(warn()))
   })
