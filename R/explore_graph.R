@@ -153,12 +153,19 @@ explore_graph.bivar <- function(vars, select_id, df, data,
     2
   }
 
-  # Draw the plot
+  # Which are the column names containing data?
+  data_cols <- c("var_right", "var_left")
+
+  # Draw plot
   plot <-
     data |>
-    remove_outliers_df(cols = c("var_left", "var_right")) |>
-    ggplot2::ggplot(ggplot2::aes(var_right, var_left)) +
-    ggplot2::geom_point(ggplot2::aes(colour = group), size = point_size) +
+    remove_outliers_df(cols = data_cols) |>
+    ggplot2::ggplot(ggplot2::aes(var_right, var_left))
+
+  plot <-
+    plot +
+    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
+                               ggplot2::aes(colour = group), size = point_size) +
     ggplot2::stat_smooth(
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
@@ -241,16 +248,23 @@ explore_graph.delta <- function(vars, select_id, df, data,
     2
   }
 
+  # Which are the column names containing data?
+  data_cols <- c("var_left_1", "var_left_2")
+
   # Draw plot
   plot <-
     data |>
-    remove_outliers_df(cols = c("var_left_1", "var_left_2")) |>
-    ggplot2::ggplot(ggplot2::aes(var_left_1, var_left_2)) +
+    remove_outliers_df(cols = data_cols) |>
+    ggplot2::ggplot(ggplot2::aes(var_left_1, var_left_2))
+
+  plot <-
+    plot +
+    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
+                               ggplot2::aes(colour = group)) +
     ggplot2::geom_smooth(
       se = FALSE, method = "lm", formula = y ~ x,
       colour = "black", linewidth = 0.5
     ) +
-    ggplot2::geom_point(ggplot2::aes(colour = group)) +
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
@@ -306,12 +320,19 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data,
     2
   }
 
-  # Draw the plot
+  # Which are the column names containing data?
+  data_cols <- c("var_right", "var_left")
+
+  # Draw plot
   plot <-
     data |>
-    remove_outliers_df(cols = c("var_left", "var_right")) |>
-    ggplot2::ggplot(ggplot2::aes(var_right, var_left)) +
-    ggplot2::geom_point(ggplot2::aes(colour = group), size = point_size) +
+    remove_outliers_df(cols = data_cols) |>
+    ggplot2::ggplot(ggplot2::aes(var_right, var_left))
+
+  plot <-
+    plot +
+    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
+                               ggplot2::aes(colour = group), size = point_size) +
     ggplot2::stat_smooth(
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line

@@ -298,3 +298,43 @@ test_assign_bivar_dollar <- function(pos = 1) {
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
 }
+
+#' Assign Values to specific Variables in the environment
+#'
+#' This function is used to recreate a variable selection, data, df, ... in the
+#' global environment, helping to test line-by-line functions.
+#'
+#' @param var_left <`reactive character`> Character string of the selected
+#' variable, e.g. `canale_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
+#' @param var_right <`reactive character`> Character string of the selected
+#' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
+#' variable is represented by (" ").
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. Defaults to
+#' `city_CSD`.
+#' @param select_id <`character`> The select_id to assign in the global environment.
+#' Defaults to NA.
+#' @param pos <`numeric`> An integer value indicating the position in the search list where
+#' the environment to be used for assignment is located. Default is 1, which is
+#' typically the global environment.
+#'
+#' @details This function uses the vars_build function to create a new set of
+#' variables using var_left, var_right, and df. It then retrieves the
+#' corresponding data using the data_get function.
+#' It then assigns each of these variables, along with df, region (which is
+#' the piece before the underscode in `df`), and select_id to the specified environment.
+#'
+#' @return This function doesn't return a value. It modifies the specified
+#' environment by assigning values to certain variables.
+test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
+                            select_id = NA, pos = 1) {
+  vars <- vars_build(var_left, var_right, df = df)
+  data <- data_get(vars = vars, df = df)
+  region <- gsub("_.*", "", df)
+
+  assign("df", df, envir = as.environment(pos))
+  assign("region", region, envir = as.environment(pos))
+  assign("vars", vars, envir = as.environment(pos))
+  assign("data", data, envir = as.environment(pos))
+  assign("select_id", select_id, envir = as.environment(pos))
+}

@@ -64,3 +64,33 @@ explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
     treated_df = treated_df
   ))
 }
+
+#' Custom ggplot2 jitter function
+#'
+#' This function applies a jitter effect to a ggplot2 scatter plot to better
+#' visualize overlapping points. The jitter effect is dependent on the
+#' proportion of unique values to total observations in the data.
+#'
+#' @param dat <`data.frame`> A data frame or tibble object that contains the data.
+#' @param cols <`character vector`> A character vector of length 2 specifying the
+#' column names of 'dat' that will be used for the x and y coordinates, respectively.
+#'
+#' @param ... Additional arguments passed to the ggplot2::geom_jitter function.
+#' Examples include 'alpha' for transparency, 'size' for point size, or 'color'
+#' for point color. `ggplot2::aes()` also works here.
+#'
+#' @return A ggplot2::geom_jitter layer with customized width and height.
+#' If the proportion of unique values to total observations in a given column
+#' is less than 0.1, jitter will be applied along that axis (width for x,
+#' height for y) to improve visualization. Otherwise, no jitter will be applied
+#' along that axis.
+explore_graph_point_jitter <- function(dat, cols, ...) {
+
+  vals_obs_ratio_x <- length(unique(dat[[cols[1]]])) / nrow(dat)
+  vals_obs_ratio_y <- length(unique(dat[[cols[2]]])) / nrow(dat)
+
+  width <- if (vals_obs_ratio_x < 0.1) 0.4 else 0
+  height <- if (vals_obs_ratio_y < 0.1) 0.4 else 0
+
+  return(list(ggplot2::geom_jitter(width = width, height = height, ...)))
+}
