@@ -17,9 +17,20 @@ test_that("map_scale_fill works", {
 })
 
 test_that("map_scale_colour works", {
+  data_colours <- data_get_colours(
+    vars = vars_build(
+      var_left = "housing_tenant_2016",
+      df = "city_CSD"
+    ),
+    region = "city",
+    zoom_levels = map_zoom_levels_city
+  )
+  actual <- map_scale_colour("1234", data_colours)
+
   expect_equal(
-    map_scale_colour(),
-    "#FFFFFF"
+    names(actual),
+    c("scale_type", "trans", "legend", "col", "get_palette", "unmapped_color",
+      "levels", "tick_format", "col_label")
   )
 })
 

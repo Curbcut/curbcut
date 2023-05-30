@@ -30,24 +30,28 @@ map_scale_fill <- function(data_colours, tileset_ID_color = "ID_color") {
 #'
 #' @param select_id <`character`> The ID of the feature to highlight. The specified
 #' colour will be applied to this feature.
-#' @param border_color <`hex`> The colour to apply to the features not equal to `select_ID`.
-#' Default is "#63666A" (a dark grey).
-#' @param selection_color The colour to apply to the feature equal to `select_ID`.
-#' Default s "#000000" (black).
+#' @param data_colours <`data.frame`> The output of \code{\link{data_get_colours}}.
+#' Two columns: `ID` and `fill`. Every `ID` will be coloured using its according
+#' `fill` colour.
+#' @param tileset_ID_color <`character`> The name of the column on the tileset
+#' used to colour every polygon. Defaults to `ID_color`, where the buildings
+#' scales have in their `ID_color` column the `ID` of their DA.
 #'
-#' @return A categorical scale for colours, generated using
-#' `rdeck::scale_color_category`. The scale maps the `select_ID` to the `selection_color`,
-#' and all other features to the `border_color`. Unmapped IDs are also coloured
-#' with `border_color`.
+#' @return A color scale for polygons borders used in an rdeck map.
 #' @export
-map_scale_colour <- function(select_id, border_color = "#63666A",
-                             selection_color = "#000000") {
-  # Return the categorical scale
+map_scale_colour <- function(select_id, data_colours,
+                             tileset_ID_color = "ID_color") {
+
+  # The colour of the selection should be black
+  if (!is.na(select_id)) {
+    data_colours$fill[data_colours$ID == select_id] <- "#000000"
+  }
+
   rdeck::scale_color_category(
-    col = !!as.name("ID"),
-    palette = c(selection_color, border_color),
-    unmapped_color = border_color,
-    levels = c(select_id, "NA"),
+    col = !!as.name(tileset_ID_color),
+    palette = paste0(data_colours$fill, "80"),
+    unmapped_color = "#B3B3BB",
+    levels = data_colours$ID,
     legend = FALSE
   )
 }

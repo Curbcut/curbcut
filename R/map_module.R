@@ -71,7 +71,9 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
                        fill_args = shiny::reactive(list(data_colours(),
                                                         tileset_ID_color = tileset_ID_color())),
                        colour_fun = shiny::reactive(map_scale_colour),
-                       colour_args = shiny::reactive(list(select_id = select_id())),
+                       colour_args = shiny::reactive(list(select_id = select_id(),
+                                                          data_colours(),
+                                                          tileset_ID_color = tileset_ID_color())),
                        lwd_fun = shiny::reactive(map_scale_lwd),
                        lwd_args = shiny::reactive(list(
                          select_id = select_id(), tile = tile(), zoom = zoom(),
@@ -201,23 +203,6 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
 
     # Get the map view state as a reactive
     map_view_state <- shiny::reactive(rdeck::get_view_state("map"))
-
-    # Show the buildings extrude at the same moment texture is off.
-    # A change in the extrude reactive only triggers the `extrude` change.
-    # Attempt to improve user experience between auto-zoom DA and building level.
-    extrude_final <- shiny::reactive({
-      if (is.null(map_view_state())) return(FALSE)
-      if (map_view_state()$pitch < 25) return(FALSE)
-      if (!extrude()) return(FALSE)
-
-      # Return TRUE or FALSE depending if the textures are present or not
-      !map_label_show_texture(
-        zoom = zoom(),
-        zoom_levels = zoom_levels(),
-        tile = tile(),
-        map_module = TRUE
-      )
-    })
 
     # Return the viewstate
     return(map_view_state)
