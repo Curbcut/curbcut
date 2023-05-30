@@ -98,10 +98,12 @@ explore_graph.q5 <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data$var_left[data$ID == shared_info$select_id]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_vline(
-        xintercept = data$var_left[data$ID == shared_info$select_id],
+        xintercept = val,
         colour = "black", linewidth = 1.5
       )
   }
@@ -180,10 +182,12 @@ explore_graph.bivar <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_point(
-        data = data[data$ID == shared_info$select_id, ], shape = 21,
+        data = val, shape = 21,
         colour = "white", fill = "black", size = 4
       )
   }
@@ -275,10 +279,12 @@ explore_graph.delta <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_point(
-        data = data[data$ID == shared_info$select_id, ], shape = 21,
+        data = val, shape = 21,
         colour = "white", fill = "black", size = 4
       )
   }
@@ -347,10 +353,12 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_point(
-        data = data[data$ID == shared_info$select_id, ], shape = 21,
+        data = val, shape = 21,
         colour = "white", fill = "black", size = 4
       )
   }
@@ -462,10 +470,12 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data$var_left[data$ID == shared_info$select_id]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_vline(
-        xintercept = data$var_left[data$ID == shared_info$select_id],
+        xintercept = val,
         colour = "black", linewidth = 1.5
       )
   }
@@ -526,10 +536,12 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data$var_left[data$ID == shared_info$select_id]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_vline(
-        xintercept = data$var_left[data$ID == shared_info$select_id] + 1,
+        xintercept = val + 1,
         colour = "black", linewidth = 1.5
       )
   }
@@ -629,10 +641,12 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_point(
-        data = data[data$ID == shared_info$select_id, ], shape = 21, colour = "white",
+        data = val, shape = 21, colour = "white",
         fill = "black", size = 4
       )
   }
@@ -752,10 +766,12 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
+    val <- data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(val)))
     plot <-
       plot +
       ggplot2::geom_tile(
-        data = data[data$ID == shared_info$select_id, ],
+        data = val,
         color = "white", fill = "transparent", size = 1.5
       )
   }

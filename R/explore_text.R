@@ -53,6 +53,12 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   # the select_id needs to be switched to that of the dissemination area.
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
+  # Check for NAs in the selected value. Return NA message if it is the case
+  na_check <- explore_text_check_na(context = context, data = data,
+                                    select_id = select_id, vars = vars,
+                                    lang = lang)
+  if (!is.null(na_check)) return(na_check)
+
   # Grab the value string
   value_string <- explore_text_values_q5(
     var = vars$var_left, region = region,
@@ -89,6 +95,10 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
       lang = lang
     ) |>
       s_sentence()
+
+    if (grepl("</ul>", exp)) {
+      exp <- cc_t("This value", lang = lang)
+    }
 
     # Plug the right elements for the final sentence
     second_step <- sprintf(
@@ -758,6 +768,12 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
   # the select_id needs to be switched to that of the dissemination area.
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
+  # Check for NAs in the selected value. Return NA message if it is the case
+  na_check <- explore_text_check_na(context = context, data = data,
+                                    select_id = select_id, vars = vars,
+                                    lang = lang)
+  if (!is.null(na_check)) return(na_check)
+
   # If there is a selection, return a completely diferent text
   if (!is.na(select_id)) {
     # Grab the value string
@@ -817,6 +833,15 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
       # Grab the explanation
       exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang)
+      # If there are bullet points, change the explanation to something more generic
+      if (grepl("</ul>", exp)) {
+        out <- if (col == "var_left") {
+          "The first value"
+        } else {
+          "The second value"
+        }
+        exp <- cc_t(out, lang = lang)
+      }
       # If left, starts with a capital letter.
       if (col == "var_left") exp <- s_sentence(exp)
       exp <- explore_text_color(
@@ -1124,6 +1149,12 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   # the select_id needs to be switched to that of the dissemination area.
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
+  # Check for NAs in the selected value. Return NA message if it is the case
+  na_check <- explore_text_check_na(context = context, data = data,
+                                    select_id = select_id, vars = vars,
+                                    lang = lang)
+  if (!is.null(na_check)) return(na_check)
+
   # Grab the explanation and region values
   exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
@@ -1166,6 +1197,10 @@ explore_text.delta <- function(vars, region, select_id, df, data,
     what = "explanation_nodet", translate = TRUE,
     lang =
     )
+  # If the explanation is a bullet point, switch to something more generic
+  if (grepl("</ul>", exp_nodet)) {
+    exp_nodet <- cc_t("the value", lang = lang)
+  }
   relat <- explore_text_selection_comparison(
     var = vars$var_left,
     data = data,
@@ -1302,6 +1337,14 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     var = var[[1]], what = "explanation", translate = TRUE,
     lang = lang
   )
+  if (grepl("</ul>", exp)) {
+    out <- if (left_right == "left") {
+      "the first value"
+    } else {
+      "the second value"
+    }
+    exp <- cc_t(out, lang = lang)
+  }
   times <- var_get_time(var)
 
   # Grab both value strings
@@ -1357,6 +1400,14 @@ explore_text_delta_exp.default <- function(var, region, select_id,
     what = "explanation", translate = TRUE,
     lang = lang
   )
+  if (grepl("</ul>", exp)) {
+    out <- if (left_right == "left") {
+      "the first value"
+    } else {
+      "the second value"
+    }
+    exp <- cc_t(out, lang = lang)
+  }
 
   # Grab the region values
   times <- var_get_time(var)
@@ -1593,6 +1644,12 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   # The context might have used a scale in the `scales_as_DA` argument, and
   # the select_id needs to be switched to that of the dissemination area.
   if ("select_id" %in% names(context)) select_id <- context$select_id
+
+  # Check for NAs in the selected value. Return NA message if it is the case
+  na_check <- explore_text_check_na(context = context, data = data,
+                                    select_id = select_id, vars = vars,
+                                    lang = lang)
+  if (!is.null(na_check)) return(na_check)
 
   # Grab the explanation and region values for both set of variables
   exp_vals_left <- explore_text_delta_exp(

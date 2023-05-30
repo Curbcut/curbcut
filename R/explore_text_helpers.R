@@ -483,7 +483,7 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
 #'
 #' @return A list containing the correlation coefficient and a formatted string.
 #' @export
-explore_text_bivar_correlation_helper <- function(vars, data, lang, ...) {
+explore_text_bivar_correlation_helper <- function(vars, data, lang = NULL, ...) {
   UseMethod("explore_text_bivar_correlation_helper", vars)
 }
 
@@ -572,4 +572,57 @@ explore_text_color <- function(x, meaning) {
 
   # Return
   return(x_colored)
+}
+
+#' Checks if data is NA for a given selection
+#'
+#' This function checks if 'var_left' or 'var_right' are NA for a given 'select_id'
+#' in the provided data frame. If NA is found, a message is generated using the
+#' 'explanation' element of the corresponding variable from 'vars' object. The
+#' message is then combined with 'p_start' from 'context' object to form a
+#' complete sentence.
+#'
+#' @param context <`list`> list that should include 'p_start' which is used as
+#'   the start of the output sentence. The output of \code{\link{explore_context}}
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations to be compared. The output of \code{\link{data_get}}.
+#' @param select_id <`character`> the current selected ID, usually
+#' `r[[id]]$select_id()`. If there is a selection (select_id is not NA), the
+#' name of the selected polygon will appear.
+#' @param vars <`character`> A list containing the variable names for which the
+#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#'
+#' @return If there is NAs in the selection, returns a string that starts with
+#' 'p_start' from the 'context' object and includes a message indicating that
+#' the information for 'var_left' or 'var_right' is not available. Returns NULL
+#' otherwise.
+explore_text_check_na <- function(context, data, select_id, vars, lang = NULL) {
+
+  # If there are no selection, returns NULL
+  if (is.na(select_id)) return(NULL)
+
+  # Check if var_left is NA
+  val <- data$var_left[data$ID == select_id]
+  if (is.na(val)) {
+    exp <- var_get_info(var = vars$var_left[[1]], what = "explanation",
+                        translate = TRUE, lang = lang)
+    out <- sprintf(cc_t("we currently don't have information regarding %s",
+                        lang = lang), exp)
+    out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
+    return(out)
+  }
+
+  if ("var_right" %in% names(data)) {
+    val <- data$var_right[data$ID == select_id]
+    if (is.na(val)) {
+      exp <- var_get_info(var = vars$var_right[[1]], what = "explanation",
+                          translate = TRUE, lang = lang)
+      out <- sprintf(cc_t("we currently don't have information regarding %s",
+                          lang = lang), exp)
+      out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
+      return(out)
+    }
+  }
 }

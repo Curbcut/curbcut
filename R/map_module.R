@@ -130,22 +130,11 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
         )
     })
 
-
-    # UPDATE MAP ARGUMENTS USING REACTIVE VALUES SO THAT update_mvt_layer DOES
-    # NOT GET TRIGGER BY ANY SMALL CHANGE THAT DOESN'T IMPACT CHANGES IN STYLING
-
     # Show a different line colors when the texture is off (building scale)
     new_line_color <- shiny::reactive({
-      if (!map_label_show_texture(
-        zoom = zoom(),
-        zoom_levels = zoom_levels(),
-        tile = tile(),
-        map_module = TRUE
-      )) {
-        "#63666A"
-      } else {
-        do.call(colour_fun(), colour_args())
-      }
+      # If the scale is building, switch borders to grey
+      if (is_scale_df("building", r[[id]]$df())) return("#63666A")
+      do.call(colour_fun(), colour_args())
     })
     update_map_rv(
       id = id, r = r, rv_name = "map_line_color_reactive",

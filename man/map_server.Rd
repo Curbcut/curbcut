@@ -19,7 +19,8 @@ map_server(
   fill_args = shiny::reactive(list(data_colours(), tileset_ID_color =
     tileset_ID_color())),
   colour_fun = shiny::reactive(map_scale_colour),
-  colour_args = shiny::reactive(list(select_id = select_id())),
+  colour_args = shiny::reactive(list(select_id = select_id(), data_colours(),
+    tileset_ID_color = tileset_ID_color())),
   lwd_fun = shiny::reactive(map_scale_lwd),
   lwd_args = shiny::reactive(list(select_id = select_id(), tile = tile(), zoom = zoom(),
     zoom_levels = zoom_levels(), lwd = 1)),

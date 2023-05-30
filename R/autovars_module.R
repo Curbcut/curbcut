@@ -135,9 +135,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
       shinyjs::toggle("time_hr", condition = !single_year)
 
-      # If there's a single year and there are no common widgets
+      # If there's a single year or there are no common widgets
       shinyjs::toggle("common_widgets",
-        condition = !single_year & {
+        condition = !single_year | {
           length(common_widgets()$widgets) != 0
         }
       )

@@ -68,8 +68,9 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 
     # If the latter is not present in the `variables` table
     if (sum(sub) == 0) {
+      final_var <- var_remove_time(var)
       stop(glue::glue_safe(
-        "`{var_remove_time(var)}` is not a variable code in the ",
+        "`{final_var}` is not a variable code in the ",
         "`variables` table."
       ))
     }

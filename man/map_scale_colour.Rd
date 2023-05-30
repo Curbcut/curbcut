@@ -4,27 +4,22 @@
 \alias{map_scale_colour}
 \title{Map scale colour for borders}
 \usage{
-map_scale_colour(
-  select_ID,
-  border_color = "#63666A",
-  selection_color = "#000000"
-)
+map_scale_colour(select_id, data_colours, tileset_ID_color = "ID_color")
 }
 \arguments{
-\item{select_ID}{<\code{character}> The ID of the feature to highlight. The specified
+\item{select_id}{<\code{character}> The ID of the feature to highlight. The specified
 colour will be applied to this feature.}
 
-\item{border_color}{<\code{hex}> The colour to apply to the features not equal to \code{select_ID}.
-Default is "#63666A" (a dark grey).}
+\item{data_colours}{<\code{data.frame}> The output of \code{\link{data_get_colours}}.
+Two columns: \code{ID} and \code{fill}. Every \code{ID} will be coloured using its according
+\code{fill} colour.}
 
-\item{selection_color}{The colour to apply to the feature equal to \code{select_ID}.
-Default s "#000000" (black).}
+\item{tileset_ID_color}{<\code{character}> The name of the column on the tileset
+used to colour every polygon. Defaults to \code{ID_color}, where the buildings
+scales have in their \code{ID_color} column the \code{ID} of their DA.}
 }
 \value{
-A categorical scale for colours, generated using
-\code{rdeck::scale_color_category}. The scale maps the \code{select_ID} to the \code{selection_color},
-and all other features to the \code{border_color}. Unmapped IDs are also coloured
-with \code{border_color}.
+A color scale for polygons borders used in an rdeck map.
 }
 \description{
 This function assigns a specific colour to the selected ID and a different

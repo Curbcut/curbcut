@@ -6,7 +6,7 @@
 \alias{explore_text_bivar_correlation_helper.ordinal}
 \title{Helper function for exploring bivariate correlation between variables}
 \usage{
-explore_text_bivar_correlation_helper(vars, data, lang, ...)
+explore_text_bivar_correlation_helper(vars, data, lang = NULL, ...)
 
 \method{explore_text_bivar_correlation_helper}{scalar}(vars, data, lang = NULL, ...)
 

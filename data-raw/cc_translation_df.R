@@ -379,6 +379,10 @@ cc_translation_df <-
   # Explore panel -----------------------------------------------------------
 
   # Context and q5
+add_row(
+  en = "This value",
+  fr = "Cette valeur"
+) |>
   add_row(
     en = "This is %s for %s",
     fr = "C'est %s pour %s"
@@ -429,9 +433,17 @@ cc_translation_df <-
   ) |>
   # bivar -------------------------------------------------------------------
 
+add_row(
+  en = "Pearson's r: %s",
+  fr = "r de Pearson : %s"
+) |>
   add_row(
-    en = "Pearson's r: %s",
-    fr = "r de Pearson : %s"
+    en = "The first value",
+    fr = "La première valeur"
+  ) |>
+  add_row(
+    en = "The second value",
+    fr = "La deuxième valeur"
   ) |>
   add_row(
     en = "Spearman's rho: %s",
@@ -544,6 +556,10 @@ cc_translation_df <-
   # Delta -------------------------------------------------------------------
 
 
+add_row(
+  en = "the value",
+  fr = "la valeur"
+) |>
   add_row(
     en = "%s percentage points (%sx)",
     fr = "%s points de pourcentage (%sx)"
@@ -622,6 +638,14 @@ cc_translation_df <-
   ) |>
   # Delta bivar -------------------------------------------------------------
 
+add_row(
+  en = "the first value",
+  fr = "la première valeur"
+) |>
+  add_row(
+    en = "the second value",
+    fr = "la deuxième valeur"
+  ) |>
   add_row(
     en = "%s from %s to %s, there is %s (%s) between the change in %s and the change in %s in %s.",
     fr = "%s de %s à %s, il n'existe %s (%s) entre la variation dans %s et la variation dans %s dans %s."
