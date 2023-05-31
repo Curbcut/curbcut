@@ -181,6 +181,7 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
       if (zoom() < 12) {
         return(FALSE)
       }
+      return(TRUE)
     })
     update_map_rv(
       id = id, r = r, rv_name = "map_pickable", default_val = TRUE,
