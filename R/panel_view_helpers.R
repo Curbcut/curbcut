@@ -706,6 +706,7 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
       scales_dictionary <- get_from_globalenv("scales_dictionary")
       scale_inter_str <-
         scales_dictionary$plur[scales_dictionary$scale == scale_inter]
+      if (length(scale_inter_str) == 0) scale_inter_str <- scale_inter
 
       scale_inter_str <- tolower(cc_t(scale_inter_str, lang = lang))
       inter_str <- sprintf(
