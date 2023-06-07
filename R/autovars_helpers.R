@@ -142,7 +142,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
   groups <- tb$group_diff[tb$group_name == group_name]
 
   # Filter in only the groups that share the common widgets' values
-  if (!is.null(common_vals)) {
+  if (!is.null(common_vals) & !is.null(groups)) {
     share_common_values_index <- sapply(groups, \(g) {
       # For all the values in `common_vals`, which are the same as the observed
       # row?
