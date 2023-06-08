@@ -295,17 +295,17 @@ contents <- lapply(all_themes, \(t) {
     ggplot2::ggsave(plot = plot, filename = tmp, width = 110, height = 50,
                     units = "px") |> suppressWarnings()
     txt <- RCurl::base64Encode(readBin(tmp, "raw", file.info(tmp)[1, "size"]), "txt")
-    myImage <- htmltools::HTML(sprintf('<img src="data:image/png;base64,%s">', txt))
+    myImage <- shiny::HTML(sprintf('<img src="data:image/png;base64,%s">', txt))
     
     # Format the value (percentile)
     percentile_f <- round(percentile * 100)
     
     # Return the bslib box and the ranking so that boxes can be ordered
     list(box = bslib::value_box(
-      title = htmltools::p(var_title),
+      title = shiny::p(var_title),
       value = paste0(ordinal_form(percentile_f, lang = "fr"), " percentile") |>  s_sentence(),
       showcase = myImage,
-      htmltools::p(htmltools::HTML(text)),
+      shiny::p(shiny::HTML(text)),
       full_screen = FALSE,
       theme_color = paste0("tab_class_", color)),
       ranking = abs(percentile - 0.5))
@@ -339,7 +339,7 @@ contents <- lapply(all_themes, \(t) {
   
   # Create the layout and return outliers or normal values
   cards_ordered <- do.call(bslib::layout_column_wrap, c(list(width = 1/2), unname(cards_ordered)))
-  list(nav = bslib::nav(cc_t(t, lang = "fr"), htmltools::br(), bslib::card_body_fill(cards_ordered)),
+  list(nav = bslib::nav(cc_t(t, lang = "fr"), shiny::br(), bslib::card_body_fill(cards_ordered)),
        ranking = ranking,
        main_card_boxes_outliers = main_card_boxes_outliers,
        main_card_boxes_normal = main_card_boxes_normal)
@@ -416,7 +416,7 @@ boxes <- mapply(\(ind, ind_name) {
   # If no data
   if (ind$percentile == "Aucune donnée.") {
     bslib::value_box(
-      title = htmltools::p(ind$row_title, bsicons::bs_icon(ind$bs_icon)),
+      title = shiny::p(ind$row_title, bsicons::bs_icon(ind$bs_icon)),
       value = ind$percentile,
       theme_color = paste0("col_pe_", "no_data"),
       full_screen = FALSE
@@ -424,10 +424,10 @@ boxes <- mapply(\(ind, ind_name) {
     # If data
   } else {
     bslib::value_box(
-      title = htmltools::p(ind$row_title, bsicons::bs_icon(ind$bs_icon)),
+      title = shiny::p(ind$row_title, bsicons::bs_icon(ind$bs_icon)),
       value = ind$percentile,
       showcase = plotlies[[ind_name]],
-      htmltools::p(htmltools::HTML(ind$text)),
+      shiny::p(shiny::HTML(ind$text)),
       full_screen = TRUE,
       theme_color = paste0("col_pe_", ind$hex_cat)
     )
@@ -438,13 +438,13 @@ boxes <- mapply(\(ind, ind_name) {
 main_card <- do.call(bslib::layout_column_wrap, c(list(width = 1/2), unname(boxes)))
 main_card <- bslib::nav(
   "Fiche principale",
-  htmltools::br(),
+  shiny::br(),
   # bslib::card_body_fill(map),
   bslib::card_body_fill(main_card),
-  htmltools::br(),
-  if (!is.null(main_card_outliers)) htmltools::h3("Qu'est-ce qui rend cette région unique ?"),
+  shiny::br(),
+  if (!is.null(main_card_outliers)) shiny::h3("Qu'est-ce qui rend cette région unique ?"),
   if (!is.null(main_card_outliers)) bslib::card_body_fill(main_card_outliers),
-  if (!is.null(main_card_normal)) htmltools::h3("Qu'est-ce qui rend cette région semblable aux autres ?"),
+  if (!is.null(main_card_normal)) shiny::h3("Qu'est-ce qui rend cette région semblable aux autres ?"),
   if (!is.null(main_card_normal)) bslib::card_body_fill(main_card_normal)
 )
 

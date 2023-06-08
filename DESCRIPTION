@@ -24,9 +24,14 @@ Imports:
     urltools,
     rintrojs,
     zip,
-    rmarkdown
+    rmarkdown,
+    plotly,
+    htmlwidgets,
+    RCurl,
+    bsicons
 Remotes:
-    qfes/rdeck
+    qfes/rdeck,
+    bdbmax/bslib
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
