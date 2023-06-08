@@ -10,6 +10,8 @@
 #' e.g. `canale`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
@@ -19,7 +21,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param temp_folder <`character`> The temporary folder of the app. By default
 #' will grab the `temp_folder` object as it's already supposed to have been assigned
 #' in the `global.R` file
@@ -29,10 +31,11 @@
 #'
 #' @return Panel view module
 #' @export
-panel_view_server <- function(id, r, vars, data, zoom_levels,
+panel_view_server <- function(id, r, region, vars, data, zoom_levels,
                               temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
   stopifnot(shiny::is.reactive(data))
+  stopifnot(shiny::is.reactive(region))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(zoom_levels))
   stopifnot(shiny::is.reactive(scales_as_DA))
@@ -80,14 +83,10 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
         if (!r[[id]]$select_id() %in% data()$ID) {
           return(FALSE)
         }
-        pe_link <- sprintf(
-          "%s_%s_%s.html", r[[id]]$df(), r[[id]]$select_id(),
-          r$lang()
-        )
-        if (!pe_link %in% pe_docs) {
-          return(FALSE)
-        }
-        return(TRUE)
+        # Is the region 'pickable', meaning there could be a place explorer
+        # for the region
+        regions_dictionary <- get_from_globalenv("regions_dictionary")
+        regions_dictionary$pickable[regions_dictionary$region == region()]
       })()
 
       shinyjs::toggle(
@@ -103,6 +102,7 @@ panel_view_server <- function(id, r, vars, data, zoom_levels,
       # Get the place explorer HTML document
       pe_src <- place_explorer_html_links(
         temp_folder = temp_folder,
+        region = region(),
         df = r[[id]]$df(),
         select_id = r[[id]]$select_id(),
         lang = r$lang()

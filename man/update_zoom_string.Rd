@@ -16,7 +16,7 @@ saved zoom level for a given region}
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{region}{<\code{character}> The region to retrieve the zoom levels for,
 usually one of the output of \code{\link{zoom_get_levels}}.}

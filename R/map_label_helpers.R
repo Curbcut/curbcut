@@ -10,7 +10,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param map_module <`logical`> Is the function placed inside the map module
 #' to informe extrusion? If so, zoom should have no effect on extrusion.
 #'
@@ -58,7 +58,7 @@ map_label_show_texture <- function(zoom, tile, zoom_levels, map_module = FALSE) 
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param tile <`character`> String representing the tile name.
 #' @param extrude <`logical`> Indicates whether to extrude or not.
 #' If FALSE, the function will immediately return FALSE.

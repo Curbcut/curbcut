@@ -55,7 +55,7 @@ test_resources_creation <- function(additional_vars = c()) {
     "grid.qsm", "cmhc.qsm", "modules.qs", "postal_codes.qs",
     "regions_dictionary.qs", "scales_dictionary.qs", "stories.qsm",
     "translation_df.qs", "colours_dfs.qs", "building.sqlite",
-    "grid100.sqlite"
+    "grid100.sqlite", "pe_main_card_data.qs"
   )
 
   # Save the variables

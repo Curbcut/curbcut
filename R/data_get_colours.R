@@ -14,7 +14,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param colours_table <`character`> Fromn which colour table should the colour
 #' be matched to the `group` column of the retrieved data. For `q5` class would be
 #' `left_5`, for `bivar` class would be `bivar`, etc. One of the names of the
@@ -76,7 +76,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.

@@ -78,7 +78,7 @@ in the \code{regions_dictionary}. Usually one of the output of \code{\link{zoom_
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

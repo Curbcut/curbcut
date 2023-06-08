@@ -11,7 +11,7 @@
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param tile <`reactive character`> A reactive string with the map tile to
-#' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)
+#' be used. Either a combination of a region with auto-scale (e.g. `city_auto_zoom`)
 #' or a combination of a region and a scale (e.g. `city_DA`). The output of
 #' \code{\link{zoom_server}}.
 #' @param data_colours <`reactive data.frame`> The output of
@@ -22,7 +22,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param zoom <`reactive numeric`> The current zoom level of the map, also
 #' the zoom at which the map will initiate. Usually `r[[id]]$zoom`
 #' @param coords <`reactive numeric vector`> The current central map location

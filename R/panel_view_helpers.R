@@ -11,7 +11,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'

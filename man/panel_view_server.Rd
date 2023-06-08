@@ -8,6 +8,7 @@
 panel_view_server(
   id,
   r,
+  region,
   vars,
   data,
   zoom_levels,
@@ -24,6 +25,9 @@ e.g. \code{canale}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
+\item{region}{<\code{character}> Character string specifying the name of the region.
+Usually equivalent of \code{r$region()}.}
+
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
@@ -35,7 +39,7 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{temp_folder}{<\code{character}> The temporary folder of the app. By default
 will grab the \code{temp_folder} object as it's already supposed to have been assigned

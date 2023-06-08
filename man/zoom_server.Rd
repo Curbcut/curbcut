@@ -30,12 +30,12 @@ current zoom level, e.g. \code{CSD}.}
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{suffix_zoom_levels}{<\code{character}> Suffix that should be appended at the
-end of an auto-zoom. If the maximum zoom possible is CT and we previously created
+end of an auto-scale. If the maximum zoom possible is CT and we previously created
 such a tileset, we could have the suffix_zoom_levels \code{max_CT}, which would
-be appended at the end of the auto-zoom tile name. Defaults to NA for none.}
+be appended at the end of the auto-scale tile name. Defaults to NA for none.}
 
 \item{no_autozoom}{<\verb{reactive logical}> Whether the output tile() reactive
 should include autozooms or not.}
@@ -47,15 +47,15 @@ displayed on the map.
 \description{
 This function creates a module for Curbcut that allows users to control
 the zoom level of a map using a slider input. The function disables the slider
-if the user selects auto-zoom. The slider is updated if the available
-zoom levels change. If on auto-zoom, the slider gets updated when the zoom
+if the user selects auto-scale. The slider is updated if the available
+zoom levels change. If on auto-scale, the slider gets updated when the zoom
 levels threshold are attained. When there is a change in the \code{r$region()},
-the auto-zoom gets activated to provide better transition between regions.
+the auto-scale gets activated to provide better transition between regions.
 The function then creates a reactive tile that returns the appropriate tile
-based on the user's selection. If auto-zoom is selected, the function returns
-the auto-zoom tile. If a specific scale is selected, the function checks to
+based on the user's selection. If auto-scale is selected, the function returns
+the auto-scale tile. If a specific scale is selected, the function checks to
 see if the scale is available for the current region. If it is not
-available, the function defaults back to auto-zoom.
+available, the function defaults back to auto-scale.
 }
 \section{Functions}{
 \itemize{

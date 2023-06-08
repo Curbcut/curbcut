@@ -23,7 +23,8 @@ Imports:
     qs,
     urltools,
     rintrojs,
-    zip
+    zip,
+    rmarkdown
 Remotes:
     qfes/rdeck
 License: AGPL (>= 3)

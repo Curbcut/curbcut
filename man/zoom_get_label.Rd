@@ -11,7 +11,7 @@ zoom_get_label(zoom_levels, lang = NULL)
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 slider titles to. Defaults to \code{NULL}, which is no translation.}

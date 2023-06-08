@@ -8,8 +8,18 @@ assign("all_choropleths",
 
 # Default random address
 assign("default_random_address",
-  value = "845 Sherbrooke",
-  envir = .GlobalEnv
+       value = "845 Sherbrooke",
+       envir = .GlobalEnv
+)
+
+# Default tileset info
+assign("tileset_prefix",
+       value = "mtl",
+       envir = .GlobalEnv
+)
+assign("mapbox_username",
+       value = "sus-mcgill",
+       envir = .GlobalEnv
 )
 
 # All qs and qsm files
@@ -31,7 +41,7 @@ dbs <- list.files("resources", full.names = TRUE)
 dbs <- subset(dbs, grepl(".sqlite$", dbs))
 
 lapply(dbs, \(x) {
-  connection_name <- paste0(stringr::str_extract(x, "(?<=/).*?(?=\\.)"), "_conn")
+  connection_name <- paste0(s_extract("(?<=/).*?(?=\\.)", x), "_conn")
   assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = .GlobalEnv)
 })
 

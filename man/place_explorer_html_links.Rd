@@ -4,12 +4,14 @@
 \alias{place_explorer_html_links}
 \title{Create and concatenate Place Explorer HTML files}
 \usage{
-place_explorer_html_links(temp_folder, df, select_id, lang = NULL)
+place_explorer_html_links(temp_folder, region, df, select_id, lang = NULL)
 }
 \arguments{
 \item{temp_folder}{<\code{character}> The temporary folder of the app. By default
 will grab the \code{temp_folder} object as it's already supposed to have been assigned
 in the \code{global.R} file}
+
+\item{region}{<\code{character}> Region under study, e.g. \code{CMA}.}
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}.}

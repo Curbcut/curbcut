@@ -253,6 +253,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::panel_view_server(
         id = id,
         r = r,
+        region = shiny::reactive(zoom_levels()$region),
         vars = r[[id]]$vars,
         data = data,
         zoom_levels = shiny::reactive(zoom_levels()$zoom_levels)

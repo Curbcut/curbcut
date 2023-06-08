@@ -7,7 +7,7 @@
 #' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `canale`.
 #' @param tile <`reactive character`> A reactive string with the map tile to
-#' be used. Either a combination of a region with auto-zoom (e.g. `city_auto_zoom`)
+#' be used. Either a combination of a region with auto-scale (e.g. `city_auto_zoom`)
 #' or a combination of a region and a scale (e.g. `city_DA`). The output of
 #' \code{\link{zoom_server}}.
 #' @param zoom <`reactive numeric`> Value representing the current zoom level. Usually
@@ -16,7 +16,7 @@
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param region <`reactive character`> representing the current region displayed
 #' on the map. Usually one of the output of \code{\link{zoom_get_levels}}.
 #' @param show <`reactive logical`> Should there be texture (streets, buildings, ...)?

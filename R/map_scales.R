@@ -60,7 +60,7 @@ map_scale_colour <- function(select_id, data_colours,
 #' This function creates a line width scale for polygons in an rdeck map based
 #' on the zoom level of the map. If `tile`, `zoom` and `zoom_levels` are given,
 #' the borders will disappear at one zoom digit under the zoom at which they
-#' would have appeared on an auto-zoom.
+#' would have appeared on an auto-scale.
 #'
 #' @param select_id <`character`> A string specifying the ID of the selected polygon.
 #' The selected polygon will have an increased in the width of its border.
@@ -70,7 +70,7 @@ map_scale_colour <- function(select_id, data_colours,
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-zoom).
+#' is last (so it makes sense on an auto-scale).
 #' @param lwd <`numeric`> Value specifying the line width of the polygon borders,
 #' with a default value of 1. This value controls the thickness of the borders
 #' around the polygons on the map. A larger value results in thicker borders,
@@ -82,9 +82,9 @@ map_scale_lwd <- function(select_id, tile = NULL, zoom = NULL,
                           zoom_levels = NULL, lwd = 1) {
   if (all(!sapply(list(tile, zoom, zoom_levels), is.null))) {
     # If we are one zoom below the threshold at which the scale would have
-    # appeared on an auto-zoom, do not display any borders around the polygons
+    # appeared on an auto-scale, do not display any borders around the polygons
     normal_zoom <- zoom_levels[sapply(names(zoom_levels), is_scale_df, tile)]
-    # If tile wasn't found in the zoom_levels, return 1. On auto-zoom, there
+    # If tile wasn't found in the zoom_levels, return 1. On auto-scale, there
     # will always be borders around the polygons.
     lwd <-
       if (length(normal_zoom) == 0) {

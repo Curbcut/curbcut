@@ -18,7 +18,7 @@ The selected polygon will have an increased in the width of its border.}
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{lwd}{<\code{numeric}> Value specifying the line width of the polygon borders,
 with a default value of 1. This value controls the thickness of the borders
@@ -32,5 +32,5 @@ A line width scale for polygons in an rdeck map.
 This function creates a line width scale for polygons in an rdeck map based
 on the zoom level of the map. If \code{tile}, \code{zoom} and \code{zoom_levels} are given,
 the borders will disappear at one zoom digit under the zoom at which they
-would have appeared on an auto-zoom.
+would have appeared on an auto-scale.
 }

@@ -42,8 +42,8 @@ cc_translation_df <-
     fr = "Explorez"
   ) |>
   add_row(
-    en = "Auto-zoom",
-    fr = "Auto-zoom"
+    en = "Auto-scale",
+    fr = "Échelle automatique"
   ) |>
   add_row(
     en = "No postal code found for `{address}`",
@@ -133,12 +133,12 @@ cc_translation_df <-
   add_row(
     en = paste0(
       "The level of zoom determines the spatial scale of what ",
-      "you see or you can click off \u2018autozoom\u2019 and manually ",
+      "you see or you can click off \u2018auto-scale\u2019 and manually ",
       "choose the spatial scale with the slider."
     ),
     fr = paste0(
       "Le niveau de zoom détermine l'échelle spatiale de ce que ",
-      "vous voyez. Vous pouvez également désactiver l'option 'zoom ",
+      "vous voyez. Vous pouvez également désactiver l'option 'échelle ",
       "automatique' et choisir manuellement l'échelle spatiale à ",
       "l'aide de la barre de défilement."
     )
@@ -791,7 +791,20 @@ add_row(
   add_row(
     en = "{source_vec} {v}",
     fr = "{v} {source_vec}"
+  ) |>
+
+
+  # Place explorer ----------------------------------------------------------
+
+add_row(
+  en = "Its value is higher than the WHO's guideline value of 53. ",
+  fr = "Sa valeur est supérieure à la valeur recommandée par l'OMS, qui est de 53. "
+) |>
+  add_riw(
+    en = "%s (count)",
+    fr = "%s (compte)"
   )
+
 
 
 # Check test

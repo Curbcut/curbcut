@@ -2,7 +2,7 @@ test_that("bookmark_build_url works", {
   translation_df <-
     rbind(
       translation_df,
-      tibble::tibble(
+      data.frame(
         en = c("Borough/City", "Census tract", "Dissemination area"),
         fr = c("Arrondissement/ville", "Secteur de recensement", "Aire de diffusion")
       )

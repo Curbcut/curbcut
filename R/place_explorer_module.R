@@ -217,6 +217,7 @@ place_explorer_server <- function(id, r,
       if (!is.na(r[[id]]$select_id())) {
         pe_links <- place_explorer_html_links(
           temp_folder = temp_folder,
+          region = zoom_levels()$region,
           df = r[[id]]$df(),
           select_id = r[[id]]$select_id(),
           lang = r$lang()

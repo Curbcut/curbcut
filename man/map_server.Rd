@@ -42,7 +42,7 @@ e.g. \code{canale}.}
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{tile}{<\verb{reactive character}> A reactive string with the map tile to
-be used. Either a combination of a region with auto-zoom (e.g. \code{city_auto_zoom})
+be used. Either a combination of a region with auto-scale (e.g. \code{city_auto_zoom})
 or a combination of a region and a scale (e.g. \code{city_DA}). The output of
 \code{\link{zoom_server}}.}
 
@@ -56,7 +56,7 @@ polygons.}
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-zoom).}
+is last (so it makes sense on an auto-scale).}
 
 \item{zoom}{<\verb{reactive numeric}> The current zoom level of the map, also
 the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
