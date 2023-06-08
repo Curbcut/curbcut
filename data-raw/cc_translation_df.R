@@ -53,6 +53,10 @@ cc_translation_df <-
     en = "Curbcut does not currently support mobile phones. Please visit from a computer.",
     fr = "Curbcut ne supporte pas actuellement les téléphones mobiles. Veuillez visiter le site à partir d'un ordinateur."
   ) |>
+  add_row(
+    en = "Clear selection",
+    fr = "Effacer la sélection"
+  )
   # Legend ------------------------------------------------------------------
 
   add_row(

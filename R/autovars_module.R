@@ -69,53 +69,65 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           }
         }
       )
+    })
+    shiny::observe({
       # Other widgets that are common between all groups, if there are any
       if (length(common_widgets()$widgets) > 0) {
+        # Remove the div if it was already present (when language changes, it gets redrawn)
+        shiny::removeUI(selector = html_ns("common_widgets_in"))
         shiny::insertUI(
           selector = html_ns("common_widgets"),
           where = "beforeBegin",
           ui = {
-            do.call(shiny::tagList, mapply(
-              function(w, l, n) {
-                if ("slider_text" %in% class(w)) {
-                  selected <- w[floor(length(w) / 2)]
-                  curbcut::slider_text_UI(
-                    id = widget_ns(id),
-                    slider_text_id = sprintf("st%s", l),
-                    choices = w,
-                    selected = selected,
-                    label = n
-                  )
-                } else if ("slider" %in% class(w)) {
-                  vals <- unlist(w)
-                  vals <- as.numeric(vals)
-                  min_ <- min(vals)
-                  max_ <- max(vals)
-                  step_ <- unique(diff(vals))[1]
-                  value_ <- vals[floor(length(vals) / 2)]
-                  curbcut::slider_UI(
-                    id = widget_ns(id),
-                    slider_id = sprintf("s%s", l),
-                    step = step_,
-                    min = min_,
-                    max = max_,
-                    value = value_,
-                    label = n
-                  )
-                } else {
-                  w <- list(w)
-                  names(w) <- n
-                  curbcut::picker_UI(
-                    id = widget_ns(id),
-                    picker_id = sprintf("p%s", l),
-                    var_list = w,
-                    label = n
-                  )
-                }
-              }, common_widgets()$widgets, seq_along(common_widgets()$widgets),
-              names(common_widgets()$widgets),
-              SIMPLIFY = FALSE
-            ))
+            shiny::div(
+              id = widget_ns("common_widgets_in"),
+              do.call(shiny::tagList, mapply(
+                function(w, l, n) {
+                  if ("slider_text" %in% class(w)) {
+                    selected <- w[floor(length(w) / 2)]
+                    slider_text_UI(
+                      id = widget_ns(id),
+                      slider_text_id = sprintf("st%s", l),
+                      choices = w,
+                      selected = selected,
+                      label = cc_t(n, force_span = TRUE)
+                    )
+                  } else if ("slider" %in% class(w)) {
+                    vals <- unlist(w)
+                    vals <- as.numeric(vals)
+                    min_ <- min(vals)
+                    max_ <- max(vals)
+                    step_ <- unique(diff(vals))[1]
+                    value_ <- vals[floor(length(vals) / 2)]
+                    slider_UI(
+                      id = widget_ns(id),
+                      slider_id = sprintf("s%s", l),
+                      step = step_,
+                      min = min_,
+                      max = max_,
+                      value = value_,
+                      label = cc_t(n, force_span = TRUE)
+                    )
+                  } else {
+                    w <- list(w)
+                    names(w) <- n
+                    # Translate the options
+                    w <- sapply(w[[1]], c, USE.NAMES = TRUE, simplify = FALSE)
+                    w <- list(w)
+                    names(w) <- n
+                    w <- cc_t(w, lang = r$lang())
+                    picker_UI(
+                      id = widget_ns(id),
+                      picker_id = sprintf("p%s", l),
+                      var_list = w,
+                      label = cc_t(n, force_span = TRUE)
+                    )
+                  }
+                }, common_widgets()$widgets, seq_along(common_widgets()$widgets),
+                names(common_widgets()$widgets),
+                SIMPLIFY = FALSE
+              ))
+            )
           }
         )
       }
@@ -137,9 +149,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
       # If there's a single year or there are no common widgets
       shinyjs::toggle("common_widgets",
-        condition = !single_year | {
-          length(common_widgets()$widgets) != 0
-        }
+                      condition = !single_year | {
+                        length(common_widgets()$widgets) != 0
+                      }
       )
     })
 
@@ -184,16 +196,26 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Draw and get value from the first dropdown
     shiny::observe({
+      shiny::removeUI(selector = html_ns("main_drop"))
       shiny::insertUI(
         selector = html_ns("common_widgets"),
         where = "afterEnd",
         ui = {
           if (is.na(main_dropdown_title)) main_dropdown_title <- NULL
-          curbcut::picker_UI(
-            id = widget_ns(id),
-            picker_id = "mnd",
-            var_list = autovars_groupnames(id = id),
-            label = cc_t(main_dropdown_title, force_span = TRUE)
+          # Translate the content of the dropdown
+          w <- autovars_groupnames(id = id)
+          w <- sapply(w, c, USE.NAMES = TRUE, simplify = FALSE)
+          w <- list(w)
+          names(w) <- main_dropdown_title
+          w <- cc_t(w, lang = r$lang())
+
+          shiny::div(id = widget_ns("main_drop"),
+                     picker_UI(
+                       id = widget_ns(id),
+                       picker_id = "mnd",
+                       var_list = w,
+                       label = cc_t(main_dropdown_title, force_span = TRUE)
+                     )
           )
         }
       )
@@ -210,7 +232,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       names(mnd_list) <- main_dropdown_title
       mnd_list
     }
-    mnd <- curbcut::picker_server(
+    mnd <- picker_server(
       id = id, r = r, picker_id = "mnd",
       var_list = shiny::reactive(mnd_list)
     )
@@ -231,21 +253,21 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # If there's only one option in the var_left, hide it
     shiny::observeEvent(mnd(),
-      {
-        modules <- get_from_globalenv("modules")
-        var_lefts <- modules$var_left[modules$id == id][[1]]
-        if (is.character(var_lefts) & length(var_lefts) == 1) {
-          shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
-        }
-      },
-      ignoreInit = TRUE
+                        {
+                          modules <- get_from_globalenv("modules")
+                          var_lefts <- modules$var_left[modules$id == id][[1]]
+                          if (is.character(var_lefts) & length(var_lefts) == 1) {
+                            shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
+                          }
+                        },
+                        ignoreInit = TRUE
     )
 
     # Additional widgets ------------------------------------------------------
 
     shiny::observe({
       # Remove the content of the previous div
-      shiny::removeUI(selector = "#additional_widgets")
+      shiny::removeUI(selector = html_ns("additional_widgets"))
 
       # If there are additional widgets only, show the hr
       shinyjs::toggle("hr_additional_widgets", condition = length(widgets()) > 0)
@@ -256,12 +278,18 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         where = "afterEnd",
         ui = {
           shiny::tags$div(
-            id = "additional_widgets",
+            id = widget_ns("additional_widgets"),
             do.call(shiny::tagList, mapply(
               function(w, l, n) {
                 w <- list(w)
                 names(w) <- n
-                curbcut::picker_UI(
+                # Translate the options
+                w <- sapply(w[[1]], c, USE.NAMES = TRUE, simplify = FALSE)
+                w <- list(w)
+                names(w) <- n
+                w <- cc_t(w, lang = r$lang())
+                print(w)
+                picker_UI(
                   id = widget_ns(id),
                   picker_id = sprintf("p%s", l),
                   var_list = w,

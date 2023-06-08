@@ -267,7 +267,7 @@ contents <- lapply(all_themes, \(t) {
     
     # Grab the type of the variable, and the title 
     type <- unlist(params$variables$type[params$variables$var_code == var])
-    var_title <- params$variables$var_title[params$variables$var_code == var]
+    var_title <- cc_t(params$variables$var_title[params$variables$var_code == var], lang = "fr")
     # If the column does not exist, return nothing
     if (!v[[1]] %in% names(scale_df)) return(NULL)
     
