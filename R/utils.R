@@ -29,7 +29,7 @@ ordinal_form <- function(lang, x, en_first = "first") {
   # French
   if (lang == "fr") {
     return(switch(as.character(x),
-      "1" = "",
+      "1" = "premier",
       "2" = "deuxi\u00e8me",
       "3" = "troisi\u00e8me",
       paste0(as.character(x), "i\u00e8me")

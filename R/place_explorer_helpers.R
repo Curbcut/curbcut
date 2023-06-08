@@ -127,7 +127,7 @@ place_explorer_html_links <- function(temp_folder, region, df, select_id, lang =
   ))
 }
 
-#' Prepare data for a title card
+#' Prepare data for a title card (english)
 #'
 #' This function prepares data for a title card for a specific region and indicator.
 #' It returns information about the data value, data date, data rank and color.
@@ -288,6 +288,168 @@ placeex_main_card_prep_output_en <- function(data, dict, region, scale_name, sel
   return(info)
 }
 
+#' Prepare data for a title card (french)
+#'
+#' This function prepares data for a title card for a specific region and indicator.
+#' It returns information about the data value, data date, data rank and color.
+#'
+#' @param data <`list`> Contains data about the indicator in its region
+#' and scale, e.g. `pe_main_card$main_card_data$no2$CMA$CSD`.
+#' @param dict <`data.frame`> Row from the dictionary for the data
+#' (title, text, etc.), e.g.
+#' `pe_main_card$main_card_dict[pe_main_card$main_card_dict$name == "no2", ]`.
+#' @param region <`character`> The geographic region.
+#' @param scale_name <`data.frame`> The scale, e.g. `DA`, `CT`, ...
+#' @param select_id <`character`> The ID of the selected area.
+#' @param scales_dictionary <`data.frame`> The scales dictionary built using
+#' \code{\link[cc.buildr]{build_census_scales}}
+#' @param regions_dictionary <`data.frame`> A dictionary containing information
+#' about the regions.
+#'
+#' @return A list of information about the data, including the data value,
+#' data date, data rank (in text), and color category (1-5).
+placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, select_id,
+                                             regions_dictionary, scales_dictionary) {
+
+  # Setup --------------------------------------------------------------------
+
+  df_scale <- "La zone"
+  df_scales <- cc_t(scales_dictionary$plur[scales_dictionary$scale == scale_name],
+                    lang = "fr")
+
+  # To what it compares
+  to_compare <- cc_t(regions_dictionary$to_compare[regions_dictionary$region == region],
+                     lang = "fr")
+
+  # Prepare list to store all data
+  info <- list()
+
+  # Get data value
+  data_s <- data[data$ID == select_id, ]
+  if ({
+    length(data_s$var) == 0
+  } | {
+    is.na(data_s$var)
+  }) {
+    return(NULL)
+  }
+
+
+  # pretty_data_var ---------------------------------------------------------
+
+  info$pretty_data_var <- if (dict$percent) {
+    scales::percent(data_s$var)
+  } else {
+    round(data_s$var, digits = dict$val_digit)
+  }
+
+
+  # Data date ---------------------------------------------------------------
+
+  info$data_date <- dict$date
+
+
+  # Data rank ---------------------------------------------------------------
+
+  info$data_rank <-
+    # If the dataset is small
+    if (nrow(data) < 40) {
+      # How many non-na entries in the dataset
+      df_row <- sum(!is.na(data$var))
+      # If high is good, then last rank means 1st. Inverse!
+      data_rank <- if (dict$high_is_good) df_row - data_s$rank + 1 else data_s$rank
+
+      ordinal <- (\(x) {
+        # if ranks in the bottom third
+        if (data_rank > (2 / 3 * df_row)) {
+          rk <- ordinal_form(x = data_rank, lang = "fr")
+          return({
+            glue::glue_safe("relativement bas à  {rk}")
+          })
+        }
+        # if ranks in the second third
+        if (data_rank > (1 / 3 * df_row)) {
+          return(ordinal_form(x = data_rank, lang = "fr"))
+        }
+        # else
+        rk <- ordinal_form(x = data_rank, lang = "fr")
+        if (rk == "premier") return(glue::glue_safe("premier"))
+        return(glue::glue_safe("{rk} meilleure"))
+      })()
+
+      glue::glue_safe("Elle se classe {ordinal} {to_compare}")
+
+
+      # If the dataset is large
+    } else {
+      (\(x) {
+        if (data_s$percentile > 0.75) {
+          return({
+            paste0(
+              glue::glue_safe("{df_scale} se classe parmis les "),
+              if (abs(data_s$percentile - 1) < 0.01) {
+                "1%"
+              } else {
+                scales::percent(abs(data_s$percentile - 1))
+              }, " plus élevés"
+            )
+          })
+        }
+
+        if (data_s$percentile < 0.25) {
+          return({
+            paste0(
+              glue::glue_safe("{df_scale} se classe parmis les "),
+              if (data_s$percentile < 1) "1%" else scales::percent(data_s$percentile)
+            , " plus faibles")
+          })
+        }
+
+        pretty_perc <- scales::percent(data_s$percentile)
+
+        if (dict$high_is_good) {
+          glue::glue_safe(
+            "Sa valeur est inférieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+          )
+        } else {
+          glue::glue_safe(
+            "Sa valeur est supérieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+          )
+        }
+      })()
+    }
+
+
+  # Colour ------------------------------------------------------------------
+
+  colours_which <- c(0.1, 0.3, 0.5, 0.7, 0.9)
+  if (!dict$high_is_good) colours_which <- rev(colours_which)
+
+  info$hex_cat <- which.min(abs(colours_which - data_s$percentile))
+
+  # In case it's higher than the threshold of 53 for Air Quality
+  if (dict$name == "no2" && data_s$var >= 53) info$hex_cat <- 1
+
+
+  # Percentile --------------------------------------------------------------
+
+  info$percentile <-
+    if (data_s$percentile > 0.50) {
+      per <- scales::percent(abs(data_s$percentile - 1))
+      if (per == "0%") per <- "1%"
+      paste0(glue::glue_safe("{per} plus haut"))
+    } else {
+      per <- scales::percent(abs(data_s$percentile))
+      if (per == "0%") per <- "1%"
+      paste0(glue::glue_safe("{per} plus bas"))
+    }
+
+
+  # Return ------------------------------------------------------------------
+
+  return(info)
+}
+
 
 #' Final function for the place explorer main card
 #'
@@ -334,7 +496,7 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
     if (is.null(z)) {
       return(list(
         row_title = dict$title,
-        percentile = "No data.",
+        percentile = cc_t("No data.", lang = lang),
         bs_icon = dict$bs_icon
       ))
     }
@@ -356,12 +518,12 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
     data_date <- z$data_date
 
     list(
-      row_title = dict$title,
+      row_title = cc_t(dict$title, lang = lang),
       percentile = z$percentile,
-      text = glue::glue_safe(dict$text),
+      text = glue::glue_safe(cc_t(dict$text, lang = lang)),
       hex_cat = z$hex_cat,
       bs_icon = dict$bs_icon,
-      xaxis_title = dict$xaxis_title,
+      xaxis_title = cc_t(dict$xaxis_title, lang = lang),
       data = data,
       link_module = dict$link_module,
       link_var = dict$link_var
