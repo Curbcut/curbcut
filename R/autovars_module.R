@@ -205,8 +205,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           # Translate the content of the dropdown
           w <- autovars_groupnames(id = id)
           w <- sapply(w, c, USE.NAMES = TRUE, simplify = FALSE)
-          w <- list(w)
-          names(w) <- main_dropdown_title
+          # Add a name if there is one available
+          if (!is.null(main_dropdown_title)) {
+            w <- list(w)
+            names(w) <- main_dropdown_title
+          }
           w <- cc_t(w, lang = r$lang())
 
           shiny::div(id = widget_ns("main_drop"),
@@ -288,7 +291,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                 w <- list(w)
                 names(w) <- n
                 w <- cc_t(w, lang = r$lang())
-                print(w)
                 picker_UI(
                   id = widget_ns(id),
                   picker_id = sprintf("p%s", l),
