@@ -8,18 +8,18 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/language.js",
-                                        package = "curbcut"
+    package = "curbcut"
   ))
   highlightOptions <- readLines(system.file("js_scripts/highlight_dropdown_option.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
 
   # Add the JS resource path
   shiny::addResourcePath("curbcut_js", system.file("js_scripts",
-                                                   package = "curbcut"
+    package = "curbcut"
   ))
 
   shiny::tagList(
@@ -126,7 +126,7 @@ highlight_dropdown <- function(dropdown_identifier, options,
   # If not color is supplied, use light blue from colours_dfs$bivar.
   if (is.null(color)) {
     colours_dfs <- get_from_globalenv("colours_dfs")
-    color = colours_dfs$bivar$fill[colours_dfs$bivar$group == "1 - 2"]
+    color <- colours_dfs$bivar$fill[colours_dfs$bivar$group == "1 - 2"]
   }
 
   # Collapse the options so that it's a vector of length 1 separated with
@@ -138,5 +138,4 @@ highlight_dropdown <- function(dropdown_identifier, options,
 
   # Update the dropdown options background colors
   shinyjs::js$highlightOptions(options)
-
 }

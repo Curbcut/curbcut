@@ -50,7 +50,7 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
         }
 
         # Show again after 6 months
-        if (Sys.time() > (as.POSIXct(last_tutorial_data()) + (60*60*24*180))) {
+        if (Sys.time() > (as.POSIXct(last_tutorial_data()) + (60 * 60 * 24 * 180))) {
           return(shinyjs::delay(
             1000,
             tutorial_trigger(

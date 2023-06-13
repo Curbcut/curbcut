@@ -36,7 +36,7 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
       id = "compare",
       r = r,
       var_list = var_list,
-      time = time#,
+      time = time # ,
       # identifier = "housing_comparedrop"
     )
 
@@ -66,7 +66,7 @@ compare_UI <- function(id, var_list) {
       picker_UI(
         id = shiny::NS(id, "compare"),
         var_list = var_list,
-        open_left = FALSE#,
+        open_left = FALSE # ,
         # identifier = if (id %in% c("housing-housing", "housing")) "housing_comparedrop" else NULL
       )
     ),

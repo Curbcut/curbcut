@@ -99,13 +99,14 @@ explore_graph.q5 <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data$var_left[data$ID == shared_info$select_id]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_vline(
-        xintercept = val,
-        colour = "black", linewidth = 1.5
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_vline(
+          xintercept = val,
+          colour = "black", linewidth = 1.5
+        )
+    }
   }
 
   # Return
@@ -166,8 +167,10 @@ explore_graph.bivar <- function(vars, select_id, df, data,
 
   plot <-
     plot +
-    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
-                               ggplot2::aes(colour = group), size = point_size) +
+    explore_graph_point_jitter(
+      dat = plot$data, cols = data_cols,
+      ggplot2::aes(colour = group), size = point_size
+    ) +
     ggplot2::stat_smooth(
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
@@ -183,13 +186,14 @@ explore_graph.bivar <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_point(
-        data = val, shape = 21,
-        colour = "white", fill = "black", size = 4
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_point(
+          data = val, shape = 21,
+          colour = "white", fill = "black", size = 4
+        )
+    }
   }
 
   # Return
@@ -263,8 +267,10 @@ explore_graph.delta <- function(vars, select_id, df, data,
 
   plot <-
     plot +
-    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
-                               ggplot2::aes(colour = group)) +
+    explore_graph_point_jitter(
+      dat = plot$data, cols = data_cols,
+      ggplot2::aes(colour = group)
+    ) +
     ggplot2::geom_smooth(
       se = FALSE, method = "lm", formula = y ~ x,
       colour = "black", linewidth = 0.5
@@ -280,13 +286,14 @@ explore_graph.delta <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_point(
-        data = val, shape = 21,
-        colour = "white", fill = "black", size = 4
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_point(
+          data = val, shape = 21,
+          colour = "white", fill = "black", size = 4
+        )
+    }
   }
 
   return(plot)
@@ -337,8 +344,10 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data,
 
   plot <-
     plot +
-    explore_graph_point_jitter(dat = plot$data, cols = data_cols,
-                               ggplot2::aes(colour = group), size = point_size) +
+    explore_graph_point_jitter(
+      dat = plot$data, cols = data_cols,
+      ggplot2::aes(colour = group), size = point_size
+    ) +
     ggplot2::stat_smooth(
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
@@ -354,13 +363,14 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_point(
-        data = val, shape = 21,
-        colour = "white", fill = "black", size = 4
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_point(
+          data = val, shape = 21,
+          colour = "white", fill = "black", size = 4
+        )
+    }
   }
 
   # Return
@@ -471,13 +481,14 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data$var_left[data$ID == shared_info$select_id]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_vline(
-        xintercept = val,
-        colour = "black", linewidth = 1.5
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_vline(
+          xintercept = val,
+          colour = "black", linewidth = 1.5
+        )
+    }
   }
 
   # Return
@@ -537,13 +548,14 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data$var_left[data$ID == shared_info$select_id]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_vline(
-        xintercept = val + 1,
-        colour = "black", linewidth = 1.5
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_vline(
+          xintercept = val + 1,
+          colour = "black", linewidth = 1.5
+        )
+    }
   }
 
   return(plot)
@@ -642,13 +654,14 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_point(
-        data = val, shape = 21, colour = "white",
-        fill = "black", size = 4
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_point(
+          data = val, shape = 21, colour = "white",
+          fill = "black", size = 4
+        )
+    }
   }
 
   # Return
@@ -767,13 +780,14 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
   # Add selection
   if (!is.na(shared_info$select_id)) {
     val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val)))
-    plot <-
-      plot +
-      ggplot2::geom_tile(
-        data = val,
-        color = "white", fill = "transparent", size = 1.5
-      )
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_tile(
+          data = val,
+          color = "white", fill = "transparent", size = 1.5
+        )
+    }
   }
 
   return(plot)

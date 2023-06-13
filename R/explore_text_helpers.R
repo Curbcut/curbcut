@@ -599,17 +599,21 @@ explore_text_color <- function(x, meaning) {
 #' the information for 'var_left' or 'var_right' is not available. Returns NULL
 #' otherwise.
 explore_text_check_na <- function(context, data, select_id, vars, lang = NULL) {
-
   # If there are no selection, returns NULL
-  if (is.na(select_id)) return(NULL)
+  if (is.na(select_id)) {
+    return(NULL)
+  }
 
   # Check if var_left is NA
   val <- data$var_left[data$ID == select_id]
   if (is.na(val)) {
-    exp <- var_get_info(var = vars$var_left[[1]], what = "explanation",
-                        translate = TRUE, lang = lang)
+    exp <- var_get_info(
+      var = vars$var_left[[1]], what = "explanation",
+      translate = TRUE, lang = lang
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang), exp)
+      lang = lang
+    ), exp)
     out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
     return(out)
   }
@@ -617,10 +621,13 @@ explore_text_check_na <- function(context, data, select_id, vars, lang = NULL) {
   if ("var_right" %in% names(data)) {
     val <- data$var_right[data$ID == select_id]
     if (is.na(val)) {
-      exp <- var_get_info(var = vars$var_right[[1]], what = "explanation",
-                          translate = TRUE, lang = lang)
+      exp <- var_get_info(
+        var = vars$var_right[[1]], what = "explanation",
+        translate = TRUE, lang = lang
+      )
       out <- sprintf(cc_t("we currently don't have information regarding %s",
-                          lang = lang), exp)
+        lang = lang
+      ), exp)
       out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
       return(out)
     }

@@ -149,9 +149,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
       # If there's a single year or there are no common widgets
       shinyjs::toggle("common_widgets",
-                      condition = !single_year | {
-                        length(common_widgets()$widgets) != 0
-                      }
+        condition = !single_year | {
+          length(common_widgets()$widgets) != 0
+        }
       )
     })
 
@@ -216,13 +216,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           }
           w <- cc_t(w, lang = r$lang())
 
-          shiny::div(id = widget_ns("main_drop"),
-                     picker_UI(
-                       id = widget_ns(id),
-                       picker_id = "mnd",
-                       var_list = w,
-                       label = cc_t(main_dropdown_title, force_span = TRUE)
-                     )
+          shiny::div(
+            id = widget_ns("main_drop"),
+            picker_UI(
+              id = widget_ns(id),
+              picker_id = "mnd",
+              var_list = w,
+              label = cc_t(main_dropdown_title, force_span = TRUE)
+            )
           )
         }
       )
@@ -260,14 +261,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # If there's only one option in the var_left, hide it
     shiny::observeEvent(mnd(),
-                        {
-                          modules <- get_from_globalenv("modules")
-                          var_lefts <- modules$var_left[modules$id == id][[1]]
-                          if (is.character(var_lefts) & length(var_lefts) == 1) {
-                            shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
-                          }
-                        },
-                        ignoreInit = TRUE
+      {
+        modules <- get_from_globalenv("modules")
+        var_lefts <- modules$var_left[modules$id == id][[1]]
+        if (is.character(var_lefts) & length(var_lefts) == 1) {
+          shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
+        }
+      },
+      ignoreInit = TRUE
     )
 
     # Additional widgets ------------------------------------------------------

@@ -133,7 +133,9 @@ map_server <- function(id, r, tile, data_colours, select_id, zoom_levels, zoom,
     # Show a different line colors when the texture is off (building scale)
     new_line_color <- shiny::reactive({
       # If the scale is building, switch borders to grey
-      if (is_scale_df("building", r[[id]]$df())) return("#63666A")
+      if (is_scale_df("building", r[[id]]$df())) {
+        return("#63666A")
+      }
       do.call(colour_fun(), colour_args())
     })
     update_map_rv(

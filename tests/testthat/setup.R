@@ -8,18 +8,18 @@ assign("all_choropleths",
 
 # Default random address
 assign("default_random_address",
-       value = "845 Sherbrooke",
-       envir = .GlobalEnv
+  value = "845 Sherbrooke",
+  envir = .GlobalEnv
 )
 
 # Default tileset info
 assign("tileset_prefix",
-       value = "mtl",
-       envir = .GlobalEnv
+  value = "mtl",
+  envir = .GlobalEnv
 )
 assign("mapbox_username",
-       value = "sus-mcgill",
-       envir = .GlobalEnv
+  value = "sus-mcgill",
+  envir = .GlobalEnv
 )
 
 # All qs and qsm files

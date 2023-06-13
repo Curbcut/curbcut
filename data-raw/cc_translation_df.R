@@ -367,10 +367,10 @@ cc_translation_df <-
   # Explore panel -----------------------------------------------------------
 
   # Context and q5
-add_row(
-  en = "This value",
-  fr = "Cette valeur"
-) |>
+  add_row(
+    en = "This value",
+    fr = "Cette valeur"
+  ) |>
   add_row(
     en = "This is %s for %s",
     fr = "C'est %s pour %s"
@@ -421,10 +421,10 @@ add_row(
   ) |>
   # bivar -------------------------------------------------------------------
 
-add_row(
-  en = "Pearson's r: %s",
-  fr = "r de Pearson : %s"
-) |>
+  add_row(
+    en = "Pearson's r: %s",
+    fr = "r de Pearson : %s"
+  ) |>
   add_row(
     en = "The first value",
     fr = "La première valeur"
@@ -544,10 +544,10 @@ add_row(
   # Delta -------------------------------------------------------------------
 
 
-add_row(
-  en = "the value",
-  fr = "la valeur"
-) |>
+  add_row(
+    en = "the value",
+    fr = "la valeur"
+  ) |>
   add_row(
     en = "%s percentage points (%sx)",
     fr = "%s points de pourcentage (%sx)"
@@ -626,10 +626,10 @@ add_row(
   ) |>
   # Delta bivar -------------------------------------------------------------
 
-add_row(
-  en = "the first value",
-  fr = "la première valeur"
-) |>
+  add_row(
+    en = "the first value",
+    fr = "la première valeur"
+  ) |>
   add_row(
     en = "the second value",
     fr = "la deuxième valeur"
@@ -780,18 +780,16 @@ add_row(
     en = "{source_vec} {v}",
     fr = "{v} {source_vec}"
   ) |>
-
-
   # Place explorer ----------------------------------------------------------
 
-add_row(
-  en = "Generating report",
-  fr = "Création du rapport"
-) |>
-add_row(
-  en = "Its value is higher than the WHO's guideline value of 53. ",
-  fr = "Sa valeur est supérieure à la valeur recommandée par l'OMS, qui est de 53. "
-) |>
+  add_row(
+    en = "Generating report",
+    fr = "Création du rapport"
+  ) |>
+  add_row(
+    en = "Its value is higher than the WHO's guideline value of 53. ",
+    fr = "Sa valeur est supérieure à la valeur recommandée par l'OMS, qui est de 53. "
+  ) |>
   add_row(
     en = "%s (count)",
     fr = "%s (compte)"
@@ -800,36 +798,66 @@ add_row(
     en = "No data.",
     fr = "Aucune donnée."
   ) |>
-  add_row(en = "Air pollution",
-          fr = "Pollution de l'air") |>
-  add_row(en = "Vegetation",
-          fr = "Végétation") |>
-  add_row(en = "Sustainable transport",
-          fr = "Mobilité durable") |>
-  add_row(en = "Housing",
-          fr = "Logement") |>
-  add_row(en = "Active living",
-          fr = "Vie active") |>
-  add_row(en = "Nitrogen dioxide (ppb)",
-          fr = "Dioxyde d'azote (ppb)") |>
-  add_row(en = "Normalized Difference Vegetation Index",
-          fr = "Indice de végétation par différence normalisée") |>
-  add_row(en = "Walk, cycle or transit to work (%)",
-          fr = "Se rendent au travail à pied, à vélo ou en transport en commun (%)") |>
-  add_row(en = "Single-detached housing (%)",
-          fr = "Maison individuelle non attenante (%)") |>
-  add_row(en = "Active living potential index",
-          fr = "Indice de potentiel de vie active") |>
-  add_row(en = "{data_rank} in terms of level of <a href = 'https://www.canuedata.ca/tmp/CANUE_METADATA_NO2LUR_A_YY.pdf'>NO2</a> pollution. {higher_than_threshold}(NO2 = {pretty_data_var}, data from {data_date})",
-          fr = "{data_rank} en termes de niveau de pollution de <a href = 'https://www.canuedata.ca/tmp/CANUE_METADATA_NO2LUR_A_YY.pdf'>NO2</a>. {higher_than_threshold}(NO2 = {pretty_data_var}, données de {data_date})") |>
-  add_row(en = "{data_rank} in terms of vegetation (<a href='https://canue.ca/wp-content/uploads/2018/11/CANUE-Metadata-NDVI-Landsat-Annual.pdf' target='_blank'>NDVI</a> = {pretty_data_var}, data from {data_date})",
-          fr = "{data_rank} en termes de végétation (<a href='https://canue.ca/wp-content/uploads/2018/11/CANUE-Metadata-NDVI-Landsat-Annual.pdf' target='_blank'>NDVI</a> = {pretty_data_var}, données de {data_date})") |>
-  add_row(en = "{pretty_data_var} of residents use public transit, walk or bicycle to get to work. {data_rank}. (Data from {data_date})",
-          fr = "{pretty_data_var} des résidents utilisent les transports en commun, la marche ou le vélo pour se rendre au travail. {data_rank}. (Données de {data_date})") |>
-  add_row(en = "{pretty_data_var} of occupied dwellings are single-detached houses. {data_rank}. (Data from {data_date})",
-          fr = "{pretty_data_var} des logements occupés sont des maisons individuelles non attenantes. {data_rank}. (Données de {data_date})") |>
-  add_row(en = "{data_rank} in terms of active living potential. (Data from {data_date})",
-          fr = "{data_rank} en termes de potentiel vie active. (Données de {data_date})")
+  add_row(
+    en = "Air pollution",
+    fr = "Pollution de l'air"
+  ) |>
+  add_row(
+    en = "Vegetation",
+    fr = "Végétation"
+  ) |>
+  add_row(
+    en = "Sustainable transport",
+    fr = "Mobilité durable"
+  ) |>
+  add_row(
+    en = "Housing",
+    fr = "Logement"
+  ) |>
+  add_row(
+    en = "Active living",
+    fr = "Vie active"
+  ) |>
+  add_row(
+    en = "Nitrogen dioxide (ppb)",
+    fr = "Dioxyde d'azote (ppb)"
+  ) |>
+  add_row(
+    en = "Normalized Difference Vegetation Index",
+    fr = "Indice de végétation par différence normalisée"
+  ) |>
+  add_row(
+    en = "Walk, cycle or transit to work (%)",
+    fr = "Se rendent au travail à pied, à vélo ou en transport en commun (%)"
+  ) |>
+  add_row(
+    en = "Single-detached housing (%)",
+    fr = "Maison individuelle non attenante (%)"
+  ) |>
+  add_row(
+    en = "Active living potential index",
+    fr = "Indice de potentiel de vie active"
+  ) |>
+  add_row(
+    en = "{data_rank} in terms of level of <a href = 'https://www.canuedata.ca/tmp/CANUE_METADATA_NO2LUR_A_YY.pdf'>NO2</a> pollution. {higher_than_threshold}(NO2 = {pretty_data_var}, data from {data_date})",
+    fr = "{data_rank} en termes de niveau de pollution de <a href = 'https://www.canuedata.ca/tmp/CANUE_METADATA_NO2LUR_A_YY.pdf'>NO2</a>. {higher_than_threshold}(NO2 = {pretty_data_var}, données de {data_date})"
+  ) |>
+  add_row(
+    en = "{data_rank} in terms of vegetation (<a href='https://canue.ca/wp-content/uploads/2018/11/CANUE-Metadata-NDVI-Landsat-Annual.pdf' target='_blank'>NDVI</a> = {pretty_data_var}, data from {data_date})",
+    fr = "{data_rank} en termes de végétation (<a href='https://canue.ca/wp-content/uploads/2018/11/CANUE-Metadata-NDVI-Landsat-Annual.pdf' target='_blank'>NDVI</a> = {pretty_data_var}, données de {data_date})"
+  ) |>
+  add_row(
+    en = "{pretty_data_var} of residents use public transit, walk or bicycle to get to work. {data_rank}. (Data from {data_date})",
+    fr = "{pretty_data_var} des résidents utilisent les transports en commun, la marche ou le vélo pour se rendre au travail. {data_rank}. (Données de {data_date})"
+  ) |>
+  add_row(
+    en = "{pretty_data_var} of occupied dwellings are single-detached houses. {data_rank}. (Data from {data_date})",
+    fr = "{pretty_data_var} des logements occupés sont des maisons individuelles non attenantes. {data_rank}. (Données de {data_date})"
+  ) |>
+  add_row(
+    en = "{data_rank} in terms of active living potential. (Data from {data_date})",
+    fr = "{data_rank} en termes de potentiel vie active. (Données de {data_date})"
+  )
 
 # lapply(string_to_translate, \(x) {
 #   paste0('add_row(en = "', x, '",\n fr = "', .t(x), '") |>\n')

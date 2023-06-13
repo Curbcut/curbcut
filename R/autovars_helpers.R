@@ -126,7 +126,6 @@ autovars_common_widgets <- function(id) {
 #'
 #' @return A list of widgets. If `tb` is not a data frame, an empty list is returned.
 autovars_widgets <- function(id, group_name, common_vals) {
-
   modules <- get_from_globalenv("modules")
 
   # Grab the correct tibble

@@ -85,7 +85,6 @@ explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
 #' height for y) to improve visualization. Otherwise, no jitter will be applied
 #' along that axis.
 explore_graph_point_jitter <- function(dat, cols, ...) {
-
   vals_obs_ratio_x <- length(unique(dat[[cols[1]]])) / nrow(dat)
   vals_obs_ratio_y <- length(unique(dat[[cols[2]]])) / nrow(dat)
 

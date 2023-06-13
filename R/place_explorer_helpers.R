@@ -61,7 +61,6 @@ place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
 #' the static file for the web server.
 #' * file: The absolute path to the temporary file.
 place_explorer_html_links <- function(temp_folder, region, df, select_id, lang = NULL) {
-
   shiny::withProgress(
     message = cc_t("Generating report", lang = lang),
     {
@@ -87,7 +86,6 @@ place_explorer_html_links <- function(temp_folder, region, df, select_id, lang =
       shiny::incProgress(0.3)
 
       if (pe_file %in% pe_docs) {
-
         # Get the full paths of the style (header of HTML) and the place explorer HTML file
         head <- normalizePath("www/place_explorer/header.html")
         pef <- normalizePath(pe_file)
@@ -102,12 +100,12 @@ place_explorer_html_links <- function(temp_folder, region, df, select_id, lang =
         } else {
           system(sprintf("cat %s %s > %s", head, pef, tmpfile))
         }
-
       } else {
-
         # If the place explorer is not already pre-processed, process it on the spot.
-        place_explorer_create_html(tmpfile = tmpfile, region = region, df = df,
-                                   select_id = select_id, lang = lang)
+        place_explorer_create_html(
+          tmpfile = tmpfile, region = region, df = df,
+          select_id = select_id, lang = lang
+        )
       }
 
       shiny::incProgress(0.3)
@@ -116,8 +114,8 @@ place_explorer_html_links <- function(temp_folder, region, df, select_id, lang =
       tmpfile <- s_extract("placeex_tmp.*$", tmpfile)
 
       shiny::incProgress(0.2)
-
-    })
+    }
+  )
 
   # Return the `src` for when we want to grab the static file for the web
   # server. `file` is the absolute path to the temporary file
@@ -149,7 +147,6 @@ place_explorer_html_links <- function(temp_folder, region, df, select_id, lang =
 #' data date, data rank (in text), and color category (1-5).
 placeex_main_card_prep_output_en <- function(data, dict, region, scale_name, select_id,
                                              regions_dictionary, scales_dictionary) {
-
   # Setup --------------------------------------------------------------------
 
   df_scale <- paste("The", scales_dictionary$sing[scales_dictionary$scale == scale_name])
@@ -310,16 +307,17 @@ placeex_main_card_prep_output_en <- function(data, dict, region, scale_name, sel
 #' data date, data rank (in text), and color category (1-5).
 placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, select_id,
                                              regions_dictionary, scales_dictionary) {
-
   # Setup --------------------------------------------------------------------
 
   df_scale <- "La zone"
   df_scales <- cc_t(scales_dictionary$plur[scales_dictionary$scale == scale_name],
-                    lang = "fr")
+    lang = "fr"
+  )
 
   # To what it compares
   to_compare <- cc_t(regions_dictionary$to_compare[regions_dictionary$region == region],
-                     lang = "fr")
+    lang = "fr"
+  )
 
   # Prepare list to store all data
   info <- list()
@@ -373,7 +371,9 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
         }
         # else
         rk <- ordinal_form(x = data_rank, lang = "fr")
-        if (rk == "premier") return(glue::glue_safe("premier"))
+        if (rk == "premier") {
+          return(glue::glue_safe("premier"))
+        }
         return(glue::glue_safe("{rk} meilleure"))
       })()
 
@@ -400,8 +400,9 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
           return({
             paste0(
               glue::glue_safe("{df_scale} se classe parmis les "),
-              if (data_s$percentile < 1) "1%" else scales::percent(data_s$percentile)
-            , " plus faibles")
+              if (data_s$percentile < 1) "1%" else scales::percent(data_s$percentile),
+              " plus faibles"
+            )
           })
         }
 
@@ -475,7 +476,6 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
 placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
                                            pe_main_card_data, scales_dictionary,
                                            regions_dictionary) {
-
   ## Generate output grid ---------------------------------------------------
 
   to_grid <- lapply(pe_main_card_data$main_card_dict$name, \(x) {
@@ -484,13 +484,14 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
     dict <- pe_main_card_data$main_card_dict[pe_main_card_data$main_card_dict$name == x, ]
 
     fun <- sprintf("placeex_main_card_prep_output_%s", lang)
-    z <- do.call(fun, list(data = data,
-                           dict = dict,
-                           region = region,
-                           scale_name = scale_name,
-                           select_id = select_id,
-                           regions_dictionary = regions_dictionary,
-                           scales_dictionary = scales_dictionary
+    z <- do.call(fun, list(
+      data = data,
+      dict = dict,
+      region = region,
+      scale_name = scale_name,
+      select_id = select_id,
+      regions_dictionary = regions_dictionary,
+      scales_dictionary = scales_dictionary
     ))
 
     if (is.null(z)) {
@@ -506,7 +507,8 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
       higher_than_threshold <-
         if (z$pretty_data_var > 53) {
           cc_t("Its value is higher than the WHO's guideline value of 53. ",
-               lang = lang)
+            lang = lang
+          )
         } else {
           ""
         }
@@ -559,13 +561,14 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
 #' for the given data point (specified by `select_id`). It is output at the location
 #' of `tmpfile`
 place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
-
   if (utils::packageVersion("bslib") != "9.9.9.9999") {
-    warning(paste0("Wrong version of `bslib`. Place explorer tabs won't be ",
-                   "colored according to how much of an outlier the zone is for ",
-                   "every theme. To ignore, set `check_bslib_version = FALSE`. ",
-                   "To build with colored tabs, install ",
-                   "`devtools::install_github('bdbmax/bslib')`"))
+    warning(paste0(
+      "Wrong version of `bslib`. Place explorer tabs won't be ",
+      "colored according to how much of an outlier the zone is for ",
+      "every theme. To ignore, set `check_bslib_version = FALSE`. ",
+      "To build with colored tabs, install ",
+      "`devtools::install_github('bdbmax/bslib')`"
+    ))
   }
 
   # Get the necessary globals
@@ -577,7 +580,7 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
 
   # Input rmarkdown file
   inp <- system.file(paste0("place_explorer/pe_", lang, ".Rmd"),
-                     package = "curbcut"
+    package = "curbcut"
   )
 
   # Setup all necessary input
@@ -586,14 +589,20 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
 
   map_loc <- scale_df$centroid[[1]]
   title_card_data <-
-    placeex_main_card_final_output(region = region, df = df, select_id = select_id,
-                                   lang = lang, pe_main_card_data = pe_main_card_data,
-                                   scales_dictionary = scales_dictionary,
-                                   regions_dictionary = regions_dictionary)
+    placeex_main_card_final_output(
+      region = region, df = df, select_id = select_id,
+      lang = lang, pe_main_card_data = pe_main_card_data,
+      scales_dictionary = scales_dictionary,
+      regions_dictionary = regions_dictionary
+    )
 
   map_zoom <- (\(x) {
-    if (is_scale_df("CT", df)) return(11)
-    if (is_scale_df("DA", df)) return(13)
+    if (is_scale_df("CT", df)) {
+      return(11)
+    }
+    if (is_scale_df("DA", df)) {
+      return(13)
+    }
     # For first level
     return(10)
   })()

@@ -54,10 +54,14 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(context = context, data = data,
-                                    select_id = select_id, vars = vars,
-                                    lang = lang)
-  if (!is.null(na_check)) return(na_check)
+  na_check <- explore_text_check_na(
+    context = context, data = data,
+    select_id = select_id, vars = vars,
+    lang = lang
+  )
+  if (!is.null(na_check)) {
+    return(na_check)
+  }
 
   # Grab the value string
   value_string <- explore_text_values_q5(
@@ -767,10 +771,14 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(context = context, data = data,
-                                    select_id = select_id, vars = vars,
-                                    lang = lang)
-  if (!is.null(na_check)) return(na_check)
+  na_check <- explore_text_check_na(
+    context = context, data = data,
+    select_id = select_id, vars = vars,
+    lang = lang
+  )
+  if (!is.null(na_check)) {
+    return(na_check)
+  }
 
   # If there is a selection, return a completely diferent text
   if (!is.na(select_id)) {
@@ -1148,10 +1156,14 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(context = context, data = data,
-                                    select_id = select_id, vars = vars,
-                                    lang = lang)
-  if (!is.null(na_check)) return(na_check)
+  na_check <- explore_text_check_na(
+    context = context, data = data,
+    select_id = select_id, vars = vars,
+    lang = lang
+  )
+  if (!is.null(na_check)) {
+    return(na_check)
+  }
 
   # Grab the explanation and region values
   exp_vals <- explore_text_delta_exp(
@@ -1642,10 +1654,14 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(context = context, data = data,
-                                    select_id = select_id, vars = vars,
-                                    lang = lang)
-  if (!is.null(na_check)) return(na_check)
+  na_check <- explore_text_check_na(
+    context = context, data = data,
+    select_id = select_id, vars = vars,
+    lang = lang
+  )
+  if (!is.null(na_check)) {
+    return(na_check)
+  }
 
   # Grab the explanation and region values for both set of variables
   exp_vals_left <- explore_text_delta_exp(

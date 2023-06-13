@@ -31,7 +31,7 @@
 #' @seealso \code{\link{picker_UI}}
 #' @export
 picker_server <- function(id, r, picker_id = "var", var_list,
-                          time = shiny::reactive(NULL), #identifier = NULL,
+                          time = shiny::reactive(NULL), # identifier = NULL,
                           ...) {
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(var_list))
