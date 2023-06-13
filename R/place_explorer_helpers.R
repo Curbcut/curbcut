@@ -528,7 +528,8 @@ placeex_main_card_final_output <- function(region, df, select_id, lang = "en",
       xaxis_title = cc_t(dict$xaxis_title, lang = lang),
       data = data,
       link_module = dict$link_module,
-      link_var = dict$link_var
+      link_dropdown = dict$link_dropdown,
+      link_var_code = dict$link_var_code
     )
   })
 

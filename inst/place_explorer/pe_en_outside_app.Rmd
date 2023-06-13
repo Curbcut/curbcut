@@ -446,7 +446,7 @@ boxes <- mapply(\(ind, ind_name) {
                       "&crds=", paste0(round(params$map_loc[1], digits = 2), 
                                        ";", round(params$map_loc[2], digits = 2)), 
                       "&sid=", params$select_id)
-        if (!is.na(ind$link_var)) {
+        if (!is.na(ind$link_dropdown)) {
           variables <- curbcut:::get_from_globalenv("variables")
           code_n <- which(variables$var_code == ind$link_var_code)
           out <- paste0(out, "&wgt=", ind$link_dropdown, ":", code_n)
