@@ -364,7 +364,7 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
         if (data_rank > (2 / 3 * df_row)) {
           rk <- ordinal_form(x = data_rank, lang = "fr")
           return({
-            glue::glue_safe("relativement bas à  {rk}")
+            glue::glue_safe("relativement bas \u00e0  {rk}")
           })
         }
         # if ranks in the second third
@@ -409,11 +409,11 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
 
         if (dict$high_is_good) {
           glue::glue_safe(
-            "Sa valeur est inférieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+            "Sa valeur est inf\u00e9rieure à celle de {pretty_perc} des {df_scales} {to_compare}"
           )
         } else {
           glue::glue_safe(
-            "Sa valeur est supérieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+            "Sa valeur est sup\u00e9rieure à celle de {pretty_perc} des {df_scales} {to_compare}"
           )
         }
       })()

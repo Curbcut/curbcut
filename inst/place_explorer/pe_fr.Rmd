@@ -262,7 +262,7 @@ contents <- lapply(all_themes, \(t) {
     text <- curbcut:::explore_text_values_q5(var = vars$var_left, region = params$region,
                                              select_id = params$select_id, data = data,
                                              df = df, lang = "fr")$text
-    text <- stringr::str_to_sentence(text)
+    text <- curbcut::s_sentence(text)
     
     if (!is.na(date)) {
       text <- sprintf("%s. <i>(Données de %s.)</i>", text, date)
@@ -403,7 +403,9 @@ boxes <- mapply(\(ind, ind_name) {
                                        ";", round(params$map_loc[2], digits = 2)), 
                       "&sid=", params$select_id)
         if (!is.na(ind$link_var)) {
-          out <- paste0(out, "&v_l=", ind$link_var)
+          variables <- curbcut:::get_from_globalenv("variables")
+          code_n <- which(variables$var_code == ind$link_var_code)
+          out <- paste0(out, "&wgt=", ind$link_dropdown, ":", code_n)
         }
         out
       } else NULL

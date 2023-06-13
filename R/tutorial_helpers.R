@@ -37,71 +37,71 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
   default_elements <-
     data.frame(
       element = c(
-        build_element("title_texts"),
         build_element("map_div"),
+        build_element("title_texts"),
         build_element("left_widgets"),
         build_element("legend_div"),
         build_element("zoom_div"),
         build_element("compare_panel"),
-        build_element("explore_content"),
+        build_element("explore_full"),
         build_element("floating-panel-content"),
         build_element("tutorial")
       ),
       intro = c(
-        cc_t("Curbcut is designed as a series of pages that explore ",
-          "a given theme. Here you will find information about the ",
-          "theme and the data used on the page.",
+        cc_t(
+          "Curbcut maps are interactive: you can scroll, zoom in and out, and ",
+          "click on areas for more information.",
           lang = lang
         ),
-        cc_t("All the maps within Curbcut are interactive and let users ",
-          "scroll, zoom in and out, and click into areas for more ",
-          "information.",
+        cc_t(
+          "A Curbcut page explores a specific theme. Here you'll find information",
+          " about the theme and the data used on the page.",
           lang = lang
         ),
-        cc_t("The interactive nature of our maps means that you can ",
-          "choose which variables you wish to explore through the ",
-          "widgets located here.",
+        cc_t(
+          "Choose the variables and time frame you want, and the map will update.",
           lang = lang
         ),
-        cc_t("The legend displays how the selected variable(s) is ",
-          "being visually represented on the map with different ",
-          "colours.",
+        cc_t(
+          "The legend shows how the selected variables are displayed on the map.",
           lang = lang
         ),
-        cc_t("The level of zoom determines the spatial scale of what ",
-          "you see or you can click off \u2018autozoom\u2019 and manually ",
-          "choose the spatial scale with the slider.",
+        cc_t(
+          "Curbcut maps automatically update the scale as you zoom in and out. ",
+          "If you want to control the scale manually, click off ",
+          "\u2018Auto-scale\u2019 and move the slider yourself.",
           lang = lang
         ),
-        cc_t("This function allows you to select a variable to compare ",
-          "with the one selected on the left-hand panel. We will show ",
-          "you the potential relationship between the variables of ",
-          "your choice.",
+        cc_t(
+          "If you want to compare your main variable with a second variable, ",
+          "choose one here and the map will update to show the relationship ",
+          "between the two.",
           lang = lang
         ),
-        cc_t("You will see meaningful information here about the variables ",
-          "selected and any potential relationships between them.",
+        cc_t(
+          "Explore patterns and relationships in the variables you've selected. ",
+          "The text and graph here automatically update as you navigate the page.",
           lang = lang
         ),
-        cc_t("These buttons allow you to switch between map view and ",
-          "data view. Both show the same information, either ",
-          "spatialized or in table form.",
+        cc_t(
+          "Use these buttons to switch between map view and table view. ",
+          "Both show the same information!",
           lang = lang
         ),
-        cc_t("Congratulations on completing the tutorial! If you wouldd like ",
+        cc_t("Congratulations on completing the tutorial! If you would like ",
           "to revisit any part of it, or run through the entire ",
           "tutorial again, simply click on this button.",
           lang = lang
         )
       ),
       position = c(
-        "right", "auto", "right", "autto", "auto", "left", "left",
+        "auto", "right", "right", "auto", "auto", "left", "left",
         "auto", "auto"
       ),
       title = sapply(
         c(
-          "Title text", "Map", "Left-hand widgets", "Legend", "Zoom",
-          "Compare menu", "Explore", "View switch", "Tutorial"
+          "Map", "Title text", "Variable selection", "Legend", "Scale",
+          "Compare", "Explore", "Switch views", "Tutorial"
         ), cc_t,
         lang = lang, USE.NAMES = FALSE
       )

@@ -411,9 +411,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
     two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
     # If the two last brackets is recognized as the default, write a particular string
-    exp <- if (identical(two_last_ranks, c("above average", "high"))) {
-      gsub("_X_", cc_t("a higher-than-average", lang = lang), exp_q5)
-    } else {
+    exp <- {
       two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
         cc_t("`%s` to `%s`", lang = lang), two_last_ranks[[1]],
@@ -1303,9 +1301,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
     two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
     # If the two last brackets is recognized as the default, write a particular string
-    exp <- if (identical(two_last_ranks, c("above average", "high"))) {
-      gsub("_X_", cc_t("a higher-than-average", lang = lang), exp_q5)
-    } else {
+    exp <- {
       two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
         cc_t("`%s` to `%s`", lang = lang), two_last_ranks[[1]],

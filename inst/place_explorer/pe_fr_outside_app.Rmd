@@ -267,7 +267,7 @@ contents <- lapply(all_themes, \(t) {
     
     # Grab the type of the variable, and the title 
     type <- unlist(params$variables$type[params$variables$var_code == var])
-    var_title <- cc_t(params$variables$var_title[params$variables$var_code == var], lang = "fr")
+    var_title <- curbcut::cc_t(params$variables$var_title[params$variables$var_code == var], lang = "fr")
     # If the column does not exist, return nothing
     if (!v[[1]] %in% names(scale_df)) return(NULL)
     
@@ -296,7 +296,7 @@ contents <- lapply(all_themes, \(t) {
     text <- curbcut:::explore_text_values_q5(var = var_class, region = params$region,
                                              select_id = params$select_id, data = data,
                                              df = df, lang = "fr")$text
-    text <- stringr::str_to_sentence(text)
+    text <- curbcut::s_sentence(text)
     
     if (!is.na(date)) {
       text <- sprintf("%s. <i>(Données de %s.)</i>", text, date)
@@ -370,7 +370,7 @@ contents <- lapply(all_themes, \(t) {
   
   # Create the layout and return outliers or normal values
   cards_ordered <- do.call(bslib::layout_column_wrap, c(list(width = 1/2), unname(cards_ordered)))
-  list(nav = bslib::nav(cc_t(t, lang = "fr"), htmltools::br(), bslib::card_body_fill(cards_ordered)),
+  list(nav = bslib::nav(curbcut::cc_t(t, lang = "fr"), htmltools::br(), bslib::card_body_fill(cards_ordered)),
        ranking = ranking,
        main_card_boxes_outliers = main_card_boxes_outliers,
        main_card_boxes_normal = main_card_boxes_normal)
@@ -433,8 +433,10 @@ boxes <- mapply(\(ind, ind_name) {
                       "&crds=", paste0(round(params$map_loc[1], digits = 2), 
                                        ";", round(params$map_loc[2], digits = 2)), 
                       "&sid=", params$select_id)
-        if (!is.na(ind$link_var)) {
-          out <- paste0(out, "&v_l=", ind$link_var)
+        if (!is.na(ind$link_dropdown)) {
+          variables <- curbcut:::get_from_globalenv("variables")
+          code_n <- which(variables$var_code == ind$link_var_code)
+          out <- paste0(out, "&wgt=", ind$link_dropdown, ":", code_n)
         }
         out
       } else NULL

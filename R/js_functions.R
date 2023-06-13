@@ -8,15 +8,18 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
-    package = "curbcut"
+                                            package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/language.js",
-    package = "curbcut"
+                                        package = "curbcut"
+  ))
+  highlightOptions <- readLines(system.file("js_scripts/highlight_dropdown_option.js",
+                                            package = "curbcut"
   ))
 
   # Add the JS resource path
   shiny::addResourcePath("curbcut_js", system.file("js_scripts",
-    package = "curbcut"
+                                                   package = "curbcut"
   ))
 
   shiny::tagList(
@@ -30,6 +33,12 @@ use_curbcut_js <- function() {
       text = set_language,
       functions = c("set_language")
     )),
+    # Highlight options
+    shiny::tags$head(shinyjs::extendShinyjs(
+      text = highlightOptions,
+      functions = c("highlightOptions")
+    )),
+
     # Right panel hides some div depending on window size
     shiny::tags$head(shiny::tags$script(
       src = "curbcut_js/right_panel.js"
@@ -90,4 +99,44 @@ update_lang <- function(r, lang) {
 
   # Update the reactive language function for the server Shiny side.
   r$lang(lang)
+}
+
+#' Highlight options in a dropdown menu
+#'
+#' This function highlights specified options in a dropdown menu of a shinyWidgets
+#' picker input. It requires the dropdown options to highlight and the desired color.
+#'
+#' @param dropdown_identifier <`character`> The dropdown identifier. Must have been
+#' previously added using the options argument of picker widget, e.g.:
+#' `options = list(identifier = "dropdown_id")`. In the latter case, the value of
+#' this argument should be 'dropdown_id'.
+#' @param options <`character vector`> A character vector of option labels to be
+#' highlighted in the dropdown. It's the user-facing option, e.g. 'housing_tenant'
+#' is 'Tenant-occupied (%)'. The latter must be used.
+#' @param color <`character`> The color (as a hex code) for highlighting. Defaults
+#' to NULL which mean the light blue of colours_dfs$bivar will be used.
+#'
+#' @return Invisible NULL. The function is called for its side effects.
+#' @export
+highlight_dropdown <- function(dropdown_identifier, options,
+                               color = NULL) {
+  if (is.null(shiny::getDefaultReactiveDomain())) {
+    stop("This function can only be used in a reactive context.")
+  }
+  # If not color is supplied, use light blue from colours_dfs$bivar.
+  if (is.null(color)) {
+    colours_dfs <- get_from_globalenv("colours_dfs")
+    color = colours_dfs$bivar$fill[colours_dfs$bivar$group == "1 - 2"]
+  }
+
+  # Collapse the options so that it's a vector of length 1 separated with
+  # double ; (which is the code used to split variables in the JS)
+  options <- paste0(options, collapse = ";;")
+
+  # The hex needs to be added with the options (last)
+  options <- sprintf("%s;;%s;;%s", dropdown_identifier, options, color)
+
+  # Update the dropdown options background colors
+  shinyjs::js$highlightOptions(options)
+
 }

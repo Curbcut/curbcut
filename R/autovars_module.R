@@ -207,8 +207,12 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           w <- sapply(w, c, USE.NAMES = TRUE, simplify = FALSE)
           # Add a name if there is one available
           if (!is.null(main_dropdown_title)) {
-            w <- list(w)
-            names(w) <- main_dropdown_title
+            # if made with `dropdown_make` (by `autovars_groupnames`), then
+            # skip this step. We know it with the vector depth
+            if (curbcut::vec_dep(w) == 2) {
+              w <- list(w)
+              names(w) <- main_dropdown_title
+            }
           }
           w <- cc_t(w, lang = r$lang())
 

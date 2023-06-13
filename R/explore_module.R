@@ -135,25 +135,28 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
 explore_UI <- function(id) {
   shiny::tagList(
     shiny::div(
-      id = shiny::NS(id, "explore_title"),
-      shiny::fluidRow(
-        shiny::column(
-          width = 7,
-          shiny::h4(icon_material_title("location_on"), cc_t("Explore"))
+      id = shiny::NS(id, "explore_full"),
+      shiny::div(
+        id = shiny::NS(id, "explore_title"),
+        shiny::fluidRow(
+          shiny::column(
+            width = 7,
+            shiny::h4(icon_material_title("location_on"), cc_t("Explore"))
+          )
         )
-      )
-    ),
-    shiny::div(
-      id = shiny::NS(id, "explore_content"),
-      shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
-      shiny::plotOutput(
-        outputId = shiny::NS(id, "explore_graph"),
-        height = 150
       ),
-      shinyjs::hidden(
-        shiny::actionLink(
-          inputId = shiny::NS(id, "clear_selection"),
-          label = cc_t("Clear selection")
+      shiny::div(
+        id = shiny::NS(id, "explore_content"),
+        shiny::htmlOutput(outputId = shiny::NS(id, "info_table")),
+        shiny::plotOutput(
+          outputId = shiny::NS(id, "explore_graph"),
+          height = 150
+        ),
+        shinyjs::hidden(
+          shiny::actionLink(
+            inputId = shiny::NS(id, "clear_selection"),
+            label = cc_t("Clear selection")
+          )
         )
       )
     )

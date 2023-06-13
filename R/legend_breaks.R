@@ -65,10 +65,8 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
   breaks <- breaks[!is.na(breaks)]
 
   # If the default, filter out some breaks to lighten the legend
-  if (identical(breaks, c(
-    "Low", "B. average", "Average", "A. average",
-    "High"
-  ))) {
+  if (identical(breaks, c("Very low", "Low", "Moderate",
+                          "High", "Very high"))) {
     breaks <- c(
       cc_t(lang = lang, "Low"),
       sapply(1:3, \(x) NULL),

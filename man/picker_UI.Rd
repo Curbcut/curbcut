@@ -13,6 +13,7 @@ picker_UI(
   div_style = NULL,
   selected = NULL,
   open_left = TRUE,
+  identifier = NULL,
   ...
 )
 }
@@ -42,6 +43,10 @@ is \code{NULL} (the first value will be selected).}
 \item{open_left}{<\code{logical}> Should the dropdown open to the left? Any dropdown
 placed on the left-side of the screen should do see, and it is the default.
 Compare dropdown should open right, and this can be changed.}
+
+\item{identifier}{<\code{character}> Unique identifier that will be used by
+\code{\link{highlight_dropdown}} to change the background color of options.
+Defaults to NULL to not set any.}
 
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}}
 }

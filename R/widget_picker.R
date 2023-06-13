@@ -31,7 +31,8 @@
 #' @seealso \code{\link{picker_UI}}
 #' @export
 picker_server <- function(id, r, picker_id = "var", var_list,
-                          time = shiny::reactive(NULL), ...) {
+                          time = shiny::reactive(NULL), #identifier = NULL,
+                          ...) {
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(var_list))
 
@@ -84,6 +85,19 @@ picker_server <- function(id, r, picker_id = "var", var_list,
       )
     })
 
+    # # # If the dropdown is a compare, highlight differently the background
+    # # # of the options that have a strong correlation
+    # shiny::observe({
+    #   if (!is.null(identifier)) {
+    #     options <- sapply(var_list_t(), \(vars) {
+    #       # FILTER HERE WHICH VARS TO KEEP (the output is the label of the options, e.g. 'Tenant-occupied (%)')
+    #
+    #     }) |> unname() |> unlist()
+    #     highlight_dropdown(dropdown_identifier = identifier,
+    #                        options = "Median household income ($)")
+    #     }
+    # })
+
     # Append the `time`
     var <- shiny::reactive(picker_return_var(
       input = input[[picker_id]],
@@ -119,6 +133,9 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @param open_left <`logical`> Should the dropdown open to the left? Any dropdown
 #' placed on the left-side of the screen should do see, and it is the default.
 #' Compare dropdown should open right, and this can be changed.
+#' @param identifier <`character`> Unique identifier that will be used by
+#' \code{\link{highlight_dropdown}} to change the background color of options.
+#' Defaults to NULL to not set any.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}
 #'
 #' @return A `div` container containing a \code{\link[shinyWidgets]{pickerInput}}
@@ -127,7 +144,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @export
 picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
                       width = "100%", div_style = NULL, selected = NULL,
-                      open_left = TRUE, ...) {
+                      open_left = TRUE, identifier = NULL, ...) {
   # Verify if the widget ID will interfere with bookmark
   picker_id <- widget_id_verif(widget_id = picker_id)
 
@@ -164,7 +181,8 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       choicesOpt = picker_hover_divs(var_list),
       options = shinyWidgets::pickerOptions(
         dropdownAlignRight = !open_left,
-        container = "body"
+        container = "body",
+        identifier = identifier
       ),
       ...
     )

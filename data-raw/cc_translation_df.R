@@ -56,7 +56,7 @@ cc_translation_df <-
   add_row(
     en = "Clear selection",
     fr = "Effacer la sélection"
-  )
+  ) |>
   # Legend ------------------------------------------------------------------
 
   add_row(
@@ -87,98 +87,82 @@ cc_translation_df <-
 
   add_row(
     en = paste0(
-      "Curbcut is designed as a series of pages that explore ",
-      "a given theme. Here you will find information about the ",
-      "theme and the data used on the page."
+      "A Curbcut page explores a specific theme. Here you'll find information",
+      " about the theme and the data used on the page."
     ),
     fr = paste0(
-      "Curbcut est conçu comme une série de pages qui explorent ",
-      "un thème donné. Vous trouverez ici des informations sur ",
-      "le thème et les données utilisées sur la page."
+      "Chaque page Curbcut explore un thème spécifique. Vous trouverez ici des ",
+      "informations sur le thème et les données qui y figurent."
     )
   ) |>
   add_row(
     en = paste0(
-      "All the maps within Curbcut are interactive and let users ",
-      "scroll, zoom in and out, and click into areas for more ",
-      "information."
+      "Curbcut maps are interactive: you can scroll, zoom in and out, and ",
+      "click on areas for more information."
     ),
     fr = paste0(
-      "Toutes les cartes de Curbcut sont interactives et ",
-      "permettent aux utilisateurs de les faire glisser, de ",
-      "les agrandir ou de les réduire, et de cliquer sur des ",
-      "zones pour obtenir plus d'informations."
+      "Les cartes Curbcut sont interactives : vous pouvez les naviguer, zoomer ",
+      "et cliquer sur les zones pour obtenir plus d'informations."
     )
   ) |>
   add_row(
     en = paste0(
-      "The interactive nature of our maps means that you can ",
-      "choose which variables you wish to explore through the ",
-      "widgets located here."
+      "Choose the variables and time frame you want, and the map will update."
     ),
     fr = paste0(
-      "La nature interactive de nos pages signifie que vous ",
-      "pouvez choisir les variables que vous souhaitez explorer ",
-      "grâce aux éléments (widgets) situés ici."
+      "Choisissez les variables et la période que vous souhaitez, et la carte s'actualisera."
     )
   ) |>
   add_row(
     en = paste0(
-      "The legend displays how the selected variable(s) is ",
-      "being visually represented on the map with different ",
-      "colours."
+      "The legend shows how the selected variables are displayed on the map."
     ),
     fr = paste0(
-      "La légende montre comment la ou les variables ",
-      "sélectionnées sont représentées visuellement sur la ",
-      "carte à l'aide de différentes couleurs."
+      "La légende montre comment les variables sélectionnées sont affichées sur la carte."
     )
   ) |>
   add_row(
     en = paste0(
-      "The level of zoom determines the spatial scale of what ",
-      "you see or you can click off \u2018auto-scale\u2019 and manually ",
-      "choose the spatial scale with the slider."
+      "Curbcut maps automatically update the scale as you zoom in and out. ",
+      "If you want to control the scale manually, click off ",
+      "\u2018Auto-scale\u2019 and move the slider yourself."
     ),
     fr = paste0(
-      "Le niveau de zoom détermine l'échelle spatiale de ce que ",
-      "vous voyez. Vous pouvez également désactiver l'option 'échelle ",
-      "automatique' et choisir manuellement l'échelle spatiale à ",
-      "l'aide de la barre de défilement."
+      "Les cartes Curbcut mettent automatiquement à jour l'échelle lorsque vous ",
+      "effectuez un zoom avant ou arrière. Si vous souhaitez contrôler l'échelle ",
+      "manuellement, désactivez l'option \u2018Échelle automatique\u2019 et ",
+      "déplacez vous-même le curseur."
     )
   ) |>
   add_row(
     en = paste0(
-      "This function allows you to select a variable to compare ",
-      "with the one selected on the left-hand panel. We will show ",
-      "you the potential relationship between the variables of ",
-      "your choice."
+      "If you want to compare your main variable with a second variable, ",
+      "choose one here and the map will update to show the relationship ",
+      "between the two."
     ),
     fr = paste0(
-      "Cette fonctionnalité vous permet de sélectionner une variable ",
-      "à comparer avec celle sélectionnée dans le panneau de gauche. ",
-      "Nous vous montrerons la relation potentielle entre les ",
-      "variables choisies"
+      "Si vous souhaitez comparer votre variable principale avec une deuxième ",
+      "variable, choisissez-en une ici et la carte sera actualisée pour montrer ",
+      "la relation entre les deux."
     )
   ) |>
   add_row(
     en = paste0(
-      "You will see meaningful information here about the variables ",
-      "selected and any potential relationships between them."
+      "Explore patterns and relationships in the variables you've selected. ",
+      "The text and graph here automatically update as you navigate the page."
     ),
     fr = paste0(
-      "Vous obtiendrez ici des informations significatives sur ",
-      "les variables sélectionnées et sur les relations potentielles ",
-      "entre elles."
+      "Explorez les tendances et les relations entre les variables que vous ",
+      "avez sélectionnées. Le texte et le graphique se mettent automatiquement ",
+      "à jour au fur et à mesure que vous naviguez sur la page."
     )
   ) |>
   add_row(
     en = paste0(
-      "These buttons allow you to switch between map view and ",
-      "data view. Both show the same information, either ",
-      "spatialized or in table form."
+      "Use these buttons to switch between map view and table view. ",
+      "Both show the same information!"
     ),
-    fr = ""
+    fr = "Ces boutons permettent de passer de l'affichage de la carte à l'affichage du tableau. Les deux affichent les mêmes informations !"
   ) |>
   add_row(
     en = paste0(
@@ -197,19 +181,15 @@ cc_translation_df <-
     fr = "Intitulé"
   ) |>
   add_row(
-    en = "Left-hand widgets",
-    fr = "Éléments (widgets)"
+    en = "Variable selection",
+    fr = "Sélection de variable"
   ) |>
   add_row(
-    en = "Zoom",
-    fr = "Zoom"
+    en = "Scale",
+    fr = "Échelle"
   ) |>
   add_row(
-    en = "Compare menu",
-    fr = "Menu de comparaison"
-  ) |>
-  add_row(
-    en = "View switch",
+    en = "Switch views",
     fr = "Changer de vue"
   ) |>
   add_row(
@@ -237,6 +217,10 @@ cc_translation_df <-
   add_row(
     en = "Households",
     fr = "Ménages"
+  ) |>
+  add_row(
+    en = "households",
+    fr = "ménages"
   ) |>
   add_row(
     en = "Visit the place explorer",
@@ -800,6 +784,10 @@ add_row(
 
   # Place explorer ----------------------------------------------------------
 
+add_row(
+  en = "Generating report",
+  fr = "Création du rapport"
+) |>
 add_row(
   en = "Its value is higher than the WHO's guideline value of 53. ",
   fr = "Sa valeur est supérieure à la valeur recommandée par l'OMS, qui est de 53. "
