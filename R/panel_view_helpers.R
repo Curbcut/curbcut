@@ -691,7 +691,7 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         # Bind two parts
         sprintf("%s %s", s, e)
       } else {
-        sprintf(cc_t("The source of the data is `%s`.", lang = lang), source)
+        sprintf(cc_t("The source of the data is '%s'.", lang = lang), source)
       }
     out <- paste0(out, sprintf("<p>%s</p>", source_bit))
   }

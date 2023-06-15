@@ -418,7 +418,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     exp <- {
       two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
-        cc_t("`%s` to `%s`", lang = lang), two_last_ranks[[1]],
+        cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
         two_last_ranks[[2]]
       ), exp_q5)
     }
@@ -1316,7 +1316,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     exp <- {
       two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
-        cc_t("`%s` to `%s`", lang = lang), two_last_ranks[[1]],
+        cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
         two_last_ranks[[2]]
       ), exp_q5)
     }

@@ -4,7 +4,7 @@
 \alias{tilejson}
 \title{Generate a Mapbox Tile JSON}
 \usage{
-tilejson(mapbox_username, tileset_prefix, tile)
+tilejson(mapbox_username, tileset_prefix, tile, return_error = FALSE)
 }
 \arguments{
 \item{mapbox_username}{<\code{character}> string representing the Mapbox username.}
@@ -13,6 +13,8 @@ tilejson(mapbox_username, tileset_prefix, tile)
 correspond to the Curbcut city, e.g. \code{mtl}.}
 
 \item{tile}{<\code{character}> The tile name to be fetched.}
+
+\item{return_error}{<\code{logical}> Print the error if the tileset isn't found.}
 }
 \value{
 A JSON list if succesfull. If missing tile, returns NULL preventing

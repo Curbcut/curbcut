@@ -408,8 +408,8 @@ cc_translation_df <-
     fr = "nous n'avons présentement pas d'informations concernant %s"
   ) |>
   add_row(
-    en = "`%s` to `%s`",
-    fr = "`%s` à `%s`"
+    en = "'%s' to '%s'",
+    fr = "'%s' à '%s'"
   ) |>
   add_row(
     en = "a higher-than-average",
@@ -769,8 +769,8 @@ cc_translation_df <-
     fr = "Pour calculer %s, nous extrayons %s et son/ses correspondant %s. Ici, le terme `vecteur parent` fait référence à la source de données qui représente %s, que nous utilisons comme base pour calculer %s."
   ) |>
   add_row(
-    en = "The source of the data is `%s`.",
-    fr = "La donnée provient de `%s`."
+    en = "The source of the data is '%s'.",
+    fr = "La donnée provient de '%s'."
   ) |>
   add_row(
     en = "%s has been spatially interpolated from %s.",

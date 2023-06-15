@@ -333,13 +333,14 @@ get_dist <- function(x, y) {
 #' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
 #' correspond to the Curbcut city, e.g. `mtl`.
 #' @param tile <`character`> The tile name to be fetched.
+#' @param return_error <`logical`> Print the error if the tileset isn't found.
 #'
 #' @return A JSON list if succesfull. If missing tile, returns NULL preventing
 #' the app from crashing. If the tile is missing and it's a _building tile,
 #' grab the first region of the regions_dictionary and show buildings for those.
 #'
 #' @export
-tilejson <- function(mapbox_username, tileset_prefix, tile) {
+tilejson <- function(mapbox_username, tileset_prefix, tile, return_error = FALSE) {
   # urltools is necessary for tile_json use
   requireNamespace("urltools", quietly = TRUE)
   tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
@@ -355,8 +356,8 @@ tilejson <- function(mapbox_username, tileset_prefix, tile) {
           )
         rdeck::tile_json(base_building_tile)
       } else {
-        print(e)
-        NULL
+        if (return_error) print(e)
+        return(NULL)
       }
     }
   )

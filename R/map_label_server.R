@@ -19,7 +19,9 @@
 #' is last (so it makes sense on an auto-scale).
 #' @param region <`reactive character`> representing the current region displayed
 #' on the map. Usually one of the output of \code{\link{zoom_get_levels}}.
-#' @param show <`reactive logical`> Should there be texture (streets, buildings, ...)?
+#' @param show_buildings <`reactive logical`> Should there be buildings texture?
+#' @param show_streets <`reactive logical`> Should there be streets texture?
+#' @param show_stories <`reactive logical`> Should the stories appear on the map?
 #' @param mapbox_username <`character`> Mapbox account username. Defaults to
 #' grabbing the `mapbox_username` object from the global environment.
 #' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
@@ -28,7 +30,10 @@
 #'
 #' @return A module server for the label and texture server.
 #' @export
-label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reactive(TRUE),
+label_server <- function(id, tile, zoom, zoom_levels, region,
+                         show_buildings = shiny::reactive(TRUE),
+                         show_streets = shiny::reactive(TRUE),
+                         show_stories = shiny::reactive(TRUE),
                          mapbox_username = get0("mapbox_username", envir = .GlobalEnv),
                          tileset_prefix = get0("tileset_prefix", envir = .GlobalEnv)) {
   stopifnot(shiny::is.reactive(tile))
@@ -112,15 +117,29 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
         get_fill_color = "#A9A9A94D"
       )
 
+    # Decide which label to show. If the current `region()` does not have
+    # a label dataset, use the first entry of the `regions_dictionary` that
+    # is pickable (general inforation).
+    label_data <- tilejson(
+      mapbox_username = mapbox_username,
+      tileset_prefix = tileset_prefix,
+      tile = paste0(region(), "_label"),
+      return_error = FALSE
+    )
+    if (is.null(label_data)) {
+      reg <- regions_dictionary$region[which(regions_dictionary$pickable)[1]]
+      label_data <- tilejson(
+        mapbox_username = mapbox_username,
+        tileset_prefix = tileset_prefix,
+        tile = paste0(reg, "_label")
+      )
+    }
+
     # Show labels on top of everything (crated last)
     rdeck::rdeck_proxy("map") |>
       rdeck::add_mvt_layer(
         id = paste0(id, "_label"),
-        data = tilejson(
-          mapbox_username = mapbox_username,
-          tileset_prefix = tileset_prefix,
-          tile = paste0(region(), "_label")
-        ),
+        data = label_data,
         visible = TRUE,
         point_type = "text",
         get_text = !!as.name("name"),
@@ -165,24 +184,24 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_building"),
-          visible = show_texture() & show()
+          visible = show_texture() & show_buildings()
         )
     )
 
     shiny::observeEvent(
-      show(),
+      show_streets(),
       rdeck::rdeck_proxy("map") |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_1"),
-          visible = show()
+          visible = show_streets()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_2"),
-          visible = show()
+          visible = show_streets()
         ) |>
         rdeck::update_mvt_layer(
           id = paste0(id, "_street_3"),
-          visible = show()
+          visible = show_streets()
         )
     )
 
@@ -234,7 +253,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region, show = shiny::reac
         rdeck::rdeck_proxy("map") |>
           rdeck::update_mvt_layer(
             id = "stories",
-            visible = zoom() > 14 & show()
+            visible = zoom() > 14 & show_stories()
           )
       }
     )
