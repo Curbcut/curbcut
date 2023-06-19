@@ -353,7 +353,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       if (is.null(time())) {
         return(out_var())
       }
-      sprintf("%s_%s", out_var(), time())
+      picker_return_var(input = out_var(), time = time())
     })
 
     return(shiny::reactive(list(var = final_var(), time = time())))
