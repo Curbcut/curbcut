@@ -127,6 +127,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
       return_error = FALSE
     )
     if (is.null(label_data)) {
+      regions_dictionary <- get_from_globalenv("regions_dictionary")
       reg <- regions_dictionary$region[which(regions_dictionary$pickable)[1]]
       label_data <- tilejson(
         mapbox_username = mapbox_username,

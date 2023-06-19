@@ -1,6 +1,6 @@
 test_that("bookmark_widget_helper returns the right info using bookmark codes", {
   wgt <- "cp:1"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt = wgt)
   expect_equal(
     result,
     list(
@@ -13,7 +13,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
   )
 
   wgt <- "pv:1"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -26,7 +26,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
   )
 
   wgt <- "zs:CT"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -39,7 +39,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
   )
 
   wgt <- "zs:hola"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -52,7 +52,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
   )
 
   wgt <- "zc:T"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -63,7 +63,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
   )
 
   wgt <- "cb:F"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -76,7 +76,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
 
 test_that("bookmark_widget_helper returns the right info using bookmark shorts", {
   wgt <- "pifir:2"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -89,7 +89,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark shorts",
   )
 
   wgt <- "pifir:something_else"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -102,7 +102,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark shorts",
   )
 
   wgt <- "sxabc:test"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -112,7 +112,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark shorts",
   )
 
   wgt <- "cheso:F"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
@@ -125,7 +125,7 @@ test_that("bookmark_widget_helper returns the right info using bookmark shorts",
 
 test_that("bookmark_widget_helper can process everything together", {
   wgt <- "pifir:2;pifir:something_else;sxabc:test;cheso:F;cb:F;zc:T;zs:CT;pv:1;lcp:1"
-  result <- bookmark_widget_helper(wgt)
+  result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(

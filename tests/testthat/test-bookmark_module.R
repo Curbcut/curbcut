@@ -27,7 +27,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?reg=1&tb=3&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=canale&reg=1&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   widgets <- list(
     `compare-ccpicker_var` = " ",
@@ -46,7 +46,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?reg=1&tb=3&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=canale&reg=1&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
     id = "canale",
@@ -60,7 +60,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?reg=1&tb=3&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=canale&reg=1&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
     id = "something",
@@ -70,7 +70,7 @@ test_that("bookmark_build_url works", {
     map_viewstate = NULL,
     select_id = NULL
   )
-  expect_equal(url, "/?reg=1&tb=something")
+  expect_equal(url, "/?tb=something&reg=1")
 
 
 

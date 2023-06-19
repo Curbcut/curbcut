@@ -229,13 +229,7 @@ contents <- lapply(all_themes, \(t) {
   all_vars <- params$variables$var_code[params$variables$theme == t &
                                       params$variables$pe_include]
   
-  # Grab the scale df, no geometry
-  scale_df <- sf::st_drop_geometry(params$scale_df)
-  
-  # Save the scale_df in the global environment, as the `curbcut` functions
-  # often search it to grab values
   df <- params$df
-  assign(params$df, scale_df, envir = .GlobalEnv)
   
   # Iterate over all the variables in the theme and create the cards
   cards <- lapply(all_vars, \(var) {

@@ -39,14 +39,8 @@ use_bookmark <- function(r) {
         return(NULL)
       }
 
-      # As we convert an ID in the modules table to a numeric for smaller URL
-      # bookmarking, retrieve the page ID using its index.
-      tab <- query$tb
-      if (is_numeric(tab)) {
-        modules <- get_from_globalenv("modules")
-        tab <- modules$id[as.numeric(tab)]
-      }
       # Update the current tab
+      tab <- query$tb
       shiny::updateTabsetPanel(
         session = r$server_session(),
         inputId = "cc_page",
@@ -71,6 +65,7 @@ use_bookmark <- function(r) {
       # Delay first, then update all the widgets
       shinyjs::delay(500, {
         widgets <- bookmark_widget_helper(
+          id = tab,
           wgt = wgt,
           lang = r$lang()
         )
@@ -134,6 +129,8 @@ use_bookmark <- function(r) {
 #' needed and returns them as a list to be used by the \code{\link{use_bookmark}}
 #' function.
 #'
+#' @param id <`character`> Page ID for which the bookmark needs to be updated,
+#' e.g. `canale`.
 #' @param wgt <`character`> A character string representing the widget inputs
 #' (the `wgt` part of the bookmarked URL).
 #' @param lang <`character`> An optional character string specifying the language
@@ -142,10 +139,16 @@ use_bookmark <- function(r) {
 #' @return A list of processed bookmarked Curbcut widgets separated into three
 #' categories: "cbox" (checkboxes), "s_text" (slider text), and "picker" (pickers).
 #' @export
-bookmark_widget_helper <- function(wgt, lang = NULL) {
+bookmark_widget_helper <- function(id, wgt, lang = NULL) {
   # Separate widgets between bookmark_codes and bookmark_shorts
   widgets <- strsplit(wgt, ";")[[1]]
   widgets <- sapply(widgets, strsplit, ":", USE.NAMES = FALSE)
+
+  # Switch the namespace deep back to regular id
+  widgets <- lapply(widgets, \(x) {
+    x[[1]] <- gsub("NS", sprintf("%s-", id), x[[1]])
+    x
+  })
 
   n_char <- lapply(widgets, nchar)
   n_char <- lapply(n_char, `[[`, 1)

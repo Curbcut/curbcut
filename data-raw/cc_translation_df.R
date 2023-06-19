@@ -57,6 +57,11 @@ cc_translation_df <-
     en = "Clear selection",
     fr = "Effacer la sélection"
   ) |>
+  add_row(
+    en = "Hide",
+    fr = "En voir moins"
+  ) |>
+
   # Legend ------------------------------------------------------------------
 
   add_row(

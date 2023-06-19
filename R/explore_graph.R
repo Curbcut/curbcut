@@ -35,7 +35,7 @@ explore_graph.q5_ind <- function(vars, select_id, df, data,
                                  scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "SourceSansPro", ...) {
   explore_graph_q5_ind(vars, select_id, df, data, scales_as_DA,
-    lang = NULL,
+    lang = lang,
     font_family = "SourceSansPro", ...
   )
 }
@@ -206,7 +206,7 @@ explore_graph.delta_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "SourceSansPro", ...) {
   explore_graph_delta_ind(vars, select_id, df, data, scales_as_DA,
-    lang = NULL,
+    lang = lang,
     font_family = "SourceSansPro", ...
   )
 }
@@ -383,7 +383,7 @@ explore_graph.bivar_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "SourceSansPro", ...) {
   explore_graph_bivar_ind(vars, select_id, df, data, scales_as_DA,
-    lang = NULL,
+    lang = lang,
     font_family = "SourceSansPro", ...
   )
 }
@@ -600,7 +600,7 @@ explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data,
                                            font_family = "SourceSansPro", ...) {
   explore_graph.bivar(
     vars = vars, select_id = select_id, df = df, data = data,
-    scales_as_DA = scales_as_DA, lang = NULL,
+    scales_as_DA = scales_as_DA, lang = lang,
     font_family = "SourceSansPro", ...
   )
 }
@@ -707,7 +707,7 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, df, data,
                                            font_family = "SourceSansPro", ...) {
   explore_graph.delta(
     vars = vars, select_id = select_id, df = df, data = data,
-    scales_as_DA = scales_as_DA, lang = NULL,
+    scales_as_DA = scales_as_DA, lang = lang,
     font_family = "SourceSansPro", ...
   )
 }

@@ -12,6 +12,9 @@ bookmark_widget_helper(wgt, lang = NULL)
 
 \item{lang}{<\code{character}> An optional character string specifying the language
 used on the app. Default is NULL.}
+
+\item{id}{<\code{character}> Page ID for which the bookmark needs to be updated,
+e.g. \code{canale}.}
 }
 \value{
 A list of processed bookmarked Curbcut widgets separated into three

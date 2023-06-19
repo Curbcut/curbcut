@@ -32,7 +32,7 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
       if (length(all_input) == 0) {
         return(NULL)
       }
-      all_widgets <- grep("ccpicker_|ccslidertext_|cccheckbox_|ccslider_",
+      all_widgets <- grep(paste0(names(bookmark_shorts), collapse = "|"),
         all_input,
         value = TRUE
       )
@@ -95,9 +95,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #' @return A character string representing the bookmarkable URL.
 bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
                                select_id) {
-  # If the page is in the module's table, make it a numeric
-  modules <- get_from_globalenv("modules")
-  if (id %in% modules$id) id <- which(modules$id == id)
 
   # Make the region a numeric too
   regions_dictionary <- get_from_globalenv("regions_dictionary")
@@ -106,7 +103,7 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
   }
 
   # First string
-  url <- sprintf("/?reg=%s&tb=%s", region, id)
+  url <- sprintf("/?tb=%s&reg=%s", id, region)
 
   # If language
   if (!is.null(lang)) url <- sprintf("%s&lng=%s", url, lang)
@@ -115,6 +112,8 @@ bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
   if (!is.null(widgets)) {
     widgets_processed <-
       mapply(\(name, value) {
+        # Switch the `id` from any name to `ns` (shorten)
+        name <- gsub(sprintf("%s-", id), "NS", name)
         # If the value is a checkbox-like, make it shorter
         if (isTRUE(value)) value <- "T"
         if (isFALSE(value)) value <- "F"
