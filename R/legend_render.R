@@ -110,14 +110,73 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   )
 
   # Adapt breaks to add the `NA` bar
-  leg <- leg_info$colours_dfs$left_5[1:6, ]
-  leg$group <- suppressWarnings(as.double(leg$group))
-  leg[1, ]$group <- 0.5
-  leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
-  leg[2, ] <- list(x = 0.75, y = 1, fill = "#FFFFFFFF")
+  leg <- leg_info$colours_dfs$left_5[2:6, 2:3]
 
-  # Adjust break placements if breaks are characters
-  breaks_placement <- c(-0.375, 0:5)
+  # Get real q5 breaks
+  brks <- var_get_info(vars$var_left, what = "breaks_q5")[[1]]
+  brks <- brks$var[brks$df == df]
+
+  # Complete the xmin and xmax
+  leg$xmin <- brks[1:(length(brks)-1)]
+  leg$xmax <- brks[2:(length(brks))]
+
+  # Blank space addition
+  blank <- (brks[length(brks)] - brks[1]) / 16
+  leg <- rbind(tibble::tibble(y = 1,
+                              fill = "#FFFFFFFF",
+                              xmin = leg$xmin[1] - blank,
+                              xmax = leg$xmin[1]),
+               leg)
+
+  # NA (grey) space addition
+  leg <- rbind(tibble::tibble(y = 1,
+                              fill = "#B3B3BB",
+                              xmin = leg$xmin[1] - blank,
+                              xmax = leg$xmin[1]),
+               leg)
+
+  # Tweak the min and max breaks so that they take a minimum of 15% of the
+  # plot space
+  rect_size <- leg$xmax - leg$xmin
+  size_pct <- rect_size / sum(rect_size[3:7])
+
+  # Go over each value (that isn't the blank space or the NA) and make sure it
+  # takes at least 15% of the plot space. Reduce the size of the other rectangle
+  # that are larger than 15% of the plot space.
+  rect_pct_vals <- size_pct[3:7]
+
+  if ((sum(rect_pct_vals < 0.15) > 0)) {
+    while (sum(rect_pct_vals < 0.15) > 0) {
+      for (i in which(rect_pct_vals < 0.15)) {
+
+        # How much it's increased
+        inc <- 0.15 - rect_pct_vals[i]
+
+        # Its new value
+        rect_pct_vals[i] <- 0.15
+
+        # Which other vars can be increased
+        can_reduce <- which(rect_pct_vals > 0.15)
+        can_reduce_vals <- rect_pct_vals[can_reduce]
+        for (c in can_reduce) {
+          prop_reduce <- rect_pct_vals[c] / sum(rect_pct_vals[can_reduce])
+
+          rect_pct_vals[c] <- rect_pct_vals[c] - (inc * prop_reduce)
+        }
+
+      }
+    }
+  }
+
+  # The new values for each rectangle that leads to a minimum of 15% plot space
+  values_updated <- rect_pct_vals * (brks[length(brks)] - brks[1])
+  # cumsum the values to get the xmax and xmax
+  values_updated <- cumsum(values_updated)
+  leg$xmax[3:7] <- values_updated
+  leg$xmin[4:7] <- values_updated[1:(length(values_updated)-1)]
+
+  # Breaks placement
+  breaks_placement <- c(brks[1] - (blank + (blank / 2)), 0, values_updated)
 
   # Grab labels to check length
   breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
@@ -135,7 +194,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   leg |>
     ggplot2::ggplot(
       ggplot2::aes(
-        xmin = group - 1, xmax = group, ymin = y - 1,
+        xmin = xmin, xmax = xmax, ymin = y - 1,
         ymax = y, fill = fill
       )
     ) +
@@ -148,6 +207,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
     ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
     leg_info$labs_xy +
     leg_info$theme_default
+
 }
 
 #' Render the legend for the q5 class

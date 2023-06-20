@@ -413,10 +413,11 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     # Sub the placeholder for the two last brackets
     breaks <- var_get_info(var = var, what = "breaks_q5")[[1]]
     breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
+    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
+    two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
+    two_last_ranks <- tolower(two_last_ranks)
     # If the two last brackets is recognized as the default, write a particular string
     exp <- {
-      two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
         cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
         two_last_ranks[[2]]
@@ -1301,6 +1302,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
   if (is.na(select_id)) {
     # Grab the parent variable
     parent <- var_get_info(var = var[[1]], what = "parent_vec")
+    parent <- cc_t(parent, lang = lang)
 
     # Grab the explanation
     exp_q5 <- var_get_info(
@@ -1311,10 +1313,11 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     # Sub the placeholder for the two last brackets
     breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
     breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- tolower(breaks$rank_name[breaks$rank > 3])[1:2]
+    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
+    two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
+    two_last_ranks <- tolower(two_last_ranks)
     # If the two last brackets is recognized as the default, write a particular string
     exp <- {
-      two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
       gsub("_X_", sprintf(
         cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
         two_last_ranks[[2]]
