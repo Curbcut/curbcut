@@ -639,6 +639,11 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
     data_vals = data$var_right
   )
 
+  # Update labels (wrong axis)
+  labs <- shared_info$labs
+  labs$x <- shared_info$labs$y
+  labs$y <- shared_info$labs$x
+
   # Draw the plot
   plot <-
     data[!is.na(data$var_left) & !is.na(data$var_right), ] |>
@@ -648,7 +653,7 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
     ggplot2::scale_fill_manual(breaks = 0:5, values = clr) +
     x_scale +
     y_scale +
-    shared_info$labs +
+    labs +
     shared_info$theme_default
 
   # Add selection

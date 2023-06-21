@@ -48,6 +48,7 @@ settings_server <- function(id = "settings", r) {
     # When the button is clicked, grab the content of the search box,
     # get the IDs for that location and save it in the reactive value.
     shiny::observeEvent(input$lock_search_button, {
+      if (input$lock_address_searched == "" | is.null(input$lock_address_searched)) return(NULL)
       IDs <- adv_opt_lock_selection(
         address = input$lock_address_searched,
         lang = r$lang()
