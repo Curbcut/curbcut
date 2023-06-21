@@ -101,7 +101,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
                              scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
-  group <- y <- fill <- NULL
+  group <- y <- fill <- xmin <- xmax <- NULL
 
   # Get all necessary information
   leg_info <- legend_get_info(vars,
