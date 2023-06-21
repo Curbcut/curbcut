@@ -214,7 +214,7 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
     )
   title_right <-
     var_get_title(
-      var = vars$var_right, short_treshold = 25,
+      var = vars$var_right, short_treshold = 16,
       translate = TRUE, lang = lang
     )
 
