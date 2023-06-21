@@ -88,9 +88,8 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
           "Both show the same information!",
           lang = lang
         ),
-        cc_t("Congratulations on completing the tutorial! If you would like ",
-          "to revisit any part of it, or run through the entire ",
-          "tutorial again, simply click on this button.",
+        cc_t("Congratulations, you’ve completed the tutorial! You can revisit ",
+             "it by clicking this button.",
           lang = lang
         )
       ),

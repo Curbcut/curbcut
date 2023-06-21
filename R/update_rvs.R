@@ -129,7 +129,7 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
     # Redirect to stories?
     click <- shiny::eventReactive(click_init(),
       {
-        stories_link <- (grepl("-stories$", click_init()$layerName) & id_map != "stories-map")
+        stories_link <- (grepl("_stories$", click_init()$layerName) & id_map != "stories-map")
         id <- click_init()$ID
         attr(id, "stories_link") <- stories_link
         return(id)

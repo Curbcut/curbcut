@@ -1220,7 +1220,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
     ranks_override = c(
       "exceptionally small", "unusually small",
       "just about average", "unusually large",
-      "exceptionnally large"
+      "exceptionally large"
     ),
     lang = lang
   )
@@ -1711,7 +1711,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
       ranks_override = c(
         "an exceptionally small change", "an unusually small change",
         "a just about average change", "an unusually large change",
-        "an exceptionnally large change"
+        "an exceptionally large change"
       ),
       lang = lang
     )
@@ -1723,7 +1723,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
       ranks_override = c(
         "an exceptionally small change", "an unusually small change",
         "a just about average change", "an unusually large change",
-        "an exceptionnally large change"
+        "an exceptionally large change"
       ),
       lang = lang
     )

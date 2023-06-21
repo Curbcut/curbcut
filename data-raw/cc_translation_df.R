@@ -213,6 +213,12 @@ cc_translation_df <-
     en = "Done",
     fr = "Terminé"
   ) |>
+  add_row(
+    en = paste0("Congratulations, you’ve completed the tutorial! You can revisit ",
+                "it by clicking this button."),
+    fr = paste0("Félicitations, vous avez terminé le tutoriel ! Vous pouvez y ",
+                "revenir en cliquant sur ce bouton.")
+  ) |>
   # Misc --------------------------------------------------------------------
 
   add_row(
@@ -610,7 +616,7 @@ cc_translation_df <-
     fr = "très forte"
   ) |>
   add_row(
-    en = "exceptionnally large",
+    en = "exceptionally large",
     fr = "exceptionnellement forte"
   ) |>
   add_row(
@@ -688,7 +694,7 @@ cc_translation_df <-
     fr = "un changement très fort"
   ) |>
   add_row(
-    en = "an exceptionnally large change",
+    en = "an exceptionally large change",
     fr = "un changement exceptionnellement fort"
   ) |>
   add_row(

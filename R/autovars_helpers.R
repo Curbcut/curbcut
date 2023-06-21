@@ -126,7 +126,7 @@ autovars_common_widgets <- function(id) {
 #'
 #' @return A list of widgets. If `tb` is not a data frame, an empty list is returned.
 autovars_widgets <- function(id, group_name, common_vals) {
-  modules <- get_from_globalenv("modules")
+  modules <- curbcut:::get_from_globalenv("modules")
 
   # Grab the correct tibble
   tb <- modules$var_left[modules$id == id][[1]]
@@ -147,7 +147,15 @@ autovars_widgets <- function(id, group_name, common_vals) {
       # row?
       share_common_values <- sapply(names(common_vals), \(cv) {
         same_feat_val <- g[names(g) == cv]
+
+        if ("levels" %in% names(attributes(same_feat_val[[1]]))) {
+          f_lvl <- which(attributes(same_feat_val[[1]])$levels == common_vals[cv])
+          return(unlist(same_feat_val) == f_lvl)
+        }
+        # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
+
         unlist(same_feat_val) == common_vals[cv]
+
       })
 
       # If ALL the values are the same
@@ -158,6 +166,9 @@ autovars_widgets <- function(id, group_name, common_vals) {
     groups <- groups[share_common_values_index]
   }
   groups <- unlist(groups)
+
+  # Return no additional widgets if groups has a length of zero
+  if (length(groups) == 0) return(list())
 
   # Filter out groups that are already part of the common widgets
   groups <- groups[!names(groups) %in% names(common_vals)]

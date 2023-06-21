@@ -254,7 +254,7 @@ label_server <- function(id, tile, zoom, zoom_levels, region,
         rdeck::rdeck_proxy("map") |>
           rdeck::update_mvt_layer(
             id = "stories",
-            visible = zoom() > 14 & show_stories()
+            visible = zoom() > 13 & show_stories()
           )
       }
     )
