@@ -4,17 +4,17 @@
 \alias{bookmark_widget_helper}
 \title{Helper function to separate and process bookmarked Shiny widgets}
 \usage{
-bookmark_widget_helper(wgt, lang = NULL)
+bookmark_widget_helper(id, wgt, lang = NULL)
 }
 \arguments{
+\item{id}{<\code{character}> Page ID for which the bookmark needs to be updated,
+e.g. \code{canale}.}
+
 \item{wgt}{<\code{character}> A character string representing the widget inputs
 (the \code{wgt} part of the bookmarked URL).}
 
 \item{lang}{<\code{character}> An optional character string specifying the language
 used on the app. Default is NULL.}
-
-\item{id}{<\code{character}> Page ID for which the bookmark needs to be updated,
-e.g. \code{canale}.}
 }
 \value{
 A list of processed bookmarked Curbcut widgets separated into three

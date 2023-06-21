@@ -116,6 +116,9 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   brks <- var_get_info(vars$var_left, what = "breaks_q5")[[1]]
   brks <- brks$var[brks$df == df]
 
+  # If all NA, don't bother draw a legend. Return NULL
+  if (all(is.na(brks))) return(NULL)
+
   # Complete the xmin and xmax
   leg$xmin <- brks[1:(length(brks)-1)]
   leg$xmax <- brks[2:(length(brks))]

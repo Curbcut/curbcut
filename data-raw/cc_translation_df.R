@@ -717,6 +717,10 @@ cc_translation_df <-
   ) |>
   # Panel view --------------------------------------------------------------
 
+add_row(
+  en = "Name",
+  fr = "Nom"
+) |>
   add_row(
     en = "the change in %s between %s and %s",
     fr = "le changement dans %s entre %s et %s"
