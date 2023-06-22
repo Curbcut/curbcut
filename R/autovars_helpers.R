@@ -209,7 +209,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
 #' data frame, the function returns the 'var_code' associated with
 #' the maximum sum of fits.
 autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
-  modules <- get_from_globalenv("modules")
+  modules <- curbcut:::get_from_globalenv("modules")
 
   # Grab the correct tibble
   tb <- modules$var_left[modules$id == id][[1]]
@@ -228,7 +228,10 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(groups) == 0) {
     return(previous_var)
   }
-  groups <- groups[sapply(groups, \(x) length(x) == length(picker_vals))]
+  # Which of the groups have the right amount of options?
+  right_amount_ind <- which(sapply(groups, \(x) length(x) == length(picker_vals)))
+  groups <- groups[right_amount_ind]
+  var_codes <- var_codes[right_amount_ind]
   if (all(lengths(groups) == 0)) {
     return(previous_var)
   }
@@ -244,7 +247,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(ordered_val_fit) == 0) {
     return(previous_var)
   }
-  sum_fits <- rowSums(ordered_val_fit)
+  sum_fits <- rowSums(tibble::as_tibble(ordered_val_fit))
   if (length(sum_fits) == 0) {
     return(previous_var)
   }
