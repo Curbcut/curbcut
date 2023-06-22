@@ -8,7 +8,7 @@ dyk_get(id, vars, poi, lang = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the module will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}

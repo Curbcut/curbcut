@@ -5,7 +5,7 @@
 #' \code{\link{checkboxInput}} function and returns its value as a reactive object.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param checkbox_id <`character`> string giving the identifier for the checkbox input
@@ -68,7 +68,7 @@ checkbox_server <- function(id, r, checkbox_id = "cbx",
 #' function and returns its output.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param checkbox_id <`character`> string giving the identifier for the checkbox input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
 #' It needs to be unique in the page. The default value is `"cbx"`.

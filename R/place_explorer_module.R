@@ -6,7 +6,7 @@
 #' panel that displays detailed information about a selected area.
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`

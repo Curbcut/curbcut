@@ -8,7 +8,7 @@ right_panel(id, ...)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{...}{Additional arguments to be passed to the \code{\link[shiny]{absolutePanel}}
 function. Would normally be the \code{compare_UI}, \code{explore_UI}, \code{dyk_UI}. TKTK LINK}

@@ -15,7 +15,7 @@ bookmark_server(
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the bookmark_server function
-will appear, e.g. \code{canale}.}
+will appear, e.g. \code{alp}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}

@@ -158,7 +158,7 @@ zoom_get_code <- function(scales_name, lang = NULL) {
 #' first region in the list of possible regions as they are ordered in priority.
 #'
 #' @param id <`character`> The id of the module to retrieve the zoom levels for,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param region <`character`> The region to retrieve the zoom levels for,
 #' usually one of the output of \code{\link{zoom_get_levels}}.
 #' @param suffix_zoom_levels <`character`> A suffix to the zoom level to determine

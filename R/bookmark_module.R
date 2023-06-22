@@ -7,7 +7,7 @@
 #' and the `df`.
 #'
 #' @param id <`character`> The ID of the page in which the bookmark_server function
-#' will appear, e.g. `canale`.
+#' will appear, e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param select_id <`reactive character`> the current selected ID, usually

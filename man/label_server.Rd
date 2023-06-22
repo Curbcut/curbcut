@@ -19,7 +19,7 @@ label_server(
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{tile}{<\verb{reactive character}> A reactive string with the map tile to
 be used. Either a combination of a region with auto-scale (e.g. \code{city_auto_zoom})

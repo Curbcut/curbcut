@@ -12,7 +12,7 @@
 #' comparing multiple years and some variables are not present in all years.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param picker_id <`character`> A character string giving the identifier for
@@ -116,7 +116,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' from a list of variables choices.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param picker_id <`character`> string giving the identifier for the picker input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
 #' It needs to be unique in the page. The default value is `"var"`.

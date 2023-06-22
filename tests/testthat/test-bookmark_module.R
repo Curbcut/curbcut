@@ -16,7 +16,7 @@ test_that("bookmark_build_url works", {
   )
 
   url <- bookmark_build_url(
-    id = "canale",
+    id = "alp",
     region = "CMA",
     widgets = widgets,
     lang = "fr",
@@ -27,7 +27,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=canale&reg=1&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&reg=1&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   widgets <- list(
     `compare-ccpicker_var` = " ",
@@ -35,7 +35,7 @@ test_that("bookmark_build_url works", {
     `zoom_auto-cccheckbox_cbx` = TRUE
   )
   url <- bookmark_build_url(
-    id = "canale",
+    id = "alp",
     region = "CMA",
     widgets = widgets,
     lang = NULL,
@@ -46,10 +46,10 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=canale&reg=1&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&reg=1&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
-    id = "canale",
+    id = "alp",
     region = "CMA",
     widgets = NULL,
     lang = NULL,
@@ -60,7 +60,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=canale&reg=1&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&reg=1&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
     id = "something",

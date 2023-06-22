@@ -7,7 +7,7 @@
 #' are retrieved.
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #'
@@ -52,7 +52,7 @@ sidebar_server <- function(id, r) {
 #' \code{\link{legend_server}}.
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param ... Additional UI elements to be included in the sidebar (widgets). To
 #' be connected to the bookmarking, these must be Curbcut widgets, e.g.
 #' \code{\link{picker_UI}}.

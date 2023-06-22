@@ -3,7 +3,7 @@
 #' This function creates a server module for a slider input element in Curbcut.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param slider_id <`character`> A character string giving the identifier for
 #' the picker input object. This will be used as the input's `inputId` and will
 #' inform the bookmarking. It needs to be unique in the page. The default value
@@ -48,7 +48,7 @@ slider_server <- function(id, slider_id = "sld",
 #' \code{\link[shiny]{sliderInput}}
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param slider_id <`character`> string giving the identifier for the slider input
 #' object. This will be used as the input's `inputId` and will inform the bookmarking.
 #' It needs to be unique in the page. The default value is `"sld"`.

@@ -8,7 +8,7 @@
 #' generates the final variable code using all of these values.
 #'
 #' @param id <`character`> The ID of the page in which the legend will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param main_dropdown_title <`character`> A character string to be used as the

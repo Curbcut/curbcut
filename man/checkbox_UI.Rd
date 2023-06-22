@@ -8,7 +8,7 @@ checkbox_UI(id, checkbox_id = "cbx", label = NULL, value = TRUE, ...)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the widget will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{checkbox_id}{<\code{character}> string giving the identifier for the checkbox input
 object. This will be used as the input's \code{inputId} and will inform the bookmarking.

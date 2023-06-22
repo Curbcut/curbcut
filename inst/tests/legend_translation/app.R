@@ -35,7 +35,7 @@ server <- function(input, output, session) {
 
   df <- shiny::reactive("CMA_CSD")
   vars <- shiny::reactive(curbcut::vars_build(
-    var_left = "canale_2016",
+    var_left = "alp_2016",
     var_right = "housing_tenant_2016",
     df = df()
   ))

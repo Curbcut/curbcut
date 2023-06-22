@@ -8,7 +8,7 @@ bookmark_widget_helper(id, wgt, lang = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> Page ID for which the bookmark needs to be updated,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{wgt}{<\code{character}> A character string representing the widget inputs
 (the \code{wgt} part of the bookmarked URL).}

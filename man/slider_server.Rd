@@ -14,7 +14,7 @@ slider_server(
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the widget will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{slider_id}{<\code{character}> A character string giving the identifier for
 the picker input object. This will be used as the input's \code{inputId} and will

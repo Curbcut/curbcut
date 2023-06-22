@@ -8,7 +8,7 @@ update_poi(id, poi, map_viewstate)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this function will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{poi}{<\verb{character vector}> The current POIs showing on the map.}
 

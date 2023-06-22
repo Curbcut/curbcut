@@ -8,7 +8,7 @@ sidebar_UI(id, ..., bottom = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{...}{Additional UI elements to be included in the sidebar (widgets). To
 be connected to the bookmarking, these must be Curbcut widgets, e.g.

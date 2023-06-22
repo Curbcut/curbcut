@@ -16,7 +16,7 @@
 #' no legend will be drawn.
 #'
 #' @param id <`character`> The ID of the page in which the legend will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param vars <`named list`> Named list with a class. Object built using the

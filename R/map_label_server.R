@@ -5,7 +5,7 @@
 #' level and tile name.
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param tile <`reactive character`> A reactive string with the map tile to
 #' be used. Either a combination of a region with auto-scale (e.g. `city_auto_zoom`)
 #' or a combination of a region and a scale (e.g. `city_DA`). The output of

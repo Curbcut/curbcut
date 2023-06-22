@@ -16,7 +16,7 @@ id (the current page) contains a named list with a vars reactive value, which st
 output of the curbcut::vars_build function.}
 
 \item{var_left}{<\verb{reactive character}> A reactive character string of the
-selected variable, e.g. canale_2016 or c("housing_tenant_2006",
+selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' "housing_tenant_2016").}
 
 \item{var_right}{<\verb{reactive character}> A reactive character string of the

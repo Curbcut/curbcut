@@ -4,7 +4,7 @@
 #' a map page.
 #'
 #' @param id <`character`> The ID of the page in which the module will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
 #' @param poi <`reactive`> (Optional) Point of interests. The output of

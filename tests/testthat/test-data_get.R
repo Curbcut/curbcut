@@ -12,7 +12,7 @@ test_that("data_get.q5  works", {
 
 # test_that("data_get.bivar works", {
 #   vars <- vars_build(
-#     var_left = c("canale_2016"),
+#     var_left = c("alp_2016"),
 #     var_right = c("housing_tenant_2016"),
 #     df = "city_CSD"
 #   )
@@ -69,7 +69,7 @@ test_that("data_get.delta_bivar works", {
 # test_that("data_get.bivar_ldelta_rq3 works", {
 #   vars <- vars_build(
 #     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-#     var_right = c("canale_2016"),
+#     var_right = c("alp_2016"),
 #     df = "city_CSD"
 #   )
 #   output <- data_get(vars = vars, df = "city_CSD")

@@ -12,7 +12,7 @@ test_that("data_get_colours.q5  works", {
 test_that("data_get_colours.bivar works", {
   vars <- vars_build(
     var_left = "housing_tenant_2016",
-    var_right = "canale_2016",
+    var_right = "alp_2016",
     df = "city_CSD"
   )
   data_colours <- data_get_colours(
@@ -57,7 +57,7 @@ test_that("data_get_colours.delta_bivar works", {
 test_that("data_get_colours.bivar_ldelta_rq3 works", {
   vars <- vars_build(
     var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-    var_right = c("canale_2016"),
+    var_right = c("alp_2016"),
     df = "city_CSD"
   )
   data_colours <- data_get_colours(

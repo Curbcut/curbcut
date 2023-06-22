@@ -2,7 +2,7 @@
 #' combinations
 #'
 #' @param var_left <`reactive character`> Character string of the selected
-#' variable, e.g. `canale_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
+#' variable, e.g. `alp_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
 #' @param var_right <`reactive character`> Character string of the selected
 #' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
 #' variable is represented by (" ").

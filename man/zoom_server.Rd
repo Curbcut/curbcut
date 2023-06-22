@@ -18,7 +18,7 @@ zoom_UI(id, zoom_levels)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}

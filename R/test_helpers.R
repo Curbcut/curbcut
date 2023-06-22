@@ -15,7 +15,7 @@ test_resources_creation <- function(additional_vars = c()) {
     "housing_tenant", "housing_rent", "access_foot_20_food_grocery",
     "access_transit_nwd_30_cultural_artcentre", "climate_drought",
     "afford_tenant_sc30_total_total_total_count_2021",
-    "canale", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
+    "alp", "alley_sqkm", "alley_per1k", "vac_rate_bachelor_bed",
     additional_vars
   )
   variables <- qs::qread("data/variables.qs")
@@ -290,7 +290,7 @@ test_assign_q5_dollar <- function(pos = 1) {
 #' @return Assigns `df`, `vars`, `data`
 test_assign_bivar_dollar <- function(pos = 1) {
   df <- "city_CSD"
-  vars <- vars_build("housing_rent_2021", "canale_2021", df = df)
+  vars <- vars_build("housing_rent_2021", "alp_2021", df = df)
   data <- data_get(vars = vars, df = df)
 
   assign("df", df, envir = as.environment(pos))
@@ -305,7 +305,7 @@ test_assign_bivar_dollar <- function(pos = 1) {
 #' global environment, helping to test line-by-line functions.
 #'
 #' @param var_left <`reactive character`> Character string of the selected
-#' variable, e.g. `canale_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
+#' variable, e.g. `alp_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
 #' @param var_right <`reactive character`> Character string of the selected
 #' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
 #' variable is represented by (" ").

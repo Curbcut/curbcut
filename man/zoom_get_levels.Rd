@@ -8,7 +8,7 @@ zoom_get_levels(id, region, suffix_zoom_levels = NA)
 }
 \arguments{
 \item{id}{<\code{character}> The id of the module to retrieve the zoom levels for,
-e.g. \code{canale}.}
+e.g. \code{alp}.}
 
 \item{region}{<\code{character}> The region to retrieve the zoom levels for,
 usually one of the output of \code{\link{zoom_get_levels}}.}

@@ -130,7 +130,7 @@ use_bookmark <- function(r) {
 #' function.
 #'
 #' @param id <`character`> Page ID for which the bookmark needs to be updated,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param wgt <`character`> A character string representing the widget inputs
 #' (the `wgt` part of the bookmarked URL).
 #' @param lang <`character`> An optional character string specifying the language

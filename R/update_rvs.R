@@ -42,7 +42,7 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' of the `stories` data.frame.
 #'
 #' @param id <`character`> The ID of the page in which this function will appear,
-#' e.g. `canale`.
+#' e.g. `alp`.
 #' @param poi <`character vector`> The current POIs showing on the map.
 #' @param map_viewstate <`list`> The map viewstate. Usually the output of the
 #' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}.
@@ -313,7 +313,7 @@ update_df <- function(tile, zoom_string) {
 #' id (the current page) contains a named list with a vars reactive value, which stores the
 #' output of the curbcut::vars_build function.
 #' @param var_left <`reactive character`> A reactive character string of the
-#' selected variable, e.g. canale_2016 or c("housing_tenant_2006",
+#' selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' #' "housing_tenant_2016").
 #' @param var_right <`reactive character`> A reactive character string of the
 #' selected compared variable, e.g. housing_value_2016.

@@ -14,7 +14,7 @@ test_assign_any(
 }
 \arguments{
 \item{var_left}{<\verb{reactive character}> Character string of the selected
-variable, e.g. \code{canale_2016} or \code{c("housing_tenant_2006", "housing_tenant_2016")}.}
+variable, e.g. \code{alp_2016} or \code{c("housing_tenant_2006", "housing_tenant_2016")}.}
 
 \item{var_right}{<\verb{reactive character}> Character string of the selected
 compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
