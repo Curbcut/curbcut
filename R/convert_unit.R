@@ -5,7 +5,8 @@
 #' magnitude, depending on the magnitude of the smallest significant digit.
 #' The scale function used to format the output can be customized.
 #' It is a helper function for the \code{\link{convert_unit}} function
-#' and so needs pre-calculated `min_dig`.
+#' and so needs pre-calculated `min_dig`. If the output is not unique, it
+#' adds decimals until a maximum of three is attained.
 #'
 #' @param x <`numeric vector`> Numeric values.
 #' @param min_dig <`integer`> An integer indicating the minimum number of
@@ -17,14 +18,33 @@
 #' @return A string representation of the input value with a suffix of M, K,
 #' or B as appropriate.
 compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
+
+  adjust_if_unique <- function(x, scale_fun, scale, suffix){
+    # Initialize the variables
+    result <- do.call(scale_fun, list(x, 1, scale = scale, suffix = suffix))
+    unique_length <- length(unique(result))
+
+    # Initialize decimal places
+    dec_places <- 1
+
+    # Increase decimal places until all elements are unique or a max of 3 decimals reached
+    while (unique_length != length(x) & dec_places <= 3) {
+      result <- do.call(scale_fun, list(x, 10^(-dec_places), scale = scale, suffix = suffix))
+      unique_length <- length(unique(result))
+      dec_places <- dec_places + 1
+    }
+
+    return(result)
+  }
+
   if (min_dig >= 10) {
-    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+09, suffix = "B")))
+    return(adjust_if_unique(x, scale_fun = scale_fun, scale = 1 / 1e+09, suffix = "B"))
   }
   if (min_dig >= 7) {
-    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+06, suffix = "M")))
+    return(adjust_if_unique(x, scale_fun = scale_fun, scale = 1 / 1e+06, suffix = "M"))
   }
   if (min_dig >= 4) {
-    return(do.call(scale_fun, list(x, 1, scale = 1 / 1e+03, suffix = "K")))
+    return(adjust_if_unique(x, scale_fun = scale_fun, scale = 1 / 1e+03, suffix = "K"))
   }
 
   return(do.call(scale_fun, list(x, 1)))
