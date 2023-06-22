@@ -104,9 +104,9 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   group <- y <- fill <- xmin <- xmax <- NULL
 
   # Get all necessary information
-  leg_info <- legend_get_info(vars,
-    font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
+  leg_info <- curbcut:::legend_get_info(vars,
+                                        font_family = font_family, scales_as_DA = scales_as_DA,
+                                        df = df
   )
 
   # Adapt breaks to add the `NA` bar
@@ -123,30 +123,15 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   leg$xmin <- brks[1:(length(brks)-1)]
   leg$xmax <- brks[2:(length(brks))]
 
-  # Blank space addition
-  blank <- (brks[length(brks)] - brks[1]) / 16
-  leg <- rbind(tibble::tibble(y = 1,
-                              fill = "#FFFFFFFF",
-                              xmin = leg$xmin[1] - blank,
-                              xmax = leg$xmin[1]),
-               leg)
-
-  # NA (grey) space addition
-  leg <- rbind(tibble::tibble(y = 1,
-                              fill = "#B3B3BB",
-                              xmin = leg$xmin[1] - blank,
-                              xmax = leg$xmin[1]),
-               leg)
-
   # Tweak the min and max breaks so that they take a minimum of 15% of the
   # plot space
   rect_size <- leg$xmax - leg$xmin
-  size_pct <- rect_size / sum(rect_size[3:7])
+  size_pct <- rect_size / sum(rect_size)
 
   # Go over each value (that isn't the blank space or the NA) and make sure it
   # takes at least 15% of the plot space. Reduce the size of the other rectangle
   # that are larger than 15% of the plot space.
-  rect_pct_vals <- size_pct[3:7]
+  rect_pct_vals <- size_pct
 
   if ((sum(rect_pct_vals < 0.15) > 0)) {
     while (sum(rect_pct_vals < 0.15) > 0) {
@@ -175,11 +160,26 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   values_updated <- rect_pct_vals * (brks[length(brks)] - brks[1])
   # cumsum the values to get the xmax and xmax
   values_updated <- cumsum(values_updated)
-  leg$xmax[3:7] <- values_updated
-  leg$xmin[4:7] <- values_updated[1:(length(values_updated)-1)]
+  leg$xmax <- values_updated
+  leg$xmin <- c(0, values_updated[1:(length(values_updated)-1)])
+
+  # Blank space addition
+  blank <- (brks[length(brks)] - brks[1]) / 16
+  leg <- rbind(tibble::tibble(y = 1,
+                              fill = "#FFFFFFFF",
+                              xmin = leg$xmin[1] - blank,
+                              xmax = leg$xmin[1]),
+               leg)
+
+  # NA (grey) space addition
+  leg <- rbind(tibble::tibble(y = 1,
+                              fill = "#B3B3BB",
+                              xmin = leg$xmin[1] - blank,
+                              xmax = leg$xmin[1]),
+               leg)
 
   # Breaks placement
-  breaks_placement <- c(brks[1] - (blank + (blank / 2)), 0, values_updated)
+  breaks_placement <- c(-(blank + (blank / 2)), 0, values_updated)
 
   # Grab labels to check length
   breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
