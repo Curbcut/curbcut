@@ -26,5 +26,6 @@ the value in millions (M), thousands (K), or billions (B) based on its
 magnitude, depending on the magnitude of the smallest significant digit.
 The scale function used to format the output can be customized.
 It is a helper function for the \code{\link{convert_unit}} function
-and so needs pre-calculated \code{min_dig}.
+and so needs pre-calculated \code{min_dig}. If the output is not unique, it
+adds decimals until a maximum of three is attained.
 }

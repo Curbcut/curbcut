@@ -347,7 +347,7 @@ contents <- lapply(all_themes, \(t) {
     # Return the bslib box and the ranking so that boxes can be ordered
     list(box = bslib::value_box(
       title = htmltools::p(var_title),
-      value = paste0(ordinal_form(percentile), " percentile"),
+      value = curbcut::s_sentence(paste0(ordinal_form(percentile), " percentile")),
       showcase = myImage,
       htmltools::p(htmltools::HTML(text)),
       full_screen = FALSE,
