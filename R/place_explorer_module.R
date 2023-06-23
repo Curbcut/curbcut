@@ -113,7 +113,7 @@ place_exp_server <- function(id, r,
     # Misc --------------------------------------------------------------------
 
     # Sidebar
-    sidebar_server(id = "place_explorer", r = r)
+    sidebar_server(id = "place_exp", r = r)
 
 
     # Postal code search ------------------------------------------------------
