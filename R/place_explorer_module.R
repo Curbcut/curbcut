@@ -28,7 +28,7 @@
 #' in the `global.R` file
 #'
 #' @export
-place_exp_server <- function(id, r,
+place_explorer_server <- function(id, r,
                                   scales_as_DA = shiny::reactive(
                                     c("building", "street")
                                   ),
@@ -113,7 +113,7 @@ place_exp_server <- function(id, r,
     # Misc --------------------------------------------------------------------
 
     # Sidebar
-    sidebar_server(id = "place_exp", r = r)
+    sidebar_server(id = "place_explorer", r = r)
 
 
     # Postal code search ------------------------------------------------------
@@ -273,7 +273,7 @@ place_exp_server <- function(id, r,
 
 #' @describeIn place_explorer_server Create the UI for the place explorer module
 #' @export
-place_exp_UI <- function(id, scales_as_DA = c("building", "street")) {
+place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   # Get default values for the place explorer
   pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA)
 
