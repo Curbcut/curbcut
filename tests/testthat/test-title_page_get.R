@@ -1,6 +1,6 @@
 test_that("title_page_get works", {
   result <- title_page_get(
-    active_page = "canale",
+    active_page = "alp",
     site_name = "Curbcut",
     lang = NULL
   )

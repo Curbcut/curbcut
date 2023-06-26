@@ -113,7 +113,7 @@ test_that("zoom_get_levels returns error if missing id", {
 })
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region", {
-  result <- zoom_get_levels(id = "canale", region = "city")
+  result <- zoom_get_levels(id = "alp", region = "city")
   expect_equal(
     result,
     list(zoom_levels = c(CSD = 0, CT = 10.5, DA = 12.5, building = 15.5), region = "city")
@@ -121,7 +121,7 @@ test_that("zoom_get_levels returns the correct map_zoom_levels and region", {
 })
 
 test_that("zoom_get_levels returns the correct map_zoom_levels and region with a suffix", {
-  result <- zoom_get_levels(id = "canale", region = "city", "max_CT")
+  result <- zoom_get_levels(id = "alp", region = "city", "max_CT")
   expect_equal(
     result,
     list(zoom_levels = c(CSD = 0, CT = 10.5), region = "city")

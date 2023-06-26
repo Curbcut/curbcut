@@ -110,7 +110,7 @@ test_that("update_df returns zoom_string when tile is 'auto_zoom'", {
 test_that("update_poi returns NULL when map zoom is less than 13", {
   poi <- c("little_burgundy", "mirron_quarry")
   map_viewstate <- list(zoom = 12, latitude = 45.5, longitude = -73.6)
-  expect_equal(update_poi("canale", poi, map_viewstate), NULL)
+  expect_equal(update_poi("alp", poi, map_viewstate), NULL)
 })
 
 test_that("update_poi returns nothing too far from the stories", {
@@ -128,7 +128,7 @@ test_that("update_poi returns the correct nearby POIs", {
   poi <- c("little_burgundy", "mirron_quarry")
   map_viewstate <- list(zoom = 15, latitude = 45.479, longitude = -73.574)
   expected_pois <- c("little_burgundy", "alley_strategy")
-  expect_equal(update_poi("canale", poi, map_viewstate), expected_pois)
+  expect_equal(update_poi("alp", poi, map_viewstate), expected_pois)
 })
 
 

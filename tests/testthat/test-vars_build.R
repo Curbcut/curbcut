@@ -23,7 +23,7 @@ test_that("vars_build works", {
 
   expect_equal(
     vars_build(
-      var_left = "housing_tenant_2016", var_right = "canale_2016",
+      var_left = "housing_tenant_2016", var_right = "alp_2016",
       df = "CMA_CSD"
     ) |> class(),
     c("bivar", "scalar")
@@ -68,13 +68,13 @@ test_that("vars_build works", {
         "housing_tenant_2006",
         "housing_tenant_2016"
       ),
-      var_right = c("canale_2006"),
+      var_right = c("alp_2006"),
       df = "city_DA"
     ),
     structure(list(var_left = structure(c(
       "housing_tenant_2006",
       "housing_tenant_2016"
-    ), class = c("pct", "scalar", "character")), var_right = structure("canale_2006", class = c(
+    ), class = c("pct", "scalar", "character")), var_right = structure("alp_2006", class = c(
       "ind", "scalar",
       "character"
     ))), class = c("bivar_ldelta_rq3", "scalar"))

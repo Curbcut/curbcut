@@ -31,7 +31,7 @@ test_that("explore_text_parent_title works", {
   expected <- "tenant households"
   expect_equal(actual, expected)
 
-  vars <- vars_build("canale_2021", df = "city_CT")
+  vars <- vars_build("alp_2021", df = "city_CT")
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "households"
   expect_equal(actual, expected)
@@ -48,7 +48,7 @@ test_that("explore_text_region_val_df works", {
   expect_equal(all(c("val", "count") %in% names(actual)), TRUE)
 
   df <- "city_CT"
-  vars <- vars_build("canale_2021", df = df)
+  vars <- vars_build("alp_2021", df = df)
   region <- "city"
   data <- data_get(vars = vars, df = df)
   actual <- explore_text_region_val_df(

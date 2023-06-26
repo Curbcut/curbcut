@@ -99,7 +99,7 @@ test_that("legend_labels.bivar works", {
     legend_labels(vars),
     list(
       ggplot2::labs(
-        x = "Tenant-occupied (%) (2016)",
+        x = "Tenant (2016)",
         y = "Drought (2015)"
       ),
       x_short = "Tenant",
@@ -128,12 +128,12 @@ test_that("legend_labels.delta_bivar works", {
 })
 
 test_that("legend_labels translation works", {
-  vars <- structure(list(var_left = "housing_tenant_2016", var_right = "canale_2016"),
+  vars <- structure(list(var_left = "housing_tenant_2016", var_right = "alp_2016"),
     class = "bivar"
   )
   expect_equal(
     legend_labels(vars, lang = "fr"),
-    list(structure(list(x = "Potentiel de vie active (2016)", y = "Locataire (2016)"), class = "labels"),
+    list(structure(list(x = "Vie active (2016)", y = "Locataire (2016)"), class = "labels"),
       x_short = structure("Vie active", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
     )
   )

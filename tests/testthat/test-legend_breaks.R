@@ -15,7 +15,7 @@ test_that("legend_breaks.q5 works", {
 
 test_that("legend_breaks.q5_ind works", {
   vars1 <- vars_build(var_left = "climate_drought_2015", df = "grid_grid50")
-  vars2 <- vars_build(var_left = "canale_2016", df = "grid_grid50")
+  vars2 <- vars_build(var_left = "alp_2016", df = "grid_grid50")
 
   expect_equal(
     unname(legend_breaks(vars1, df = "grid_grid50")),
@@ -49,7 +49,7 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
       "housing_tenant_2006",
       "housing_tenant_2016"
     ),
-    var_right = "canale_2016",
+    var_right = "alp_2016",
     df = "city_CSD"
   )
   data <- data_get(
@@ -96,7 +96,7 @@ test_that("legend_breaks.bivar works", {
       x = c("25.91%", "60.37%", "69.61%", "73.35%"),
       y = c(
         "1.42",
-        "3.24", "3.45", "3.81"
+        "3.13", "3.40", "3.81"
       )
     )
   )

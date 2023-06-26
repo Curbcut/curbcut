@@ -29,7 +29,7 @@ test_explores <- function(var_right, select_id, df) {
   )
 
   # Ind scalar
-  test_explores_helper("canale_2021",
+  test_explores_helper("alp_2021",
     var_right = var_right, df = df,
     select_id = select_id
   )
@@ -65,7 +65,7 @@ test_that("q5 explore works with selections", {
 # bivar -------------------------------------------------------------------
 
 test_that("q5 explore works without a selection", {
-  test_explores(var_right = "canale_2021", select_id = NA, df = "city_CSD")
+  test_explores(var_right = "alp_2021", select_id = NA, df = "city_CSD")
   test_explores(var_right = "climate_drought_2015", select_id = NA, df = "city_building")
 })
 
@@ -95,7 +95,7 @@ test_explores_delta <- function(var_right, select_id, df) {
   # select_id = select_id)
 
   # Ind scalar
-  test_explores_helper(paste0("canale_", c(2016, 2021)),
+  test_explores_helper(paste0("alp_", c(2016, 2021)),
     var_right = var_right, df = df,
     select_id = select_id
   )
@@ -132,14 +132,14 @@ test_explores_delta <- function(var_right, select_id, df) {
   # df = "city_DA", select_id = select_id)
 
   # Ind scalar
-  test_explores_helper(paste0("canale_", c(2016, 2021)),
+  test_explores_helper(paste0("alp_", c(2016, 2021)),
     var_right = var_right,
     df = df, select_id = select_id
   )
 }
 
 test_that("q5 explore works without a selection", {
-  test_explores_delta(var_right = paste0("canale_", c(2016, 2021)), select_id = NA, df = "city_CSD")
+  test_explores_delta(var_right = paste0("alp_", c(2016, 2021)), select_id = NA, df = "city_CSD")
   test_explores_delta(var_right = paste0("climate_drought_", c(2015, 2022)), select_id = NA, df = "city_building")
 })
 

@@ -31,7 +31,7 @@ test_that("autovars_final_value works", {
     picker_vals = picker_vals,
     previous_var = "access_car_20_cultural_artcenter"
   )
-  expect_equal(actual, "access_foot_30_cultural_artcentre")
+  expect_equal(actual, "access_transit_opwe_30_cultural_artcentre")
 
   picker_vals <- c("Walking", "50", "Art or cultural centre")
   actual <- autovars_final_value(

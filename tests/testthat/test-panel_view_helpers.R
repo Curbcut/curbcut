@@ -51,7 +51,7 @@ test_that("table_view_prep_table works as expected (q5)", {
     map_zoom_levels = map_zoom_levels
   )
 
-  var_left <- "canale_2021"
+  var_left <- "alp_2021"
   df <- "city_DA"
   var_right <- " "
   map_zoom_levels <- map_zoom_levels_city
@@ -117,7 +117,7 @@ test_that("table_view_prep_table works as expected (bivar)", {
     map_zoom_levels = map_zoom_levels
   )
 
-  var_left <- "canale_2021"
+  var_left <- "alp_2021"
   df <- "city_DA"
   var_right <- "climate_drought_2022"
   map_zoom_levels <- map_zoom_levels_city
@@ -172,7 +172,7 @@ test_that("table_view_prep_table works as expected (delta)", {
     map_zoom_levels = map_zoom_levels
   )
 
-  var_left <- c("canale_2016", "canale_2021")
+  var_left <- c("alp_2016", "alp_2021")
   df <- "city_DA"
   var_right <- " "
   map_zoom_levels <- map_zoom_levels_city
