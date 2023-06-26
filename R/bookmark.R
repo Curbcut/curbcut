@@ -31,7 +31,7 @@ use_bookmark <- function(r) {
         reg <- regions_dictionary$region[as.numeric(reg)]
         r$region(reg)
       }
-      if ("lng" %in% names(query)) r$lang(query$lng)
+      if ("lng" %in% names(query)) update_lang(r, query$lng)
 
       # The rest are tab dependent.
       # Grab the tab
