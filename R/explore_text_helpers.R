@@ -94,7 +94,7 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   }
 
   # Get the sentence start (In Borough or In dissemination area XYZ, )
-  p_start <- cc_t(tolower(scale$place_name))
+  p_start <- tolower(cc_t(scale$place_name, lang = lang))
 
   # Return
   return(list(
