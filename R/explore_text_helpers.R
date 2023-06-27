@@ -94,7 +94,7 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   }
 
   # Get the sentence start (In Borough or In dissemination area XYZ, )
-  p_start <- tolower(cc_t(scale$place_name, lang = lang))
+  p_start <- cc_t(scale$place_name, lang = lang)
 
   # Return
   return(list(
@@ -164,6 +164,8 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right` or
 #' `var_left_1` in delta.
+#' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
+#' for no translation.
 #' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
 #' function: \itemize{
 #'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
@@ -174,7 +176,8 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #'
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
-explore_text_region_val_df <- function(var, region, select_id, col = "var_left", ...) {
+explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
+                                       lang = NULL, ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- var_get_info(var = var, what = "region_values")[[1]]
@@ -198,6 +201,7 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
     region = region,
     select_id = select_id,
     col = col,
+    lang = lang,
     ...
   ))
 }
@@ -322,10 +326,11 @@ explore_text_select_val.pct <- function(var, select_id, data, df, col = "var_lef
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right` or
 #' `var_left_1` in delta.
+#' @param lang <`character`> Active language. `"en"` or `"fr"`
 #'
 #' @export
 explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_left",
-                                        ...) {
+                                        lang, ...) {
   # Create empty vector
   out <- c()
 
@@ -343,7 +348,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
   out$val <- brks$rank_name[brks$rank == rank]
 
   # Lower letters
-  out$val <- tolower(out$val)
+  out$val <- tolower(cc_t(out$val, lang = lang))
 
   if (!is.na(select_id)) {
     out$num <- data[[col]][data$ID == select_id]

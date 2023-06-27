@@ -168,7 +168,7 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.pct <- function(var, region, data, df, select_id,
-                                       col = "var_left", lang = lang, ...) {
+                                       col = "var_left", lang, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -185,7 +185,8 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
     data = data,
     df = df,
     select_id = select_id,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -237,7 +238,7 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.count <- function(var, region, data, df, select_id,
-                                         col = "var_left", lang = lang, ...) {
+                                         col = "var_left", lang, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -251,7 +252,8 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
     data = data,
     df = df,
     select_id = select_id,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -304,14 +306,15 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.dollar <- function(var, region, data, select_id,
-                                          col = "var_left", lang = lang, ...) {
+                                          col = "var_left", lang, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
     data = data,
     select_id = select_id,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -369,7 +372,7 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.ind <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang = lang, ...) {
+                                       col = "var_left", lang, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -380,7 +383,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     select_id = select_id,
     data = data,
     df = df,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -441,7 +445,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
   )
 
   # Build the return
-  out <- sprintf("%s is %s", exp, region_values$val)
+  out <- sprintf(cc_t("%s is %s", lang = lang), exp, region_values$val)
 
   # Return
   return(list(
@@ -475,7 +479,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.avg <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang = lang, ...) {
+                                       col = "var_left", lang, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -486,7 +490,8 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
     select_id = select_id,
     data = data,
     df = df,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -567,14 +572,15 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
-                                        col = "var_left", lang = lang, ...) {
+                                        col = "var_left", lang, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
     data = data,
     select_id = select_id,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -669,14 +675,15 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang = lang, ...) {
+                                       col = "var_left", lang, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
     data = data,
     select_id = select_id,
-    col = col
+    col = col,
+    lang = lang
   )
 
   # NA message
@@ -1386,7 +1393,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
       select_id = select_id,
       data = data,
       df = df,
-      col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var))
+      col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var)),
+      lang = lang
     )$num) |> unlist()
   # Newest value must be first, like for the no-selection values
   region_vals <- rev(region_vals)
@@ -1435,7 +1443,8 @@ explore_text_delta_exp.default <- function(var, region, select_id,
         select_id = select_id,
         data = data,
         df = df,
-        col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var))
+        col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var)),
+        lang = lang
       ))
     region_vals <- sapply(region_values, `[[`, "val")
     # Newest value must be first, like for the no-selection values
