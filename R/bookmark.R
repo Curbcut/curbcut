@@ -42,9 +42,11 @@ use_bookmark <- function(r) {
       # Update the current tab
       tab <- query$tb
       # Translate tab if necessary (from french to english)
-      translation_df <- get_from_globalenv("translation_df")
-      if (tab %in% translation_df$fr) {
-        tab <- translation_df$en[which(tab == translation_df$fr)]
+      translation_df <- get0("translation_df", envir = .GlobalEnv)
+      if (!is.null(translation_df)) {
+        if (tab %in% translation_df$fr) {
+          tab <- translation_df$en[which(tab == translation_df$fr)]
+        }
       }
       shiny::updateTabsetPanel(
         session = r$server_session(),
