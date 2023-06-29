@@ -1810,14 +1810,12 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
     left = TRUE,
     lang = lang
   )
-  left_adj <- gsub("</b>", cc_t(" change</b>", lang = lang), left_adj)
   right_adj <- explore_text_delta_bivar_adjective(
     var = vars$var_right,
     left = FALSE,
     positive = relation$positive,
     lang = lang
   )
-  right_adj <- gsub("</b>", cc_t(" change</b>", lang = lang), right_adj)
 
   # Paragraphs
   first_p <-
@@ -1890,25 +1888,24 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
 #' relationship.
 #' @export
 explore_text_delta_bivar_adjective <- function(var, left, positive, lang = NULL, ...) {
-  UseMethod("explore_text_bivar_adjective", var)
+  UseMethod("explore_text_delta_bivar_adjective", var)
 }
 
-#' @rdname explore_text_delta_bivar_adjective
-#' @export
-explore_text_delta_bivar_adjective.dollar <- function(var, left, positive, lang,
-                                                      ...) {
-  string <- (\(x) {
-    if (left) {
-      return(cc_t("larger change", lang = lang))
-    }
-    if (positive) {
-      return(cc_t("larger change", lang = lang))
-    }
-    return(cc_t("smaller change", lang = lang))
-  })()
 
-  return(sprintf("<b>%s</b>", string))
-}
+# explore_text_delta_bivar_adjective.dollar <- function(var, left, positive, lang,
+#                                                       ...) {
+#   string <- (\(x) {
+#     if (left) {
+#       return(cc_t("larger change", lang = lang))
+#     }
+#     if (positive) {
+#       return(cc_t("larger change", lang = lang))
+#     }
+#     return(cc_t("smaller change", lang = lang))
+#   })()
+#
+#   return(sprintf("<b>%s</b>", string))
+# }
 
 #' @rdname explore_text_delta_bivar_adjective
 #' @export

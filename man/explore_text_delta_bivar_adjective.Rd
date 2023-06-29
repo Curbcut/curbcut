@@ -2,14 +2,11 @@
 % Please edit documentation in R/explore_text.R
 \name{explore_text_delta_bivar_adjective}
 \alias{explore_text_delta_bivar_adjective}
-\alias{explore_text_delta_bivar_adjective.dollar}
 \alias{explore_text_delta_bivar_adjective.default}
 \title{Helper function for generating adjective to describe delta/bivariate
 relationship between text variables}
 \usage{
 explore_text_delta_bivar_adjective(var, left, positive, lang = NULL, ...)
-
-\method{explore_text_delta_bivar_adjective}{dollar}(var, left, positive, lang, ...)
 
 \method{explore_text_delta_bivar_adjective}{default}(var, left, positive, lang, ...)
 }

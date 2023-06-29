@@ -663,7 +663,7 @@ cc_translation_df <-
   ) |>
   add_row(
     en = "%s from %s to %s, %s with %s in %s %s have had %s in %s.",
-    fr = "%s de %s à %s, %s avec %s dans %s %s %s dams %s."
+    fr = "%s de %s à %s, les %s avec %s dans %s %s %s dans %s."
   ) |>
   add_row(
     en = "There is a %s (%s) between the change in these two variables between these years.",
