@@ -82,223 +82,6 @@ test_assign_delta_ind_ord <- function(pos = 1) {
   assign("data", data, envir = as.environment(pos))
 }
 
-#' Assign a ind ordinal delta_bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns `df`, `vars`, `data`
-test_assign_delta_bivar_ind_ord <- function(pos = 1) {
-  df <- "grid_grid250"
-  vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"),
-    c("housing_rent_2016", "housing_rent_2021"),
-    df = df
-  )
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "grid", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a ind ordinal q5 vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_q5_ind_ord <- function(pos = 1) {
-  df <- "grid_grid250"
-  vars <- vars_build(c("climate_drought_2022"), df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "grid", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a ind ordinal bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_bivar_ind_ord <- function(pos = 1) {
-  df <- "grid_grid250"
-  vars <- vars_build(c("climate_drought_2022"), "housing_tenant_2021", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "grid", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a avg q5 vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_q5_avg <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("access_foot_20_food_grocery_2023", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a avg bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_bivar_avg <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("access_foot_20_food_grocery_2023", "housing_tenant_2021", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a sqkm bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_q5_sqkm <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("alley_sqkm_2023", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a per1k q5 vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_q5_per1k <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("alley_per1k_2023", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a q5 count vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_q5_count <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("afford_tenant_sc30_total_total_total_count_2021", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a count bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_bivar_count <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("afford_tenant_sc30_total_total_total_count_2021",
-    "housing_tenant_2021",
-    df = df
-  )
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a count delta vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns a constructed `df`, `vars`, `data` in the global environment
-test_assign_delta_count <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build(
-    c(
-      "afford_tenant_sc30_total_total_total_count_2016",
-      "afford_tenant_sc30_total_total_total_count_2021"
-    ),
-    df = df
-  )
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a dollar q5 vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns `df`, `vars`, `data` corresponding to a delta index ordinal
-#' variable to the global environment
-test_assign_q5_dollar <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("housing_rent_2021", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
-#' Assign a dollar bivar vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns `df`, `vars`, `data`
-test_assign_bivar_dollar <- function(pos = 1) {
-  df <- "city_CSD"
-  vars <- vars_build("housing_rent_2021", "alp_2021", df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "city", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
 #' Assign Values to specific Variables in the environment
 #'
 #' This function is used to recreate a variable selection, data, df, ... in the
@@ -327,9 +110,20 @@ test_assign_bivar_dollar <- function(pos = 1) {
 #' @return This function doesn't return a value. It modifies the specified
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
-                            select_id = NA, pos = 1) {
+                            select_id = NA, pos = 1, data_path = .curbcut_montreal_data) {
+
+  # Assign necessary setup objects to the global environment
+  test_setup()
+
+  # Subset the variables table
+  variables <- qs::qread(sprintf("%svariables.qs", .curbcut_montreal_data))
+  possible_vars <- unique(sapply(c(var_left, var_right), var_remove_time))
+  parents <- variables$parent_vec[variables$var_code %in% possible_vars]
+  variables <- variables[variables$var_code %in% c(possible_vars, parents), ]
+  assign("variables", variables, envir = as.environment(pos))
+
   vars <- vars_build(var_left, var_right, df = df)
-  data <- data_get(vars = vars, df = df)
+  data <- data_get(vars = vars, df = df, data_path = data_path)
   region <- gsub("_.*", "", df)
 
   assign("df", df, envir = as.environment(pos))
@@ -337,4 +131,36 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
   assign("vars", vars, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
   assign("select_id", select_id, envir = as.environment(pos))
+}
+
+#' Setup objects
+#'
+#' Assigns objects in the global environment which are needed for testthat and
+#' other testing functions.
+#'
+#' @return Assigns objects in the global environment which are needed for testthat and
+#' other testing functions.
+test_setup <- function() {
+  # Variables present in the .GlobalEnv
+  assign("all_choropleths",
+         value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
+                   "cmhczone"),
+         envir = .GlobalEnv
+  )
+
+  # Default random address
+  assign("default_random_address",
+         value = "845 Sherbrooke",
+         envir = .GlobalEnv
+  )
+
+  # Default tileset info
+  assign("tileset_prefix",
+         value = "mtl",
+         envir = .GlobalEnv
+  )
+  assign("mapbox_username",
+         value = "sus-mcgill",
+         envir = .GlobalEnv
+  )
 }

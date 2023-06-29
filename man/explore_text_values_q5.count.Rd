@@ -11,7 +11,7 @@
   df,
   select_id,
   col = "var_left",
-  lang = lang,
+  lang,
   ...
 )
 }

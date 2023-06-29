@@ -4,7 +4,13 @@
 \alias{data_get.default}
 \title{Default data method}
 \usage{
-\method{data_get}{default}(vars, df, scales_as_DA = c("building", "street"), ...)
+\method{data_get}{default}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = "data/",
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with an unknown class. For this \code{default}

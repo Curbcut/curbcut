@@ -47,14 +47,16 @@ data_get_sql <- function(var, df, select = "*") {
 #' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
 #' @param df <`character`> A string specifying the name of the database to retrieve
 #' data from. Combination of the region and the scale, e.g. `CMA_DA`.
+#' @param data_path A string representing the path to the directory containing the
+#' QS files. Default is "data/".
 #'
 #' @return A data.frame object with the selected data from the specified table.
-data_get_qs <- function(var, df) {
+data_get_qs <- function(var, df, data_path = "data/") {
   # Switch _ to / , as _ is the separation between the region and the scale.
   df_path <- gsub("_", "/", df)
 
   # Construct the file path
-  path <- sprintf("data/%s/%s.qs", df_path, var)
+  path <- sprintf("%s%s/%s.qs", data_path, df_path, var)
 
   # Read the data
   qs::qread(path)
@@ -108,13 +110,16 @@ data_get_delta <- function(var_two_years, df) {
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path A string representing the path to the directory containing the
+#' QS files. Default is "data/".
 #'
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`
 #' along with a `group` column for map colouring.
 #' @export
-data_get <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get <- function(vars, df, scales_as_DA = c("building", "street"),
+                     data_path = "data/", ...) {
   UseMethod("data_get", vars)
 }
 
@@ -133,12 +138,13 @@ data_get <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
 #' added `group` column for map colouring.
 #' @export
-data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"),
+                        data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df)
+  data <- data_get_qs(vars$var_left, df, data_path = data_path)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
 
   # Add the `group` for the map colouring
@@ -163,16 +169,17 @@ data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
 #' binded in the same dataframe with an added `group` column for map colouring.
 #' @export
-data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
+                           data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df)
+  data <- data_get_qs(vars$var_left, df, data_path = data_path)
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
 
   # Get var_right and rename
-  vr <- data_get_qs(vars$var_right, df)
+  vr <- data_get_qs(vars$var_right, df, data_path = data_path)
   names(vr) <- c("ID", "var_right", "var_right_q3", "var_right_q5")
 
   # Error check before binding
@@ -208,7 +215,8 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...
 #' years of the same variable. `q5` is calculated on the spot with and doubled
 #' to the `group` column for map colouring.
 #' @export
-data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
+                           data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -245,7 +253,8 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"), ...
 #' years of two variables. `q3`s are calculated on the spot along with the
 #' `group` column for the map colouring.
 #' @export
-data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
+                                 data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -283,7 +292,8 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 #' to regroup with the `q3` column of the second value to create the `group`
 #' column for map colouring.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
+                                      data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -293,7 +303,7 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
   # Normal retrieval for var_right (single value)
-  data_vr <- data_get_qs(vars$var_right, df)[2:3]
+  data_vr <- data_get_qs(vars$var_right, df, data_path = data_path)[2:3]
   names(data_vr) <- c("var_right", "var_right_q3")
 
   # Bind vl and vr
@@ -326,12 +336,13 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
-data_get.default <- function(vars, df, scales_as_DA = c("building", "street"), ...) {
+data_get.default <- function(vars, df, scales_as_DA = c("building", "street"),
+                             data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_qs(var = vars[[1]], df = df)
+  data <- data_get_qs(var = vars[[1]], df = df, data_path = data_path)
 
   # To keep it constant, rename with var_left
   names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")

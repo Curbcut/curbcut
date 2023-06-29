@@ -1,26 +1,6 @@
 ### CURBCUT PACKAGE TEST SETUP #################################################
 
-# Variables present in the .GlobalEnv
-assign("all_choropleths",
-  value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250", "cmhczone"),
-  envir = .GlobalEnv
-)
-
-# Default random address
-assign("default_random_address",
-  value = "845 Sherbrooke",
-  envir = .GlobalEnv
-)
-
-# Default tileset info
-assign("tileset_prefix",
-  value = "mtl",
-  envir = .GlobalEnv
-)
-assign("mapbox_username",
-  value = "sus-mcgill",
-  envir = .GlobalEnv
-)
+test_setup()
 
 # All qs and qsm files
 data_files <- list.files("resources", full.names = TRUE)
@@ -50,3 +30,4 @@ tbs <- DBI::dbListTables(conn)
 tbs <- tbs[!grepl("city_", tbs)]
 lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
 suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
+

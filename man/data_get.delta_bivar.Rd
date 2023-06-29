@@ -4,7 +4,13 @@
 \alias{data_get.delta_bivar}
 \title{Get data from the SQLite database for a \code{delta_bivar} class}
 \usage{
-\method{data_get}{delta_bivar}(vars, df, scales_as_DA = c("building", "street"), ...)
+\method{data_get}{delta_bivar}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = "data/",
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the

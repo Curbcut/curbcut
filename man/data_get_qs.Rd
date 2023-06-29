@@ -4,7 +4,7 @@
 \alias{data_get_qs}
 \title{Retrieve data from a QS file based on variable and df}
 \usage{
-data_get_qs(var, df)
+data_get_qs(var, df, data_path = "data/")
 }
 \arguments{
 \item{var}{<\code{character}> A string specifying the name of the table to retrieve
@@ -12,6 +12,9 @@ data from. Single variable (year) = single table. e.g. \code{housing_tenant_2016
 
 \item{df}{<\code{character}> A string specifying the name of the database to retrieve
 data from. Combination of the region and the scale, e.g. \code{CMA_DA}.}
+
+\item{data_path}{A string representing the path to the directory containing the
+QS files. Default is "data/".}
 }
 \value{
 A data.frame object with the selected data from the specified table.

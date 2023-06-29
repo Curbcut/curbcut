@@ -4,7 +4,13 @@
 \alias{data_get}
 \title{Get data from the SQLite database}
 \usage{
-data_get(vars, df, scales_as_DA = c("building", "street"), ...)
+data_get(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = "data/",
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
@@ -18,6 +24,9 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{data_path}{A string representing the path to the directory containing the
+QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
 }

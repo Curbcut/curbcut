@@ -11,7 +11,7 @@
   data,
   df,
   col = "var_left",
-  lang = lang,
+  lang,
   ...
 )
 }

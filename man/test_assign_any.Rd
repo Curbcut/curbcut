@@ -9,7 +9,8 @@ test_assign_any(
   var_right = " ",
   df = "city_CSD",
   select_id = NA,
-  pos = 1
+  pos = 1,
+  data_path = .curbcut_montreal_data
 )
 }
 \arguments{

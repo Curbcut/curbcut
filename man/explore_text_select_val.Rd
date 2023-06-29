@@ -11,7 +11,7 @@ explore_text_select_val(var, ...)
 
 \method{explore_text_select_val}{pct}(var, select_id, data, df, col = "var_left", ...)
 
-\method{explore_text_select_val}{ind}(var, data, df, select_id, col = "var_left", ...)
+\method{explore_text_select_val}{ind}(var, data, df, select_id, col = "var_left", lang, ...)
 
 \method{explore_text_select_val}{default}(var, data, df, select_id, col = "var_left", ...)
 }
@@ -34,6 +34,8 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{lang}{<\code{character}> Active language. \code{"en"} or \code{"fr"}}
 }
 \value{
 The resulting values
