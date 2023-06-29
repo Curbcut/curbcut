@@ -40,8 +40,3 @@ vignettes/*.pdf
 .Rproj.user
 .Rdata
 .DS_Store
-
-# Test folders
-data/city/
-data/grid/
-data/cmhc/
