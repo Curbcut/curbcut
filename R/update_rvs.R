@@ -124,12 +124,16 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
                              id_map = "map") {
   # Must be its own module for the use of the button on the stories modal
   shiny::moduleServer(id, function(input, output, session) {
-    click_init <- shiny::reactive(rdeck::get_clicked_object(id_map))
+    click_init <- get_click(id_map)
 
     # Redirect to stories?
     click <- shiny::eventReactive(click_init(),
       {
-        stories_link <- (grepl("_stories$", click_init()$layerName) & sprintf("%s-%s", id, id_map) != "stories-map")
+        stories_link <- if ("layerName" %in% names(click_init())) {
+          (grepl("_stories$", click_init()$layerName) & sprintf("%s-%s", id, id_map) != "stories-map")
+        } else {
+          FALSE
+        }
         id <- click_init()$ID
         attr(id, "stories_link") <- stories_link
         return(id)

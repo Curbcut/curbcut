@@ -399,8 +399,8 @@ cc_translation_df <-
     fr = "autour du %s"
   ) |>
   add_row(
-    en = "Dissemination area around %s",
-    fr = "Aire de diffusion autour du %s"
+    en = "Dissemination area %s",
+    fr = "Aire de diffusion %s"
   ) |>
   add_row(
     en = "in {p_start}",

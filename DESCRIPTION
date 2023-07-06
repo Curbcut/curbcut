@@ -31,7 +31,8 @@ Imports:
     bsicons
 Remotes:
     qfes/rdeck,
-    bdbmax/bslib
+    bdbmax/bslib,
+    Curbcut/cc.map
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

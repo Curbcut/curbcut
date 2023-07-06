@@ -33,7 +33,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       ),
 
       # Map
-      curbcut::map_UI(shiny::NS(id, id)),
+      curbcut::map_js_UI(shiny::NS(id, id)),
 
       # Tutorial
       curbcut::tutorial_UI(id = shiny::NS(id, id)),
@@ -210,16 +210,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
       )
 
       # Update map in response to variable changes or zooming
-      map_viewstate <- curbcut::map_server(
+      map_viewstate <- curbcut::map_js_server(
         id = id,
         r = r,
         tile = tile,
-        data_colours = data_colours,
-        select_id = r[[id]]$select_id,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
-        zoom = r[[id]]$zoom,
-        coords = r[[id]]$coords
-      )
+        data_colours = data_colours)
 
       # Update map labels
       curbcut::label_server(
