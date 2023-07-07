@@ -29,27 +29,25 @@ map_js_server <- function(id, r, tile, data_colours) {
     # Form the tileset
     tileset <- shiny::reactive(sprintf("mtl_%s", tile()))
 
+    # Whenever the tileset changes, load it with the according data_colours.
     shiny::observeEvent(tileset(), {
-      dc <- data_colours()
-      names(dc)[1] <- "ID_color"
-
       cc.map::update_map(session = session,
                          map_ID = "map",
                          configuration = list(tileset = tileset(),
-                                              fill_colour = jsonlite::toJSON(dc)))
+                                              fill_colour = data_colours()))
     })
 
+    # Only update the fill_colour when data_colours change
     shiny::observeEvent(data_colours(), {
-      dc <- data_colours()
-      names(dc)[1] <- "ID_color"
-
       cc.map::update_map(session = session,
                          map_ID = "map",
-                         configuration = list(fill_colour = jsonlite::toJSON(dc)))
-    })
+                         configuration = list(fill_colour = data_colours()))
+    }, ignoreInit = TRUE)
 
+    # Grab the viewstate (lat, lon, zoom)
     viewstate <- curbcut::get_viewstate("map")
 
+    # Return
     return(viewstate)
   })
 }
