@@ -65,33 +65,31 @@ sidebar_server <- function(id, r) {
 #' @export
 sidebar_UI <- function(id, ..., bottom = NULL) {
   shiny::tagList(
-    shiny::div(class = "sus-map-sidebar-shadow"),
     shiny::div(
       id = "title_bar", class = "sus-map-sidebar",
       shiny::div(
-        class = "sus-map-sidebar-container",
+        class = "sus-map-sidebar-container scrollable-div",
         shiny::div(
-          class = "sus-map-sidebar-content sus-scroll",
+          class = "sus-map-sidebar-content",
           shiny::div(
-            class = "sus-scroll-content",
             shiny::tagList(
               shiny::div(
                 id = shiny::NS(id, "title_texts"),
                 shiny::uiOutput(shiny::NS(id, "title")),
                 shiny::p(shiny::uiOutput(shiny::NS(id, "title_main"))),
                 shiny::p(shiny::actionLink(shiny::NS(id, "more_info"),
-                  class = "sus-small-link",
-                  cc_t(
-                    "Learn more"
-                  )
+                                           class = "sus-small-link",
+                                           cc_t(
+                                             "Learn more"
+                                           )
                 ))
               ),
-              shinyjs::hidden(shiny::uiOutput(outputId = shiny::NS(id, "title_extra"))),
-              shiny::div(
-                class = "sus-sidebar-widgets",
-                id = shiny::NS(id, "left_widgets"), ...
-              )
+              shinyjs::hidden(shiny::uiOutput(outputId = shiny::NS(id, "title_extra")))
             )
+          ),
+          shiny::div(
+            class = "sus-sidebar-widgets",
+            id = shiny::NS(id, "left_widgets"), ...
           )
         ),
         shiny::div(class = "bottom_sidebar", bottom)
@@ -99,3 +97,4 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
     )
   )
 }
+

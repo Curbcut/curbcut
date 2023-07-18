@@ -17,7 +17,7 @@ right_panel <- function(id, ...) {
     id = shiny::NS(id, "right_panel"),
     class = "panel panel-default sus-map-panel sus-scroll",
     shiny::div(
-      class = "sus-map-panel-content sus-scroll-content",
+      class = "sus-map-panel-content scrollable-div",
       id = "cc-right-panel", ...
     )
   )

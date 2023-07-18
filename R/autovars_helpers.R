@@ -5,6 +5,9 @@
 #' They are used to populate the main dropdown.
 #'
 #' @param id <`character`> Identifying the module in modules$id
+#' @param pres <`logical`> If TRUE, will return a logical on if the there should
+#' be a widgets existing at all. Defaults to FALSE, which returns the default
+#' return of this function.
 #'
 #' If 'var_lefts' (the variables left to be selected) is a data frame,
 #' it returns the unique group names from the 'group_name' column.
@@ -13,16 +16,24 @@
 #'
 #' @return A character vector of group names or a list prepared for a dropdown selection,
 #' depending on the type of 'var_lefts'.
-autovars_groupnames <- function(id) {
+autovars_groupnames <- function(id, pres = FALSE) {
   modules <- get_from_globalenv("modules")
 
   var_lefts <- modules$var_left[modules$id == id][[1]]
 
   # If it is a dataframe. Just supply the group name as a character vector.
   if (is.data.frame(var_lefts)) {
+    # If want to know about presence of a widget, return TRUE
+    if (pres) return(TRUE)
     options <- unique(var_lefts$group_name)
     options <- options[order(options)]
     return(options)
+  }
+
+  # If want to know about presence of a widget,
+  if (pres) {
+    if (length(var_lefts) == 1) return(FALSE)
+    return(TRUE)
   }
 
   # If it's a character vector, supply a full dropdown list

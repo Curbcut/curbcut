@@ -121,6 +121,12 @@ use_bookmark <- function(r) {
       if ("sid" %in% names(query)) {
         new_id <- if (query$sid %in% c("", "NA")) NA else query$sid
         r[[tab]]$select_id(new_id)
+        # shinyjs::delay(2000, {
+        #   # print(r$server_session()$input[[ns_doubled(page_id = tab, "map")]])
+        #   cc.map::update_map(session = r$server_session(),
+        #                      ns_doubled(page_id = tab, "map"),
+        #                      configuration = list(select_id = new_id))
+        # })
       }
     },
     priority = -5

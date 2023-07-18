@@ -147,12 +147,19 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
       shinyjs::toggle("time_hr", condition = !single_year)
 
-      # If there's a single year or there are no common widgets
-      shinyjs::toggle("common_widgets",
-        condition = !single_year | {
-          length(common_widgets()$widgets) != 0
-        }
-      )
+      # If there's a single year or there are no common widgets, or if there are
+      # no main widgets.
+      main_widgets <- autovars_groupnames(id = id, pres = TRUE)
+
+      show_hr <- {
+        com_widgs <- length(common_widgets()$widgets) > 0
+        years_shown <- !single_year
+
+        # If there are more than one block, show the hr
+        sum(main_widgets, com_widgs, years_shown) > 1
+      }
+
+      shinyjs::toggle("common_widgets", condition = show_hr)
     })
 
     # Grab the right time

@@ -307,8 +307,6 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
 
               shiny::incProgress(0.3)
 
-              print(file)
-
               # Set file names
               tmp_path <- dirname(file)
               name_base <- file.path(tmp_path, paste0(id, "_data"))
