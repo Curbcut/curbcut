@@ -4,10 +4,14 @@
 \alias{autovars_groupnames}
 \title{Retrieve Group Names for a Specific Module}
 \usage{
-autovars_groupnames(id)
+autovars_groupnames(id, pres = FALSE)
 }
 \arguments{
-\item{id}{<\code{character}> Identifying the module in modules$id
+\item{id}{<\code{character}> Identifying the module in modules$id}
+
+\item{pres}{<\code{logical}> If TRUE, will return a logical on if the there should
+be a widgets existing at all. Defaults to FALSE, which returns the default
+return of this function.
 
 If 'var_lefts' (the variables left to be selected) is a data frame,
 it returns the unique group names from the 'group_name' column.

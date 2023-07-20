@@ -19,37 +19,42 @@ create_ui_server_mods <- function(modules, pos = 1) {
   ui <- function(id) {
     default_region <- modules$regions[modules$id == id][[1]][1]
     mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
+    page <- modules[modules$id == id, ]
+    theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
     shiny::tagList(
       # Sidebar
-      curbcut::sidebar_UI(
-        id = shiny::NS(id, id),
-        curbcut::autovars_UI(shiny::NS(id, id)),
-        curbcut::warnuser_UI(shiny::NS(id, id)),
-        bottom = shiny::tagList(
-          curbcut::legend_UI(shiny::NS(id, id)),
-          curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp)
-        )
-      ),
-
-      # Map
-      curbcut::map_js_UI(shiny::NS(id, id)),
-
-      # Tutorial
-      curbcut::tutorial_UI(id = shiny::NS(id, id)),
-
-      # Change view (Map/Data/Place explorer)
-      curbcut::panel_view_UI(id = shiny::NS(id, id)),
-
-      # Right panel
-      curbcut::right_panel(
-        id = id,
-        curbcut::compare_UI(
+      shiny::div(
+        `data-theme` = theme_lowercased,
+        curbcut::sidebar_UI(
           id = shiny::NS(id, id),
-          var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
+          curbcut::autovars_UI(shiny::NS(id, id)),
+          curbcut::warnuser_UI(shiny::NS(id, id)),
+          bottom = shiny::tagList(
+            curbcut::legend_UI(shiny::NS(id, id)),
+            curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp)
+          )
         ),
-        curbcut::explore_UI(shiny::NS(id, id)),
-        curbcut::dyk_UI(shiny::NS(id, id))
+
+        # Map
+        curbcut::map_js_UI(shiny::NS(id, id)),
+
+        # Tutorial
+        curbcut::tutorial_UI(id = shiny::NS(id, id)),
+
+        # Change view (Map/Data/Place explorer)
+        curbcut::panel_view_UI(id = shiny::NS(id, id)),
+
+        # Right panel
+        curbcut::right_panel(
+          id = id,
+          curbcut::compare_UI(
+            id = shiny::NS(id, id),
+            var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
+          ),
+          curbcut::explore_UI(shiny::NS(id, id)),
+          curbcut::dyk_UI(shiny::NS(id, id))
+        )
       )
     )
   }

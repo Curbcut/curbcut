@@ -39,7 +39,7 @@ icon_material <- function(icon, style = NULL) {
 icon_material_title <- function(icon) {
   icon_material(icon, style = paste0(
     "font-size: 20px; ",
-    "color: var(--c-dark-blue); ",
+    "color: var(--theme-color); ",
     "vertical-align:sub; ",
     "margin-right:.3rem"
   ))

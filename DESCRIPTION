@@ -32,7 +32,8 @@ Imports:
 Remotes:
     qfes/rdeck,
     bdbmax/bslib,
-    Curbcut/cc.map
+    Curbcut/cc.map,
+    Curbcut/cc.landing
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

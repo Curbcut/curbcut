@@ -1,12 +1,8 @@
 #' Server logic for the settings UI module
 #'
-#' This function contains the server-side logic for the settings UI module.
-#' It connects to the \code{settings_UI} function through the module ID and a
-#' reactive values object, and handles various events triggered by user
-#' interactions with the UI. Specifically, it opens a modal dialog for advanced
-#' options, updates the region cookie if a user changes the default region,
-#' retrieves the IDs for a searched location and saves it in a reactive value,
-#' and clears the default location when a button is clicked.
+#' This function contains the server-side logic for the settings UI module. It
+#' only triggers a phantom button, which triggers the opening of the advanced
+#' settings modal.
 #'
 #' @param id <`character`> The ID of the module, used to connect the UI and server
 #' functions. Defaults to `"settings"`.
@@ -15,55 +11,13 @@
 #'
 #' @seealso \code{\link{settings_UI}}
 #' @export
-settings_server <- function(id = "settings", r) {
+settings_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
-    # Advanced options UI - Opens a modal.
-    shinyjs::onclick("advanced_options", {
-      shiny::showModal(shiny::modalDialog(
-        # Change the region
-        adv_opt_region(id = id, region = r$region(), lang = r$lang()),
-        shiny::hr(),
-        adv_opt_lock_selection_UI(id = id, lang = r$lang()),
-        title = cc_t(lang = r$lang(), "Advanced options"),
-        footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss"))
-      ))
+
+    shinyjs::onclick(shiny::NS(id, "advanced_options"), {
+      shinyjs::click("proxy_advanced_options", asis = TRUE)
     })
 
-    # If the region cookie is already in and it differs from default. Intended
-    # to run only once at startup.
-    region_cookie <- shiny::reactive(cookie_retrieve(
-      input = r$server_session()$input,
-      name = "region"
-    ))
-    shiny::observeEvent(region_cookie(), r$region(region_cookie()),
-      once = TRUE
-    )
-
-    # Change the default region and save the cookie at a change of the region.
-    shiny::observeEvent(input$region_change, {
-      r$region(input$region_change)
-      cookie_set(session = r$server_session(), name = "region", value = input$region_change)
-    })
-
-    # When the button is clicked, grab the content of the search box,
-    # get the IDs for that location and save it in the reactive value.
-    shiny::observeEvent(input$lock_search_button, {
-      if (input$lock_address_searched == "" | is.null(input$lock_address_searched)) return(NULL)
-      IDs <- adv_opt_lock_selection(
-        address = input$lock_address_searched,
-        lang = r$lang()
-      )
-      r$default_select_ids(IDs)
-    })
-
-    # Clear default location on the button click
-    shiny::observeEvent(input$cancel_lock_location, {
-      r$default_select_ids(NULL)
-      shiny::showNotification(
-        cc_t(lang = r$lang(), paste0("Default location successfully cleared")),
-        type = "default"
-      )
-    })
   })
 }
 
@@ -83,9 +37,12 @@ settings_server <- function(id = "settings", r) {
 #' @export
 settings_UI <- function(id = "settings") {
   # Return the settings menu
-  shiny::actionLink(
-    inputId = shiny::NS(id, "advanced_options"),
-    label = NULL,
-    shiny::icon("gear", verify_fa = FALSE)
+  shiny::div(
+    class = "settings-gear",
+    shiny::actionLink(
+      inputId = shiny::NS(id, "advanced_options"),
+      label = NULL,
+      shiny::icon("gear", verify_fa = FALSE)
+    )
   )
 }

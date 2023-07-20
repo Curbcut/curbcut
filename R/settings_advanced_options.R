@@ -29,7 +29,7 @@ adv_opt_region <- function(id, region, lang = NULL) {
 
   # Get the shiny input
   shiny::radioButtons(
-    inputId = shiny::NS(id, "region_change"),
+    inputId = "region_change",
     label = cc_t(lang = lang, "Change default region"),
     inline = TRUE,
     selected = region,
@@ -73,19 +73,19 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
       '<div style="width: 80%; margin-top: var(--padding-v-md); ',
       'width:auto;">',
       shiny::textInput(
-        inputId = shiny::NS(id, "lock_address_searched"),
+        inputId = "lock_address_searched",
         label = NULL,
         placeholder = default_random_address
       ),
       '</div><div style="width: 20%">',
       shiny::actionButton(
-        inputId = shiny::NS(id, "lock_search_button"),
+        inputId = "lock_search_button",
         label = shiny::icon("check", verify_fa = FALSE),
         style = "margin-top: var(--padding-v-md);"
       ),
       "</div></div>",
       shiny::actionButton(
-        inputId = shiny::NS(id, "cancel_lock_location"),
+        inputId = "cancel_lock_location",
         label = cc_t(lang = lang, "Clear default location"),
         icon = shiny::icon("xmark", verify_fa = FALSE),
         style = "margin-top: var(--padding-v-md);"

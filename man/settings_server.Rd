@@ -4,7 +4,7 @@
 \alias{settings_server}
 \title{Server logic for the settings UI module}
 \usage{
-settings_server(id = "settings", r)
+settings_server(id, r)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the module, used to connect the UI and server
@@ -14,13 +14,9 @@ functions. Defaults to \code{"settings"}.}
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 }
 \description{
-This function contains the server-side logic for the settings UI module.
-It connects to the \code{settings_UI} function through the module ID and a
-reactive values object, and handles various events triggered by user
-interactions with the UI. Specifically, it opens a modal dialog for advanced
-options, updates the region cookie if a user changes the default region,
-retrieves the IDs for a searched location and saves it in a reactive value,
-and clears the default location when a button is clicked.
+This function contains the server-side logic for the settings UI module. It
+only triggers a phantom button, which triggers the opening of the advanced
+settings modal.
 }
 \seealso{
 \code{\link{settings_UI}}
