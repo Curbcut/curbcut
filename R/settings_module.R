@@ -13,11 +13,9 @@
 #' @export
 settings_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
-
     shinyjs::onclick(shiny::NS(id, "advanced_options"), {
       shinyjs::click("proxy_advanced_options", asis = TRUE)
     })
-
   })
 }
 

@@ -6,7 +6,7 @@
 \usage{
 \method{legend_render}{bivar_ldelta_rq3}(
   vars,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
   df,
   lang = NULL,
@@ -20,7 +20,7 @@ of length 2 (two years) and the second of length 1 (one year).
 2 (two years each) The output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
-the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
+the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}

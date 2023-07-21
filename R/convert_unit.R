@@ -18,8 +18,7 @@
 #' @return A string representation of the input value with a suffix of M, K,
 #' or B as appropriate.
 compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
-
-  adjust_if_unique <- function(x, scale_fun, scale, suffix){
+  adjust_if_unique <- function(x, scale_fun, scale, suffix) {
     # Initialize the variables
     result <- do.call(scale_fun, list(x, 1, scale = scale, suffix = suffix))
     unique_length <- length(unique(result))

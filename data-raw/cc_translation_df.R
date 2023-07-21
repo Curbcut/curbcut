@@ -61,7 +61,6 @@ cc_translation_df <-
     en = "Hide",
     fr = "En voir moins"
   ) |>
-
   # Legend ------------------------------------------------------------------
 
   add_row(
@@ -214,10 +213,14 @@ cc_translation_df <-
     fr = "Terminé"
   ) |>
   add_row(
-    en = paste0("Congratulations, you’ve completed the tutorial! You can revisit ",
-                "it by clicking this button."),
-    fr = paste0("Félicitations, vous avez terminé le tutoriel ! Vous pouvez y ",
-                "revenir en cliquant sur ce bouton.")
+    en = paste0(
+      "Congratulations, you’ve completed the tutorial! You can revisit ",
+      "it by clicking this button."
+    ),
+    fr = paste0(
+      "Félicitations, vous avez terminé le tutoriel ! Vous pouvez y ",
+      "revenir en cliquant sur ce bouton."
+    )
   ) |>
   # Misc --------------------------------------------------------------------
 
@@ -723,10 +726,10 @@ cc_translation_df <-
   ) |>
   # Panel view --------------------------------------------------------------
 
-add_row(
-  en = "Name",
-  fr = "Nom"
-) |>
+  add_row(
+    en = "Name",
+    fr = "Nom"
+  ) |>
   add_row(
     en = "the change in %s between %s and %s",
     fr = "le changement dans %s entre %s et %s"

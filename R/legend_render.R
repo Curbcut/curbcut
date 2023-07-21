@@ -6,7 +6,7 @@
 #' @param vars <`named list`> A list object with a pre-determined class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -20,7 +20,7 @@
 #' @return A list with the legend labels and breaks computed by
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
-legend_get_info <- function(vars, font_family = "SourceSansPro", scales_as_DA,
+legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA,
                             df, ...) {
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -53,7 +53,7 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", scales_as_DA,
 #' @param vars <`named list`> A list object with a pre-determined class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -66,7 +66,7 @@ legend_get_info <- function(vars, font_family = "SourceSansPro", scales_as_DA,
 #'
 #' @return It returns a ggplot object
 #' @export
-legend_render <- function(vars, font_family = "SourceSansPro",
+legend_render <- function(vars, font_family = "acidgrotesk-book",
                           scales_as_DA = c("building", "street"), df, ...) {
   UseMethod("legend_render", vars)
 }
@@ -85,7 +85,7 @@ legend_render <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `q5` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -97,7 +97,7 @@ legend_render <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.q5 <- function(vars, font_family = "SourceSansPro",
+legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
                              scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -105,8 +105,8 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
 
   # Get all necessary information
   leg_info <- curbcut:::legend_get_info(vars,
-                                        font_family = font_family, scales_as_DA = scales_as_DA,
-                                        df = df
+    font_family = font_family, scales_as_DA = scales_as_DA,
+    df = df
   )
 
   # Adapt breaks to add the `NA` bar
@@ -117,10 +117,12 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   brks <- brks$var[brks$df == df]
 
   # If all NA, don't bother draw a legend. Return NULL
-  if (all(is.na(brks))) return(NULL)
+  if (all(is.na(brks))) {
+    return(NULL)
+  }
 
   # Complete the xmin and xmax
-  leg$xmin <- brks[1:(length(brks)-1)]
+  leg$xmin <- brks[1:(length(brks) - 1)]
   leg$xmax <- brks[2:(length(brks))]
 
   # Tweak the min and max breaks so that they take a minimum of 15% of the
@@ -136,7 +138,6 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   if ((sum(rect_pct_vals < 0.15) > 0)) {
     while (sum(rect_pct_vals < 0.15) > 0) {
       for (i in which(rect_pct_vals < 0.15)) {
-
         # How much it's increased
         inc <- 0.15 - rect_pct_vals[i]
 
@@ -151,7 +152,6 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
 
           rect_pct_vals[c] <- rect_pct_vals[c] - (inc * prop_reduce)
         }
-
       }
     }
   }
@@ -161,22 +161,30 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
   # cumsum the values to get the xmax and xmax
   values_updated <- cumsum(values_updated)
   leg$xmax <- values_updated
-  leg$xmin <- c(0, values_updated[1:(length(values_updated)-1)])
+  leg$xmin <- c(0, values_updated[1:(length(values_updated) - 1)])
 
   # Blank space addition
   blank <- (brks[length(brks)] - brks[1]) / 16
-  leg <- rbind(tibble::tibble(y = 1,
-                              fill = "#FFFFFFFF",
-                              xmin = leg$xmin[1] - blank,
-                              xmax = leg$xmin[1]),
-               leg)
+  leg <- rbind(
+    tibble::tibble(
+      y = 1,
+      fill = "#FFFFFFFF",
+      xmin = leg$xmin[1] - blank,
+      xmax = leg$xmin[1]
+    ),
+    leg
+  )
 
   # NA (grey) space addition
-  leg <- rbind(tibble::tibble(y = 1,
-                              fill = "#B3B3BB",
-                              xmin = leg$xmin[1] - blank,
-                              xmax = leg$xmin[1]),
-               leg)
+  leg <- rbind(
+    tibble::tibble(
+      y = 1,
+      fill = "#B3B3BB",
+      xmin = leg$xmin[1] - blank,
+      xmax = leg$xmin[1]
+    ),
+    leg
+  )
 
   # Breaks placement
   breaks_placement <- c(-(blank + (blank / 2)), 0, values_updated)
@@ -210,7 +218,6 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
     ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
     leg_info$labs_xy +
     leg_info$theme_default
-
 }
 
 #' Render the legend for the q5 class
@@ -227,7 +234,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `q5` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -239,7 +246,7 @@ legend_render.q5 <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.q5_ind <- function(vars, font_family = "SourceSansPro",
+legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
                                  scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -304,7 +311,7 @@ legend_render.q5_ind <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `qual` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -316,7 +323,7 @@ legend_render.q5_ind <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A plot generated using ggplot2.
 #' @export
-legend_render.qual <- function(vars, font_family = "SourceSansPro",
+legend_render.qual <- function(vars, font_family = "acidgrotesk-book",
                                scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -370,7 +377,7 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `bivar` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
@@ -384,7 +391,7 @@ legend_render.qual <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the bivariate legend.
 #' @export
-legend_render.bivar <- function(vars, font_family = "SourceSansPro",
+legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
                                 df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
@@ -439,7 +446,7 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `delta` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -451,7 +458,7 @@ legend_render.bivar <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
-legend_render.delta <- function(vars, font_family = "SourceSansPro",
+legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -504,7 +511,7 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `q100` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -516,7 +523,7 @@ legend_render.delta <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the `q100` legend.
 #' @export
-legend_render.q100 <- function(vars, font_family = "SourceSansPro",
+legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
                                scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -560,7 +567,7 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro",
 #' @param vars <`named list`> A list object with a `delta_bivar` class. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
@@ -574,7 +581,7 @@ legend_render.q100 <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the `delta_bivar` legend.
 #' @export
-legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
+legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
                                       scales_as_DA = c("building", "street"),
                                       df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
@@ -630,7 +637,7 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #' of length 2 (two years) and the second of length 1 (one year).
 #' 2 (two years each) The output of \code{\link{vars_build}}.
 #' @param font_family <`character`> Which font family should be used to render
-#' the legend (breaks, axis titles, ...). Defaults to `SourceSansPro`. To use
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
@@ -644,7 +651,7 @@ legend_render.delta_bivar <- function(vars, font_family = "SourceSansPro",
 #'
 #' @return A ggplot object that represents the `bivar_ldelta_rq3` legend.
 #' @export
-legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "SourceSansPro",
+legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "acidgrotesk-book",
                                            scales_as_DA = c("building", "street"),
                                            df, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for

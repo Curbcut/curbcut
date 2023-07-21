@@ -24,7 +24,9 @@ autovars_groupnames <- function(id, pres = FALSE) {
   # If it is a dataframe. Just supply the group name as a character vector.
   if (is.data.frame(var_lefts)) {
     # If want to know about presence of a widget, return TRUE
-    if (pres) return(TRUE)
+    if (pres) {
+      return(TRUE)
+    }
     options <- unique(var_lefts$group_name)
     options <- options[order(options)]
     return(options)
@@ -32,7 +34,9 @@ autovars_groupnames <- function(id, pres = FALSE) {
 
   # If want to know about presence of a widget,
   if (pres) {
-    if (length(var_lefts) == 1) return(FALSE)
+    if (length(var_lefts) == 1) {
+      return(FALSE)
+    }
     return(TRUE)
   }
 
@@ -152,53 +156,59 @@ autovars_widgets <- function(id, group_name, common_vals) {
 
   # TKTKTK If it is to ever crash, return no additional widgets (must be a temporary
   # thing only and the module will rise back)
-  tryCatch({
-    # Grab the difference between the variables
-    groups <- tb$group_diff[tb$group_name == group_name]
+  tryCatch(
+    {
+      # Grab the difference between the variables
+      groups <- tb$group_diff[tb$group_name == group_name]
 
-    # Filter in only the groups that share the common widgets' values
-    if (!is.null(common_vals) & !is.null(groups)) {
-      share_common_values_index <- sapply(groups, \(g) {
-        # For all the values in `common_vals`, which are the same as the observed
-        # row?
-        share_common_values <- sapply(names(common_vals), \(cv) {
-          same_feat_val <- g[names(g) == cv]
+      # Filter in only the groups that share the common widgets' values
+      if (!is.null(common_vals) & !is.null(groups)) {
+        share_common_values_index <- sapply(groups, \(g) {
+          # For all the values in `common_vals`, which are the same as the observed
+          # row?
+          share_common_values <- sapply(names(common_vals), \(cv) {
+            same_feat_val <- g[names(g) == cv]
 
-          if ("levels" %in% names(attributes(same_feat_val[[1]]))) {
-            f_lvl <- which(attributes(same_feat_val[[1]])$levels == common_vals[cv])
-            return(unlist(same_feat_val) == f_lvl)
-          }
-          # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
+            if ("levels" %in% names(attributes(same_feat_val[[1]]))) {
+              f_lvl <- which(attributes(same_feat_val[[1]])$levels == common_vals[cv])
+              return(unlist(same_feat_val) == f_lvl)
+            }
+            # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
 
-          unlist(same_feat_val) == common_vals[cv]
+            unlist(same_feat_val) == common_vals[cv]
+          })
 
+          # If ALL the values are the same
+          all(share_common_values)
         })
 
-        # If ALL the values are the same
-        all(share_common_values)
-      })
+        # Filter in only the observations sharing the values of the common values
+        groups <- groups[share_common_values_index]
+      }
+      groups <- unlist(groups)
 
-      # Filter in only the observations sharing the values of the common values
-      groups <- groups[share_common_values_index]
+      # Return no additional widgets if groups has a length of zero
+      if (length(groups) == 0) {
+        return(list())
+      }
+
+      # Filter out groups that are already part of the common widgets
+      groups <- groups[!names(groups) %in% names(common_vals)]
+
+      widgets <- sapply(unique(names(groups)), \(n) {
+        options <- unique(unname(groups[names(groups) == n]))
+        options <- options[order(options)]
+        # If there is a total, put it first
+        if ("Total" %in% options) options <- c("Total", options[options != "Total"])
+        options
+      }, simplify = FALSE, USE.NAMES = TRUE)
+
+      return(widgets)
+    },
+    error = function(e) {
+      return(list())
     }
-    groups <- unlist(groups)
-
-    # Return no additional widgets if groups has a length of zero
-    if (length(groups) == 0) return(list())
-
-    # Filter out groups that are already part of the common widgets
-    groups <- groups[!names(groups) %in% names(common_vals)]
-
-    widgets <- sapply(unique(names(groups)), \(n) {
-      options <- unique(unname(groups[names(groups) == n]))
-      options <- options[order(options)]
-      # If there is a total, put it first
-      if ("Total" %in% options) options <- c("Total", options[options != "Total"])
-      options
-    }, simplify = FALSE, USE.NAMES = TRUE)
-
-    return(widgets)
-  }, error = function(e) return(list()))
+  )
 }
 
 #' Determine Final Value

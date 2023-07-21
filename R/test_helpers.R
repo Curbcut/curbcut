@@ -111,7 +111,6 @@ test_assign_delta_ind_ord <- function(pos = 1) {
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
                             select_id = NA, pos = 1, data_path = .curbcut_montreal_data) {
-
   # Assign necessary setup objects to the global environment
   test_setup()
 
@@ -143,24 +142,26 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
 test_setup <- function() {
   # Variables present in the .GlobalEnv
   assign("all_choropleths",
-         value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
-                   "cmhczone"),
-         envir = .GlobalEnv
+    value = c(
+      "CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
+      "cmhczone"
+    ),
+    envir = .GlobalEnv
   )
 
   # Default random address
   assign("default_random_address",
-         value = "845 Sherbrooke",
-         envir = .GlobalEnv
+    value = "845 Sherbrooke",
+    envir = .GlobalEnv
   )
 
   # Default tileset info
   assign("tileset_prefix",
-         value = "mtl",
-         envir = .GlobalEnv
+    value = "mtl",
+    envir = .GlobalEnv
   )
   assign("mapbox_username",
-         value = "sus-mcgill",
-         envir = .GlobalEnv
+    value = "sus-mcgill",
+    envir = .GlobalEnv
   )
 }

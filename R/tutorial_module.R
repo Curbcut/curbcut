@@ -82,7 +82,9 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
 tutorial_UI <- function(id) {
   shiny::tagList(
     rintrojs::introjsUI(),
-    shiny::div(id = shiny::NS(id, "tutorial"), class = "tutorial-btn",
-               shiny::icon("question", verify_fa = FALSE))
+    shiny::div(
+      id = shiny::NS(id, "tutorial"), class = "tutorial-btn",
+      shiny::icon("question", verify_fa = FALSE)
+    )
   )
 }

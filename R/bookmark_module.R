@@ -95,7 +95,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #' @return A character string representing the bookmarkable URL.
 bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
                                select_id) {
-
   # Make the region a numeric too
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   if (region %in% regions_dictionary$region) {

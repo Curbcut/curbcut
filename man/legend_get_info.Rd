@@ -4,14 +4,14 @@
 \alias{legend_get_info}
 \title{Get information (labels, breaks, themes, ...) for legend creation}
 \usage{
-legend_get_info(vars, font_family = "SourceSansPro", scales_as_DA, df, ...)
+legend_get_info(vars, font_family = "acidgrotesk-book", scales_as_DA, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
 output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
-the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
+the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}

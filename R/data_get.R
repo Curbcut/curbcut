@@ -229,8 +229,10 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve
-  data <- data_get_delta(var_two_years = vars$var_left, df = df,
-                         data_path  = data_path )
+  data <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
 
   # Add the `group` for the map colouring
@@ -270,11 +272,15 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df,
-                            data_path  = data_path )
+  data_vl <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
-  data_vr <- data_get_delta(var_two_years = vars$var_right, df = df,
-                            data_path  = data_path )[-1]
+  data_vr <- data_get_delta(
+    var_two_years = vars$var_right, df = df,
+    data_path = data_path
+  )[-1]
   names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
   data <- cbind(data_vl, data_vr)
 
@@ -313,8 +319,10 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve var_left and add a `q3 column`
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df,
-                            data_path  = data_path )
+  data_vl <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 

@@ -18,14 +18,14 @@
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param font_family <`character`> A string specifying the font family for the
-#' plot, default is "SourceSansPro".
+#' plot, default is "acidgrotesk-book".
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
 explore_graph <- function(vars, select_id, df, data,
                           scales_as_DA = c("building", "street"), lang = NULL,
-                          font_family = "SourceSansPro", ...) {
+                          font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph", vars)
 }
 
@@ -33,10 +33,10 @@ explore_graph <- function(vars, select_id, df, data,
 #' @export
 explore_graph.q5_ind <- function(vars, select_id, df, data,
                                  scales_as_DA = c("building", "street"), lang = NULL,
-                                 font_family = "SourceSansPro", ...) {
+                                 font_family = "acidgrotesk-book", ...) {
   explore_graph_q5_ind(vars, select_id, df, data, scales_as_DA,
     lang = lang,
-    font_family = "SourceSansPro", ...
+    font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -44,7 +44,7 @@ explore_graph.q5_ind <- function(vars, select_id, df, data,
 #' @export
 explore_graph.q5 <- function(vars, select_id, df, data,
                              scales_as_DA = c("building", "street"), lang = NULL,
-                             font_family = "SourceSansPro", ...) {
+                             font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- x <- NULL
 
@@ -117,7 +117,7 @@ explore_graph.q5 <- function(vars, select_id, df, data,
 #' @export
 explore_graph.bivar <- function(vars, select_id, df, data,
                                 scales_as_DA = c("building", "street"), lang = NULL,
-                                font_family = "SourceSansPro", ...) {
+                                font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- var_right <- group <- NULL
 
@@ -204,10 +204,10 @@ explore_graph.bivar <- function(vars, select_id, df, data,
 #' @export
 explore_graph.delta_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
-                                    font_family = "SourceSansPro", ...) {
+                                    font_family = "acidgrotesk-book", ...) {
   explore_graph_delta_ind(vars, select_id, df, data, scales_as_DA,
     lang = lang,
-    font_family = "SourceSansPro", ...
+    font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -215,7 +215,7 @@ explore_graph.delta_ind <- function(vars, select_id, df, data,
 #' @export
 explore_graph.delta <- function(vars, select_id, df, data,
                                 scales_as_DA = c("building", "street"), lang = NULL,
-                                font_family = "SourceSansPro", ...) {
+                                font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left_1 <- var_left_2 <- group <- NULL
 
@@ -303,7 +303,7 @@ explore_graph.delta <- function(vars, select_id, df, data,
 #' @export
 explore_graph.delta_bivar <- function(vars, select_id, df, data,
                                       scales_as_DA = c("building", "street"), lang = NULL,
-                                      font_family = "SourceSansPro", ...) {
+                                      font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- var_right <- group <- NULL
 
@@ -381,10 +381,10 @@ explore_graph.delta_bivar <- function(vars, select_id, df, data,
 #' @export
 explore_graph.bivar_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
-                                    font_family = "SourceSansPro", ...) {
+                                    font_family = "acidgrotesk-book", ...) {
   explore_graph_bivar_ind(vars, select_id, df, data, scales_as_DA,
     lang = lang,
-    font_family = "SourceSansPro", ...
+    font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -408,14 +408,14 @@ explore_graph.bivar_ind <- function(vars, select_id, df, data,
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param font_family <`character`> A string specifying the font family for the
-#' plot, default is "SourceSansPro".
+#' plot, default is "acidgrotesk-book".
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
 explore_graph_q5_ind <- function(vars, select_id, df, data,
                                  scales_as_DA = c("building", "street"), lang = NULL,
-                                 font_family = "SourceSansPro", ...) {
+                                 font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph_q5_ind", vars)
 }
 
@@ -424,7 +424,7 @@ explore_graph_q5_ind <- function(vars, select_id, df, data,
 explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
                                         scales_as_DA = c("building", "street"),
                                         lang = NULL,
-                                        font_family = "SourceSansPro", ...) {
+                                        font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- x <- NULL
 
@@ -500,7 +500,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
 explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data,
                                          scales_as_DA = c("building", "street"),
                                          lang = NULL,
-                                         font_family = "SourceSansPro", ...) {
+                                         font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- occ <- NULL
 
@@ -581,14 +581,14 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, df, data,
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param font_family <`character`> A string specifying the font family for the
-#' plot, default is "SourceSansPro".
+#' plot, default is "acidgrotesk-book".
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
 explore_graph_bivar_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
-                                    font_family = "SourceSansPro", ...) {
+                                    font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph_bivar_ind", vars)
 }
 
@@ -597,11 +597,11 @@ explore_graph_bivar_ind <- function(vars, select_id, df, data,
 explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data,
                                            scales_as_DA = c("building", "street"),
                                            lang = NULL,
-                                           font_family = "SourceSansPro", ...) {
+                                           font_family = "acidgrotesk-book", ...) {
   explore_graph.bivar(
     vars = vars, select_id = select_id, df = df, data = data,
     scales_as_DA = scales_as_DA, lang = lang,
-    font_family = "SourceSansPro", ...
+    font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -610,7 +610,7 @@ explore_graph_bivar_ind.scalar <- function(vars, select_id, df, data,
 explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
                                             scales_as_DA = c("building", "street"),
                                             lang = NULL,
-                                            font_family = "SourceSansPro", ...) {
+                                            font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left <- var_right <- NULL
 
@@ -693,14 +693,14 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, df, data,
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param font_family <`character`> A string specifying the font family for the
-#' plot, default is "SourceSansPro".
+#' plot, default is "acidgrotesk-book".
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
 explore_graph_delta_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
-                                    font_family = "SourceSansPro", ...) {
+                                    font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph_delta_ind", vars)
 }
 
@@ -709,11 +709,11 @@ explore_graph_delta_ind <- function(vars, select_id, df, data,
 explore_graph_delta_ind.scalar <- function(vars, select_id, df, data,
                                            scales_as_DA = c("building", "street"),
                                            lang = NULL,
-                                           font_family = "SourceSansPro", ...) {
+                                           font_family = "acidgrotesk-book", ...) {
   explore_graph.delta(
     vars = vars, select_id = select_id, df = df, data = data,
     scales_as_DA = scales_as_DA, lang = lang,
-    font_family = "SourceSansPro", ...
+    font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -722,7 +722,7 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, df, data,
 explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
                                             scales_as_DA = c("building", "street"),
                                             lang = NULL,
-                                            font_family = "SourceSansPro", ...) {
+                                            font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
   var_left_1 <- var_left_2 <- group <- frequency <- NULL
 

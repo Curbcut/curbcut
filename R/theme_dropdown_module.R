@@ -48,8 +48,8 @@ theme_dropdown_UI <- function(id) {
   shiny::div(
     class = "theme-dropdown",
     cc.landing::theme_drop_input(shiny::NS(id, "theme_drop"),
-                                 pages = pages,
-                                 theme = theme
+      pages = pages,
+      theme = theme
     )
   )
 }

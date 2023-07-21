@@ -385,7 +385,7 @@ panel_view_UI <- function(id) {
     # To accompany the panel data button, create the div
     shinyjs::hidden(
       shiny::div(
-        class = "panel_view",
+        class = "panel_view scrollable-div",
         id = shiny::NS(id, "view_data"),
         shiny::div(
           style = "margin-bottom:20px;",

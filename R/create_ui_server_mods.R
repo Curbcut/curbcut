@@ -219,7 +219,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         tile = tile,
-        data_colours = data_colours)
+        data_colours = data_colours
+      )
 
       # Update map labels
       curbcut::label_server(

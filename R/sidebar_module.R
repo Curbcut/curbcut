@@ -37,7 +37,7 @@ sidebar_server <- function(id, r) {
         inputId = "title_box",
         configuration = list(
           # lang = r$lang(),
-          show = "true"#,
+          show = "true" # ,
           # title_text_title = cc_t(page$title_text_title, lang = r$lang()),
           # title_text_main = cc_t(page$title_text_main, lang = r$lang()),
           # title_text_extra = cc_t(page$title_text_extra, lang = r$lang())
@@ -117,7 +117,11 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
               id = shiny::NS(id, "left_widgets"), ...
             )
           ),
-          shiny::div(class = "bottom_sidebar", bottom)
+          shiny::div(
+            class = "bottom_sidebar",
+            style = if (is.null(bottom)) "display:none;" else "",
+            bottom
+          )
         )
       )
     ),
@@ -133,4 +137,3 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
     )
   )
 }
-

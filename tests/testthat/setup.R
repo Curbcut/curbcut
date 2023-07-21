@@ -30,4 +30,3 @@ tbs <- DBI::dbListTables(conn)
 tbs <- tbs[!grepl("city_", tbs)]
 lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
 suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
-

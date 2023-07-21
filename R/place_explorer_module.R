@@ -227,7 +227,6 @@ place_explorer_server <- function(id, r,
         return(list(
           div = shiny::div(
             class = "main_panel_popup",
-            style = "height:100%;overflow:hidden;",
             shiny::tags$iframe(
               style = "width:100%;height:100%;",
               title = "place_ex",
@@ -276,56 +275,62 @@ place_explorer_server <- function(id, r,
 place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   # Get default values for the place explorer
   pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA)
+  modules <- get_from_globalenv("modules")
+  page <- modules[modules$id == id, ]
+  theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
   shiny::tagList(
+    shiny::div(
+      `data-theme` = theme_lowercased,
 
-    # Sidebar
-    sidebar_UI(
-      shiny::NS(id, id),
-      # Search box
-      shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
-      # Imitate a split layout which only works this way on iOS
-      shiny::HTML(paste0(
-        '<div class="shiny-split-layout">
+      # Sidebar
+      sidebar_UI(
+        shiny::NS(id, id),
+        # Search box
+        shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
+        # Imitate a split layout which only works this way on iOS
+        shiny::HTML(paste0(
+          '<div class="shiny-split-layout">
                      <div style="width: 80%;">',
-        shiny::textInput(
-          inputId = shiny::NS(id, "address_searched"),
-          label = NULL, placeholder = "H3A 2T5"
+          shiny::textInput(
+            inputId = shiny::NS(id, "address_searched"),
+            label = NULL, placeholder = "H3A 2T5"
+          ),
+          '</div><div style="width: 20%;">',
+          shiny::actionButton(
+            inputId = shiny::NS(id, "search_button"),
+            label = shiny::icon("search", verify_fa = FALSE),
+            style = "margin-top: var(--padding-v-md);"
+          ),
+          "</div></div>"
+        )),
+        # Back button. The CSS file places it at the right spot
+        shiny::actionLink(
+          shiny::NS(id, "back"),
+          curbcut::cc_t("Back to the place explorer")
         ),
-        '</div><div style="width: 20%;">',
-        shiny::actionButton(
-          inputId = shiny::NS(id, "search_button"),
-          label = shiny::icon("search", verify_fa = FALSE),
-          style = "margin-top: var(--padding-v-md);"
-        ),
-        "</div></div>"
-      )),
-      # Back button. The CSS file places it at the right spot
-      shiny::actionLink(
-        shiny::NS(id, "back"),
-        curbcut::cc_t("Back to the place explorer")
+        bottom =
+        # Scale slider
+          curbcut::zoom_UI(
+            id = shiny::NS(id, id),
+            zoom_levels = pe_vars$map_zoom_levels
+          ),
       ),
-      bottom =
-      # Scale slider
-        curbcut::zoom_UI(
-          id = shiny::NS(id, id),
-          zoom_levels = pe_vars$map_zoom_levels
-        ),
-    ),
 
-    # Map
-    map_UI(id = shiny::NS(id, id)),
+      # Map
+      map_UI(id = shiny::NS(id, id)),
 
-    # Main panel
-    shinyjs::hidden(
-      shiny::div(
-        id = shiny::NS(id, "place_exp_main_panel"),
-        shiny::htmlOutput(shiny::NS(id, "loader")),
-        shiny::htmlOutput(shiny::NS(id, "main_panel")),
-        shiny::downloadButton(
-          class = "download_portrait",
-          outputId = shiny::NS(id, "download_portrait"),
-          label = cc_t("Download regional portrait")
+      # Main panel
+      shinyjs::hidden(
+        shiny::div(
+          id = shiny::NS(id, "place_exp_main_panel"),
+          shiny::htmlOutput(shiny::NS(id, "loader")),
+          shiny::htmlOutput(shiny::NS(id, "main_panel")),
+          shiny::downloadButton(
+            class = "download_portrait",
+            outputId = shiny::NS(id, "download_portrait"),
+            label = cc_t("Download regional portrait")
+          )
         )
       )
     )
