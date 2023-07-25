@@ -115,11 +115,22 @@ zoom_UI <- function(id, zoom_levels) {
     shiny::div(
       id = shiny::NS(id, "zoom_div"),
       shiny::div(
-        class = "sus-sidebar-control",
-        checkbox_UI(
-          id = shiny::NS(id, "zoom_auto"),
-          label = cc_t("Auto-scale"),
-          value = TRUE
+        class = "shiny-split-layout sidebar-section-title",
+        shiny::div(
+          style = "width: 9%",
+          icon_material_title("filter_alt")
+        ),
+        shiny::div(
+          style = "width: 24%",
+          cc_t("Scale")
+        ),
+        shiny::div(
+          style = "width: 64%; margin:0px !important; text-align: right;",
+          checkbox_UI(
+            id = shiny::NS(id, "zoom_auto"),
+            label = cc_t("Auto-scale"),
+            value = TRUE
+          )
         )
       ),
       shiny::div(

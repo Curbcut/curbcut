@@ -93,9 +93,9 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
       shiny::div(
         id = "title_bar", class = "sus-map-sidebar",
         shiny::div(
-          class = "sus-map-sidebar-container scrollable-div",
+          class = "sus-map-sidebar-container",
           shiny::div(
-            class = "sus-map-sidebar-content",
+            class = "sus-map-sidebar-content scrollable-div",
             shiny::div(
               shiny::tagList(
                 shiny::div(

@@ -30,9 +30,15 @@ create_ui_server_mods <- function(modules, pos = 1) {
           id = shiny::NS(id, id),
           curbcut::autovars_UI(shiny::NS(id, id)),
           curbcut::warnuser_UI(shiny::NS(id, id)),
+          if (length(unlist(page$var_left)) > 1 || length(unlist(page$dates)) > 1) shiny::hr(),
+          curbcut::compare_UI(
+            id = shiny::NS(id, id),
+            var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
+          ),
+          shiny::hr(),
+          curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp),
           bottom = shiny::tagList(
-            curbcut::legend_UI(shiny::NS(id, id)),
-            curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp)
+            curbcut::legend_UI(shiny::NS(id, id))
           )
         ),
 
@@ -48,10 +54,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
         # Right panel
         curbcut::right_panel(
           id = id,
-          curbcut::compare_UI(
-            id = shiny::NS(id, id),
-            var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
-          ),
           curbcut::explore_UI(shiny::NS(id, id)),
           curbcut::dyk_UI(shiny::NS(id, id))
         )

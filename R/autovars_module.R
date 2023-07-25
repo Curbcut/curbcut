@@ -41,8 +41,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     shiny::observe({
       # Time widgets, if there are date times
       shiny::insertUI(
-        selector = html_ns("common_widgets"),
-        where = "beforeBegin",
+        selector = html_ns("autovars"),
+        where = "beforeEnd",
         ui = {
           if (!is.null(default_year)) {
             min_ <- common_widgets()$time |> min()
@@ -51,20 +51,34 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             double_value_ <- common_widgets()$time[ceiling(length(common_widgets()$time) / 2)]
             double_value_ <- c(double_value_, max_)
             shiny::tagList(
-              slider_UI(
-                id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
-                step = step_, label = cc_t("Select a year", force_span = TRUE)
-              ),
-              slider_UI(
-                id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
-                step = step_, label = cc_t("Select two years", force_span = TRUE),
-                value = double_value_
-              ),
-              checkbox_UI(
-                id = widget_ns(id), label = cc_t("Compare dates", force_span = TRUE),
-                value = FALSE
-              ),
-              if (length(common_widgets()$widgets) > 1) shiny::hr(id = widget_ns("time_hr"))
+              shiny::div(
+                id = widget_ns("year_sliders"),
+                class = "year-slider",
+                hr(id = widget_ns("above_year_hr")),
+                shiny::div(
+                  class="shiny-split-layout sidebar-section-title",
+                  shiny::div(style = "width: 9%",
+                             icon_material_title("date_range")),
+                  shiny::div(style = "width: 24%",
+                             shiny::tags$span(id = shiny::NS(id, "year_label"),
+                                              cc_t("Time", force_span = TRUE))),
+                  shiny::div(style = "width: 64%; margin:0px !important; text-align: right;",
+                             checkbox_UI(
+                               id = widget_ns(id),
+                               label = cc_t("Compare dates", force_span = TRUE),
+                               value = FALSE
+                             )))
+                ,
+                slider_UI(
+                  id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
+                  step = step_, label = NULL
+                ),
+                slider_UI(
+                  id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
+                  step = step_, label = NULL,
+                  value = double_value_
+                )
+              )
             )
           }
         }
@@ -145,21 +159,31 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
-      shinyjs::toggle("time_hr", condition = !single_year)
+
+      # Hide the whole div if there's only one year of data
+      shinyjs::toggle("year_sliders", condition = !single_year)
 
       # If there's a single year or there are no common widgets, or if there are
       # no main widgets.
       main_widgets <- autovars_groupnames(id = id, pres = TRUE)
 
-      show_hr <- {
-        com_widgs <- length(common_widgets()$widgets) > 0
-        years_shown <- !single_year
-
-        # If there are more than one block, show the hr
-        sum(main_widgets, com_widgs, years_shown) > 1
-      }
+      show_hr <- length(common_widgets()$widgets) > 0
+      # {
+      #   com_widgs <- length(common_widgets()$widgets) > 0
+      #   years_shown <- !single_year
+      #
+      #   # If there are more than one block, show the hr
+      #   sum(main_widgets, com_widgs, years_shown) > 1
+      # }
 
       shinyjs::toggle("common_widgets", condition = show_hr)
+
+      # On slider switch event, change the label
+      if (slider_switch()) {
+        shinyjs::html(shiny::NS(id, "year_label"), "Select two years")
+      } else {
+        shinyjs::html(shiny::NS(id, "year_label"), "Select a year")
+      }
     })
 
     # Grab the right time
@@ -268,14 +292,16 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # If there's only one option in the var_left, hide it
     shiny::observeEvent(mnd(),
-      {
-        modules <- get_from_globalenv("modules")
-        var_lefts <- modules$var_left[modules$id == id][[1]]
-        if (is.character(var_lefts) & length(var_lefts) == 1) {
-          shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
-        }
-      },
-      ignoreInit = TRUE
+                        {
+                          modules <- get_from_globalenv("modules")
+                          var_lefts <- modules$var_left[modules$id == id][[1]]
+                          if (is.character(var_lefts) & length(var_lefts) == 1) {
+                            shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
+                            shinyjs::hide(id = "above_year_hr")
+                            shinyjs::hide(id = "indicators_label")
+                          }
+                        },
+                        ignoreInit = TRUE
     )
 
     # Additional widgets ------------------------------------------------------
@@ -373,6 +399,7 @@ autovars_UI <- function(id) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "autovars"),
+      label_indicators(id = shiny::NS(id, "indicators_label")),
       shiny::hr(id = shiny::NS(id, "common_widgets")),
       shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets")))
     )

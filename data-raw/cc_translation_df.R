@@ -46,6 +46,10 @@ cc_translation_df <-
     fr = "Échelle automatique"
   ) |>
   add_row(
+    en = "Select a scale",
+    fr = "Sélectionnez une échelle"
+  ) |>
+  add_row(
     en = "No postal code found for `{address}`",
     fr = "Pas de code postal trouvé pour `{address}`"
   ) |>

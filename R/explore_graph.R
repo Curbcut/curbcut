@@ -68,7 +68,7 @@ explore_graph.q5 <- function(vars, select_id, df, data,
 
   # Graph an appropriate number of bins
   var_left_num <- length(unique(data$var_left))
-  bin_number <- max(15, min(25, var_left_num))
+  bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
   vals <- var_get_breaks(
@@ -450,7 +450,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, df, data,
 
   # Graph an appropriate number of bins
   var_left_num <- length(unique(data$var_left))
-  bin_number <- max(15, min(25, var_left_num))
+  bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
   vals <- var_get_breaks(

@@ -38,7 +38,7 @@ icon_material <- function(icon, style = NULL) {
 #' icon, styled for a title.
 icon_material_title <- function(icon) {
   icon_material(icon, style = paste0(
-    "font-size: 20px; ",
+    "font-size: 17px; ",
     "color: var(--theme-color); ",
     "vertical-align:sub; ",
     "margin-right:.3rem"

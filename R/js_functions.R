@@ -39,10 +39,10 @@ use_curbcut_js <- function() {
       functions = c("highlightOptions")
     )),
 
-    # Right panel hides some div depending on window size
-    shiny::tags$head(shiny::tags$script(
-      src = "curbcut_js/right_panel.js"
-    )),
+    # # Right panel hides some div depending on window size
+    # shiny::tags$head(shiny::tags$script(
+    #   src = "curbcut_js/right_panel.js"
+    # )),
     # Change window title
     shiny::tags$head(shiny::tags$script(
       shiny::HTML(

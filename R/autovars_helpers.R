@@ -1,3 +1,30 @@
+#' Creates a UI label element with an icon and a title
+#'
+#' This function generates a UI element for a Shiny application. The output
+#' is a div with two child divs. One contains a Material Design icon, the
+#' other contains the 'Select an indicator' title.
+#'
+#' @param id A character string specifying the id attribute for the outer div.
+#'
+#' @return A shiny::div object that includes the specified icon and title.
+#' @export
+label_indicators <- function(id) {
+  shiny::div(
+    id = id,
+    class = "shiny-split-layout sidebar-section-title",
+    style = "margin-bottom:10px;",
+    shiny::div(
+      style = "width: 9%",
+      icon_material_title("tune")
+    ),
+    shiny::div(
+      style = "width: 88%",
+      cc_t("Indicator")
+    )
+  )
+}
+
+
 #' Retrieve Group Names for a Specific Module
 #'
 #' This function retrieves the group names associated with a specific module ID.
