@@ -129,7 +129,7 @@ explore_text_parent_title <- function(var, lang = NULL) {
   variables <- get_from_globalenv("variables")
   if (!parent_string %in% variables$var_code) {
     if (parent_string == "population") {
-      return("individuals")
+      return(cc_t("individuals", lang = lang))
     }
     return(cc_t(parent_string, lang = lang))
   }

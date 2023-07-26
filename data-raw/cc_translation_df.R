@@ -385,6 +385,10 @@ cc_translation_df <-
   # Explore panel -----------------------------------------------------------
 
   # Context and q5
+add_row(
+  en = "individuals",
+  fr = "individus"
+) |>
   add_row(
     en = "This value",
     fr = "Cette valeur"

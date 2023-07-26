@@ -50,10 +50,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             step_ <- unique(diff(common_widgets()$time))[1]
             double_value_ <- common_widgets()$time[ceiling(length(common_widgets()$time) / 2)]
             double_value_ <- c(double_value_, max_)
+            length_ <- common_widgets()$time |> length()
+            # If there are less than 10 options, slim sliders
+            ys_classes <- if (length_ < 10) "year-slider-slim" else "year-slider"
+
             shiny::tagList(
               shiny::div(
                 id = widget_ns("year_sliders"),
-                class = "year-slider",
+                class = ys_classes,
                 hr(id = widget_ns("above_year_hr")),
                 shiny::div(
                   class="shiny-split-layout sidebar-section-title",
@@ -123,13 +127,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                       label = cc_t(n, force_span = TRUE)
                     )
                   } else {
-                    w <- list(w)
-                    names(w) <- n
-                    # Translate the options
-                    w <- sapply(w[[1]], c, USE.NAMES = TRUE, simplify = FALSE)
-                    w <- list(w)
-                    names(w) <- n
-                    w <- cc_t(w, lang = r$lang())
+                    names(w) <- w
+                    names(w) <- sapply(names(w), cc_t, lang = r$lang())
                     picker_UI(
                       id = widget_ns(id),
                       picker_id = sprintf("p%s", l),
@@ -235,17 +234,20 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           if (is.na(main_dropdown_title)) main_dropdown_title <- NULL
           # Translate the content of the dropdown
           w <- autovars_groupnames(id = id)
-          w <- sapply(w, c, USE.NAMES = TRUE, simplify = FALSE)
-          # Add a name if there is one available
-          if (!is.null(main_dropdown_title)) {
-            # if made with `dropdown_make` (by `autovars_groupnames`), then
-            # skip this step. We know it with the vector depth
-            if (curbcut::vec_dep(w) == 2) {
-              w <- list(w)
-              names(w) <- main_dropdown_title
+
+          # If the list is of length one, do not keep it as a list, so we can
+          # remove the dropddown title.
+          if (!is.list(w) || length(w) == 1) w <- {
+            w <- unname(w)
+            w <- unlist(w)
+            if (is.null(names(w))) {
+              names(w) <- w
             }
+            names(w) <- sapply(names(w), cc_t, lang = r$lang())
+            w
+          } else {
+            w <- cc_t(w, lang = r$lang())
           }
-          w <- cc_t(w, lang = r$lang())
 
           shiny::div(
             id = widget_ns("main_drop"),
@@ -253,7 +255,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               id = widget_ns(id),
               picker_id = "mnd",
               var_list = w,
-              label = cc_t(main_dropdown_title, force_span = TRUE)
+              label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
             )
           )
         }
@@ -322,13 +324,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             id = widget_ns("additional_widgets"),
             do.call(shiny::tagList, mapply(
               function(w, l, n) {
-                w <- list(w)
-                names(w) <- n
-                # Translate the options
-                w <- sapply(w[[1]], c, USE.NAMES = TRUE, simplify = FALSE)
-                w <- list(w)
-                names(w) <- n
-                w <- cc_t(w, lang = r$lang())
+                names(w) <- w
+                names(w) <- sapply(names(w), cc_t, lang = r$lang())
                 picker_UI(
                   id = widget_ns(id),
                   picker_id = sprintf("p%s", l),

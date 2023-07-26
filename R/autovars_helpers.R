@@ -12,7 +12,6 @@ label_indicators <- function(id) {
   shiny::div(
     id = id,
     class = "shiny-split-layout sidebar-section-title",
-    style = "margin-bottom:10px;",
     shiny::div(
       style = "width: 9%",
       icon_material_title("tune")
