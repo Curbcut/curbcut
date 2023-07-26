@@ -17,8 +17,15 @@ right_panel <- function(id, ...) {
     id = shiny::NS(id, "right_panel"),
     class = "panel panel-default sus-map-panel sus-scroll",
     shiny::div(
-      class = "sus-map-panel-content scrollable-div",
-      id = "cc-right-panel", ...
+      shiny::h4(class = "mobile-panel-title", cc_t("Explore")),
+      shiny::div(
+        class = "sus-map-panel-content scrollable-div",
+        id = "cc-right-panel", ...
+      ),
+      shiny::div(
+        class = "mobile-panel-menu",
+        icon_material("menu")
+      )
     )
   )
 }

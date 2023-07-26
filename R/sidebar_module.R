@@ -106,8 +106,12 @@ sidebar_UI <- function(id, ..., bottom = NULL) {
                     shiny::actionLink(
                       inputId = shiny::NS(id, "expand_title_text"),
                       label = NULL,
-                      shiny::icon("info-circle")
-                    )
+                      shiny::icon("info-circle", class = "title-text-info")
+                    ),
+                    shiny::div(
+                      class = "mobile-sidebar-menu",
+                      icon_material("menu")
+                    ),
                   ),
                 ),
               )
