@@ -81,9 +81,7 @@ sidebar_server <- function(id, r) {
 #' Curbcut.
 #' @export
 sidebar_UI <- function(id, ..., bottom = NULL) {
-  modules <- get_from_globalenv("modules")
-  solo_id <- gsub("-.*$", "", id)
-  page <- modules[modules$id == solo_id, ]
+  page <- page_get(id)
 
   shiny::tagList(
     shiny::div(

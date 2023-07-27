@@ -21,6 +21,7 @@
 #' @export
 autovars_server <- function(id, r, main_dropdown_title, default_year) {
   shiny::moduleServer(id, function(input, output, session) {
+
     # Global preparation ------------------------------------------------------
 
     # Selector function. Retrieve the namespace function associated with the
@@ -30,7 +31,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     }
     widget_ns <- session$ns
     additional_picker_count <- shiny::reactiveVal(0)
-    out_var <- shiny::reactiveVal(autovars_placeholder_var(id = id))
+
+    page <- page_get(id)
+    # Some widgets must be placed in the advanced controls
+    adv <- unlist(page$add_advanced_controls)
+
+    default_var <- autovars_placeholder_var(id = id)
+    out_var <- shiny::reactiveVal(default_var)
 
     # Common widgets ----------------------------------------------------------
 
@@ -89,60 +96,100 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       )
     })
     shiny::observe({
+
+      raw_wdgs <- common_widgets()$widgets
+
       # Other widgets that are common between all groups, if there are any
-      if (length(common_widgets()$widgets) > 0) {
+      if (length(raw_wdgs) > 0) {
         # Remove the div if it was already present (when language changes, it gets redrawn)
         shiny::removeUI(selector = html_ns("common_widgets_in"))
+        shiny::removeUI(selector = html_ns("common_widgets_in_adv"))
+
+        # Grab the default selections
+        tb <- page$var_left[[1]]
+        default_selection <- tb$group_diff[tb$var_code == default_var][[1]]
+
+        # Common widgets UIs function. wdgs are the widgest to add, ns is
+        # the name of the div
+        UIs <- \(wdgs, ns) {
+          shiny::div(
+            id = widget_ns(ns),
+            do.call(shiny::tagList, mapply(
+              function(w, n) {
+
+                # Keep the order!
+                l <- which(names(raw_wdgs) == n)
+
+                if ("slider_text" %in% class(w)) {
+                  selected <- w[[default_selection[[n]]]]
+
+                  slider_text_UI(
+                    id = widget_ns(id),
+                    slider_text_id = sprintf("st%s", l),
+                    choices = w,
+                    selected = selected,
+                    label = cc_t(n, force_span = TRUE)
+                  )
+                } else if ("slider" %in% class(w)) {
+                  vals <- unlist(w)
+                  vals <- as.numeric(vals)
+                  min_ <- min(vals)
+                  max_ <- max(vals)
+                  step_ <- unique(diff(vals))[1]
+                  selected <- default_selection[[n]]
+
+                  slider_UI(
+                    id = widget_ns(id),
+                    slider_id = sprintf("s%s", l),
+                    step = step_,
+                    min = min_,
+                    max = max_,
+                    value = selected,
+                    label = cc_t(n, force_span = TRUE)
+                  )
+                } else {
+                  names(w) <- w
+                  names(w) <- sapply(names(w), cc_t, lang = r$lang())
+                  selected <- default_selection[[n]]
+
+                  picker_UI(
+                    id = widget_ns(id),
+                    picker_id = sprintf("p%s", l),
+                    var_list = w,
+                    label = cc_t(n, force_span = TRUE),
+                    selected = selected
+                  )
+                }
+              }, wdgs, names(wdgs),
+              SIMPLIFY = FALSE
+            ))
+          )
+        }
+
+        # The Check for the widgets that should be placed in the advanced
+        # options div. Filter them out of wdgs after.
+        if (length(adv) != 0) {
+          wdgs_adv <- raw_wdgs[names(raw_wdgs) %in% adv]
+          other_wdgs <- raw_wdgs[!names(raw_wdgs) %in% adv]
+
+          if (length(wdgs_adv) != 0) {
+            shiny::insertUI(
+              selector = html_ns("advanced_controls_div"),
+              where = "beforeEnd",
+              ui = UIs(wdgs_adv, ns = "common_widgets_in_adv")
+            )
+          }
+        } else {
+          other_wdgs <- raw_wdgs
+        }
+
+        # Place the rest of the wdgs at their spot
         shiny::insertUI(
           selector = html_ns("common_widgets"),
           where = "beforeBegin",
-          ui = {
-            shiny::div(
-              id = widget_ns("common_widgets_in"),
-              do.call(shiny::tagList, mapply(
-                function(w, l, n) {
-                  if ("slider_text" %in% class(w)) {
-                    selected <- w[floor(length(w) / 2)]
-                    slider_text_UI(
-                      id = widget_ns(id),
-                      slider_text_id = sprintf("st%s", l),
-                      choices = w,
-                      selected = selected,
-                      label = cc_t(n, force_span = TRUE)
-                    )
-                  } else if ("slider" %in% class(w)) {
-                    vals <- unlist(w)
-                    vals <- as.numeric(vals)
-                    min_ <- min(vals)
-                    max_ <- max(vals)
-                    step_ <- unique(diff(vals))[1]
-                    value_ <- vals[floor(length(vals) / 2)]
-                    slider_UI(
-                      id = widget_ns(id),
-                      slider_id = sprintf("s%s", l),
-                      step = step_,
-                      min = min_,
-                      max = max_,
-                      value = value_,
-                      label = cc_t(n, force_span = TRUE)
-                    )
-                  } else {
-                    names(w) <- w
-                    names(w) <- sapply(names(w), cc_t, lang = r$lang())
-                    picker_UI(
-                      id = widget_ns(id),
-                      picker_id = sprintf("p%s", l),
-                      var_list = w,
-                      label = cc_t(n, force_span = TRUE)
-                    )
-                  }
-                }, common_widgets()$widgets, seq_along(common_widgets()$widgets),
-                names(common_widgets()$widgets),
-                SIMPLIFY = FALSE
-              ))
-            )
-          }
+          ui = UIs(other_wdgs, ns = "common_widgets_in")
         )
+
       }
     })
     # Grab the time values
@@ -165,17 +212,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       # If there's a single year or there are no common widgets, or if there are
       # no main widgets.
       main_widgets <- autovars_groupnames(id = id, pres = TRUE)
-
-      show_hr <- length(common_widgets()$widgets) > 0
-      # {
-      #   com_widgs <- length(common_widgets()$widgets) > 0
-      #   years_shown <- !single_year
-      #
-      #   # If there are more than one block, show the hr
-      #   sum(main_widgets, com_widgs, years_shown) > 1
-      # }
-
-      shinyjs::toggle("common_widgets", condition = show_hr)
 
       # On slider switch event, change the label
       if (slider_switch()) {
@@ -227,9 +263,20 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Draw and get value from the first dropdown
     shiny::observe({
       shiny::removeUI(selector = html_ns("main_drop"))
+
+      # If `mnd` is in the list of widgets that should be placed in the advanced
+      # options, switch selector
+      if (length(adv) != 0 && "mnd" %in% adv) {
+        selector <-  html_ns("advanced_controls_div")
+        where <-  "beforeEnd"
+      } else {
+        selector <-  html_ns("common_widgets")
+        where <-  "afterEnd"
+      }
+
       shiny::insertUI(
-        selector = html_ns("common_widgets"),
-        where = "afterEnd",
+        selector = selector,
+        where = where,
         ui = {
           if (is.na(main_dropdown_title)) main_dropdown_title <- NULL
           # Translate the content of the dropdown
@@ -249,12 +296,21 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             w <- cc_t(w, lang = r$lang())
           }
 
+          # Default selection
+          tb <- page$var_left[[1]]
+          default_selection <- if (is.data.frame(tb)) {
+            tb$group_name[tb$var_code == default_var]
+          } else {
+            default_var
+          }
+
           shiny::div(
             id = widget_ns("main_drop"),
             picker_UI(
               id = widget_ns(id),
               picker_id = "mnd",
               var_list = w,
+              selected = default_selection,
               label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
             )
           )
@@ -308,37 +364,66 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Additional widgets ------------------------------------------------------
 
+    # Checkbox to show additional widgets
+    show_advanced <- checkbox_server(
+      id = "cb_advanced_controls",
+      r = r,
+      label = shiny::reactive("Show")
+    )
+    shiny::observeEvent(show_advanced(), {
+      shinyjs::toggle("advanced_controls_div", condition = show_advanced(),
+                      anim = TRUE, animType = "slide")
+    })
+
     shiny::observe({
       # Remove the content of the previous div
       shiny::removeUI(selector = html_ns("additional_widgets"))
 
-      # If there are additional widgets only, show the hr
-      shinyjs::toggle("hr_additional_widgets", condition = length(widgets()) > 0)
+      # If there are additional widgets, and the common number of widgets is 3
+      # or less, placed them in advanced controls.
+      advanced_controls_avail <- (length(widgets()) + length(adv) > 2)
+      if (!advanced_controls_avail) {
+        selector = html_ns("hr_additional_widgets")
+        where = "afterEnd"
+      } else {
+        selector <- html_ns("advanced_controls_div")
+        where <- "beforeEnd"
+      }
+      # Show and hide the whole advanced controls div
+      shinyjs::toggle("advanced_controls", condition = advanced_controls_avail)
 
-      # Other widgets (dropdowns)
-      shiny::insertUI(
-        selector = html_ns("hr_additional_widgets"),
-        where = "afterEnd",
-        ui = {
-          shiny::tags$div(
-            id = widget_ns("additional_widgets"),
-            do.call(shiny::tagList, mapply(
-              function(w, l, n) {
-                names(w) <- w
-                names(w) <- sapply(names(w), cc_t, lang = r$lang())
-                picker_UI(
-                  id = widget_ns(id),
-                  picker_id = sprintf("p%s", l),
-                  var_list = w,
-                  label = cc_t(n, force_span = TRUE)
-                )
-              }, widgets(), seq_along(widgets()) + length(common_widgets()$widgets),
-              names(widgets()),
-              SIMPLIFY = FALSE
-            ))
-          )
-        }
-      )
+      if (length(widgets()) > 0) {
+        tb <- page$var_left[[1]]
+        default_selection <- tb$group_diff[tb$var_code == default_var][[1]]
+
+        # Other widgets (dropdowns)
+        shiny::insertUI(
+          selector = selector,
+          where = where,
+          ui = {
+            shiny::tags$div(
+              id = widget_ns("additional_widgets"),
+              do.call(shiny::tagList, mapply(
+                function(w, l, n) {
+                  names(w) <- w
+                  names(w) <- sapply(names(w), cc_t, lang = r$lang())
+                  selected <- default_selection[[n]]
+
+                  picker_UI(
+                    id = widget_ns(id),
+                    picker_id = sprintf("p%s", l),
+                    var_list = w,
+                    selected = selected,
+                    label = cc_t(n, force_span = TRUE)
+                  )
+                }, widgets(), seq_along(widgets()) + length(common_widgets()$widgets),
+                names(widgets()),
+                SIMPLIFY = FALSE
+              ))
+            )
+          }
+        )
+      }
       # Update the number of picker values to be retrieved
       additional_picker_count(length(widgets()))
     })
@@ -397,8 +482,31 @@ autovars_UI <- function(id) {
     shiny::div(
       id = shiny::NS(id, "autovars"),
       label_indicators(id = shiny::NS(id, "indicators_label")),
-      shiny::hr(id = shiny::NS(id, "common_widgets")),
-      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets")))
+      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "common_widgets"))),
+      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets"))),
+      shinyjs::hidden(shiny::div(
+        id = shiny::NS(id, "advanced_controls"),
+        shiny::hr(id = shiny::NS(id, "hr_advanced_controls")),
+        shiny::div(
+          class = "shiny-split-layout sidebar-section-title",
+          shiny::div(
+            style = "width: 9%",
+            icon_material_title("precision_manufacturing")
+          ),
+          shiny::div(
+            style = "width: 60%",
+            cc_t("Advanced controls")
+          ),
+          shiny::div(style = "width: 30%; margin:0px !important; text-align: right;",
+                     checkbox_UI(
+                       id = shiny::NS(id, "cb_advanced_controls"),
+                       label = cc_t("Show"),
+                       value = FALSE
+                     ))
+        ),
+        shiny::div(id = shiny::NS(id, "advanced_controls_div"))
+      )
+      )
     )
   )
 }

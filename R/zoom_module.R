@@ -102,6 +102,21 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
       return(paste(zoom_levels()$region, scale, sep = "_"))
     })
 
+    # If there's only one zoom level, hide the slider and the auto-zoom
+    shiny::observe({
+      # Do nothing if there are more than one zoom level
+      if (length(zoom_levels()$zoom_levels) > 1) return()
+
+      # Add one namespace as these are inside other module servers
+      shinyjs::hide(shiny::NS(id, "zoom_auto"))
+      # Follow the rest of the slidertext addition ID for the zoom slider
+      shinyjs::hide("zoon_slider_div")
+
+      # Replace the content of zoom_cbx_loc (zoom checkbox location)
+      zoom_name <- zoom_get_name(names(zoom_levels()$zoom_levels), r$lang())
+      shinyjs::html("zoom_cbx_loc", zoom_name)
+    })
+
     # Return the tile
     return(tile)
   })
@@ -125,6 +140,7 @@ zoom_UI <- function(id, zoom_levels) {
           cc_t("Scale")
         ),
         shiny::div(
+          id = shiny::NS(id, "zoom_cbx_loc"),
           style = "width: 64%; margin:0px !important; text-align: right;",
           checkbox_UI(
             id = shiny::NS(id, "zoom_auto"),
@@ -134,6 +150,7 @@ zoom_UI <- function(id, zoom_levels) {
         )
       ),
       shiny::div(
+        id = shiny::NS(id, "zoon_slider_div"),
         class = "sus-sidebar-control",
         slider_text_UI(
           id = shiny::NS(id, "zoom_slider"),

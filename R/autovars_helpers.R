@@ -317,13 +317,9 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
 autovars_placeholder_var <- function(id) {
   modules <- get_from_globalenv("modules")
 
-  var_lefts <- modules$var_left[modules$id == id][[1]]
+  # Grab the default variable
+  default_var <- modules$default_var[modules$id == id]
 
-  # If it is a dataframe. Just grab the first element of the `var_code` column
-  if (is.data.frame(var_lefts)) {
-    return(var_lefts$var_code[[1]])
-  }
-
-  # If it's a character vector, grab the first element
-  return(var_lefts[[1]])
+  # Return it
+  return(default_var)
 }

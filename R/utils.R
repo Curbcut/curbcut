@@ -575,3 +575,28 @@ grab_df_from_bslike <- function(df) {
 
   return(out)
 }
+
+#' Retrieve a specific page
+#'
+#' This function retrieves a specific page based on the provided `ns_id`.
+#' It substracts the namespace doubling noise and retrieves the page from
+#' the modules stored in the global environment.
+#'
+#' @param ns_id <`character`> ID of the page identifier including the namespace.
+#'
+#' @return A subset of the `modules` global data frame matching the `ns_id`.
+#' @export
+page_get <- function(ns_id) {
+
+  # Grab the modules table
+  modules <- get_from_globalenv("modules")
+
+  # Grab only the `id` (take out namespace doubling noise)
+  solo_id <- gsub("-.*$", "", ns_id)
+
+  # Subset the current page
+  page <- modules[modules$id == solo_id, ]
+
+  # Return
+  return(page)
+}
