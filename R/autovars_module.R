@@ -32,12 +32,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     widget_ns <- session$ns
     additional_picker_count <- shiny::reactiveVal(0)
 
-    page <- page_get(id)
     # Some widgets must be placed in the advanced controls
+    page <- page_get(id)
     adv <- unlist(page$add_advanced_controls)
 
     default_var <- autovars_placeholder_var(id = id)
     out_var <- shiny::reactiveVal(default_var)
+
+    advanced_div_selector <- html_ns("advanced_controls_div")
 
     # Common widgets ----------------------------------------------------------
 
@@ -174,7 +176,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
           if (length(wdgs_adv) != 0) {
             shiny::insertUI(
-              selector = html_ns("advanced_controls_div"),
+              selector = advanced_div_selector,
               where = "beforeEnd",
               ui = UIs(wdgs_adv, ns = "common_widgets_in_adv")
             )
@@ -267,11 +269,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       # If `mnd` is in the list of widgets that should be placed in the advanced
       # options, switch selector
       if (length(adv) != 0 && "mnd" %in% adv) {
-        selector <-  html_ns("advanced_controls_div")
-        where <-  "beforeEnd"
+        selector <- advanced_div_selector
+        where <- "beforeEnd"
       } else {
-        selector <-  html_ns("common_widgets")
-        where <-  "afterEnd"
+        selector <- html_ns("common_widgets")
+        where <- "afterEnd"
       }
 
       shiny::insertUI(
@@ -364,16 +366,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Additional widgets ------------------------------------------------------
 
-    # Checkbox to show additional widgets
-    show_advanced <- checkbox_server(
-      id = "cb_advanced_controls",
-      r = r,
-      label = shiny::reactive("Show")
-    )
-    shiny::observeEvent(show_advanced(), {
-      shinyjs::toggle("advanced_controls_div", condition = show_advanced(),
-                      anim = TRUE, animType = "slide")
-    })
+    # Show or hide the advanced controls with the checkbox
+    advanced_controls_server(id = id, r = r)
 
     shiny::observe({
       # Remove the content of the previous div
@@ -386,7 +380,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         selector = html_ns("hr_additional_widgets")
         where = "afterEnd"
       } else {
-        selector <- html_ns("advanced_controls_div")
+        selector <- advanced_div_selector
         where <- "beforeEnd"
       }
       # Show and hide the whole advanced controls div
@@ -484,29 +478,7 @@ autovars_UI <- function(id) {
       label_indicators(id = shiny::NS(id, "indicators_label")),
       shinyjs::hidden(shiny::hr(id = shiny::NS(id, "common_widgets"))),
       shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets"))),
-      shinyjs::hidden(shiny::div(
-        id = shiny::NS(id, "advanced_controls"),
-        shiny::hr(id = shiny::NS(id, "hr_advanced_controls")),
-        shiny::div(
-          class = "shiny-split-layout sidebar-section-title",
-          shiny::div(
-            style = "width: 9%",
-            icon_material_title("precision_manufacturing")
-          ),
-          shiny::div(
-            style = "width: 60%",
-            cc_t("Advanced controls")
-          ),
-          shiny::div(style = "width: 30%; margin:0px !important; text-align: right;",
-                     checkbox_UI(
-                       id = shiny::NS(id, "cb_advanced_controls"),
-                       label = cc_t("Show"),
-                       value = FALSE
-                     ))
-        ),
-        shiny::div(id = shiny::NS(id, "advanced_controls_div"))
-      )
-      )
+      shinyjs::hidden(advanced_controls_UI(id = id))
     )
   )
 }

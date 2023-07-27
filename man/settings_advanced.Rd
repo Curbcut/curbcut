@@ -4,11 +4,14 @@
 \alias{settings_advanced}
 \title{Advanced options UI and server interactions}
 \usage{
-settings_advanced(r = r)
+settings_advanced(r = r, input = input)
 }
 \arguments{
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
+
+\item{input}{A list of all the input values from a Shiny application.
+Usually \code{input = input} from server.R.}
 }
 \value{
 NULL. This function is called for its side effects.

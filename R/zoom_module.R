@@ -128,6 +128,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
 zoom_UI <- function(id, zoom_levels) {
   shiny::tagList(
     shiny::div(
+      class = "scale-panel",
       id = shiny::NS(id, "zoom_div"),
       shiny::div(
         class = "shiny-split-layout sidebar-section-title",

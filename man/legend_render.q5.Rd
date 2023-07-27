@@ -6,7 +6,7 @@
 \usage{
 \method{legend_render}{q5}(
   vars,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
   df,
   ...
@@ -17,7 +17,7 @@
 output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> Which font family should be used to render
-the legend (breaks, axis titles, ...). Defaults to \code{SourceSansPro}. To use
+the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}

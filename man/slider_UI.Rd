@@ -13,7 +13,7 @@ slider_UI(
   max,
   sep = "",
   value = max,
-  width = "95\%",
+  width = "100\%",
   ...
 )
 }
