@@ -65,23 +65,6 @@ test_resources_creation <- function(additional_vars = c()) {
   mapply(file.copy, paste0("data/", other_files), paste0("resources/", other_files))
 }
 
-#' Assign a ind ordinal delta vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns `df`, `vars`, `data`
-test_assign_delta_ind_ord <- function(pos = 1) {
-  df <- "grid_grid250"
-  vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"), df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "grid", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
 #' Assign Values to specific Variables in the environment
 #'
 #' This function is used to recreate a variable selection, data, df, ... in the

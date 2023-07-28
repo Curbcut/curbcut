@@ -4,11 +4,15 @@
 \alias{advanced_controls_UI}
 \title{Advanced Controls - UI}
 \usage{
-advanced_controls_UI(id, label = cc_t("Show"))
+advanced_controls_UI(id, label = cc_t("Show"), ...)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the legend will appear,
-e.g. \code{alp}.}
+e.g. \code{alp}. NOT A MODULE, NO NAMESPACING.}
+
+\item{label}{<\code{character}> Label for the checkbox. Defaults to \code{cc_t("Show")}}
+
+\item{...}{<\code{args}> UIs to be inserted in the advanced controls div.}
 }
 \value{
 A Shiny UI definition

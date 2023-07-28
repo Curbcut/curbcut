@@ -183,7 +183,7 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
       link(r = r, page = "stories")
     })
 
-    # Grab the new selected ID (in the cae it's not a stories link)
+    # Grab the new selected ID (in the case it's not a stories link)
     new_ID <- shiny::eventReactive(click(), {
       if (!attr(click(), "stories_link")) {
         id <- click()

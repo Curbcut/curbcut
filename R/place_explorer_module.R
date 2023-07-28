@@ -227,8 +227,19 @@ place_explorer_server <- function(id, r,
         return(list(
           div = shiny::div(
             class = "main_panel_popup",
+            shiny::div(class = "back-to-map",
+                       shiny::actionLink(
+                         shiny::NS(id, "back"), "X"
+                       )
+            ),
+            shiny::downloadButton(
+              class = "cc-download-btn",
+              style = "right:75px;position:absolute;top:15px;min-height:auto;",
+              outputId = shiny::NS(id, "download_portrait"),
+              label = cc_t("Download regional portrait")
+            ),
             shiny::tags$iframe(
-              style = "width:100%;height:100%;",
+              style = "width:100%;height: calc(100% - 38px); margin-top: 38px;",
               title = "place_ex",
               src = pe_links$src,
               frameborder = 0
@@ -300,15 +311,9 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
           shiny::actionButton(
             inputId = shiny::NS(id, "search_button"),
             label = shiny::icon("search", verify_fa = FALSE),
-            style = "margin-top: var(--padding-v-md);"
           ),
           "</div></div>"
         )),
-        # Back button. The CSS file places it at the right spot
-        shiny::actionLink(
-          shiny::NS(id, "back"),
-          curbcut::cc_t("Back to the place explorer")
-        ),
         bottom =
         # Scale slider
           curbcut::zoom_UI(
@@ -326,11 +331,6 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
           id = shiny::NS(id, "place_exp_main_panel"),
           shiny::htmlOutput(shiny::NS(id, "loader")),
           shiny::htmlOutput(shiny::NS(id, "main_panel")),
-          shiny::downloadButton(
-            class = "download_portrait",
-            outputId = shiny::NS(id, "download_portrait"),
-            label = cc_t("Download regional portrait")
-          )
         )
       )
     )

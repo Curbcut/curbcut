@@ -2,15 +2,10 @@
 title: "`r params$title`"
 output:
   html_document:
+    css: !expr system.file("styles", "fonts.css", package = "curbcut")
     theme: 
-      bg: "#ffffff" 
-      fg: "#7f7f7f"
       primary: "#4a5c83"
-      base_font: !expr bslib::font_google("Outfit")
-      heading_font: !expr bslib::font_google("Source Sans Pro")
-      code_font: !expr bslib::font_google("Outfit")
       code-color: skyblue
-      font-base-size: 1.25rem
 params: 
     wd: "C:/"
     title: "Main indicators"

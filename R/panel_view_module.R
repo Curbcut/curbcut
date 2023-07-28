@@ -396,12 +396,12 @@ panel_view_UI <- function(id) {
         shiny::div(
           style = "text-align:right",
           shiny::downloadButton(
-            class = "download_csv",
+            class = "cc-download-btn",
             outputId = shiny::NS(id, "download_csv"),
             label = cc_t("Download '.csv'")
           ),
           shiny::downloadButton(
-            class = "download_shp",
+            class = "cc-download-btn",
             outputId = shiny::NS(id, "download_shp"),
             label = cc_t("Download '.shp'")
           )

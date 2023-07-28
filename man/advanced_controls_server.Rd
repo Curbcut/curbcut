@@ -2,7 +2,7 @@
 % Please edit documentation in R/advanced_controls.R
 \name{advanced_controls_server}
 \alias{advanced_controls_server}
-\title{Advanced Controls - Server}
+\title{Advanced Controls (server, although NOT A MODULE)}
 \usage{
 advanced_controls_server(id, r, label = shiny::reactive("Show"))
 }
@@ -12,6 +12,9 @@ e.g. \code{alp}.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
+
+\item{label}{<\code{character}> Label for the checkbox. Must be a reactive.
+Defaults to \code{shiny::reactive("Show")}}
 }
 \value{
 None
