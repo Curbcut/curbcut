@@ -37,6 +37,9 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
 
     shiny::observeEvent(last_tutorial_data(),
       {
+        if (is.null(r$server_session()$input$dimension)) {
+          shiny::invalidateLater(500, session)
+        }
         if (is.null(last_tutorial_data())) {
           return(shinyjs::delay(
             1000,
@@ -44,7 +47,8 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
               id = id, session = session,
               server_session = r$server_session(),
               skip_elements = skip_elements(),
-              lang = r$lang()
+              lang = r$lang(),
+              window_size = r$server_session()$input$dimension
             )
           ))
         }
@@ -57,7 +61,8 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
               id = id, session = session,
               server_session = r$server_session(),
               skip_elements = skip_elements(),
-              lang = r$lang()
+              lang = r$lang(),
+              window_size = r$server_session()$input$dimension
             )
           ))
         }
@@ -71,7 +76,8 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
         id = id, session = session,
         server_session = r$server_session(),
         skip_elements = skip_elements(),
-        lang = r$lang()
+        lang = r$lang(),
+        window_size = r$server_session()$input$dimension
       )
     )
   })

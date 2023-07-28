@@ -67,7 +67,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               shiny::div(
                 id = widget_ns("year_sliders"),
                 class = ys_classes,
-                hr(id = widget_ns("above_year_hr")),
+                shiny::hr(id = widget_ns("above_year_hr")),
                 shiny::div(
                   class="shiny-split-layout sidebar-section-title",
                   shiny::div(style = "width: 9%",

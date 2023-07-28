@@ -4,7 +4,15 @@
 \alias{test_setup}
 \title{Setup objects}
 \usage{
-test_setup()
+test_setup(pos = 1, folder = "tests/testthat/resources")
+}
+\arguments{
+\item{pos}{<\code{numeric}> An integer value indicating the position in the search list where
+the environment to be used for assignment is located. Default is 1, which is
+typically the global environment.}
+
+\item{folder}{<\code{character}> Folder from which to grab the test resources. Defaults
+to \code{tests/testthat/resources} from coding within the \code{curbcut} package repo.}
 }
 \value{
 Assigns objects in the global environment which are needed for testthat and

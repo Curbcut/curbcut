@@ -66,7 +66,6 @@ dyk_UI <- function(id) {
         )
       ),
       shiny::div(
-        # class = "right-panel-hidden",
         shiny::uiOutput(shiny::NS(id, "dyk_contents"))
       )
     ))

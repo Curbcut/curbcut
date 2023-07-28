@@ -70,7 +70,6 @@ compare_UI <- function(id, var_list) {
     shiny::div(
       id = shiny::NS(id, "compare_widgets"),
       class = "compare-dropdown",
-      # class = "right-panel-hidden",
       picker_UI(
         id = shiny::NS(id, "compare"),
         var_list = var_list,

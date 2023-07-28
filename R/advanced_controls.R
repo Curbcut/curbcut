@@ -27,8 +27,6 @@ advanced_controls_server <- function(id, r, label = shiny::reactive("Show")) {
                       anim = TRUE, animType = "slide")
     })
 
-    observe(print(show_advanced()))
-
     return(show_advanced)
 }
 

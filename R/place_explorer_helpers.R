@@ -391,7 +391,7 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
                 "1%"
               } else {
                 scales::percent(abs(data_s$percentile - 1))
-              }, " plus élevés"
+              }, " plus \u00e9lev\u00e9s"
             )
           })
         }
@@ -410,11 +410,11 @@ placeex_main_card_prep_output_fr <- function(data, dict, region, scale_name, sel
 
         if (dict$high_is_good) {
           glue::glue_safe(
-            "Sa valeur est inf\u00e9rieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+            "Sa valeur est inf\u00e9rieure \u00e0 celle de {pretty_perc} des {df_scales} {to_compare}"
           )
         } else {
           glue::glue_safe(
-            "Sa valeur est sup\u00e9rieure à celle de {pretty_perc} des {df_scales} {to_compare}"
+            "Sa valeur est sup\u00e9rieure \u00e0 celle de {pretty_perc} des {df_scales} {to_compare}"
           )
         }
       })()

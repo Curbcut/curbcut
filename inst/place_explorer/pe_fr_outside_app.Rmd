@@ -288,7 +288,7 @@ contents <- lapply(all_themes, \(t) {
     # Construct the text
     # If the data is NA, return nothing
     if (is.na(data$var_left[data$ID == params$select_id])) return(NULL)
-    text <- curbcut:::explore_text_values_q5(var = var_class, region = params$region,
+    text <- explore_text_values_q5(var = var_class, region = params$region,
                                              select_id = params$select_id, data = data,
                                              df = df, lang = "fr")$text
     text <- curbcut::s_sentence(text)
@@ -429,7 +429,7 @@ boxes <- mapply(\(ind, ind_name) {
                                        ";", round(params$map_loc[2], digits = 2)), 
                       "&sid=", params$select_id)
         if (!is.na(ind$link_dropdown)) {
-          variables <- curbcut:::get_from_globalenv("variables")
+          variables <- get_from_globalenv("variables")
           code_n <- which(variables$var_code == ind$link_var_code)
           out <- paste0(out, "&wgt=", ind$link_dropdown, ":", code_n)
         }

@@ -7,13 +7,13 @@
 #' @return A `script` tag to be placed in the `ui` function, `ui.R` file.
 #' @export
 use_curbcut_js <- function() {
-  copy_current_url <- readLines(system.file("js_scripts/copy_current_url.js",
+  copy_current_url <- readLines(system.file("js_scripts/shinyjs/copy_current_url.js",
     package = "curbcut"
   ))
-  set_language <- readLines(system.file("js_scripts/language.js",
+  set_language <- readLines(system.file("js_scripts/shinyjs/language.js",
     package = "curbcut"
   ))
-  highlightOptions <- readLines(system.file("js_scripts/highlight_dropdown_option.js",
+  highlightOptions <- readLines(system.file("js_scripts/shinyjs/highlight_dropdown_option.js",
     package = "curbcut"
   ))
 
@@ -21,6 +21,18 @@ use_curbcut_js <- function() {
   shiny::addResourcePath("curbcut_js", system.file("js_scripts",
     package = "curbcut"
   ))
+
+  # List all JS files
+  js_files <- paste0("curbcut_js/",
+                        list.files(system.file("js_scripts", package = "curbcut")))
+  js_files <- js_files[grepl("\\.js$", js_files)]
+  js_files <- paste0(js_files, "?id=1")
+  # Build the tags for the style files
+  js_tags <- shiny::tagList(
+    lapply(js_files, function(x) {
+      shiny::tags$head(shiny::tags$script(src = x))
+    })
+  )
 
   shiny::tagList(
     # Copy URL
@@ -38,11 +50,6 @@ use_curbcut_js <- function() {
       text = highlightOptions,
       functions = c("highlightOptions")
     )),
-
-    # # Right panel hides some div depending on window size
-    # shiny::tags$head(shiny::tags$script(
-    #   src = "curbcut_js/right_panel.js"
-    # )),
     # Change window title
     shiny::tags$head(shiny::tags$script(
       shiny::HTML(
@@ -58,6 +65,13 @@ use_curbcut_js <- function() {
     # (linked with the previous) Make the hover on the block rather than the
     # text itself
     shiny::tags$head(shiny::tags$style("span.text {display: block !important;}")),
+    # Other JS scripts
+    js_tags,
+    # Script needed for cookies
+    shiny::tags$head(shiny::tags$script(src = paste0(
+      "https://cdn.jsdelivr.net/npm/js-cookie@rc/",
+      "dist/js.cookie.min.js"
+    )))
   )
 }
 

@@ -32,7 +32,7 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
       if (length(all_input) == 0) {
         return(NULL)
       }
-      all_widgets <- grep(paste0(names(bookmark_shorts), collapse = "|"),
+      all_widgets <- grep(paste0(names(curbcut::bookmark_shorts), collapse = "|"),
         all_input,
         value = TRUE
       )

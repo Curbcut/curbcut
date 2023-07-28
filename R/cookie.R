@@ -1,27 +1,3 @@
-#' Load JavaScript cookie library and custom cookie script for Curbcut
-#'
-#' This function generates an HTML tag list that loads the necessary JavaScript
-#' files for using cookies in the curbcut package. It adds a script tag for a
-#' custom cookie.js script and a script tag for the js-cookie library from
-#' cdn.jsdelivr.net. It needs to be placed in the `ui` function in `ui.R` for
-#' the cookies function to work.
-#'
-#' @return A tag list object with the necessary JavaScript files for using cookies
-#' in curbcut package. Must be placed in the `ui` function in `ui.R`.
-#' @export
-use_curbcut_cookie <- function() {
-  shiny::addResourcePath("curbcut_js", system.file("js_scripts",
-    package = "curbcut"
-  ))
-  shiny::tagList(
-    shiny::tags$head(shiny::tags$script(src = "curbcut_js/cookie.js")),
-    shiny::tags$head(shiny::tags$script(src = paste0(
-      "https://cdn.jsdelivr.net/npm/js-cookie@rc/",
-      "dist/js.cookie.min.js"
-    )))
-  )
-}
-
 #' Set and save a cookie value
 #'
 #' This function sets a cookie value by sending a custom message to the

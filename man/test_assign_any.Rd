@@ -10,7 +10,7 @@ test_assign_any(
   df = "city_CSD",
   select_id = NA,
   pos = 1,
-  data_path = .curbcut_montreal_data
+  data_path = get0(".curbcut_montreal_data")
 )
 }
 \arguments{
@@ -31,6 +31,10 @@ Defaults to NA.}
 \item{pos}{<\code{numeric}> An integer value indicating the position in the search list where
 the environment to be used for assignment is located. Default is 1, which is
 typically the global environment.}
+
+\item{data_path}{<\code{character}> Path to a Curbcut repo data folder.
+eg, \verb{C:/.../curbcut-montreal/data/}. Defaults to grabbing
+.curbcut_montreal_data from the environment.}
 }
 \value{
 This function doesn't return a value. It modifies the specified

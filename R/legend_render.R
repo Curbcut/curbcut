@@ -104,7 +104,7 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
   group <- y <- fill <- xmin <- xmax <- NULL
 
   # Get all necessary information
-  leg_info <- curbcut:::legend_get_info(vars,
+  leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
     df = df
   )
@@ -166,7 +166,7 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
   # Blank space addition
   blank <- (brks[length(brks)] - brks[1]) / 16
   leg <- rbind(
-    tibble::tibble(
+    data.frame(
       y = 1,
       fill = "#FFFFFFFF",
       xmin = leg$xmin[1] - blank,
@@ -177,7 +177,7 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
 
   # NA (grey) space addition
   leg <- rbind(
-    tibble::tibble(
+    data.frame(
       y = 1,
       fill = "#B3B3BB",
       xmin = leg$xmin[1] - blank,

@@ -256,7 +256,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
 #' data frame, the function returns the 'var_code' associated with
 #' the maximum sum of fits.
 autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
-  modules <- curbcut:::get_from_globalenv("modules")
+  modules <- get_from_globalenv("modules")
 
   # Grab the correct tibble
   tb <- modules$var_left[modules$id == id][[1]]
