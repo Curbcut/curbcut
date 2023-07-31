@@ -125,27 +125,29 @@ ui <- function(web_description, web_title, twitter_handler, google_analytics,
     shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),
 
     # Curbcut scripts
-    curbcut::use_curbcut_js(),
-    curbcut::use_curbcut_css(lang_init = TRUE),
+    use_curbcut_js(),
+    use_curbcut_css(lang_init = TRUE),
 
     # Google analytics
     shiny::tags$head(shiny::includeHTML(google_analytics)),
 
     # Sharing card ---------------------------------------------------------------
-    shiny::tags$meta(name = "og:url", content = website_url),
-    shiny::tags$meta(name = "og:type", content = "website"),
-    shiny::tags$meta(name = "og:title", content = web_title),
-    shiny::tags$meta(name = "og:description", content = web_description),
-    shiny::tags$meta(name = "description", content = web_description),
-    shiny::tags$meta(name = "title", content = web_title),
-    shiny::tags$meta(name = "og:image", content = share_jpg),
-    shiny::tags$meta(name = "og:site_name", content = site_name),
-    shiny::tags$meta(name = "twitter:card", content = "summary_large_image"),
-    shiny::tags$meta(name = "twitter:site", content = twitter_handler),
-    shiny::tags$meta(name = "twitter:creator", content = twitter_handler),
-    shiny::tags$meta(name = "twitter:title", content = web_title),
-    shiny::tags$meta(name = "twitter:description", content = web_description),
-    shiny::tags$meta(name = "twitter:image", content = share_jpg),
+    shiny::tags$head(
+        shiny::tags$meta(name = "og:url", content = website_url),
+        shiny::tags$meta(name = "og:type", content = "website"),
+        shiny::tags$meta(name = "og:title", content = web_title),
+        shiny::tags$meta(name = "og:description", content = web_description),
+        shiny::tags$meta(name = "description", content = web_description),
+        shiny::tags$meta(name = "title", content = web_title),
+        shiny::tags$meta(name = "og:image", content = share_jpg),
+        shiny::tags$meta(name = "og:site_name", content = site_name),
+        shiny::tags$meta(name = "twitter:card", content = "summary_large_image"),
+        shiny::tags$meta(name = "twitter:site", content = twitter_handler),
+        shiny::tags$meta(name = "twitter:creator", content = twitter_handler),
+        shiny::tags$meta(name = "twitter:title", content = web_title),
+        shiny::tags$meta(name = "twitter:description", content = web_description),
+        shiny::tags$meta(name = "twitter:image", content = share_jpg)
+    ),
 
     # Navigation bar -------------------------------------------------------------
     shiny::actionButton("proxy_advanced_options", "", style = "display: none;"),
@@ -156,7 +158,7 @@ ui <- function(web_description, web_title, twitter_handler, google_analytics,
           id = "cc_page",
           windowTitle = site_name,
           title = shiny::actionLink("title", "Curbcut"),
-          shiny::tabPanel(curbcut::cc_t("Home"), curbcut::home_UI("home"), value = "home")
+          shiny::tabPanel(cc_t("Home"), home_UI("home"), value = "home")
         ),
         modules_panel(),
         list(collapsible = TRUE)
