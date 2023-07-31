@@ -294,7 +294,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(ordered_val_fit) == 0) {
     return(previous_var)
   }
-  sum_fits <- rowSums(tibble::as_tibble(ordered_val_fit))
+  sum_fits <- rowSums(as.data.frame(ordered_val_fit))
   if (length(sum_fits) == 0) {
     return(previous_var)
   }

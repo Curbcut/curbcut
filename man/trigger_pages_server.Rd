@@ -4,7 +4,7 @@
 \alias{trigger_pages_server}
 \title{Trigger the \code{server} of pages}
 \usage{
-trigger_pages_server(cc_page, r, r_folder_envir)
+trigger_pages_server(cc_page, r)
 }
 \arguments{
 \item{cc_page}{<\code{reactive}> Character of the currently active tab stored
@@ -13,11 +13,6 @@ in a \code{\link[shiny]{reactive}} to ensure reactivity on change. Usually
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
-
-\item{r_folder_envir}{<\code{environment}> The environment of the R/ folder of
-the Curbcut app. Mandatory to retrieve the pages server functions, as they
-do not live in the global environment. It is a simple variable created from
-the \verb{R/} folder using \code{environment()}, e.g. \code{environment_created_in_R_folder <- environment()}}
 }
 \value{
 Triggers the server module function if it hasn't already been

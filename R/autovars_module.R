@@ -39,7 +39,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     default_var <- autovars_placeholder_var(id = id)
     out_var <- shiny::reactiveVal(default_var)
 
-    advanced_div_selector <- html_ns("advanced_controls_div")
+    advanced_div_selector <- html_ns("indicators_label-advanced_controls_div")
 
     # Common widgets ----------------------------------------------------------
 
@@ -50,8 +50,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     shiny::observe({
       # Time widgets, if there are date times
       shiny::insertUI(
-        selector = html_ns("autovars"),
-        where = "beforeEnd",
+        # selector = html_ns("autovars"),
+        # where = "beforeEnd",
+        # place after the compare panel
+        selector = html_ns("compare_widgets"),
+        where = "afterEnd",
         ui = {
           if (!is.null(default_year)) {
             min_ <- common_widgets()$time |> min()
@@ -86,11 +89,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                   id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
                   step = step_, label = NULL
                 ),
-                slider_UI(
+                shinyjs::hidden(slider_UI(
                   id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
                   step = step_, label = NULL,
                   value = double_value_
-                )
+                ))
               )
             )
           }
@@ -187,8 +190,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
         # Place the rest of the wdgs at their spot
         shiny::insertUI(
-          selector = html_ns("common_widgets"),
-          where = "beforeBegin",
+          selector = html_ns("indicators_label-common_widgets"),
+          where = "afterBegin",
           ui = UIs(other_wdgs, ns = "common_widgets_in")
         )
 
@@ -272,8 +275,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         selector <- advanced_div_selector
         where <- "beforeEnd"
       } else {
-        selector <- html_ns("common_widgets")
-        where <- "afterEnd"
+        selector <- html_ns("indicators_label-common_widgets")
+        where <- "beforeEnd"
       }
 
       shiny::insertUI(
@@ -306,7 +309,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             default_var
           }
 
-          shiny::div(
+          shinyjs::hidden(shiny::div(
             id = widget_ns("main_drop"),
             picker_UI(
               id = widget_ns(id),
@@ -315,7 +318,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               selected = default_selection,
               label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
             )
-          )
+          ))
         }
       )
     })
@@ -351,23 +354,24 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     })
 
     # If there's only one option in the var_left, hide it
-    shiny::observeEvent(mnd(),
-                        {
-                          modules <- get_from_globalenv("modules")
-                          var_lefts <- modules$var_left[modules$id == id][[1]]
-                          if (is.character(var_lefts) & length(var_lefts) == 1) {
-                            shinyjs::hide(id = shiny::NS(id, "ccpicker_mnd"))
-                            shinyjs::hide(id = "above_year_hr")
-                            shinyjs::hide(id = "indicators_label")
-                          }
-                        },
-                        ignoreInit = TRUE
+    shiny::observeEvent(mnd(), {
+      modules <- get_from_globalenv("modules")
+      var_lefts <- modules$var_left[modules$id == id][[1]]
+
+      hide <- is.character(var_lefts) & length(var_lefts) == 1
+
+      shinyjs::toggle(id = "main_drop", condition = !hide)
+      shinyjs::toggle(id = "hr_compare_panel", condition = !hide)
+      shinyjs::toggle(id = "indicators_label-indicator_label", condition = !hide)
+
+    },
+    ignoreInit = TRUE
     )
 
     # Additional widgets ------------------------------------------------------
 
     # Show or hide the advanced controls with the checkbox
-    advanced_controls_server(id = id, r = r)
+    label_indicators_server(id = "indicators_label", r = r)
 
     shiny::observe({
       # Remove the content of the previous div
@@ -377,14 +381,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       # or less, placed them in advanced controls.
       advanced_controls_avail <- (length(widgets()) + length(adv) > 2)
       if (!advanced_controls_avail) {
-        selector = html_ns("hr_additional_widgets")
-        where = "afterEnd"
+        selector = html_ns("indicators_label-common_widgets")
+        where = "beforeEnd"
       } else {
         selector <- advanced_div_selector
         where <- "beforeEnd"
       }
-      # Show and hide the whole advanced controls div
-      shinyjs::toggle("advanced_controls", condition = advanced_controls_avail)
+      # Show and hide the advanced div checkbox
+      shinyjs::toggle("indicators_label-cb_adv_opt_div", condition = advanced_controls_avail)
 
       if (length(widgets()) > 0) {
         tb <- page$var_left[[1]]
@@ -475,10 +479,7 @@ autovars_UI <- function(id) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "autovars"),
-      label_indicators(id = shiny::NS(id, "indicators_label")),
-      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "common_widgets"))),
-      shinyjs::hidden(shiny::hr(id = shiny::NS(id, "hr_additional_widgets"))),
-      shinyjs::hidden(advanced_controls_UI(id = id))
+      label_indicators_UI(id = shiny::NS(id, "indicators_label")),
     )
   )
 }

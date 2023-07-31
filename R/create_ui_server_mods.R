@@ -30,7 +30,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
           id = shiny::NS(id, id),
           curbcut::autovars_UI(shiny::NS(id, id)),
           curbcut::warnuser_UI(shiny::NS(id, id)),
-          if (length(unlist(page$var_left)) > 1 || length(unlist(page$dates)) > 1) shiny::hr(),
           curbcut::compare_UI(
             id = shiny::NS(id, id),
             var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)

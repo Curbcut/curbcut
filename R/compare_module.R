@@ -55,6 +55,7 @@ compare_UI <- function(id, var_list) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "compare_panel"),
+      shiny::hr(id = shiny::NS(id, "hr_compare_panel")),
       shiny::div(
         class = "shiny-split-layout sidebar-section-title",
         shiny::div(

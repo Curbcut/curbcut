@@ -53,10 +53,10 @@ advanced_controls_UI <- function(id, label = cc_t("Show"), ...) {
         icon_material_title("precision_manufacturing")
       ),
       shiny::div(
-        style = "width: 50%",
+        style = "width: 30%",
         cc_t("Advanced controls")
       ),
-      shiny::div(style = "width: 40%; margin:0px !important; text-align: right; overflow: hidden;",
+      shiny::div(style = "width: 60%; margin:0px !important; text-align: right; overflow: hidden;",
                  checkbox_UI(
                    id = shiny::NS(id, "cb_advanced_controls"),
                    label = label,

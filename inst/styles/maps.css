@@ -360,6 +360,12 @@
 	font-size: large;
 }
 
+@media (max-width: 768px) {
+	.tutorial-btn {
+		display: none;
+	}
+}
+
 .title_text {
 	display: flex;
 	justify-content: space-between;
