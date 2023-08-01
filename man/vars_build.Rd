@@ -9,7 +9,9 @@ vars_build(
   var_left,
   var_right = " ",
   df,
-  scales_as_DA = c("building", "street")
+  scales_as_DA = c("building", "street"),
+  check_choropleth = TRUE,
+  variables = get_from_globalenv("variables")
 )
 }
 \arguments{
@@ -25,7 +27,10 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their colour will be the one of their DA.}
+their colour will be the one of their DA.+}
+
+\item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
+from the global environment using \code{\link{get_from_globalenv}}.}
 }
 \value{
 A named list containing both \code{var_left} and \code{var_right} variables with
