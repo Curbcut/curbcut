@@ -11,17 +11,17 @@
 #' @return A Shiny module server for the home page.
 #' @export
 home_server <- function(id = "home", r) {
-  moduleServer(id, function(input, output, session) {
+  shiny::moduleServer(id, function(input, output, session) {
 
     # Detect page clicks on other pages and update the active page accordingly
-    page_click <- shiny::reactive(get_landing_click("landing"))
+    page_click <- shiny::reactive(cc.landing::get_landing_click("landing"))
     shiny::observeEvent(page_click(), {
       shiny::updateTabsetPanel(session = r$server_session(), inputId = "cc_page",
                                selected = page_click())
     }, ignoreNULL = TRUE)
 
     # Update the landing input based on the active page
-    observeEvent(r$server_session()$input$cc_page, {
+    shiny::observeEvent(r$server_session()$input$cc_page, {
       active_page <- r$server_session()$input$cc_page
 
       turn_on_off <- if (active_page == "home") "on" else "off"
@@ -46,7 +46,7 @@ home_server <- function(id = "home", r) {
       update_lang(r = r, lang = lang_cookie())
 
       # Update the language of the landing UI
-      update_landing(session = session,
+      cc.landing::update_landing(session = session,
                      inputId = "landing",
                      configuration = list(
                        lang = lang_cookie()
@@ -54,8 +54,8 @@ home_server <- function(id = "home", r) {
     }, once = TRUE, ignoreNULL = TRUE)
 
     # Detect lang button click
-    lang_click <- shiny::reactive(get_lang_click("landing"))
-    observeEvent(lang_click(), {
+    lang_click <- shiny::reactive(cc.landing::get_lang_click("landing"))
+    shiny::observeEvent(lang_click(), {
 
       # Update the website language (span + r$lang)
       update_lang(r = r, lang_click())

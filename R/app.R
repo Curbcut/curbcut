@@ -96,6 +96,7 @@ modules_panel <- function() {
 #' application styles, Curbcut scripts, Google Analytics, metadata for sharing,
 #' and the creation of the pages UI.
 #'
+#' @param site_name <`character`>¨Name of the site with the city, e.g. `Curbcut Montréal`.
 #' @param web_description <`character`> The description of the website for metadata.
 #' e.g. `"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."`
 #' @param web_title <`character`> The title of the website for metadata.
@@ -106,13 +107,15 @@ modules_panel <- function() {
 #' for tracking user activity. e.g. `"www/google_analytics.html"`
 #' @param website_url <`character`> The URL of the website for metadata.
 #' e.g. `"https://montreal.curbcut.ca"`
-#' @param share_jpg <`character`> The URL of the image for sharing on social media.
-#' Not relative paths. e.g. `"https://montreal.curbcut.ca/share.jpg"`
+#' @param share_jpg <`character`> ABSOLUTE path to he URL of the image for sharing
+#' on social media. No relative paths. e.g. `"https://montreal.curbcut.ca/share.jpg"`
+#' @param apple_touch_icon <`character`> Absolute path to the 192x192px logo.
+#' e.g. `"https://montreal.curbcut.ca/logo192.jpg"`
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
-ui <- function(web_description, web_title, twitter_handler, google_analytics,
-               website_url, share_jpg) {
+ui <- function(site_name, web_description, web_title, twitter_handler, google_analytics,
+               website_url, share_jpg, apple_touch_icon) {
   shiny::tagList(
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
@@ -122,31 +125,32 @@ ui <- function(web_description, web_title, twitter_handler, google_analytics,
     shiny::tags$style(type = "text/css", ".navbar{display:none;}"),
 
     # Styling objects ------------------------------------------------------------
-    shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),
-
-    # Curbcut scripts
     use_curbcut_js(),
     use_curbcut_css(lang_init = TRUE),
 
-    # Google analytics
+    # Favicon -----------------------------------------------------------------
+    shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),
+
+    # Google analytics --------------------------------------------------------
     shiny::tags$head(shiny::includeHTML(google_analytics)),
 
     # Sharing card ---------------------------------------------------------------
     shiny::tags$head(
-        shiny::tags$meta(name = "og:url", content = website_url),
-        shiny::tags$meta(name = "og:type", content = "website"),
-        shiny::tags$meta(name = "og:title", content = web_title),
-        shiny::tags$meta(name = "og:description", content = web_description),
-        shiny::tags$meta(name = "description", content = web_description),
-        shiny::tags$meta(name = "title", content = web_title),
-        shiny::tags$meta(name = "og:image", content = share_jpg),
-        shiny::tags$meta(name = "og:site_name", content = site_name),
-        shiny::tags$meta(name = "twitter:card", content = "summary_large_image"),
-        shiny::tags$meta(name = "twitter:site", content = twitter_handler),
-        shiny::tags$meta(name = "twitter:creator", content = twitter_handler),
-        shiny::tags$meta(name = "twitter:title", content = web_title),
-        shiny::tags$meta(name = "twitter:description", content = web_description),
-        shiny::tags$meta(name = "twitter:image", content = share_jpg)
+      shiny::tags$meta(name = "og:url", content = website_url),
+      shiny::tags$meta(name = "og:type", content = "website"),
+      shiny::tags$meta(name = "og:title", content = web_title),
+      shiny::tags$meta(name = "og:description", content = web_description),
+      shiny::tags$meta(name = "description", content = web_description),
+      shiny::tags$meta(name = "title", content = web_title),
+      shiny::tags$meta(name = "og:image", content = share_jpg),
+      shiny::tags$meta(name = "og:site_name", content = site_name),
+      shiny::tags$meta(name = "twitter:card", content = "summary_large_image"),
+      shiny::tags$meta(name = "twitter:site", content = twitter_handler),
+      shiny::tags$meta(name = "twitter:creator", content = twitter_handler),
+      shiny::tags$meta(name = "twitter:title", content = web_title),
+      shiny::tags$meta(name = "twitter:description", content = web_description),
+      shiny::tags$meta(name = "twitter:image", content = share_jpg),
+      shiny::tags$link(rel = "apple-touch-icon", href = apple_touch_icon)
     ),
 
     # Navigation bar -------------------------------------------------------------

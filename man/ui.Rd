@@ -5,15 +5,19 @@
 \title{Generate Curbcut Shiny User Interface}
 \usage{
 ui(
+  site_name,
   web_description,
   web_title,
   twitter_handler,
   google_analytics,
   website_url,
-  share_jpg
+  share_jpg,
+  apple_touch_icon
 )
 }
 \arguments{
+\item{site_name}{<\code{character}>¨Name of the site with the city, e.g. \verb{Curbcut Montréal}.}
+
 \item{web_description}{<\code{character}> The description of the website for metadata.
 e.g. \code{"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."}}
 
@@ -29,8 +33,11 @@ for tracking user activity. e.g. \code{"www/google_analytics.html"}}
 \item{website_url}{<\code{character}> The URL of the website for metadata.
 e.g. \code{"https://montreal.curbcut.ca"}}
 
-\item{share_jpg}{<\code{character}> The URL of the image for sharing on social media.
-Not relative paths. e.g. \code{"https://montreal.curbcut.ca/share.jpg"}}
+\item{share_jpg}{<\code{character}> ABSOLUTE path to he URL of the image for sharing
+on social media. No relative paths. e.g. \code{"https://montreal.curbcut.ca/share.jpg"}}
+
+\item{apple_touch_icon}{<\code{character}> Absolute path to the 192x192px logo.
+e.g. \code{"https://montreal.curbcut.ca/logo192.jpg"}}
 }
 \value{
 A Shiny UI object that includes all elements of the Curbcut application interface.
