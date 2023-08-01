@@ -10,30 +10,33 @@
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
+#' their colour will be the one of their DA.+
+#' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
+#' from the global environment using \code{\link{get_from_globalenv}}.
 #'
 #' @return A named list containing both `var_left` and `var_right` variables with
 #' a class attached.
 #'
 #' @export
 vars_build <- function(var_left, var_right = " ", df,
-                       scales_as_DA = c("building", "street")) {
+                       scales_as_DA = c("building", "street"),
+                       check_choropleth = TRUE,
+                       variables = get_from_globalenv("variables")) {
   # If the `var` displays twice the same year
   var_left <- unique(var_left)
   var_right <- unique(var_right)
-
-  # Check errors
-  choropleths <- get_from_globalenv("all_choropleths")
 
   # Switch scales to DA if necessary
   df <- treat_to_DA(scales_as_DA, df)
 
   # Add var left and right measurement variable as classes
-  var_left_m <- var_get_info(var_left[[1]], "var_measurement")[[1]]
+  var_left_m <- var_get_info(var_left[[1]], "var_measurement",
+                             variables = variables)[[1]]
   var_left_m <- var_left_m$measurement[var_left_m$df == df]
   class(var_left) <- c(var_left_m, class(var_left))
   if (var_right[[1]] != " ") {
-    var_right_m <- var_get_info(var_right[[1]], "var_measurement")[[1]]
+    var_right_m <- var_get_info(var_right[[1]], "var_measurement",
+                                variables = variables)[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$df == df]
     class(var_right) <- c(var_right_m, class(var_right))
   } else {
@@ -42,12 +45,12 @@ vars_build <- function(var_left, var_right = " ", df,
 
   # Add var left and right types as classes
   class(var_left) <- c(
-    unlist(var_get_info(var_left[[1]], "type")),
+    unlist(var_get_info(var_left[[1]], "type", variables = variables)),
     class(var_left)
   )
   if (var_right[[1]] != " ") {
     class(var_right) <- c(
-      unlist(var_get_info(var_right[[1]], "type")),
+      unlist(var_get_info(var_right[[1]], "type", variables = variables)),
       class(var_right)
     )
   }
@@ -66,8 +69,12 @@ vars_build <- function(var_left, var_right = " ", df,
     }
 
     # If not part of the normal `choropleths` map
-    if (!is_scale_df(choropleths, df)) {
-      return(df)
+    if (check_choropleth) {
+      choropleths <- get_from_globalenv("all_choropleths")
+
+      if (!is_scale_df(choropleths, df)) {
+        return(df)
+      }
     }
 
     # Impossible cases
