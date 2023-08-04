@@ -24,18 +24,23 @@ dyk_get <- function(id, vars, poi, lang = NULL) {
     if (is.null(stories)) {
       return(NULL)
     }
-    pois <- stories[c("ID", "name_id", "preview")]
+    pois <- stories[c("ID", "name_id", "preview_en", "preview_fr")]
 
     # Grab two stories
     out <- pois[pois$name_id %in% poi, ]
     out <- out[min(1, nrow(out)):min(2, nrow(out)), ]
+
+    # Construct the preview column
+    preview_lang <- if (is.null(lang)) "en" else lang
+    preview_col <- sprintf("preview_%s", preview_lang)
 
     # Make the a tag links as if they were action buttons
     previews_links <- lapply(seq_along(out$name_id), \(x) {
       button_id <- ns_doubled(page_id = id, element = sprintf("dyk_%s", x))
 
       shiny::tags$li(
-        cc_t(out$preview[x], lang = lang),
+        # Grab the preview column, in the correct language
+        out[[preview_col]][x],
         shiny::tags$a(
           id = button_id,
           href = "#",
