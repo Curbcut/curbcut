@@ -70,6 +70,7 @@ li {
 h1,
 .h1 {
 	font-family: var(--ff-h1);
+	text-transform: uppercase;
 }
 
 h2,

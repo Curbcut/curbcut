@@ -357,6 +357,10 @@ cc_translation_df <-
     fr = "Options avanc\u00e9es"
   ) |>
   tibble::add_row(
+    en = "Change language",
+    fr = "Modifier la langue"
+  ) |>
+  tibble::add_row(
     en = "Dismiss",
     fr = "Fermer"
   ) |>

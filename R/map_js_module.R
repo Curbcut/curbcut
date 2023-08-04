@@ -30,8 +30,6 @@ map_js_server <- function(id, r, tile, data_colours) {
 
     # Whenever the tileset changes, load it with the according data_colours.
     shiny::observeEvent(tileset(), {
-      print(tileset())
-      print(data_colours())
       cc.map::update_map(
         session = session,
         map_ID = "map",

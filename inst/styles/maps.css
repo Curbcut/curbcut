@@ -243,7 +243,6 @@
 
 	.sus-map-panel.open {
 		max-height: 45vh;
-		height: 100%;
 	}
 
 	.sus-map-panel.open .mobile-panel-title {

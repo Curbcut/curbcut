@@ -27,7 +27,12 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their colour will be the one of their DA.+}
+their colour will be the one of their DA.}
+
+\item{check_choropleth}{<\code{logical}> Check if the scale is one of the main
+choropleth scales on the app, by grabbind the \code{all_choropleth} object. If
+the \code{df} is not in \code{all_choropleth}, it is returned as a class (instead of \code{q5},
+\code{bivar}, ...). Defaults to TRUE.}
 
 \item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
 from the global environment using \code{\link{get_from_globalenv}}.}

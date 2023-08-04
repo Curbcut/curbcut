@@ -24,13 +24,13 @@ adv_opt_region <- function(id, region, lang = NULL) {
 
   # Translate and get the text labels + the values
   choices_txt <-
-    sapply(unname(pickable_regions$name), cc_t, lang = lang, USE.NAMES = FALSE)
+    lapply(unname(pickable_regions$name), cc_t, lang = lang, force_span = TRUE)
   choices_values <- pickable_regions$region
 
   # Get the shiny input
   shiny::radioButtons(
     inputId = "region_change",
-    label = cc_t(lang = lang, "Change default region"),
+    label = cc_t(lang = lang, "Change default region", force_span = TRUE),
     inline = TRUE,
     selected = region,
     choiceNames = choices_txt,
@@ -61,13 +61,14 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
     # Lock in address of zone for select_ids
     shiny::strong(cc_t(
       lang = lang, "Enter and save a default location (postal ",
-      "code or address)"
+      "code or address)", force_span = TRUE
     )),
-    shiny::HTML("<br><i>", cc_t(
+    shiny::HTML("<br>"),
+    cc_t(
       lang = lang,
       "Default location will be saved until ",
-      "manually cleared from advanced options"
-    ), "</i>"),
+      "manually cleared from advanced options", force_span = TRUE
+    ),
     shiny::HTML(paste0(
       '<div class="shiny-split-layout">',
       '<div style="width: 80%; margin-top: var(--padding-v-md); ',
@@ -86,7 +87,7 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
       "</div></div>",
       shiny::actionButton(
         inputId = "cancel_lock_location",
-        label = cc_t(lang = lang, "Clear default location"),
+        label = cc_t(lang = lang, "Clear default location", force_span = TRUE),
         icon = shiny::icon("xmark", verify_fa = FALSE),
         style = "margin-top: var(--padding-v-md);"
       )

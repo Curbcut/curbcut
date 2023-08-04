@@ -10,7 +10,11 @@
 #' and the scale at which the user is on, e.g. `CMA_CSD`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.+
+#' their colour will be the one of their DA.
+#' @param check_choropleth <`logical`> Check if the scale is one of the main
+#' choropleth scales on the app, by grabbind the `all_choropleth` object. If
+#' the `df` is not in `all_choropleth`, it is returned as a class (instead of `q5`,
+#' `bivar`, ...). Defaults to TRUE.
 #' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
 #' from the global environment using \code{\link{get_from_globalenv}}.
 #'

@@ -19,12 +19,21 @@ settings_advanced <- function(r = r, input = input) {
     id <- "settings"
 
     shiny::showModal(shiny::modalDialog(
+      shiny::radioButtons(
+        inputId = "language_change",
+        label = cc_t(lang = r$lang(), "Change language", force_span = TRUE),
+        inline = TRUE,
+        selected = r$lang(),
+        choiceNames = c("English", "Fran\u00e7ais"),
+        choiceValues = c("en", "fr")
+      ),
+      shiny::hr(),
       # Change the region
       adv_opt_region(id = id, region = r$region(), lang = r$lang()),
       shiny::hr(),
       adv_opt_lock_selection_UI(id = id, lang = r$lang()),
-      title = cc_t(lang = r$lang(), "Advanced options"),
-      footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss"))
+      title = cc_t(lang = r$lang(), "Advanced options", force_span = TRUE),
+      footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss", force_span = TRUE))
     ))
   })
 
@@ -64,5 +73,10 @@ settings_advanced <- function(r = r, input = input) {
       cc_t(lang = r$lang(), paste0("Default location successfully cleared")),
       type = "default"
     )
+  })
+
+  # Change language when the radio buttons are clicked
+  shiny::observeEvent(input$language_change, {
+    update_lang(r = r, lang = input$language_change)
   })
 }
