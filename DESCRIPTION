@@ -1,5 +1,5 @@
 Package: curbcut
-Title: What the Package Does (One Line, Title Case)
+Title: Run-time Functions to Power a Curbcut Instance
 Version: 0.0.0.9000
 Authors@R: 
     c(person("Curbcut", email = "contact@curbcut.ca", role = "aut"),
