@@ -15,14 +15,6 @@ get_viewstate <- function(map_ID) {
   # Get the map view state as a reactive
   map_view_state <- shiny::reactiveVal(NULL)
 
-  shiny::observeEvent(rdeck::get_view_state(map_ID),
-    {
-      map_view_state(rdeck::get_view_state(map_ID))
-    },
-    ignoreNULL = TRUE,
-    ignoreInit = TRUE
-  )
-
   shiny::observeEvent(cc.map::get_map_viewstate(map_ID),
     {
       map_view_state(cc.map::get_map_viewstate(map_ID))
@@ -50,14 +42,6 @@ get_viewstate <- function(map_ID) {
 get_click <- function(map_ID) {
   # Get the map click as a reactive
   map_click <- shiny::reactiveVal(NULL)
-
-  shiny::observeEvent(rdeck::get_clicked_object(map_ID),
-    {
-      map_click(rdeck::get_clicked_object(map_ID))
-    },
-    ignoreNULL = TRUE,
-    ignoreInit = TRUE
-  )
 
   shiny::observeEvent(cc.map::get_map_click(map_ID),
     {

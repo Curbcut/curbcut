@@ -42,7 +42,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         ),
 
         # Map
-        curbcut::map_js_UI(shiny::NS(id, id)),
+        curbcut::map_js_UI(shiny::NS(id, id), stories = stories),
 
         # Tutorial
         curbcut::tutorial_UI(id = shiny::NS(id, id)),
@@ -220,16 +220,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         tile = tile,
-        data_colours = data_colours
-      )
-
-      # Update map labels
-      curbcut::label_server(
-        id = id,
-        tile = tile,
+        select_id = r[[id]]$select_id,
+        coords = r[[id]]$coords,
         zoom = r[[id]]$zoom,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
-        region = shiny::reactive(zoom_levels()$region)
+        data_colours = data_colours
       )
 
       # Explore panel

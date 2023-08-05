@@ -52,6 +52,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
   mapping <- match(data$group, colour_table$group)
   data$fill <- colour_table$fill[mapping]
   data <- data[c("ID", "fill")]
+  names(data)[1] <- c("ID_color")
 
   # Switch NA to the right "NA" colour
   data$fill[is.na(data$fill)] <- colour_table$fill[colour_table$group == "NA"]

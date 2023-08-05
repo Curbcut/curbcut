@@ -5,7 +5,7 @@
 \alias{map_js_UI}
 \title{Shiny Server function to update the interactive map of \code{cc.map}}
 \usage{
-map_js_server(id, r, tile, data_colours)
+map_js_server(id, r, tile, coords, zoom, select_id, data_colours)
 
 map_js_UI(id)
 }
@@ -20,6 +20,14 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 be used. Either a combination of a region with auto-scale (e.g. \code{city_auto_zoom})
 or a combination of a region and a scale (e.g. \code{city_DA}). The output of
 \code{\link{zoom_server}}.}
+
+\item{coords}{<\verb{reactive numeric vector}> The current central map location
+of the map. Bookmark can have an input on it. Usually \code{r[[id]]$coords}.}
+
+\item{zoom}{<\verb{reactive numeric}> The current zoom level of the map, also
+the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
+
+\item{select_id}{<\verb{reactive character}> The ID of the selected polygon.}
 
 \item{data_colours}{<\verb{reactive data.frame}> The output of
 \code{\link{data_get_colours}}. Used for the fill colour of the
