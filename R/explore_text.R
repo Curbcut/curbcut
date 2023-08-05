@@ -1,4 +1,4 @@
-#' Generate text for the given variables and region
+#' Generate Explore text for the given variables and region
 #'
 #' This function dispatches to the appropriate text-generating function based on
 #' the type of `vars` and returns the resulting text.
@@ -15,8 +15,8 @@
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The output of \code{\link{data_get}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their info will be the one of their DA.
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
+#' default, their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param ... Additional arguments passed to the dispatched function.
@@ -1091,23 +1091,27 @@ explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
 #' generated. `vars$var_left` or `vars$var_right`
 #' @param left <`logical>` Whether the `var` supplied is the var_left
 #' or the `var_right`. If `var_left`, TRUE.
-#' @param positive <`logical`> Wheter the bivariate relationship is positive
-#' or negative. One of the output of \code{\link{explore_text_bivar_correlation}}
+#' @param positive <`logical`> Whether the bivariate relationship is positive
+#' or negative. One of the output of
+#' \code{\link{explore_text_bivar_correlation}}.
+#' @param style <`logical`> Whether the output should have text styling (e.g.
+#' <b>).
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
-#' @param ... Additional arguments to be passed.
+#' @param ... Additional arguments to be passed to methods.
 #'
 #' @return A text string containing an adjective to describe the bivariate
 #' relationship.
 #' @export
-explore_text_bivar_adjective <- function(var, left, positive, lang = NULL, ...) {
+explore_text_bivar_adjective <- function(var, left, positive, style = TRUE,
+                                         lang = NULL, ...) {
   UseMethod("explore_text_bivar_adjective", var)
 }
 
 #' @rdname explore_text_bivar_adjective
 #' @export
-explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
-                                                ...) {
+explore_text_bivar_adjective.dollar <- function(var, left, positive,
+                                                style = TRUE, lang, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("higher", lang = lang))
@@ -1118,13 +1122,15 @@ explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
     return(cc_t("lower", lang = lang))
   })()
 
-  return(sprintf("<b>%s</b>", string))
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
 }
 
 #' @rdname explore_text_bivar_adjective
 #' @export
-explore_text_bivar_adjective.default <- function(var, left, positive, lang,
-                                                 ...) {
+explore_text_bivar_adjective.default <- function(var, left, positive,
+                                                 style = TRUE, lang, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("a higher", lang = lang))
@@ -1135,7 +1141,9 @@ explore_text_bivar_adjective.default <- function(var, left, positive, lang,
     return(cc_t("a lower", lang = lang))
   })()
 
-  return(sprintf("<b>%s</b>", string))
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
 }
 
 
