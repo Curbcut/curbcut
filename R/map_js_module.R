@@ -143,7 +143,8 @@ map_js_UI <- function(id, stories = NULL, stories_min_zoom = 13) {
       zoom = map_zoom,
       map_style_id = map_base_style,
       tileset_prefix = tileset_prefix,
-      stories = stories
+      stories = stories,
+      stories_min_zoom = stories_min_zoom
     )
   )
 }
