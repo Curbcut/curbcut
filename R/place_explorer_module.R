@@ -149,31 +149,12 @@ place_explorer_server <- function(id, r,
 
     # Map ---------------------------------------------------------------------
 
-    output[[id_map]] <- rdeck::renderRdeck(
-      rdeck::rdeck(
-        map_style = map_base_style, initial_view_state =
-          rdeck::view_state(center = map_loc, zoom = map_zoom),
-        layer_selector = FALSE
-      ) |>
-        rdeck::add_mvt_layer(
-          id = "place_explorer",
-          name = "place_explorer",
-          pickable = TRUE,
-          auto_highlight = TRUE,
-          highlight_color = "#AAB6CF80",
-          get_fill_color = "#AAB6CF20",
-          get_line_color = "#FFFFFF00"
-        )
-    )
-
-    # Update the map whenever the `df` changes
-    shiny::observe({
-      rdeck::rdeck_proxy(id_map) |>
-        rdeck::update_mvt_layer(
-          id = "place_explorer",
-          data = tilejson(mapbox_username, tileset_prefix, r[[id]]$df())
-        )
-    })
+    map_js_server(id = id,
+                  r = r,
+                  tile = r[[id]]$df,
+                  coords = r[[id]]$coords,
+                  zoom = r[[id]]$zoom,
+                  fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF20")))
 
     # Map click
     update_select_id(id = id, r = r)
@@ -323,7 +304,7 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
       ),
 
       # Map
-      map_UI(id = shiny::NS(id, id)),
+      map_js_UI(id = shiny::NS(id, id), stories = NULL),
 
       # Main panel
       shinyjs::hidden(

@@ -66,3 +66,27 @@
 	color: black;
 	font-weight: bold;
 }
+
+@media (max-width: 768px) {
+	.main_panel_popup {
+		position: absolute;
+		top: calc(var(--side-bar-top) + 60px);
+		box-sizing: border-box;
+		margin-left: var(--padding-h-md);
+		margin-right: var(--padding-h-md);
+		width: calc(100vw - var(--padding-h-md) - var(--padding-h-md));
+		background-color: #e9ecef;
+		padding: 0.5rem 1rem 0.5rem 1rem;
+		border-radius: 15px;
+		border: 1px solid #000;
+		height: calc(100vh - var(--side-bar-top) - 60px - var(--padding-h-md));
+	}
+
+	.main_panel_popup::before {
+		display: none;
+	}
+
+	.main_panel_popup::after {
+		display: none;
+	}
+}

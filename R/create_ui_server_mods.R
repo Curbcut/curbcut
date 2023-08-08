@@ -21,6 +21,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
     mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
     page <- modules[modules$id == id, ]
     theme_lowercased <- gsub(" .*", "", tolower(page$theme))
+    stories <- get_from_globalenv("stories")
 
     shiny::tagList(
       # Sidebar

@@ -5,9 +5,23 @@
 \alias{map_js_UI}
 \title{Shiny Server function to update the interactive map of \code{cc.map}}
 \usage{
-map_js_server(id, r, tile, coords, zoom, select_id, data_colours)
+map_js_server(
+  id,
+  r,
+  tile,
+  coords,
+  zoom,
+  select_id = shiny::reactive(NA),
+  data_colours = shiny::reactive(data.frame()),
+  outline_width = shiny::reactive(1),
+  outline_color = shiny::reactive("transparent"),
+  pickable = shiny::reactive(TRUE),
+  fill_fun = shiny::reactive(cc.map::map_choropleth_fill_fun),
+  fill_fun_args = shiny::reactive(list(df = data_colours(), get_col =
+    names(data_colours())[1], fallback = "#B3B3BB"))
+)
 
-map_js_UI(id)
+map_js_UI(id, stories = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
@@ -30,8 +44,28 @@ the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
 \item{select_id}{<\verb{reactive character}> The ID of the selected polygon.}
 
 \item{data_colours}{<\verb{reactive data.frame}> The output of
-\code{\link{data_get_colours}}. Used for the fill colour of the
+\code{\link{data_get_colours}}. Used for the fill color of the
 polygons.}
+
+\item{outline_width}{<\verb{reactive numeric}> The width of the polygon outline.
+Defaults to \code{shiny::reactive(1)}.}
+
+\item{outline_color}{<\verb{reactive object}> The color of the polygon outline.
+Defaults to \code{shiny::reactive("transparent")}. It can be a color, or a
+JSON object representing the line-color mapping.}
+
+\item{pickable}{<\verb{reactive logical}> Determines if the polygons are
+selectable. Defaults to \code{shiny::reactive(TRUE)}.}
+
+\item{fill_fun}{<\verb{reactive function}> The function used for fill colour of
+polygons. Defaults to \code{shiny::reactive(cc.map::map_choropleth_fill_fun)}.}
+
+\item{fill_fun_args}{<\verb{reactive list}> Arguments passed to the \code{fill_fun}
+function. Defaults to \code{shiny::reactive(list(df = data_colours(),
+get_col = names(data_colours())[1], fallback = "#B3B3BB"))}.}
+
+\item{stories}{<\code{data.frame}> Stories data.frame if they are to be shown
+on the map. Defaults to NULL for not showing them.}
 }
 \value{
 A list. The function returns the viewstate of the map, which includes

@@ -280,6 +280,7 @@ treat_to_DA <- function(scales_as_DA, df) {
 #' environment.
 #'
 #' @return The requested object from the global environment.
+#' @export
 get_from_globalenv <- function(x) {
   out <- get0(x, envir = .GlobalEnv)
   if (is.null(out)) {
@@ -599,4 +600,29 @@ page_get <- function(ns_id) {
 
   # Return
   return(page)
+}
+
+#' Convert a HEX8 color code to an RGBA color string
+#'
+#' This function takes a HEX8 color code (including alpha channel) and converts
+#' it to an RGBA string. The HEX8 code must include the hash symbol (#) at the
+#' beginning.
+#'
+#' @param hex8 <`character`> A string representing the HEX8 color code (e.g.
+#' "#FF5733FF").
+#'
+#' @return A string representing the RGBA color (e.g. "rgba(255, 87, 51, 1)").
+#' @export
+hex8_to_rgba <- function(hex8) {
+  # Extract the RGB and alpha components
+  r <- strtoi(substr(hex8, 2, 3), 16L)
+  g <- strtoi(substr(hex8, 4, 5), 16L)
+  b <- strtoi(substr(hex8, 6, 7), 16L)
+  a <- strtoi(substr(hex8, 8, 9), 16L)
+
+  # Convert alpha from 0-255 to 0-1 scale
+  a <- round(a / 255, 2)
+
+  # Return as rgba string
+  return(paste0("rgba(", r, ", ", g, ", ", b, ", ", a, ")"))
 }
