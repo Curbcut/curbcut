@@ -42,14 +42,15 @@ map_js_server <- function(id, r, tile, coords, zoom,
                           data_colours = shiny::reactive(data.frame()),
                           outline_width = shiny::reactive(1),
                           outline_color = shiny::reactive("transparent"),
-                           pickable = shiny::reactive(TRUE),
-                           fill_fun = shiny::reactive(cc.map::map_choropleth_fill_fun),
-                           fill_fun_args = shiny::reactive(list(
-                             df = data_colours(),
-                             get_col = names(data_colours())[1],
-                             fallback = "#B3B3BB"))) {
-  # stopifnot(shiny::is.reactive(tile))
-  # stopifnot(shiny::is.reactive(data_colours))
+                          pickable = shiny::reactive(TRUE),
+                          fill_fun = shiny::reactive(cc.map::map_choropleth_fill_fun),
+                          fill_fun_args = shiny::reactive(list(
+                            df = data_colours(),
+                            get_col = names(data_colours())[1],
+                            fallback = "#B3B3BB"))) {
+
+  stopifnot(shiny::is.reactive(tile))
+  stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
 
@@ -120,8 +121,10 @@ map_js_server <- function(id, r, tile, coords, zoom,
 #' @describeIn map_js_server Create the UI for the map module
 #' @param stories <`data.frame`> Stories data.frame if they are to be shown
 #' on the map. Defaults to NULL for not showing them.
+#' @param stories_min_zoom <`numeric`> Zoom level at which stories start to be
+#' shown. Defaults to 13.
 #' @export
-map_js_UI <- function(id, stories = NULL) {
+map_js_UI <- function(id, stories = NULL, stories_min_zoom = 13) {
   map_zoom <- get_from_globalenv("map_zoom")
   map_loc <- get_from_globalenv("map_loc")
   tileset_prefix <- get_from_globalenv("tileset_prefix")

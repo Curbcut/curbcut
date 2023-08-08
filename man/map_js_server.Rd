@@ -21,7 +21,7 @@ map_js_server(
     names(data_colours())[1], fallback = "#B3B3BB"))
 )
 
-map_js_UI(id, stories = NULL)
+map_js_UI(id, stories = NULL, stories_min_zoom = 13)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
@@ -66,6 +66,9 @@ get_col = names(data_colours())[1], fallback = "#B3B3BB"))}.}
 
 \item{stories}{<\code{data.frame}> Stories data.frame if they are to be shown
 on the map. Defaults to NULL for not showing them.}
+
+\item{stories_min_zoom}{<\code{numeric}> Zoom level at which stories start to be
+shown. Defaults to 13.}
 }
 \value{
 A list. The function returns the viewstate of the map, which includes
