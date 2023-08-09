@@ -4,9 +4,12 @@
 \alias{link}
 \title{Update tabset panel and select an ID}
 \usage{
-link(r, page, select_id = NA, df = NULL)
+link(session, r, page, select_id = NA, df = NULL)
 }
 \arguments{
+\item{session}{<\code{session}> A shiny session object from the server function.
+The actual session of the module, should be  \code{session = session}}
+
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 

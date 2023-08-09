@@ -16,7 +16,7 @@ params:
     scale_sing: "Dissemination area (count)"
     map_loc: c("lat", "lon")
     map_zoom: 13.75
-    mapbox_username: "sus-mcgill"
+    mapbox_username: "curbcut"
     title_card_data: ""
     variables: ""
     scale_df: ""
@@ -111,10 +111,9 @@ if (is.na(map_col)) map_col <- "#A9A9A995"
 map_col_light <- gsub("95$", "20", map_col)
 
 # Necessary for the rdeck map
-map_token <- paste0("pk.eyJ1Ijoic3VzLW1jZ2lsbCIsImEiOiJjbDBxMTcyNWwyNTl0M2",
-                    "RtZzRremNxOHA3In0.V2Ah5lxy-3RZlF2QKOvIjg")
+map_token <- paste0("pk.eyJ1IjoiY3VyYmN1dCIsImEiOiJjbGprYnVwOTQwaDAzM2xwaWdjbTB6bzdlIn0.Ks1cOI6v2i8jiIjk38s_kg")
 options(rdeck.mapbox_access_token = map_token)
-map_style_building <- "mapbox://styles/sus-mcgill/cl2bwtrsp000516rwyrkt9ior"
+map_style_building <- "mapbox://styles/curbcut/cljkciic3002h01qveq5z1wrp"
 
 # The MVT json
 mvt <- curbcut::tilejson(mapbox_username = params$mapbox_username,

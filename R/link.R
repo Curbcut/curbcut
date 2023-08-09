@@ -4,6 +4,8 @@
 #' the corresponding \code{select_id}. The \code{page} and \code{select_id}
 #' arguments must be reactive objects.
 #'
+#' @param session <`session`> A shiny session object from the server function.
+#' The actual session of the module, should be  `session = session`
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param page <`character`> The id of the tab to be opened.
@@ -13,7 +15,7 @@
 #' of the newly opened page's map.
 #'
 #' @export
-link <- function(r, page, select_id = NA, df = NULL) {
+link <- function(session, r, page, select_id = NA, df = NULL) {
   # Detect if we're in a reactive context
   if (is.null(shiny::getDefaultReactiveDomain())) {
     stop("The function needs to be used in a reactive context")
@@ -69,12 +71,11 @@ link <- function(r, page, select_id = NA, df = NULL) {
       r[[page]]$zoom(zoom)
       r[[page]]$coords(coords)
       # Update the map using the zoom and location
-      rdeck::rdeck_proxy(
-        session = r$server_session(),
-        id = ns_doubled(page_id = page, "map"),
-        initial_view_state =
-          rdeck::view_state(center = coords, zoom = zoom)
-      )
+      cc.map::map_viewstate(session = session,
+                            map_ID = ns_doubled(page_id = page, "map"),
+                            longitude = as.numeric(coords[1]),
+                            latitude = as.numeric(coords[2]),
+                            zoom = zoom)
     }
 
     # Update the selection

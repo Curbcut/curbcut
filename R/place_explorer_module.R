@@ -56,7 +56,7 @@ place_explorer_server <- function(id, r,
     )
 
     # Get the map view state
-    map_viewstate <- shiny::reactive(rdeck::get_view_state(id_map))
+    map_viewstate <- get_viewstate(id_map)
 
     # Zoom reactive when the view state of the map changes.
     shiny::observeEvent(map_viewstate(), {

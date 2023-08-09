@@ -12,11 +12,10 @@ is to be retrieved. This ID is used to monitor changes in the map's view state.}
 }
 \value{
 A reactive value containing the most recent state of the map. This reactive value
-updates whenever the \code{rdeck::get_view_state} or \code{cc.map::get_map_viewstate} function
-produces a non-null output.
+updates whenever the  \code{cc.map::get_map_viewstate} function produces a non-null output.
 }
 \description{
-This function retrieves the map view state by observing changes in the \code{rdeck::get_view_state}
-and \code{cc.map::get_map_viewstate} functions, whichever is used on the page. The
-map view state is then stored and returned as a reactive value.
+This function retrieves the map view state by observing changes in the
+\code{cc.map::get_map_viewstate} function. The  map view state is then stored and
+returned as a reactive value.
 }

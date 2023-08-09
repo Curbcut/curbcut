@@ -264,13 +264,16 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
         }
         coords <- df_data$centroid[df_data$ID == new_id][[1]]
         coords <- sapply(coords, round, digits = 2)
-        rdeck::rdeck_proxy(
-          id = "map",
-          initial_view_state =
-            rdeck::view_state(
-              center = coords,
-              zoom = r[[id]]$zoom()
-            )
+        cc.map::map_viewstate(
+          session = session,
+          map_ID = "map",
+          longitude = as.numeric(coords[1]),
+          latitude = as.numeric(coords[2]),
+          zoom = r[[id]]$zoom())
+        cc.map::map_choropleth_update_selection(
+          session = session,
+          map_ID = "map",
+          select_id = new_id
         )
       },
       ignoreNULL = FALSE,

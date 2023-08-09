@@ -20,7 +20,7 @@ language. Default is NULL.}
 on the page.}
 
 \item{map_viewstate}{<\verb{named list}> An optional named list representing the
-state of the map view. Usually \code{rdeck::get_view_state("map")}.}
+state of the map view. Usually \code{cc.map::get_map_viewstate("map")}.}
 
 \item{select_id}{<\code{character}> An optional string or numeric value representing
 the ID of the selected item.}

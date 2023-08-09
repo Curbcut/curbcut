@@ -7,6 +7,9 @@ Authors@R:
     person("David", "Wachsmuth", email = "david.wachsmuth@mcgill.ca", role  = "ctb"))
 Description: The purpose of the package is to centralise the functions used by all instances of Curbcut. 
 Imports:
+    cc.map,
+    cc.landing,
+    rdeck,
     shiny,
     glue,
     shinyjs,
@@ -14,7 +17,6 @@ Imports:
     ggplot2,
     scales,
     stats,
-    rdeck,
     DBI,
     shinyWidgets,
     DT,
@@ -30,10 +32,10 @@ Imports:
     RCurl,
     bsicons
 Remotes:
-    qfes/rdeck,
-    bdbmax/bslib,
     Curbcut/cc.map,
-    Curbcut/cc.landing
+    Curbcut/cc.landing,
+    bdbmax/bslib,
+    qfes/rdeck
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

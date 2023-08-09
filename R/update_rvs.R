@@ -45,7 +45,7 @@ update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
 #' e.g. `alp`.
 #' @param poi <`character vector`> The current POIs showing on the map.
 #' @param map_viewstate <`list`> The map viewstate. Usually the output of the
-#' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}.
+#' \code{\link{map_js_server}}.
 #'
 #' @return A character vector of nearby POIs if new POIs are found; otherwise,
 #' returns the input POI vector.
@@ -95,7 +95,7 @@ update_poi <- function(id, poi, map_viewstate) {
 #' Update Select ID module
 #'
 #' This module function updates the selected ID on a Curbcut map page. It uses the
-#' \code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+#' \code{\link{get_click}} function to get the ID of the clicked map.
 #' It looks if the selection has been made on a 'stories' bubble and if so,
 #' links to the stories page.
 #' If a new ID is selected, the function updates the `select_id` reactive to
@@ -114,7 +114,7 @@ update_poi <- function(id, poi, map_viewstate) {
 #' checked for any match with the `r$default_select_ids()` changed in
 #' the advanced options.
 #' @param id_map <`character`> Indicates the ID of the object map, usually
-#' created by \code{\link{map_server}}. Defaults to `"map"` as it is
+#' created by \code{\link{map_js_server}}. Defaults to `"map"` as it is
 #' the default of the `map_server` function.
 #'
 #' @return This function does not return a value. Instead, it updates the
@@ -339,5 +339,40 @@ update_vars <- function(id, r, var_left, var_right) {
     } else {
       r[[id]]$vars(vr)
     }
+  })
+}
+
+#' Update a reactive value object
+#'
+#' This function updates a reactive value object and does not trigger a change
+#' in the reactive value if the new value is the same as the previous value. It
+#' observes a new value, and if this new value is different from the current one,
+#' the function updates the rv. It uses the reactive programming features of Shiny.
+#'
+#' @param id <`character`> The ID of the page in which this module will appear,
+#' e.g. `alp`.
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
+#' @param rv_name <`character`> A character string specifying the name of the
+#' reactive value to create and update.
+#' @param default_val <`vector`> A vector of length one. This parameter is used
+#' to initialize the rv.
+#' @param new_val <`reactive`> A reactive expression returning the new value to
+#' assign to the rv. If the new value is the same as the current one, the function
+#' does nothing.
+#'
+#' @return
+#' This function does not return a value. It updates the reactive value in place.
+#' The updated value can be accessed using the rv object and the rv_name parameter.
+#' If the new value is the same as the current one, the function does nothing and
+#' returns NULL.
+update_map_rv <- function(id, r, rv_name, default_val, new_val) {
+  r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+
+  shiny::observe({
+    if (identical(new_val(), shiny::isolate(r[[id]][[rv_name]]()))) {
+      return(NULL)
+    }
+    r[[id]][[rv_name]](new_val())
   })
 }

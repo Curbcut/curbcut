@@ -40,11 +40,11 @@ their colour will be the one of their DA.}
 }
 \value{
 A data frame with the columns \code{ID} and \code{fill} to use in
-an \code{rdeck} scale function.
+an \code{cc.map::map_choropleth_fill_fun}-like scale function.
 }
 \description{
 This function retrieves the colors of all ID of a specified region by matching
 the \code{group} column in the data with the colors in the correct \code{colours}
 data frame. The resulting data frame contains only the \code{ID} and \code{fill}
-columns, to use in an \code{rdeck} scale function.
+columns, to use in an \code{cc.map::map_choropleth_fill_fun}-like  function.
 }
