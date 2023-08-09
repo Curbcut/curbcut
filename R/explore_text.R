@@ -1221,7 +1221,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   }
   exp_nodet <- var_get_info(vars$var_left,
     what = "explanation_nodet", translate = TRUE,
-    lang =
+    lang = lang
     )
   # If the explanation is a bullet point, switch to something more generic
   if (grepl("</ul>", exp_nodet)) {

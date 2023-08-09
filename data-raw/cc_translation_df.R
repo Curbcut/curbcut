@@ -662,7 +662,7 @@ tibble::add_row(
   ) |>
   tibble::add_row(
     en = "The change in %s %s between %s and %s is larger than in %s of other %s between the same years.",
-    fr = "La variation de la/du %s entre %s et %s est plus \u00e9lev\u00e9 que dans %s des autres %s entre les m\u00eames ann\u00e9es."
+    fr = "La variation de la/du %s %s entre %s et %s est plus \u00e9lev\u00e9 que dans %s des autres %s entre les m\u00eames ann\u00e9es."
   ) |>
   # Delta bivar -------------------------------------------------------------
 
