@@ -16,7 +16,7 @@ use_curbcut_css <- function(lang_init = FALSE) {
   # List all style files
   style_files <- paste0("curbcut_css/",
                         list.files(system.file("styles", package = "curbcut")))
-  style_files <- paste0(style_files, "?id=1")
+  style_files <- paste0(style_files, "?id=2")
   # Build the tags for the style files
   style_tags <- shiny::tagList(
     lapply(style_files, function(x) {

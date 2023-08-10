@@ -7,14 +7,16 @@
 #'
 #' @param id <`character`> The ID of the page in which this module will appear,
 #' e.g. `alp`.
+#' @param style <`character`> Additional style to the panel.
 #' @param ... Additional arguments to be passed to the \code{\link[shiny]{absolutePanel}}
 #' function. Would normally be the `compare_UI`, `explore_UI`, `dyk_UI`. TKTK LINK
 #'
 #' @return An absolutePanel object with a custom class for the content div.
 #' @export
-right_panel <- function(id, ...) {
+right_panel <- function(id, style, ...) {
   shiny::absolutePanel(
     id = shiny::NS(id, "right_panel"),
+    style = style,
     class = "panel panel-default sus-map-panel sus-scroll",
     shiny::div(
       shiny::h4(class = "mobile-panel-title", cc_t("Explore")),
