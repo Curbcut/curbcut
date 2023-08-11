@@ -11,17 +11,20 @@
 #' @export
 server <- function() {
   shiny::shinyServer(function(input, output, session) {
-
     ## Reactive variables --------------------------------------------------------
-    r <- r_init(server_session = session,
-                lang_init = "fr",
-                prev_norm = shiny::reactiveVal(FALSE))
+    r <- r_init(
+      server_session = session,
+      lang_init = "fr",
+      prev_norm = shiny::reactiveVal(FALSE)
+    )
 
     ## Page title change, depending on page visited ------------------------------
     site_name <- get_from_globalenv("site_name")
-    title_page_update(r = r,
-                      active_page = shiny::reactive(input$cc_page),
-                      site_name = site_name)
+    title_page_update(
+      r = r,
+      active_page = shiny::reactive(input$cc_page),
+      site_name = site_name
+    )
 
     ## Bookmark ------------------------------------------------------------------
     use_bookmark(r = r)
@@ -34,7 +37,6 @@ server <- function() {
 
     ## Heartbeat function to keep app alive --------------------------------------
     heartbeat(input)
-
   })
 }
 
@@ -47,7 +49,6 @@ server <- function() {
 #'
 #' @return A list of translated shiny UI elements.
 modules_panel <- function() {
-
   # Get unique themes and arrange them for each theme
   modules <- get_from_globalenv("modules")
   unique_themes <- unique(modules$theme)[!is.na(unique(modules$theme))]
@@ -71,8 +72,8 @@ modules_panel <- function() {
           name <- curbcut::cc_t(module)
           key <- unname(mods_rdy[[theme]][module])
           shiny::tabPanel(name,
-                          do.call(paste0(key, "_UI"), list(key)),
-                          value = key
+            do.call(paste0(key, "_UI"), list(key)),
+            value = key
           )
         })
       )

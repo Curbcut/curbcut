@@ -60,7 +60,6 @@ var_remove_time <- function(var) {
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL, check_year = TRUE,
                          variables = get_from_globalenv("variables")) {
-
   if (!what %in% names(variables)) {
     stop(glue::glue_safe("`{what}` is not a column of the `variables` table."))
   }

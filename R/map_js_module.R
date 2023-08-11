@@ -47,13 +47,12 @@ map_js_server <- function(id, r, tile, coords, zoom,
                           fill_fun_args = shiny::reactive(list(
                             df = data_colours(),
                             get_col = names(data_colours())[1],
-                            fallback = "#B3B3BB"))) {
-
+                            fallback = "#B3B3BB"
+                          ))) {
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     tileset_prefix <- get_from_globalenv("tileset_prefix")
 
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
@@ -61,38 +60,50 @@ map_js_server <- function(id, r, tile, coords, zoom,
     tileset <- shiny::reactive(sprintf("%s_%s", tileset_prefix, tile()))
     tileset_trigger <- shiny::reactiveVal(NULL)
     shiny::observeEvent(tileset(), {
-      if (is.null(tileset_trigger())) return(tileset_trigger(tileset()))
-      if (tileset() == tileset_trigger()) return()
+      if (is.null(tileset_trigger())) {
+        return(tileset_trigger(tileset()))
+      }
+      if (tileset() == tileset_trigger()) {
+        return()
+      }
       tileset_trigger(tileset())
     })
 
     # Update map coordinates if needed
-    shiny::observeEvent(coords(), {
-      map_loc <- get_from_globalenv("map_loc")
-      if (!identical(map_loc, coords()))
-      cc.map::map_viewstate(
-        session = session,
-        map_ID = "map",
-        longitude = as.numeric(unname(coords()[1])),
-        latitude = as.numeric(unname(coords()[2])),
-        zoom = zoom())
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(coords(),
+      {
+        map_loc <- get_from_globalenv("map_loc")
+        if (!identical(map_loc, coords())) {
+          cc.map::map_viewstate(
+            session = session,
+            map_ID = "map",
+            longitude = as.numeric(unname(coords()[1])),
+            latitude = as.numeric(unname(coords()[2])),
+            zoom = zoom()
+          )
+        }
+      },
+      ignoreNULL = TRUE
+    )
 
     # Whenever the tileset changes, load it with the according data_colours.
-    shiny::observeEvent(tileset_trigger(), {
-      cc.map::map_choropleth(
-        session = session,
-        map_ID = "map",
-        tileset = tileset_trigger(),
-        fill_colour = data_colours(),
-        select_id = select_id(),
-        fill_fun = fill_fun(),
-        fill_fun_args = fill_fun_args(),
-        pickable = pickable(),
-        outline_width = outline_width(),
-        outline_color = outline_color()
-      )
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(tileset_trigger(),
+      {
+        cc.map::map_choropleth(
+          session = session,
+          map_ID = "map",
+          tileset = tileset_trigger(),
+          fill_colour = data_colours(),
+          select_id = select_id(),
+          fill_fun = fill_fun(),
+          fill_fun_args = fill_fun_args(),
+          pickable = pickable(),
+          outline_width = outline_width(),
+          outline_color = outline_color()
+        )
+      },
+      ignoreNULL = TRUE
+    )
 
     # Only update the fill_colour when data_colours change
     shiny::observe({
@@ -101,7 +112,8 @@ map_js_server <- function(id, r, tile, coords, zoom,
         map_ID = "map",
         fill_colour = data_colours(),
         fill_fun = fill_fun(),
-        fill_fun_args = fill_fun_args())
+        fill_fun_args = fill_fun_args()
+      )
     })
 
     # Change language for stories hover text

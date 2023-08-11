@@ -35,12 +35,14 @@ vars_build <- function(var_left, var_right = " ", df,
 
   # Add var left and right measurement variable as classes
   var_left_m <- var_get_info(var_left[[1]], "var_measurement",
-                             variables = variables)[[1]]
+    variables = variables
+  )[[1]]
   var_left_m <- var_left_m$measurement[var_left_m$df == df]
   class(var_left) <- c(var_left_m, class(var_left))
   if (var_right[[1]] != " ") {
     var_right_m <- var_get_info(var_right[[1]], "var_measurement",
-                                variables = variables)[[1]]
+      variables = variables
+    )[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$df == df]
     class(var_right) <- c(var_right_m, class(var_right))
   } else {

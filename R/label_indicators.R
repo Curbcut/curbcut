@@ -24,8 +24,10 @@ label_indicators_server <- function(id, r, label = shiny::reactive("Advanced con
 
     # If the checkbox is clicked, slide open the div
     shiny::observeEvent(show_advanced(), {
-      shinyjs::toggle("advanced_controls_div", condition = show_advanced(),
-                      anim = TRUE, animType = "slide")
+      shinyjs::toggle("advanced_controls_div",
+        condition = show_advanced(),
+        anim = TRUE, animType = "slide"
+      )
     })
 
     return(show_advanced)
@@ -65,7 +67,9 @@ label_indicators_UI <- function(id, label = cc_t("Advanced controls"), ...) {
             id = shiny::NS(id, "cb_advanced_controls"),
             label = label,
             value = FALSE
-          ))),
+          )
+        )
+      ),
     )),
     shiny::div(id = shiny::NS(id, "common_widgets")),
     shinyjs::hidden(shiny::div(
@@ -80,10 +84,10 @@ label_indicators_UI <- function(id, label = cc_t("Advanced controls"), ...) {
         shiny::div(
           style = "width: 89%",
           cc_t("Advanced controls")
-        )),
+        )
+      ),
       shiny::div(id = shiny::NS(id, "additional_widgets_div")),
       ...
-    )
-    )
+    ))
   )
 }

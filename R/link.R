@@ -71,11 +71,13 @@ link <- function(session, r, page, select_id = NA, df = NULL) {
       r[[page]]$zoom(zoom)
       r[[page]]$coords(coords)
       # Update the map using the zoom and location
-      cc.map::map_viewstate(session = session,
-                            map_ID = ns_doubled(page_id = page, "map"),
-                            longitude = as.numeric(coords[1]),
-                            latitude = as.numeric(coords[2]),
-                            zoom = zoom)
+      cc.map::map_viewstate(
+        session = session,
+        map_ID = ns_doubled(page_id = page, "map"),
+        longitude = as.numeric(coords[1]),
+        latitude = as.numeric(coords[2]),
+        zoom = zoom
+      )
     }
 
     # Update the selection

@@ -105,7 +105,9 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
     # If there's only one zoom level, hide the slider and the auto-zoom
     shiny::observe({
       # Do nothing if there are more than one zoom level
-      if (length(zoom_levels()$zoom_levels) > 1) return()
+      if (length(zoom_levels()$zoom_levels) > 1) {
+        return()
+      }
 
       # Add one namespace as these are inside other module servers
       shinyjs::hide(shiny::NS(id, "zoom_auto"))

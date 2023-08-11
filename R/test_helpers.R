@@ -97,7 +97,6 @@ test_resources_creation <- function(additional_vars = c()) {
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
                             select_id = NA, pos = 1, data_path = get0(".curbcut_montreal_data")) {
-
   if (is.null(data_path)) {
     stop("Set a path from which to grab the data (data folder of a Curbcut repo).")
   }
@@ -165,8 +164,8 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
   # All qs and qsm files
   data_files <- list.files(folder, full.names = TRUE)
   invisible(lapply(data_files[grepl("qsm$", data_files)],
-                   qs::qload,
-                   env = as.environment(pos)
+    qs::qload,
+    env = as.environment(pos)
   ))
   invisible(lapply(
     data_files[grepl("qs$", data_files)],

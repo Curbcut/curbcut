@@ -30,14 +30,12 @@ trigger_pages_server <- function(cc_page, r) {
 
   # Every time a page is opened, trigger the server module of the page (only
   # if the page has not been visited yet).
-  shiny::observeEvent(cc_page(),
-    {
-      if (!cc_page() %in% page_activity$previous_tabs()) {
-        do.call(paste0(cc_page(), "_server"), list(cc_page(), r = r))
-      }
-
-      # Update the URL
-      shiny::updateQueryString("?")
+  shiny::observeEvent(cc_page(), {
+    if (!cc_page() %in% page_activity$previous_tabs()) {
+      do.call(paste0(cc_page(), "_server"), list(cc_page(), r = r))
     }
-  )
+
+    # Update the URL
+    shiny::updateQueryString("?")
+  })
 }

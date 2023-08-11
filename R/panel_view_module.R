@@ -75,12 +75,16 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
     # selection is in `data`
     shiny::observe({
       pe_docs <- get_from_globalenv("pe_docs")
+      pe_main_card_data <- get_from_globalenv("pe_main_card_data")
       # When to show the place portrait button?
       show <- (\(x) {
         if (is.na(r[[id]]$select_id())) {
           return(FALSE)
         }
         if (!r[[id]]$select_id() %in% data()$ID) {
+          return(FALSE)
+        }
+        if (!r[[id]]$df() %in% pe_main_card_data$avail_df$df) {
           return(FALSE)
         }
         # Is the region 'pickable', meaning there could be a place explorer
@@ -269,7 +273,8 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
           map_ID = "map",
           longitude = as.numeric(coords[1]),
           latitude = as.numeric(coords[2]),
-          zoom = r[[id]]$zoom())
+          zoom = r[[id]]$zoom()
+        )
         cc.map::map_choropleth_update_selection(
           session = session,
           map_ID = "map",

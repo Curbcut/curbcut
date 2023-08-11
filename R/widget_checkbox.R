@@ -27,7 +27,6 @@ checkbox_server <- function(id, r, checkbox_id = "cbx",
   stopifnot(shiny::is.reactive(event_reset))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Reformat the checkbox_id to make it obvious it's a checkbox (for bookmark)
     checkbox_id <- paste0("cccheckbox_", checkbox_id)
 

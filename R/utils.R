@@ -588,7 +588,6 @@ grab_df_from_bslike <- function(df) {
 #' @return A subset of the `modules` global data frame matching the `ns_id`.
 #' @export
 page_get <- function(ns_id) {
-
   # Grab the modules table
   modules <- get_from_globalenv("modules")
 

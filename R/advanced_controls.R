@@ -14,20 +14,22 @@
 #' @return None
 #' @export
 advanced_controls_server <- function(id, r, label = shiny::reactive("Show")) {
-    # Checkbox to show additional widgets
-    show_advanced <- checkbox_server(
-      id = "cb_advanced_controls",
-      r = r,
-      label = label
+  # Checkbox to show additional widgets
+  show_advanced <- checkbox_server(
+    id = "cb_advanced_controls",
+    r = r,
+    label = label
+  )
+
+  # If the checkbox is clicked, slide open the div
+  shiny::observeEvent(show_advanced(), {
+    shinyjs::toggle("advanced_controls_div",
+      condition = show_advanced(),
+      anim = TRUE, animType = "slide"
     )
+  })
 
-    # If the checkbox is clicked, slide open the div
-    shiny::observeEvent(show_advanced(), {
-      shinyjs::toggle("advanced_controls_div", condition = show_advanced(),
-                      anim = TRUE, animType = "slide")
-    })
-
-    return(show_advanced)
+  return(show_advanced)
 }
 
 #' Advanced Controls - UI
@@ -56,12 +58,14 @@ advanced_controls_UI <- function(id, label = cc_t("Show"), ...) {
         style = "width: 30%",
         cc_t("Advanced controls")
       ),
-      shiny::div(style = "width: 60%; margin:0px !important; text-align: right; overflow: hidden;",
-                 checkbox_UI(
-                   id = shiny::NS(id, "cb_advanced_controls"),
-                   label = label,
-                   value = FALSE
-                 ))
+      shiny::div(
+        style = "width: 60%; margin:0px !important; text-align: right; overflow: hidden;",
+        checkbox_UI(
+          id = shiny::NS(id, "cb_advanced_controls"),
+          label = label,
+          value = FALSE
+        )
+      )
     ),
     shiny::div(id = shiny::NS(id, "advanced_controls_div"), ...)
   )

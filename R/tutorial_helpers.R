@@ -37,8 +37,12 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
     sprintf("#%s", session$ns(element))
   }
 
-  if (is.null(window_size)) return(NULL)
-  if (window_size[1] <= 768) return(NULL)
+  if (is.null(window_size)) {
+    return(NULL)
+  }
+  if (window_size[1] <= 768) {
+    return(NULL)
+  }
 
   # Default elements which need the tutorial
   default_elements <-

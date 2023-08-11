@@ -21,7 +21,6 @@
 #' @export
 autovars_server <- function(id, r, main_dropdown_title, default_year) {
   shiny::moduleServer(id, function(input, output, session) {
-
     # Global preparation ------------------------------------------------------
 
     # Selector function. Retrieve the namespace function associated with the
@@ -72,19 +71,27 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                 class = ys_classes,
                 shiny::hr(id = widget_ns("above_year_hr")),
                 shiny::div(
-                  class="shiny-split-layout sidebar-section-title",
-                  shiny::div(style = "width: 9%",
-                             icon_material_title("date_range")),
-                  shiny::div(style = "width: 24%",
-                             shiny::tags$span(id = shiny::NS(id, "year_label"),
-                                              cc_t("Time", force_span = TRUE))),
-                  shiny::div(style = "width: 64%; margin:0px !important; text-align: right;",
-                             checkbox_UI(
-                               id = widget_ns(id),
-                               label = cc_t("Compare dates", force_span = TRUE),
-                               value = FALSE
-                             )))
-                ,
+                  class = "shiny-split-layout sidebar-section-title",
+                  shiny::div(
+                    style = "width: 9%",
+                    icon_material_title("date_range")
+                  ),
+                  shiny::div(
+                    style = "width: 24%",
+                    shiny::tags$span(
+                      id = shiny::NS(id, "year_label"),
+                      cc_t("Time", force_span = TRUE)
+                    )
+                  ),
+                  shiny::div(
+                    style = "width: 64%; margin:0px !important; text-align: right;",
+                    checkbox_UI(
+                      id = widget_ns(id),
+                      label = cc_t("Compare dates", force_span = TRUE),
+                      value = FALSE
+                    )
+                  )
+                ),
                 slider_UI(
                   id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
                   step = step_, label = NULL
@@ -101,7 +108,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       )
     })
     shiny::observe({
-
       raw_wdgs <- common_widgets()$widgets
 
       # Other widgets that are common between all groups, if there are any
@@ -121,7 +127,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
             id = widget_ns(ns),
             do.call(shiny::tagList, mapply(
               function(w, n) {
-
                 # Keep the order!
                 l <- which(names(raw_wdgs) == n)
 
@@ -194,7 +199,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           where = "afterBegin",
           ui = UIs(other_wdgs, ns = "common_widgets_in")
         )
-
       }
     })
     # Grab the time values
@@ -289,14 +293,16 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
           # If the list is of length one, do not keep it as a list, so we can
           # remove the dropddown title.
-          if (!is.list(w) || length(w) == 1) w <- {
-            w <- unname(w)
-            w <- unlist(w)
-            if (is.null(names(w))) {
-              names(w) <- w
+          if (!is.list(w) || length(w) == 1) {
+            w <- {
+              w <- unname(w)
+              w <- unlist(w)
+              if (is.null(names(w))) {
+                names(w) <- w
+              }
+              names(w) <- sapply(names(w), cc_t, lang = r$lang())
+              w
             }
-            names(w) <- sapply(names(w), cc_t, lang = r$lang())
-            w
           } else {
             w <- cc_t(w, lang = r$lang())
           }
@@ -354,18 +360,18 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     })
 
     # If there's only one option in the var_left, hide it
-    shiny::observeEvent(mnd(), {
-      modules <- get_from_globalenv("modules")
-      var_lefts <- modules$var_left[modules$id == id][[1]]
+    shiny::observeEvent(mnd(),
+      {
+        modules <- get_from_globalenv("modules")
+        var_lefts <- modules$var_left[modules$id == id][[1]]
 
-      hide <- is.character(var_lefts) & length(var_lefts) == 1
+        hide <- is.character(var_lefts) & length(var_lefts) == 1
 
-      shinyjs::toggle(id = "main_drop", condition = !hide)
-      shinyjs::toggle(id = "hr_compare_panel", condition = !hide)
-      shinyjs::toggle(id = "indicators_label-indicator_label", condition = !hide)
-
-    },
-    ignoreInit = TRUE
+        shinyjs::toggle(id = "main_drop", condition = !hide)
+        shinyjs::toggle(id = "hr_compare_panel", condition = !hide)
+        shinyjs::toggle(id = "indicators_label-indicator_label", condition = !hide)
+      },
+      ignoreInit = TRUE
     )
 
     # Additional widgets ------------------------------------------------------
@@ -381,8 +387,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       # or less, placed them in advanced controls.
       advanced_controls_avail <- (length(widgets()) + length(adv) > 2)
       if (!advanced_controls_avail) {
-        selector = html_ns("indicators_label-common_widgets")
-        where = "beforeEnd"
+        selector <- html_ns("indicators_label-common_widgets")
+        where <- "beforeEnd"
       } else {
         selector <- advanced_div_selector
         where <- "beforeEnd"

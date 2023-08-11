@@ -23,8 +23,10 @@ use_curbcut_js <- function() {
   ))
 
   # List all JS files
-  js_files <- paste0("curbcut_js/",
-                        list.files(system.file("js_scripts", package = "curbcut")))
+  js_files <- paste0(
+    "curbcut_js/",
+    list.files(system.file("js_scripts", package = "curbcut"))
+  )
   js_files <- js_files[grepl("\\.js$", js_files)]
   js_files <- paste0(js_files, "?id=1")
   # Build the tags for the style files

@@ -403,10 +403,10 @@ cc_translation_df <-
   # Explore panel -----------------------------------------------------------
 
   # Context and q5
-tibble::add_row(
-  en = "individuals",
-  fr = "individus"
-) |>
+  tibble::add_row(
+    en = "individuals",
+    fr = "individus"
+  ) |>
   tibble::add_row(
     en = "This value",
     fr = "Cette valeur"
@@ -898,13 +898,11 @@ tibble::add_row(
     en = "{data_rank} in terms of active living potential. (Data from {data_date})",
     fr = "{data_rank} en termes de potentiel vie active. (Donn\u00e9es de {data_date})"
   ) |>
-
-
-# Possible themes ---------------------------------------------------------
-tibble::add_row(
-  en = "Climate",
-  fr = "Climat"
-) |>
+  # Possible themes ---------------------------------------------------------
+  tibble::add_row(
+    en = "Climate",
+    fr = "Climat"
+  ) |>
   tibble::add_row(
     en = "Ecology",
     fr = "\u00c9cologie"

@@ -149,12 +149,14 @@ place_explorer_server <- function(id, r,
 
     # Map ---------------------------------------------------------------------
 
-    map_js_server(id = id,
-                  r = r,
-                  tile = r[[id]]$df,
-                  coords = r[[id]]$coords,
-                  zoom = r[[id]]$zoom,
-                  fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF20")))
+    map_js_server(
+      id = id,
+      r = r,
+      tile = r[[id]]$df,
+      coords = r[[id]]$coords,
+      zoom = r[[id]]$zoom,
+      fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF20"))
+    )
 
     # Map click
     update_select_id(id = id, r = r)
@@ -208,10 +210,11 @@ place_explorer_server <- function(id, r,
         return(list(
           div = shiny::div(
             class = "main_panel_popup",
-            shiny::div(class = "back-to-map",
-                       shiny::actionLink(
-                         shiny::NS(id, "back"), "X"
-                       )
+            shiny::div(
+              class = "back-to-map",
+              shiny::actionLink(
+                shiny::NS(id, "back"), "X"
+              )
             ),
             shiny::downloadButton(
               class = "cc-download-btn",
