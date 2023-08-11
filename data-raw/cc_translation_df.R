@@ -942,7 +942,17 @@ cc_translation_df <-
   tibble::add_row(
     en = "Land use",
     fr = "Utilisation des sols"
+  ) |>
+  # Stories -----------------------------------------------------------------
+  tibble::add_row(
+    en = "Image gallery",
+    fr = "Galerie d'images"
+  ) |>
+  tibble::add_row(
+    en = "Choose themes:",
+    fr = "Choisissez des thèmes :"
   )
+
 
 
 
