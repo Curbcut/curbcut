@@ -14,7 +14,10 @@
 theme_dropdown_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
     # Detect page clicks on a page in the theme dropdown
-    page_click <- shiny::reactive(cc.landing::get_theme_drop_click(shiny::NS(id, "theme_drop"), session))
+    page_click <- shiny::reactive(cc.landing::get_theme_drop_click(
+      inputId = shiny::NS(id, "theme_drop"),
+      session = session
+    ))
 
     shiny::observeEvent(page_click(),
       {
@@ -25,6 +28,15 @@ theme_dropdown_server <- function(id, r) {
       },
       ignoreNULL = TRUE
     )
+
+    # If language changes, update the pages list
+    shiny::observeEvent(r$lang(), {
+      cc.landing::update_theme_drop_lang(
+        session = session,
+        inputId = shiny::NS(id, "theme_drop"),
+        lang = r$lang())
+    })
+
   })
 }
 
@@ -41,15 +53,20 @@ theme_dropdown_server <- function(id, r) {
 #' @export
 theme_dropdown_UI <- function(id) {
   modules <- get_from_globalenv("modules")
+  translation_df <- get_from_globalenv("translation_df")
   pages <- modules[c("id", "theme", "nav_title")]
+  translation_df <- translation_df[translation_df$en %in% c(pages$theme, pages$nav_title), ]
+
   solo_id <- gsub("-.*$", "", id)
   theme <- pages$theme[pages$id == solo_id]
 
   shiny::div(
     class = "theme-dropdown",
-    cc.landing::theme_drop_input(shiny::NS(id, "theme_drop"),
+    cc.landing::theme_drop_input(
+      inputId = shiny::NS(id, "theme_drop"),
       pages = pages,
-      theme = theme
+      theme = theme,
+      translation_df = translation_df
     )
   )
 }

@@ -13,7 +13,7 @@
 #'
 #' @return An absolutePanel object with a custom class for the content div.
 #' @export
-right_panel <- function(id, style, ...) {
+right_panel <- function(id, ..., style = "") {
   shiny::absolutePanel(
     id = shiny::NS(id, "right_panel"),
     style = style,

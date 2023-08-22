@@ -579,7 +579,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s, there is %s (%s) between %s and %s in %s.",
-    fr = "%s, il existe une %s (%s) entre %s et %s en %s."
+    fr = "%s, il n'existe %s (%s) entre %s et %s à l'échelle des %s."
   ) |>
   # Delta -------------------------------------------------------------------
 

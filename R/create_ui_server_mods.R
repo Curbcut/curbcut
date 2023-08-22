@@ -53,7 +53,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
         # Right panel
         curbcut::right_panel(
-          id = id,
+          id = shiny::NS(id, id),
           curbcut::explore_UI(shiny::NS(id, id)),
           curbcut::dyk_UI(shiny::NS(id, id))
         )
