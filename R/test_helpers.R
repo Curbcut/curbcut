@@ -102,7 +102,7 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
   }
 
   # Assign necessary setup objects to the global environment
-  test_setup()
+  test_setup(folder = data_path)
 
   # Subset the variables table
   variables <- qs::qread(sprintf("%svariables.qs", data_path))
