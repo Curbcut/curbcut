@@ -92,10 +92,16 @@ home_server <- function(id = "home", r) {
 #' the landing page with it.
 #'
 #' @param id <`character`> A unique identifier for the home UI. Normally `home`.
+#' @param placeholder_video_src <`character`> External link to a publicly available
+#' mp4 video. The video will be used as the placeholder, until the user click on
+#' to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
+#' @param video_src <`character`> External link to a publicly available
+#' mp4 video. This is the full length official video the user will see when
+#' they click on to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
 #'
 #' @return A Shiny UI object for the home page.
 #' @export
-home_UI <- function(id = "home") {
+home_UI <- function(id = "home", placeholder_video_src, video_src) {
   # Get modules from the global environment
   modules <- get_from_globalenv("modules")
   pages <- modules[c("id", "theme", "nav_title")]
@@ -115,6 +121,8 @@ home_UI <- function(id = "home") {
     contributors = get_from_globalenv("contributors"),
     translation_df = translation_df,
     collabs = get_from_globalenv("collabs"),
-    lang = "fr"
+    lang = "fr",
+    placeholder_video_src = placeholder_video_src,
+    video_src = video_src
   )
 }

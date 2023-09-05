@@ -95,7 +95,7 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
   # Make it an HTML paragraph -----------------------------------------------
 
   out <- lapply(out, \(x) {
-    sprintf("<p style='font-size:12px; font-style:italic;'>%s<hr>", x)
+    sprintf("<p style='font-size:12px; font-style:italic;'>%s", x)
   })
   out <- paste0(out, collapse = "")
 

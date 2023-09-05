@@ -46,14 +46,14 @@ place_explorer_server <- function(id, r,
 
     # Get df ------------------------------------------------------------------
 
-    # Initial reactives
-    rv_zoom_string <- shiny::reactiveVal(
-      zoom_get_string(
-        zoom = map_zoom,
-        zoom_levels = pe_vars$map_zoom_levels,
-        region = pe_vars$default_region
-      )
-    )
+    # # Initial reactives
+    # rv_zoom_string <- shiny::reactiveVal(
+    #   zoom_get_string(
+    #     zoom = map_zoom,
+    #     zoom_levels = pe_vars$map_zoom_levels,
+    #     region = pe_vars$default_region
+    #   )
+    # )
 
     # Get the map view state
     map_viewstate <- get_viewstate(id_map)
@@ -63,50 +63,57 @@ place_explorer_server <- function(id, r,
       r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
     })
 
-    # Map zoom levels change depending on r$region()
-    zoom_levels_ <-
-      shiny::reactive(zoom_get_levels(id = id, region = r$region()))
-    # Do not include scales as DA like buildings or streets
-    zoom_levels <- shiny::reactive({
-      zoom_lvls <- zoom_levels_()$zoom_levels
-      zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
+    # Now that we only get the first scale of every region, the following can
+    # be simpler
+    zoom_levels <- shiny::reactive(zoom_get_levels(id = id, region = r$region()))
 
-      return(list(
-        zoom_levels = zoom_levels,
-        region = zoom_levels_()$region
-      ))
-    })
+    # # Map zoom levels change depending on r$region()
+    # zoom_levels_ <-
+    #   shiny::reactive(zoom_get_levels(id = id, region = r$region()))
+    # # Do not include scales as DA like buildings or streets
+    # zoom_levels <- shiny::reactive({
+    #   zoom_lvls <- zoom_levels_()$zoom_levels
+    #   zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
+    #
+    #   return(list(
+    #     zoom_levels = zoom_levels,
+    #     region = zoom_levels_()$region
+    #   ))
+    # })
+    #
+    # # Zoom string reactive
+    # shiny::observe({
+    #   rv_zoom_string({
+    #     zoom_get_string(
+    #       zoom = r[[id]]$zoom(),
+    #       zoom_levels = zoom_levels()$zoom_levels,
+    #       region = zoom_levels()$region
+    #     )
+    #   })
+    # })
+    #
+    # # Choose tileset
+    # tile <- zoom_server(
+    #   id = id,
+    #   r = r,
+    #   zoom_string = rv_zoom_string,
+    #   zoom_levels = zoom_levels
+    # )
 
-    # Zoom string reactive
-    shiny::observe({
-      rv_zoom_string({
-        zoom_get_string(
-          zoom = r[[id]]$zoom(),
-          zoom_levels = zoom_levels()$zoom_levels,
-          region = zoom_levels()$region
-        )
-      })
-    })
-
-    # Choose tileset
-    tile <- zoom_server(
-      id = id,
-      r = r,
-      zoom_string = rv_zoom_string,
-      zoom_levels = zoom_levels
-    )
+    tile <- shiny::reactive(sprintf("%s_%s", r$region(), names(zoom_levels()$zoom_levels)[1]))
 
     # Get df
     shiny::observeEvent(
       {
         tile()
-        rv_zoom_string()
+        # rv_zoom_string()
       },
       {
-        r[[id]]$df(update_df(
-          tile = tile(),
-          zoom_string = rv_zoom_string()
-        ))
+        # r[[id]]$df(update_df(
+        #   tile = tile(),
+        #   zoom_string = rv_zoom_string()
+        # ))
+        r[[id]]$df(tile())
       }
     )
 
@@ -155,7 +162,7 @@ place_explorer_server <- function(id, r,
       tile = r[[id]]$df,
       coords = r[[id]]$coords,
       zoom = r[[id]]$zoom,
-      fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF20"))
+      fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF90")),
     )
 
     # Map click
@@ -298,12 +305,12 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
           ),
           "</div></div>"
         )),
-        bottom =
-        # Scale slider
-          curbcut::zoom_UI(
-            id = shiny::NS(id, id),
-            zoom_levels = pe_vars$map_zoom_levels
-          ),
+        # bottom =
+        # # Scale slider
+        #   curbcut::zoom_UI(
+        #     id = shiny::NS(id, id),
+        #     zoom_levels = pe_vars$map_zoom_levels
+        #   ),
       ),
 
       # Map

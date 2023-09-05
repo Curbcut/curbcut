@@ -102,6 +102,12 @@ modules_panel <- function() {
 #' e.g. `"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."`
 #' @param web_title <`character`> The title of the website for metadata.
 #' e.g. `Curbcut Montréal | Vers une ville durable`
+#' @param placeholder_video_src <`character`> External link to a publicly available
+#' mp4 video. The video will be used as the placeholder, until the user click on
+#' to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
+#' @param video_src <`character`> External link to a publicly available
+#' mp4 video. This is the full length official video the user will see when
+#' they click on to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
 #' @param twitter_handler <`character`> The Twitter handle associated with the
 #' website for metadata.e.g. `"@curbcutca"`
 #' @param google_analytics <`character`> The Google Analytics script location
@@ -115,8 +121,9 @@ modules_panel <- function() {
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
-ui <- function(site_name, web_description, web_title, twitter_handler, google_analytics,
-               website_url, share_jpg, apple_touch_icon) {
+ui <- function(site_name, web_description, web_title, placeholder_video_src,
+               video_src, twitter_handler, google_analytics, website_url,
+               share_jpg, apple_touch_icon) {
   shiny::tagList(
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
@@ -163,7 +170,13 @@ ui <- function(site_name, web_description, web_title, twitter_handler, google_an
           id = "cc_page",
           windowTitle = site_name,
           title = shiny::actionLink("title", "Curbcut"),
-          shiny::tabPanel(cc_t("Home"), home_UI("home"), value = "home")
+          shiny::tabPanel(cc_t("Home"),
+            home_UI("home",
+              placeholder_video_src = placeholder_video_src,
+              video_src = video_src
+            ),
+            value = "home"
+          )
         ),
         modules_panel(),
         list(collapsible = TRUE)
