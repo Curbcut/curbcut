@@ -29,7 +29,7 @@ settings_advanced <- function(r = r, input = input) {
       ),
       shiny::hr(),
       # Change the region
-      adv_opt_region(id = id, region = r$region(), lang = r$lang()),
+      adv_opt_region(id = id, lang = r$lang()),
       shiny::hr(),
       adv_opt_lock_selection_UI(id = id, lang = r$lang()),
       title = cc_t(lang = r$lang(), "Advanced options", force_span = TRUE),
@@ -44,7 +44,7 @@ settings_advanced <- function(r = r, input = input) {
     name = "region"
   ))
   shiny::observeEvent(region_cookie(), r$region(region_cookie()),
-    once = TRUE
+    once = TRUE, ignoreNULL = TRUE
   )
 
   # Change the default region and save the cookie at a change of the region.

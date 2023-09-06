@@ -9,15 +9,13 @@
 #'
 #' @param id <`character`> The ID of the module, in which this UI bit will
 #' be used. Necessary for namespacing reasons.
-#' @param region <`character`> A character string specifying the currently
-#' selected region.
 #' @param lang <`character`> A character string specifying the language in
 #' which the names of the regions should be translated. Defaults to `NULL`
 #' which means no translation.
 #'
 #' @return A shiny radio button input object.
 #' @export
-adv_opt_region <- function(id, region, lang = NULL) {
+adv_opt_region <- function(id, lang = NULL) {
   # Get the regions dictionary from the global environment
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   pickable_regions <- regions_dictionary[regions_dictionary$pickable, ]
@@ -32,7 +30,7 @@ adv_opt_region <- function(id, region, lang = NULL) {
     inputId = "region_change",
     label = cc_t(lang = lang, "Change default region", force_span = TRUE),
     inline = TRUE,
-    selected = region,
+    selected = regions_dictionary$region[1],
     choiceNames = choices_txt,
     choiceValues = choices_values
   )
