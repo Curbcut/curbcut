@@ -4,7 +4,7 @@
 \alias{home_UI}
 \title{Create the home user interface}
 \usage{
-home_UI(id = "home", placeholder_video_src, video_src)
+home_UI(id = "home", placeholder_video_src, video_src, lang_init = "en")
 }
 \arguments{
 \item{id}{<\code{character}> A unique identifier for the home UI. Normally \code{home}.}
@@ -16,6 +16,9 @@ to watch the intro video. e.g. \verb{https://s3.amazonaws.com/curbcut.public.res
 \item{video_src}{<\code{character}> External link to a publicly available
 mp4 video. This is the full length official video the user will see when
 they click on to watch the intro video. e.g. \verb{https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4}}
+
+\item{lang_init}{<\code{character}> Language which should be used to initiate the
+app.}
 }
 \value{
 A Shiny UI object for the home page.

@@ -601,6 +601,26 @@ page_get <- function(ns_id) {
   return(page)
 }
 
+#' Convert a HEX6 color code to an RGB color string
+#'
+#' This function takes a HEX6 color code and converts it to an RGB string. The
+#' HEX6 code must include the hash symbol (#) at the beginning.
+#'
+#' @param hex6 <`character`> A string representing the HEX6 color code (e.g.
+#' "#FF5733").
+#'
+#' @return A string representing the RGB color (e.g. "rgb(255, 87, 51)").
+#' @export
+hex6_to_rgb <- function(hex6) {
+  # Extract the RGB components
+  r <- strtoi(substr(hex6, 2, 3), 16L)
+  g <- strtoi(substr(hex6, 4, 5), 16L)
+  b <- strtoi(substr(hex6, 6, 7), 16L)
+
+  # Return as rgb string
+  return(paste0("rgb(", r, ", ", g, ", ", b, ")"))
+}
+
 #' Convert a HEX8 color code to an RGBA color string
 #'
 #' This function takes a HEX8 color code (including alpha channel) and converts
@@ -624,4 +644,28 @@ hex8_to_rgba <- function(hex8) {
 
   # Return as rgba string
   return(paste0("rgba(", r, ", ", g, ", ", b, ", ", a, ")"))
+}
+
+#' Convert a HEX color code to an RGB or RGBA color string
+#'
+#' This function takes a HEX color code and converts it to either an RGB or
+#' RGBA string based on its length. HEX6 codes are converted to RGB, while
+#' HEX8 codes are converted to RGBA.
+#'
+#' @param hex <`character`> A string representing the HEX color code. It can be
+#' either HEX6 (e.g. "#FF5733") or HEX8 (e.g. "#FF5733FF").
+#'
+#' @return A string representing the RGB or RGBA color.
+#' @export
+hex_to_rgb_or_rgba <- function(hex) {
+  # Determine if the input is HEX6 or HEX8
+  len <- nchar(hex)
+
+  if (len == 7) { # HEX6
+    return(hex6_to_rgb(hex))
+  } else if (len == 9) { # HEX8
+    return(hex8_to_rgba(hex))
+  } else {
+    stop("Invalid HEX code length. Must be HEX6 or HEX8.")
+  }
 }

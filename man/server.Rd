@@ -4,7 +4,11 @@
 \alias{server}
 \title{Curbcut Shiny Server Function}
 \usage{
-server()
+server(lang_init = "en")
+}
+\arguments{
+\item{lang_init}{<\code{character}> Language which should be used to initiate the
+app.}
 }
 \value{
 Nothing. This function initiates the Shiny server for the

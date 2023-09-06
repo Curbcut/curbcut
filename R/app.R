@@ -5,16 +5,19 @@
 #' initialization, title page updating, bookmarking, modules loading,
 #' advanced settings handling, and a heartbeat function to keep the app alive.
 #'
+#' @param lang_init <`character`> Language which should be used to initiate the
+#' app.
+#'
 #' @return Nothing. This function initiates the Shiny server for the
 #' Curbcut application, and its results are side effects (i.e., launching the
 #' application).
 #' @export
-server <- function() {
+server <- function(lang_init = "en") {
   shiny::shinyServer(function(input, output, session) {
     ## Reactive variables --------------------------------------------------------
     r <- r_init(
       server_session = session,
-      lang_init = "fr",
+      lang_init = lang_init,
       prev_norm = shiny::reactiveVal(FALSE)
     )
 
@@ -118,12 +121,14 @@ modules_panel <- function() {
 #' on social media. No relative paths. e.g. `"https://montreal.curbcut.ca/share.jpg"`
 #' @param apple_touch_icon <`character`> Absolute path to the 192x192px logo.
 #' e.g. `"https://montreal.curbcut.ca/logo192.jpg"`
+#' @param lang_init <`character`> Language which should be used to initiate the
+#' app.
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
 ui <- function(site_name, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics, website_url,
-               share_jpg, apple_touch_icon) {
+               share_jpg, apple_touch_icon, lang_init = "en") {
   shiny::tagList(
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
@@ -173,7 +178,8 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
           shiny::tabPanel(cc_t("Home"),
             home_UI("home",
               placeholder_video_src = placeholder_video_src,
-              video_src = video_src
+              video_src = video_src,
+              lang_init = lang_init
             ),
             value = "home"
           )

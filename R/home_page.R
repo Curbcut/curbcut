@@ -98,10 +98,12 @@ home_server <- function(id = "home", r) {
 #' @param video_src <`character`> External link to a publicly available
 #' mp4 video. This is the full length official video the user will see when
 #' they click on to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
+#' @param lang_init <`character`> Language which should be used to initiate the
+#' app.
 #'
 #' @return A Shiny UI object for the home page.
 #' @export
-home_UI <- function(id = "home", placeholder_video_src, video_src) {
+home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "en") {
   # Get modules from the global environment
   modules <- get_from_globalenv("modules")
   pages <- modules[c("id", "theme", "nav_title")]
@@ -121,7 +123,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src) {
     contributors = get_from_globalenv("contributors"),
     translation_df = translation_df,
     collabs = get_from_globalenv("collabs"),
-    lang = "fr",
+    lang = lang_init,
     placeholder_video_src = placeholder_video_src,
     video_src = video_src
   )

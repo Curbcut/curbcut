@@ -14,7 +14,8 @@ ui(
   google_analytics,
   website_url,
   share_jpg,
-  apple_touch_icon
+  apple_touch_icon,
+  lang_init = "en"
 )
 }
 \arguments{
@@ -48,6 +49,9 @@ on social media. No relative paths. e.g. \code{"https://montreal.curbcut.ca/shar
 
 \item{apple_touch_icon}{<\code{character}> Absolute path to the 192x192px logo.
 e.g. \code{"https://montreal.curbcut.ca/logo192.jpg"}}
+
+\item{lang_init}{<\code{character}> Language which should be used to initiate the
+app.}
 }
 \value{
 A Shiny UI object that includes all elements of the Curbcut application interface.
