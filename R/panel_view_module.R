@@ -307,11 +307,10 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
               shiny::incProgress(0.4)
 
               # Prepare data by attaching geometries
-              geo <- qs::qread(paste0(
-                "data/geometry_export/", treated_df(),
-                ".qs"
-              ))
+              require(sf)
+              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_df()))
               data <- merge(datas()$data, geo, by = "ID")
+              data <- sf::st_as_sf(data)
 
               shiny::incProgress(0.3)
 
