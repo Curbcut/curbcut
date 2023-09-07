@@ -109,8 +109,13 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   pages <- modules[c("id", "theme", "nav_title")]
 
   # Get translations from the global environment and filter it
-  translation_df <- get_from_globalenv("translation_df")
-  translation_df <- translation_df[translation_df$en %in% unlist(pages), ]
+  translation_df <- get0("translation_df")
+  translation_df <-  if (is.null(translation_df)) {
+    tibble::tibble(en = unlist(pages), fr = unlist(pages))
+  } else {
+    translation_df[translation_df$en %in% unlist(pages), ]
+  }
+
 
   # Create landing page
   cc.landing::landing_input(

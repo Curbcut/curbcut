@@ -53,9 +53,14 @@ theme_dropdown_server <- function(id, r) {
 #' @export
 theme_dropdown_UI <- function(id) {
   modules <- get_from_globalenv("modules")
-  translation_df <- get_from_globalenv("translation_df")
+  translation_df <- get0("translation_df")
   pages <- modules[c("id", "theme", "nav_title")]
-  translation_df <- translation_df[translation_df$en %in% c(pages$theme, pages$nav_title), ]
+
+  translation_df <-  if (is.null(translation_df)) {
+    tibble::tibble(en = c(pages$theme, pages$nav_title), fr = c(pages$theme, pages$nav_title))
+  } else {
+    translation_df[translation_df$en %in% c(pages$theme, pages$nav_title), ]
+  }
 
   solo_id <- gsub("-.*$", "", id)
   theme <- pages$theme[pages$id == solo_id]

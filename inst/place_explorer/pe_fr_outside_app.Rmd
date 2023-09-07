@@ -98,6 +98,8 @@ params:
 
 ```{r map, echo = FALSE}
 
+require(curbcut)
+
 # Which of the title cards do this ID have data for
 avail_dat <- sapply(params$title_card_data, \(x)  "hex_cat" %in% names(x))
 with_data <- params$title_card_data[avail_dat]
@@ -275,7 +277,7 @@ contents <- lapply(all_themes, \(t) {
     # Some type need to have access to the parent string. The function in Curbcut
     # will search in the global environent if it's not able to load the `data`.
     parent_string <- variables$parent_vec[variables$var_code == var]
-    if (!is.na(parent_string) & !parent_string %in% c("population", "households")) {
+    if (!is.na(parent_string) & parent_string %in% params$variables$var_code) {
       date <- max(params$variables$dates[params$variables$var_code == parent_string][[1]])
       parent_string <- if (is.na(date)) {
         parent_string
@@ -287,7 +289,7 @@ contents <- lapply(all_themes, \(t) {
     # Construct the text
     # If the data is NA, return nothing
     if (is.na(data$var_left[data$ID == params$select_id])) return(NULL)
-    text <- explore_text_values_q5(var = var_class, region = params$region,
+    text <- curbcut::explore_text_values_q5(var = var_class, region = params$region,
                                              select_id = params$select_id, data = data,
                                              df = df, lang = "fr")$text
     text <- curbcut::s_sentence(text)

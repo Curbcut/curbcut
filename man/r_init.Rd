@@ -7,7 +7,6 @@
 r_init(
   server_session,
   lang_init = NULL,
-  default_region = get_from_globalenv("default_region"),
   map_zoom = get_from_globalenv("map_zoom"),
   map_loc = get_from_globalenv("map_loc"),
   ...
@@ -20,10 +19,6 @@ itself.}
 
 \item{lang_init}{<\code{character}> An optional character string specifying the
 initial language for the Curbcut. Default is \code{NULL}.}
-
-\item{default_region}{<\code{character}> The default region for the app. By default,
-this value is retrieved from the \code{default_region} variable in the global
-environment.}
 
 \item{map_zoom}{<\code{numeric}> The default zoom level for the map. By default,
 this value is retrieved from the \code{map_zoom} variable in the global environment.}
