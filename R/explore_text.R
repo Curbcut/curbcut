@@ -1111,7 +1111,7 @@ explore_text_bivar_adjective <- function(var, left, positive, style = TRUE,
 #' @rdname explore_text_bivar_adjective
 #' @export
 explore_text_bivar_adjective.dollar <- function(var, left, positive,
-                                                style = TRUE, lang, ...) {
+                                                style = TRUE, lang = NULL, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("higher", lang = lang))
@@ -1130,7 +1130,7 @@ explore_text_bivar_adjective.dollar <- function(var, left, positive,
 #' @rdname explore_text_bivar_adjective
 #' @export
 explore_text_bivar_adjective.default <- function(var, left, positive,
-                                                 style = TRUE, lang, ...) {
+                                                 style = TRUE, lang = NULL, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("a higher", lang = lang))

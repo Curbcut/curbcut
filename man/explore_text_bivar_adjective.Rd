@@ -16,9 +16,23 @@ explore_text_bivar_adjective(
   ...
 )
 
-\method{explore_text_bivar_adjective}{dollar}(var, left, positive, style = TRUE, lang, ...)
+\method{explore_text_bivar_adjective}{dollar}(
+  var,
+  left,
+  positive,
+  style = TRUE,
+  lang = NULL,
+  ...
+)
 
-\method{explore_text_bivar_adjective}{default}(var, left, positive, style = TRUE, lang, ...)
+\method{explore_text_bivar_adjective}{default}(
+  var,
+  left,
+  positive,
+  style = TRUE,
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text needs to be
