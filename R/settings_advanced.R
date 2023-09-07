@@ -36,7 +36,7 @@ settings_advanced <- function(r = r, input = input, show_lang_button = FALSE) {
       shiny::hr(),
       adv_opt_lock_selection_UI(id = id, lang = r$lang()),
       title = cc_t(lang = r$lang(), "Advanced options", force_span = TRUE),
-      footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss", force_span = TRUE))
+      footer = shiny::modalButton(cc_t(lang = r$lang(), "Close", force_span = TRUE))
     ))
   })
 

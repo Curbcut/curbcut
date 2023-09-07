@@ -361,7 +361,7 @@ cc_translation_df <-
     fr = "Modifier la langue"
   ) |>
   tibble::add_row(
-    en = "Dismiss",
+    en = "Close",
     fr = "Fermer"
   ) |>
   tibble::add_row(

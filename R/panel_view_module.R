@@ -129,7 +129,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
           src = pe_src,
           frameborder = 0
         ),
-        footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
+        footer = shiny::modalButton(cc_t(lang = r$lang(), "Close")),
         size = "xl",
         easyClose = TRUE
       ))

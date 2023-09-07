@@ -17,7 +17,7 @@ right_panel <- function(id, ..., style = "") {
   shiny::absolutePanel(
     id = shiny::NS(id, "right_panel"),
     style = style,
-    class = "panel panel-default sus-map-panel sus-scroll",
+    class = "panel panel-default sus-map-panel scrollable-div",
     shiny::div(
       shiny::h4(class = "mobile-panel-title", cc_t("Explore")),
       shiny::div(

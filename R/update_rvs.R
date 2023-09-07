@@ -170,7 +170,7 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
             src = story_src,
             frameborder = 0
           ),
-          footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
+          footer = shiny::modalButton(cc_t(lang = r$lang(), "Close")),
           size = "xl",
           easyClose = TRUE
         ))
