@@ -189,6 +189,20 @@ convert_unit.dollar <- function(var, x, compact = FALSE, ...) {
   return(out)
 }
 
+#' Convert a numeric vector into a character vector with a degrees sign
+#'
+#' @param var Same as in the generic function.
+#' @param x Same as in the generic function.
+#' @param ... Additional arguments to be passed to the method.
+#'
+#' @return A character vector with a percentage sign.
+#'
+#' @method convert_unit degree
+#' @export
+convert_unit.degree <- function(var, x, ...) {
+  paste0(scales::comma(x, 0.1), "\u00B0C")
+}
+
 #' Convert a numeric vector into a character vector with a default separator
 #'
 #' @param var Same as in the generic function.

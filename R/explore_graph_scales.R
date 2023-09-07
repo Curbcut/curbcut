@@ -49,6 +49,17 @@ explore_graph_scale.dollar <- function(var, x_y, data_vals, ...) {
   list(do.call(eval(parse(text = scale)), list(labels = scl)))
 }
 
+#' @describeIn explore_graph_scale The method for degrees Celsius values.
+#' Applies a degrees Celsius scale to the x-axis.
+#' @export
+explore_graph_scale.degree <- function(var, x_y, ...) {
+  # Create the scale function
+  scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
+
+  # Return the ggplot2 scale with custom labels
+  list(do.call(eval(parse(text = scale)), list(labels = function(x) paste0(x, "\u00B0C"))))
+}
+
 #' @describeIn explore_graph_scale The method for ordinal values.
 #' @param lang <`character` Which language should the label be translated to.
 #' Defaults to NULL for no translation.
