@@ -55,7 +55,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         curbcut::right_panel(
           id = shiny::NS(id, id),
           curbcut::explore_UI(shiny::NS(id, id)),
-          curbcut::dyk_UI(shiny::NS(id, id))
+          dyk_UI(shiny::NS(id, id))
         )
       )
     )
@@ -208,7 +208,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       )
 
       # Did-you-know panel
-      curbcut::dyk_server(
+      dyk_server(
         id = id,
         r = r,
         vars = r[[id]]$vars,
