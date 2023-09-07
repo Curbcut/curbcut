@@ -4,11 +4,14 @@
 \alias{server}
 \title{Curbcut Shiny Server Function}
 \usage{
-server(lang_init = "en")
+server(lang_init = "en", show_lang_button = FALSE)
 }
 \arguments{
 \item{lang_init}{<\code{character}> Language which should be used to initiate the
-app.}
+app. Defaults to english.}
+
+\item{show_lang_button}{<\code{logical}> Should there be a language button? Defaults
+to FALSE (only english).}
 }
 \value{
 Nothing. This function initiates the Shiny server for the

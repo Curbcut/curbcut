@@ -10,24 +10,27 @@
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param input A list of all the input values from a Shiny application.
 #' Usually `input = input` from server.R.
+#' @param show_lang_button <`logical`> Should there be a language button? Defaults
+#' to FALSE (only english).
 #'
 #' @return NULL. This function is called for its side effects.
 #' @export
-settings_advanced <- function(r = r, input = input) {
+settings_advanced <- function(r = r, input = input, show_lang_button = FALSE) {
   # Advanced options UI - Opens a modal.
   shinyjs::onclick("proxy_advanced_options", {
     id <- "settings"
 
     shiny::showModal(shiny::modalDialog(
-      shiny::radioButtons(
-        inputId = "language_change",
-        label = cc_t(lang = r$lang(), "Change language", force_span = TRUE),
-        inline = TRUE,
-        selected = r$lang(),
-        choiceNames = c("English", "Fran\u00e7ais"),
-        choiceValues = c("en", "fr")
-      ),
-      shiny::hr(),
+      if (show_lang_button)
+        shiny::radioButtons(
+          inputId = "language_change",
+          label = cc_t(lang = r$lang(), "Change language", force_span = TRUE),
+          inline = TRUE,
+          selected = r$lang(),
+          choiceNames = c("English", "Fran\u00e7ais"),
+          choiceValues = c("en", "fr")
+        ),
+      if (show_lang_button) shiny::hr(),
       # Change the region
       adv_opt_region(id = id, lang = r$lang()),
       shiny::hr(),

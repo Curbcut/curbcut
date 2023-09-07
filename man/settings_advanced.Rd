@@ -4,7 +4,7 @@
 \alias{settings_advanced}
 \title{Advanced options UI and server interactions}
 \usage{
-settings_advanced(r = r, input = input)
+settings_advanced(r = r, input = input, show_lang_button = FALSE)
 }
 \arguments{
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
@@ -12,6 +12,9 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{input}{A list of all the input values from a Shiny application.
 Usually \code{input = input} from server.R.}
+
+\item{show_lang_button}{<\code{logical}> Should there be a language button? Defaults
+to FALSE (only english).}
 }
 \value{
 NULL. This function is called for its side effects.

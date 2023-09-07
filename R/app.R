@@ -6,13 +6,15 @@
 #' advanced settings handling, and a heartbeat function to keep the app alive.
 #'
 #' @param lang_init <`character`> Language which should be used to initiate the
-#' app.
+#' app. Defaults to english.
+#' @param show_lang_button <`logical`> Should there be a language button? Defaults
+#' to FALSE (only english).
 #'
 #' @return Nothing. This function initiates the Shiny server for the
 #' Curbcut application, and its results are side effects (i.e., launching the
 #' application).
 #' @export
-server <- function(lang_init = "en") {
+server <- function(lang_init = "en", show_lang_button = FALSE) {
   shiny::shinyServer(function(input, output, session) {
     ## Reactive variables --------------------------------------------------------
     r <- r_init(
@@ -36,7 +38,7 @@ server <- function(lang_init = "en") {
     trigger_pages_server(shiny::reactive(input$cc_page), r = r)
 
     ## Advanced options ----------------------------------------------------------
-    settings_advanced(r = r, input = input)
+    settings_advanced(r = r, input = input, show_lang_button)
 
     ## Heartbeat function to keep app alive --------------------------------------
     heartbeat(input)
@@ -122,13 +124,15 @@ modules_panel <- function() {
 #' @param apple_touch_icon <`character`> Absolute path to the 192x192px logo.
 #' e.g. `"https://montreal.curbcut.ca/logo192.jpg"`
 #' @param lang_init <`character`> Language which should be used to initiate the
-#' app.
+#' app. Defaults to english.
+#' @param show_lang_button <`logical`> Should there be a language button? Defaults
+#' to FALSE (only english).
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
 ui <- function(site_name, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics, website_url,
-               share_jpg, apple_touch_icon, lang_init = "en") {
+               share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE) {
   shiny::tagList(
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
@@ -136,6 +140,7 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
     # Remove the navbar -------------------------------------------------------
     shiny::tags$style(type = "text/css", ".navbar-shadow{display:none;}"),
     shiny::tags$style(type = "text/css", ".navbar{display:none;}"),
+    if (!show_lang_button) shiny::tags$style(type = "text/css", ".language-switcher{display:none !important;}"),
 
     # Styling objects ------------------------------------------------------------
     use_curbcut_js(),

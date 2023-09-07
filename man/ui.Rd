@@ -15,7 +15,8 @@ ui(
   website_url,
   share_jpg,
   apple_touch_icon,
-  lang_init = "en"
+  lang_init = "en",
+  show_lang_button = FALSE
 )
 }
 \arguments{
@@ -51,7 +52,10 @@ on social media. No relative paths. e.g. \code{"https://montreal.curbcut.ca/shar
 e.g. \code{"https://montreal.curbcut.ca/logo192.jpg"}}
 
 \item{lang_init}{<\code{character}> Language which should be used to initiate the
-app.}
+app. Defaults to english.}
+
+\item{show_lang_button}{<\code{logical}> Should there be a language button? Defaults
+to FALSE (only english).}
 }
 \value{
 A Shiny UI object that includes all elements of the Curbcut application interface.
