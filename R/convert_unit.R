@@ -208,6 +208,9 @@ convert_unit.degree <- function(var, x, ...) {
 #' @param var Same as in the generic function.
 #' @param x Same as in the generic function.
 #' @param compact <`logical`> Whether to attempt to compact large numbers.
+#' @param precise_round <`logical`> If the rounding should be precise (show more
+#' decimals). Defaults to TRUE. It changes to 2 decimal for numbers between 0 and 10,
+#' and 1 decimal for between 10 and 100. If FALSE, it's 1 and 0.
 #' @param ... Additional arguments to be passed to the method.
 #'
 #' @return A character vector with a default separator.

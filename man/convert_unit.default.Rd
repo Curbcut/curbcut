@@ -13,6 +13,10 @@
 
 \item{compact}{<\code{logical}> Whether to attempt to compact large numbers.}
 
+\item{precise_round}{<\code{logical}> If the rounding should be precise (show more
+decimals). Defaults to TRUE. It changes to 2 decimal for numbers between 0 and 10,
+and 1 decimal for between 10 and 100. If FALSE, it's 1 and 0.}
+
 \item{...}{Additional arguments to be passed to the method.}
 }
 \value{
