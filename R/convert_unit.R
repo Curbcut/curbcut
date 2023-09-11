@@ -214,7 +214,7 @@ convert_unit.degree <- function(var, x, ...) {
 #'
 #' @method convert_unit default
 #' @export
-convert_unit.default <- function(var, x, compact = FALSE, ...) {
+convert_unit.default <- function(var, x, compact = FALSE, precise_round = TRUE, ...) {
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(x)
 
@@ -235,8 +235,18 @@ convert_unit.default <- function(var, x, compact = FALSE, ...) {
   if (max(abs(x)) >= 100 || all(round(x) == x)) {
     return(scales::comma(x, 1))
   }
-  if (max(abs(x)) >= 10) {
+
+  # If precise round, get a decimal more
+  if (!precise_round) {
+    if (max(abs(x)) >= 10) {
+      return(scales::comma(x, 1))
+    }
     return(scales::comma(x, 0.1))
+  } else {
+    if (max(abs(x)) >= 10) {
+      return(scales::comma(x, 0.1))
+    }
+    return(scales::comma(x, 0.01))
   }
-  return(scales::comma(x, 0.01))
+
 }

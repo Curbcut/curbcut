@@ -4,7 +4,7 @@
 \alias{convert_unit.default}
 \title{Convert a numeric vector into a character vector with a default separator}
 \usage{
-\method{convert_unit}{default}(var, x, compact = FALSE, ...)
+\method{convert_unit}{default}(var, x, compact = FALSE, precise_round = TRUE, ...)
 }
 \arguments{
 \item{var}{Same as in the generic function.}

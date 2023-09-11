@@ -201,7 +201,7 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 
   # Make the region values as characters
   pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-  count_string <- convert_unit(x = region_values$count, decimal = 1)
+  count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
 
   # Build the return
   out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
@@ -272,7 +272,7 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
   }
 
   # Make the region values as characters
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Build the return
   out <- sprintf("%s %s %s", count_string, parent_string, exp)
@@ -406,7 +406,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
   if (is.na(select_id)) {
     # Construct the region values
     pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-    count_string <- convert_unit(x = region_values$count, decimal = 1)
+    count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
 
     # Grab the explanation
     exp_q5 <- var_get_info(
@@ -512,7 +512,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   # If there is no selection
   if (is.na(select_id)) {
     # Construct the region values
-    count_string <- convert_unit(x = region_values$val, decimal = 1)
+    count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
     # Grab the explanation
     exp_q5 <- var_get_info(
@@ -537,7 +537,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   )
 
   # Build the return
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
   out <- sprintf(cc_t("%s is %s", lang = lang), exp, count_string)
 
   # Return
@@ -599,7 +599,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
   }
 
   # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Grab the explanation
   exp_q5 <- var_get_info(
@@ -702,7 +702,7 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
   }
 
   # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Grab the explanation
   exp_q5 <- var_get_info(
@@ -1459,7 +1459,7 @@ explore_text_delta_exp.default <- function(var, region, select_id,
     region_vals <- rev(region_vals)
   }
 
-  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1)
+  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1, precise_round = FALSE)
 
   # Return
   return(list(
