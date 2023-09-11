@@ -579,7 +579,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s, there is %s (%s) between %s and %s in %s.",
-    fr = "%s, il n'existe %s (%s) entre %s et %s à l'échelle des %s."
+    fr = "%s, il n'existe %s (%s) entre %s et %s \u00e0 l'\u00e9chelle des %s."
   ) |>
   # Delta -------------------------------------------------------------------
 
@@ -950,7 +950,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "Choose themes:",
-    fr = "Choisissez des thèmes :"
+    fr = "Choisissez des th\u00e8mes :"
   )
 
 

@@ -38,6 +38,7 @@
 #'
 #' @export
 map_js_server <- function(id, r, tile, coords, zoom,
+                          stories = NULL, stories_min_zoom = 13,
                           select_id = shiny::reactive(NA),
                           data_colours = shiny::reactive(data.frame()),
                           outline_width = shiny::reactive(1),
@@ -53,7 +54,29 @@ map_js_server <- function(id, r, tile, coords, zoom,
   stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
+    map_zoom <- get_from_globalenv("map_zoom")
+    map_loc <- get_from_globalenv("map_loc")
     tileset_prefix <- get_from_globalenv("tileset_prefix")
+    map_token <- get_from_globalenv("map_token")
+    map_base_style <- get_from_globalenv("map_base_style")
+    mapbox_username <- get_from_globalenv("mapbox_username")
+    tileset_prefix <- get_from_globalenv("tileset_prefix")
+
+    # Populate the empty container created in map_js_UI
+    output$map_ph <- shiny::renderUI({
+      cc.map::map_input(
+        map_ID = shiny::NS(id, shiny::NS(id, "map")),
+        username = mapbox_username,
+        token = map_token,
+        longitude = map_loc[1],
+        latitude = map_loc[2],
+        zoom = map_zoom,
+        map_style_id = map_base_style,
+        tileset_prefix = tileset_prefix,
+        stories = stories,
+        stories_min_zoom = stories_min_zoom
+      )
+    })
 
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
     # if it hasn't changed.
@@ -136,27 +159,9 @@ map_js_server <- function(id, r, tile, coords, zoom,
 #' @param stories_min_zoom <`numeric`> Zoom level at which stories start to be
 #' shown. Defaults to 13.
 #' @export
-map_js_UI <- function(id, stories = NULL, stories_min_zoom = 13) {
-  map_zoom <- get_from_globalenv("map_zoom")
-  map_loc <- get_from_globalenv("map_loc")
-  tileset_prefix <- get_from_globalenv("tileset_prefix")
-  map_token <- get_from_globalenv("map_token")
-  map_base_style <- get_from_globalenv("map_base_style")
-  mapbox_username <- get_from_globalenv("mapbox_username")
-
+map_js_UI <- function(id) {
   shiny::div(
     class = "map_div", id = shiny::NS(id, "map_div"),
-    cc.map::map_input(
-      map_ID = shiny::NS(id, "map"),
-      username = mapbox_username,
-      token = map_token,
-      longitude = map_loc[1],
-      latitude = map_loc[2],
-      zoom = map_zoom,
-      map_style_id = map_base_style,
-      tileset_prefix = tileset_prefix,
-      stories = stories,
-      stories_min_zoom = stories_min_zoom
-    )
+    shiny::uiOutput(outputId = shiny::NS(id, "map_ph"))
   )
 }

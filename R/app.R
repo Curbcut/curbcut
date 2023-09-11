@@ -35,7 +35,7 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
     use_bookmark(r = r)
 
     ## Modules -------------------------------------------------------------------
-    trigger_pages_server(shiny::reactive(input$cc_page), r = r)
+    trigger_pages_server(shiny::reactive(input$cc_page), r = r, output = output)
 
     ## Advanced options ----------------------------------------------------------
     settings_advanced(r = r, input = input, show_lang_button)
@@ -52,10 +52,12 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
 #' in alphabetical order. Each module UI is created using its corresponding
 #' key and title.
 #'
+#' @param modules <`data.frame`> Tibble of all the pages.
+#'
 #' @return A list of translated shiny UI elements.
-modules_panel <- function() {
+#' @export
+modules_panel <- function(modules = get_from_globalenv("modules")) {
   # Get unique themes and arrange them for each theme
-  modules <- get_from_globalenv("modules")
   unique_themes <- unique(modules$theme)[!is.na(unique(modules$theme))]
   mods_rdy <-
     sapply(unique_themes, \(x) {
@@ -76,7 +78,8 @@ modules_panel <- function() {
         lapply(names(mods_rdy[[theme]]), function(module) {
           name <- curbcut::cc_t(module)
           key <- unname(mods_rdy[[theme]][module])
-          shiny::tabPanel(name,
+          shiny::tabPanel(
+            name,
             do.call(paste0(key, "_UI"), list(key)),
             value = key
           )
@@ -133,6 +136,8 @@ modules_panel <- function() {
 ui <- function(site_name, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE) {
+  modules_panel_calculated <- get0("modules_panel_calculated")
+
   shiny::tagList(
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
@@ -189,7 +194,7 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
             value = "home"
           )
         ),
-        modules_panel(),
+        if (!is.null(modules_panel_calculated)) modules_panel_calculated else modules_panel(),
         list(collapsible = TRUE)
       )
     )

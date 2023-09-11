@@ -48,9 +48,9 @@
 .irs--shiny .irs-single,
 .irs--shiny .irs-to,
 .irs--shiny .irs-from {
-	background-color: var(--theme-color);
-	border: 0px;
-	line-height: 1.42857143;
+	background-color: var(--theme-color) !important;
+	border: 0px !important;
+	line-height: 1.42857143 !important;
 }
 
 /* YEAR SLIDER */

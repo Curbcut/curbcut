@@ -4,7 +4,7 @@
 \alias{trigger_pages_server}
 \title{Trigger the \code{server} of pages}
 \usage{
-trigger_pages_server(cc_page, r)
+trigger_pages_server(cc_page, r, output)
 }
 \arguments{
 \item{cc_page}{<\code{reactive}> Character of the currently active tab stored
@@ -13,6 +13,9 @@ in a \code{\link[shiny]{reactive}} to ensure reactivity on change. Usually
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
+
+\item{output}{<\code{shiny::output}> The output slot for storing UI elements. Usually
+\code{output = output}.}
 }
 \value{
 Triggers the server module function if it hasn't already been

@@ -163,6 +163,7 @@ place_explorer_server <- function(id, r,
       coords = r[[id]]$coords,
       zoom = r[[id]]$zoom,
       fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF90")),
+      stories = NULL
     )
 
     # Map click
@@ -314,7 +315,7 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
       ),
 
       # Map
-      map_js_UI(id = shiny::NS(id, id), stories = NULL),
+      map_js_UI(id = shiny::NS(id, id)),
 
       # Main panel
       shinyjs::hidden(

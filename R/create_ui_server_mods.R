@@ -43,7 +43,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         ),
 
         # Map
-        curbcut::map_js_UI(shiny::NS(id, id), stories = stories),
+        curbcut::map_js_UI(shiny::NS(id, id)),
 
         # Tutorial
         curbcut::tutorial_UI(id = shiny::NS(id, id)),
@@ -72,6 +72,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
       suffix_zoom_levels <- modules$suffix_zoom_levels[modules$id == id]
+      stories <- get_from_globalenv("stories")
 
       # Initial zoom string reactive value
       rv_zoom_string <- shiny::reactiveVal(
@@ -224,7 +225,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         select_id = r[[id]]$select_id,
         coords = r[[id]]$coords,
         zoom = r[[id]]$zoom,
-        data_colours = data_colours
+        data_colours = data_colours,
+        stories = stories
       )
 
       # Explore panel

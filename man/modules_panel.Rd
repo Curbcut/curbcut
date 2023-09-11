@@ -4,7 +4,10 @@
 \alias{modules_panel}
 \title{Generate User Interface for Ready Modules}
 \usage{
-modules_panel()
+modules_panel(modules = get_from_globalenv("modules"))
+}
+\arguments{
+\item{modules}{<\code{data.frame}> Tibble of all the pages.}
 }
 \value{
 A list of translated shiny UI elements.

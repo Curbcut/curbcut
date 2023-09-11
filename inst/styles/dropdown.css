@@ -59,7 +59,7 @@
 
 .tab-content .dropdown {
 	background: none;
-	border: 1px solid var(--c-black);
+	border: 1px solid var(--c-black) !important;
 	border-radius: 5px;
 	text-shadow: unset;
 	box-shadow: unset;

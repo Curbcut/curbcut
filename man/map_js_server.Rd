@@ -11,6 +11,8 @@ map_js_server(
   tile,
   coords,
   zoom,
+  stories = NULL,
+  stories_min_zoom = 13,
   select_id = shiny::reactive(NA),
   data_colours = shiny::reactive(data.frame()),
   outline_width = shiny::reactive(1),
@@ -21,7 +23,7 @@ map_js_server(
     names(data_colours())[1], fallback = "#B3B3BB"))
 )
 
-map_js_UI(id, stories = NULL, stories_min_zoom = 13)
+map_js_UI(id)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
@@ -40,6 +42,12 @@ of the map. Bookmark can have an input on it. Usually \code{r[[id]]$coords}.}
 
 \item{zoom}{<\verb{reactive numeric}> The current zoom level of the map, also
 the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
+
+\item{stories}{<\code{data.frame}> Stories data.frame if they are to be shown
+on the map. Defaults to NULL for not showing them.}
+
+\item{stories_min_zoom}{<\code{numeric}> Zoom level at which stories start to be
+shown. Defaults to 13.}
 
 \item{select_id}{<\verb{reactive character}> The ID of the selected polygon.}
 
@@ -63,12 +71,6 @@ polygons. Defaults to \code{shiny::reactive(cc.map::map_choropleth_fill_fun)}.}
 \item{fill_fun_args}{<\verb{reactive list}> Arguments passed to the \code{fill_fun}
 function. Defaults to \code{shiny::reactive(list(df = data_colours(),
 get_col = names(data_colours())[1], fallback = "#B3B3BB"))}.}
-
-\item{stories}{<\code{data.frame}> Stories data.frame if they are to be shown
-on the map. Defaults to NULL for not showing them.}
-
-\item{stories_min_zoom}{<\code{numeric}> Zoom level at which stories start to be
-shown. Defaults to 13.}
 }
 \value{
 A list. The function returns the viewstate of the map, which includes

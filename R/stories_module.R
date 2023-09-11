@@ -22,10 +22,12 @@ stories_server <- function(id, r) {
 
     # Map
     map_js_server(id = id,
-                           r = r,
-                           tile = shiny::reactive(NULL),
-                           coords = shiny::reactive(NULL),
-                           zoom = shiny::reactive(NULL))
+                  r = r,
+                  tile = shiny::reactive(NULL),
+                  coords = shiny::reactive(NULL),
+                  zoom = shiny::reactive(NULL),
+                  stories = stories,
+                  stories_min_zoom = 2)
 
     # Click reactive
     update_select_id(id = id, r = r)
@@ -241,9 +243,7 @@ stories_UI <- function(id) {
       ),
 
       # Map
-      map_js_UI(id = shiny::NS(id, id),
-                         stories = stories,
-                         stories_min_zoom = 2),
+      map_js_UI(id = shiny::NS(id, id)),
 
       # Main panel
       shiny::htmlOutput(shiny::NS(id, "stories")),
