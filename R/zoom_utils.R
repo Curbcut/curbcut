@@ -131,8 +131,8 @@ zoom_get_code <- function(scales_name, lang = NULL) {
 
   # Translate the zoom_code if it's neither NULL nor "en"
   translation_df <- get0("translation_df")
-  translation_df <-  if (is.null(translation_df)) {
-    translation_df <-  tibble::tibble(en = scales_name, fr = scales_name)
+  if (is.null(translation_df)) {
+    translation_df <- tibble::tibble(en = scales_name, fr = scales_name)
   }
 
   translated <-
