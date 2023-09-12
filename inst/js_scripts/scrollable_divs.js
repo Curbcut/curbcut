@@ -8,7 +8,11 @@ $(document).ready(function () {
 		}
 	)
 
-	// $(document).on('touchstart touchmove touchend', '.scrollable-div, .dropdown, #shiny-modal-wrapper', function (e) {
-	//   e.stopPropagation();
-	// });
+	$(document).on(
+		'touchstart touchmove touchend',
+		'.scrollable-div, .dropdown, #shiny-modal-wrapper',
+		function (e) {
+			e.stopPropagation()
+		}
+	)
 })

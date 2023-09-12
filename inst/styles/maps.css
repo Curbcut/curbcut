@@ -35,7 +35,7 @@
 	min-width: var(--w-sidebar);
 	max-width: var(--w-sidebar);
 	width: var(--w-sidebar);
-	min-height: min-content;
+	/* min-height: min-content; */
 	max-height: calc(100vh - (var(--padding-h-md) * 3 + 35px));
 	border-radius: 15px;
 	border: 1px solid #000;
@@ -163,7 +163,7 @@
 	min-width: var(--w-panel);
 	max-width: var(--w-panel);
 	width: 20vw;
-	min-height: min-content;
+	/* min-height: min-content; */
 	max-height: calc(100vh - 30px);
 	height: fit-content;
 	border-radius: 15px;
@@ -385,7 +385,7 @@
 	position: absolute;
 	z-index: 20;
 	margin: var(--padding-h-md);
-	min-height: min-content;
+	/* min-height: min-content; */
 	max-height: calc(100vh - (var(--padding-h-md) * 3 + 35px));
 	height: fit-content;
 	top: calc(var(--padding-h-md) + 35px);
