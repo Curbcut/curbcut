@@ -116,6 +116,9 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
     translation_df[translation_df$en %in% unlist(pages), ]
   }
 
+  # Filter 4 discover cards randomly
+  discover_cards <- get_from_globalenv("discover_cards")
+  discover_cards <- discover_cards[sample(1:nrow(discover_cards), 4), ]
 
   # Create landing page
   cc.landing::landing_input(
@@ -123,7 +126,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
     pages = pages,
     c_city_svg = get_from_globalenv("c_city_svg"),
     news_cards = get_from_globalenv("news_cards"),
-    discover_cards = get_from_globalenv("discover_cards"),
+    discover_cards = discover_cards,
     team_cards = get_from_globalenv("team_cards"),
     contributors = get_from_globalenv("contributors"),
     translation_df = translation_df,
