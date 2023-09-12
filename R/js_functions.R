@@ -28,7 +28,7 @@ use_curbcut_js <- function() {
     list.files(system.file("js_scripts", package = "curbcut"))
   )
   js_files <- js_files[grepl("\\.js$", js_files)]
-  js_files <- paste0(js_files, "?id=1")
+  js_files <- paste0(js_files, "?id=2")
   # Build the tags for the style files
   js_tags <- shiny::tagList(
     lapply(js_files, function(x) {
