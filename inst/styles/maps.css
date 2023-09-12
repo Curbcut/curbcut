@@ -140,11 +140,19 @@
 	}
 
 	.sus-map-sidebar:not(.open) .bottom_sidebar {
-		display: none;
+		max-height: 0;
+		opacity: 0;
+		overflow: hidden;
+		transition: all 0.5s ease-in-out;
+		padding-top: 0px;
+		padding-bottom: 0px;
 	}
 
 	.sus-map-sidebar.open .bottom_sidebar {
-		display: block;
+		max-height: 100%;
+		visibility: visible;
+		opacity: 1;
+		transition: all 0.5s ease-in-out;
 	}
 
 	.sus-map-sidebar:not(.open) h3 {

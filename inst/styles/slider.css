@@ -1,3 +1,7 @@
+.shiny-input-container:not(.shiny-input-container-inline) {
+	width: auto !important;
+}
+
 .irs {
 	font-family: var(--ff-body);
 }
