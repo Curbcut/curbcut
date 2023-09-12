@@ -106,7 +106,7 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df
+    df = df, ...
   )
 
   # Adapt breaks to add the `NA` bar

@@ -145,6 +145,13 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
     envir = as.environment(pos)
   )
 
+  # Assign translation_df
+  translation_df <- qs::qread(sprintf("%stranslation_df.qs", folder))
+  assign("translation_df",
+         value = translation_df,
+         envir = as.environment(pos)
+  )
+
   # Default random address
   assign("default_random_address",
     value = "845 Sherbrooke",
