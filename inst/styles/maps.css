@@ -104,7 +104,7 @@
 
 @media (max-width: 768px) {
 	.mobile-sidebar-menu {
-		display: block;
+		display: flex;
 	}
 
 	.title-text-info {
