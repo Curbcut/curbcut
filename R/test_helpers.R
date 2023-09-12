@@ -152,6 +152,20 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
          envir = as.environment(pos)
   )
 
+  # Assign scales_dictionary
+  scales_dictionary <- qs::qread(sprintf("%sscales_dictionary.qs", folder))
+  assign("scales_dictionary",
+         value = scales_dictionary,
+         envir = as.environment(pos)
+  )
+
+  # Assign regions_dictionary
+  regions_dictionary <- qs::qread(sprintf("%sregions_dictionary.qs", folder))
+  assign("regions_dictionary",
+         value = regions_dictionary,
+         envir = as.environment(pos)
+  )
+
   # Default random address
   assign("default_random_address",
     value = "845 Sherbrooke",
