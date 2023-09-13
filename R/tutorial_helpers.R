@@ -51,9 +51,9 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
         build_element("map_div"),
         build_element("title_texts"),
         build_element("left_widgets"),
-        build_element("legend_div"),
-        build_element("zoom_div"),
         build_element("compare_panel"),
+        build_element("zoom_div"),
+        build_element("legend_div"),
         build_element("explore_full"),
         build_element("floating-panel-content"),
         build_element("tutorial")

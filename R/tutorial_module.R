@@ -30,17 +30,17 @@
 #' @export
 tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
   shiny::moduleServer(id, function(input, output, session) {
-    last_tutorial_data <- shiny::reactive(cookie_retrieve(
+    last_tutorial_date <- shiny::reactive(cookie_retrieve(
       input = r$server_session()$input,
       name = "tutorial_date"
     ))
 
-    shiny::observeEvent(last_tutorial_data(),
+    shiny::observeEvent(last_tutorial_date(),
       {
         if (is.null(r$server_session()$input$dimension)) {
           shiny::invalidateLater(500, session)
         }
-        if (is.null(last_tutorial_data())) {
+        if (is.null(last_tutorial_date())) {
           return(shinyjs::delay(
             1000,
             tutorial_trigger(
@@ -54,7 +54,7 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
         }
 
         # Show again after 6 months
-        if (Sys.time() > (as.POSIXct(last_tutorial_data()) + (60 * 60 * 24 * 180))) {
+        if (Sys.time() > (as.POSIXct(last_tutorial_date()) + (60 * 60 * 24 * 180))) {
           return(shinyjs::delay(
             1000,
             tutorial_trigger(

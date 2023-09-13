@@ -13,6 +13,8 @@
 home_server <- function(id = "home", r) {
   shiny::moduleServer(id, function(input, output, session) {
     discover_cards <- get_from_globalenv("discover_cards")
+    news_cards <- get_from_globalenv("news_cards")
+    modules <- get_from_globalenv("modules")
 
     # Detect page clicks on other pages and update the active page accordingly
     page_click <- shiny::reactive(cc.landing::get_landing_click("landing"))
@@ -30,7 +32,7 @@ home_server <- function(id = "home", r) {
     discover_click <- reactive(get_landing_discover("landing"))
     observeEvent(discover_click(), {
       # Selected row
-      disc_card <- discover_cards[discover_cards$id == discover_click(),]
+      disc_card <- discover_cards[discover_cards$id == discover_click(), ]
 
       # Which tab, which selection
       tab <- if (disc_card$type == "page") disc_card$id else if (disc_card$type == "stories") "stories"
@@ -44,6 +46,23 @@ home_server <- function(id = "home", r) {
       shinyjs::delay(500, {
         r[[tab]]$select_id(select_id)
       })
+    }, ignoreNULL = TRUE)
+
+    # Detect discover card click and update the active page accordingly
+    news_click <- reactive(get_landing_news("landing"))
+    observeEvent(news_click(), {
+      # Selected row
+      news_card <- news_cards[news_cards$id == news_click(), ]
+
+      if (grepl("^https://", news_card$link)) {
+        session$sendCustomMessage(type = 'openURL', message = news_card$link)
+      } else if (news_card$link %in% modules$id) {
+        shiny::updateTabsetPanel(
+          session = r$server_session(), inputId = "cc_page",
+          selected = news_card$link
+        )
+      }
+
     }, ignoreNULL = TRUE)
 
     # Update the landing input based on the active page

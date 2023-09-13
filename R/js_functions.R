@@ -59,6 +59,14 @@ use_curbcut_js <- function() {
                    {document.title=x});')
       ),
     )),
+    # Open URL with blank target
+    shiny::tags$head(shiny::tags$script(
+      HTML("
+      Shiny.addCustomMessageHandler('openURL', function(url) {
+        window.open(url, '_blank');
+      });
+    ")
+    )),
     # Allow hover with texts on elements of the picker menus
     shiny::tags$head(shiny::tags$script(
       "var myDefaultWhiteList = $.fn.selectpicker.Constructor.DEFAULTS.whiteList;
