@@ -19,13 +19,20 @@
 #'
 #' @return A Shiny module server function for the DYK module.
 #' @export
-dyk_server <- function(id, r, vars, df, poi = shiny::reactive(NULL)) {
+dyk_server <- function(id, r, vars, df, select_id,
+                       poi = shiny::reactive(NULL)) {
+
+  # Error checking
   stopifnot(shiny::is.reactive(vars))
+  stopifnot(shiny::is.reactive(df))
+  stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(poi))
 
   shiny::moduleServer(id, function(input, output, session) {
+
     # Get the DYKs
-    dyk <- shiny::reactive(dyk_get(id, vars(), poi(), lang = r$lang()))
+    dyk <- shiny::reactive(dyk_get(id, vars(), df(), select_id(), poi(),
+                                   lang = r$lang()))
 
     # Hide the panel if there are no DYK
     shiny::observe({

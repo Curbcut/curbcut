@@ -213,8 +213,9 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         vars = r[[id]]$vars,
-        poi = r[[id]]$poi,
-        df = r[[id]]$df
+        df = r[[id]]$df,
+        select_id = r[[id]]$select_id,
+        poi = r[[id]]$poi
       )
 
       # Update map in response to variable changes or zooming

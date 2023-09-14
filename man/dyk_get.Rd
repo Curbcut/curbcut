@@ -4,7 +4,7 @@
 \alias{dyk_get}
 \title{Get Did You Know Contents}
 \usage{
-dyk_get(id, vars, poi, lang = NULL)
+dyk_get(id, vars, df, select_id, poi, lang = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the module will appear,
