@@ -15,17 +15,26 @@
 #' @return An HTML list of DYK content with the "links" attribute containing the
 #' necessary arguments for the link function (except r, which is added subsequently).
 #' @export
-dyk_get <- function(id, vars, df, select_id, poi, lang = NULL) {
-
+dyk_get <- function(id, vars, df, select_id, poi, region, zoom_levels,
+                    scales_as_DA = scales_as_DA, lang = NULL) {
   # Start with a NULL output
   dyk_out <- NULL
 
   # If there are POIs, take them
-  if (!is.null(poi)) dyk_out <- dyk_poi(id, poi, lang)
+  if (!is.null(poi)) dyk_out <- dyk_poi(id = id, poi = poi, lang = lang)
 
   # Otherwise take standard DYKs
-  if (is.null(dyk_out)) dyk_out <- dyk_text(vars, df, select_id, lang)
+  if (is.null(dyk_out)) {
+    dyk_out <- dyk_text(
+      vars = vars,
+      df = df,
+      select_id = select_id,
+      region = region,
+      zoom_levels = zoom_levels,
+      scales_as_DA = scales_as_DA,
+      lang = lang
+    )
+  }
 
   return(dyk_out)
-
 }

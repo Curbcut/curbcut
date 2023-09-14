@@ -14,25 +14,30 @@
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_df}}.
-#' @param poi <`reactive`> (Optional) Point of interests. The output of
-#' \code{\link{update_df}}. Default is NULL.
+#' @param poi <`reactive`> (Optional) Point of interests. Default is NULL.
 #'
 #' @return A Shiny module server function for the DYK module.
 #' @export
-dyk_server <- function(id, r, vars, df, select_id,
-                       poi = shiny::reactive(NULL)) {
+dyk_server <- function(id, r, vars, df, select_id, region, zoom_levels,
+                       poi = shiny::reactive(NULL),
+                       scales_as_DA = shiny::reactive(c("building", "street"))) {
 
   # Error checking
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(poi))
+  stopifnot(shiny::is.reactive(region))
+  stopifnot(shiny::is.reactive(zoom_levels))
 
   shiny::moduleServer(id, function(input, output, session) {
 
     # Get the DYKs
-    dyk <- shiny::reactive(dyk_get(id, vars(), df(), select_id(), poi(),
-                                   lang = r$lang()))
+    dyk <- shiny::reactive(dyk_get(
+      id = id, vars = vars(), df = df(), select_id = select_id(), poi = poi(),
+      region = region(), zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
+      lang = r$lang()
+    ))
 
     # Hide the panel if there are no DYK
     shiny::observe({
@@ -41,16 +46,18 @@ dyk_server <- function(id, r, vars, df, select_id,
 
     # Observe for clicks
     shiny::observeEvent(input$dyk_1, do.call(
-      link, c(session = session, r = list(r), attr(dyk(), "links")[[1]])
+      link, c(session = session, r = list(r), attr(dyk()[[1]], "links"))
     ))
     shiny::observeEvent(input$dyk_2, do.call(
-      link, c(session = session, r = list(r), attr(dyk(), "links")[[2]])
+      link, c(session = session, r = list(r), attr(dyk()[[2]], "links"))
     ))
 
     # Only show contents if dyk_output isn't empty
     output$dyk_contents <- shiny::renderUI({
       if (!is.null(dyk())) {
-        shiny::tagList(dyk())
+        # Convert back the character to HTML tag
+        out <- lapply(dyk(), shiny::HTML)
+        Reduce(shiny::tags$ul, out)
       }
     })
   })

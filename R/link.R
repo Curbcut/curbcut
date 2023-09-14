@@ -1,3 +1,26 @@
+#' Retrieve the Appropriate Zoom Level
+#'
+#' This function obtains the zoom level corresponding to the scale of a data
+#' frame. If the zoom level is 0, it defaults to 9.
+#'
+#' @param zoom_levels <`named vector`> A named vector of potential zoom levels.
+#' @param df <`character`> df used for scale matching.
+#'
+#' @return Returns the appropriate zoom level.
+link_get_zoom <- function(zoom_levels, df) {
+  if (is.null(df)) {
+    return(NULL)
+  }
+  zoom <- zoom_levels[is_scale_df(names(zoom_levels), df, vectorized = TRUE)]
+  zoom <- unname(zoom)
+
+  if (zoom == 0) {
+    zoom <- if (length(zoom_levels) > 1) unname(zoom_levels[2] - 1) else 9
+  }
+
+  return(zoom)
+}
+
 #' Update tabset panel and select an ID
 #'
 #' This function updates the tabset panel with the given \code{page} and selects
@@ -15,18 +38,23 @@
 #' of the newly opened page's map.
 #'
 #' @export
-link <- function(session, r, page, select_id = NA, df = NULL) {
+link <- function(session, r, page, region = r$region(),
+                 select_id = NA, df = NULL,
+                 zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
+                 zoom = link_get_zoom(zoom_levels, df)) {
   # Detect if we're in a reactive context
   if (is.null(shiny::getDefaultReactiveDomain())) {
     stop("The function needs to be used in a reactive context")
   }
 
   # Update the current tab
-  shiny::updateTabsetPanel(
-    session = r$server_session(),
-    inputId = "cc_page",
-    selected = page
-  )
+  if (!is.null(page)) {
+    shiny::updateTabsetPanel(
+      session = r$server_session(),
+      inputId = "cc_page",
+      selected = page
+    )
+  }
 
   # After half a second and the tab is opened, update the widgets
   shinyjs::delay(500, {
@@ -41,46 +69,28 @@ link <- function(session, r, page, select_id = NA, df = NULL) {
         selected = zoom_get_name(df, lang = r$lang())
       )
     }
-  })
 
-  # If there is a selection, update the map view through zoom and coords, and
-  # the selection
-  if (!is.na(select_id)) {
-    # Update the zoom and map location
-    if (!is.null(df)) {
-      # Zoom
-      mzl <- paste("map_zoom_levels", r$region(), sep = "_")
-      map_zoom_level <- get_from_globalenv(mzl)
+    if (!is.na(select_id)) {
+      if (!is.null(df)) {
+        if (!is.null(zoom)) r[[page]]$zoom(zoom)
 
-      zoom <-
-        map_zoom_level[is_scale_df(names(map_zoom_level), df, vectorized = TRUE)]
-      zoom <- unname(zoom)
+        # df_data <- get_from_globalenv(df)
+        # # Skip the zoom update if the 'centroid' is not in the df
+        # if (!"centroid" %in% names(df_data)) {
+        #   return(NULL)
+        # }
+        # coords <- df_data$centroid[df_data$ID == select_id][[1]]
+        # coords <- sapply(coords, round, digits = 2)
+        # cc.map::map_viewstate(
+        #   session = session,
+        #   map_ID = "map",
+        #   longitude = as.numeric(coords[1]),
+        #   latitude = as.numeric(coords[2]),
+        #   zoom = r[[page]]$zoom()
+        # )
 
-      if (zoom == 0) zoom <- 9
-
-      # Location
-      df_data <- get_from_globalenv(df)
-      # Skip the zoom/coords if the centroid is not in the dataframe
-      if (!"centroid" %in% names(df_data)) {
-        return(NULL)
+        r[[page]]$select_id(select_id)
       }
-      coords <- df_data$centroid[df_data$ID == select_id][[1]]
-      coords <- sapply(coords, round, digits = 2)
-
-      # Update the reactives
-      r[[page]]$zoom(zoom)
-      r[[page]]$coords(coords)
-      # Update the map using the zoom and location
-      cc.map::map_viewstate(
-        session = session,
-        map_ID = ns_doubled(page_id = page, "map"),
-        longitude = as.numeric(coords[1]),
-        latitude = as.numeric(coords[2]),
-        zoom = zoom
-      )
     }
-
-    # Update the selection
-    r[[page]]$select_id(select_id)
-  }
+  })
 }

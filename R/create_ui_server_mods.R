@@ -99,14 +99,16 @@ create_ui_server_mods <- function(modules, pos = 1) {
           region = r$region(),
           suffix_zoom_levels = suffix_zoom_levels
         ))
+      current_region <- shiny::reactive(zoom_levels()$region)
+      current_zl <- shiny::reactive(zoom_levels()$zoom_levels)
 
       # Zoom string reactive
       shiny::observe({
         rv_zoom_string({
           curbcut::zoom_get_string(
             zoom = r[[id]]$zoom(),
-            zoom_levels = zoom_levels()$zoom_levels,
-            region = zoom_levels()$region
+            zoom_levels = current_zl(),
+            region = current_region()
           )
         })
       })
@@ -180,8 +182,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Data for tile coloring
       data_colours <- shiny::reactive(curbcut::data_get_colours(
         vars = r[[id]]$vars(),
-        region = zoom_levels()$region,
-        zoom_levels = zoom_levels()$zoom_levels
+        region = current_region(),
+        zoom_levels = current_zl()
       ))
 
       # Warn user
@@ -215,7 +217,9 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars,
         df = r[[id]]$df,
         select_id = r[[id]]$select_id,
-        poi = r[[id]]$poi
+        poi = r[[id]]$poi,
+        region = current_region,
+        zoom_levels = current_zl
       )
 
       # Update map in response to variable changes or zooming
@@ -235,7 +239,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         data = data,
-        region = shiny::reactive(zoom_levels()$region),
+        region = current_region,
         vars = r[[id]]$vars,
         df = r[[id]]$df,
         select_id = r[[id]]$select_id
@@ -253,10 +257,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::panel_view_server(
         id = id,
         r = r,
-        region = shiny::reactive(zoom_levels()$region),
+        region = current_region,
         vars = r[[id]]$vars,
         data = data,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels)
+        zoom_levels = current_zl
       )
     })
   }

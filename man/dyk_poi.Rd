@@ -4,7 +4,7 @@
 \alias{dyk_poi}
 \title{Get Did You Know Contents for Points of Interest}
 \usage{
-dyk_poi(id, poi, lang)
+dyk_poi(id, poi, lang = NULL)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the module will appear,

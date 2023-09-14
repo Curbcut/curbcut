@@ -23,8 +23,7 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
 
-\item{poi}{<\code{reactive}> (Optional) Point of interests. The output of
-\code{\link{update_df}}. Default is NULL.}
+\item{poi}{<\code{reactive}> (Optional) Point of interests. Default is NULL.}
 }
 \value{
 A Shiny module server function for the DYK module.
