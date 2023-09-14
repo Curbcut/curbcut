@@ -39,7 +39,7 @@ link_get_zoom <- function(zoom_levels, df) {
 #'
 #' @export
 link <- function(session, r, page, region = r$region(),
-                 select_id = NA, df = NULL, date = NULL,
+                 select_id = NA, df = NULL, date = NULL, var_right = NULL,
                  zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
                  zoom = link_get_zoom(zoom_levels, df)) {
   # Detect if we're in a reactive context
@@ -87,35 +87,47 @@ link <- function(session, r, page, region = r$region(),
         value = date
       )
     }
+
+    if (!is.null(var_right)) {
+      print(var_right)
+      shinyWidgets::updatePickerInput(
+        session = r$server_session(),
+        inputId = ns_doubled(
+          page_id = page,
+          element = "compare-ccpicker_var"
+        ),
+        selected = var_right
+      )
+    }
   })
 
-    if (!is.na(select_id)) {
-      if (!is.null(df)) {
-        if (!is.null(zoom)) r[[page]]$zoom(zoom)
+  if (!is.na(select_id)) {
+    if (!is.null(df)) {
+      if (!is.null(zoom)) r[[page]]$zoom(zoom)
 
-        df_data <- get_from_globalenv(df)
-        # Skip the zoom update if the 'centroid' is not in the df
-        if (!"centroid" %in% names(df_data)) {
-          return(NULL)
-        }
-        coords <- df_data$centroid[df_data$ID == select_id][[1]]
-        coords <- sapply(coords, round, digits = 2)
-        cc.map::map_viewstate(
-          session = session,
-          map_ID = "map",
-          longitude = as.numeric(coords[1]),
-          latitude = as.numeric(coords[2]),
-          zoom = r[[page]]$zoom()
-        )
-
-        r[[page]]$select_id(select_id)
+      df_data <- get_from_globalenv(df)
+      # Skip the zoom update if the 'centroid' is not in the df
+      if (!"centroid" %in% names(df_data)) {
+        return(NULL)
       }
+      coords <- df_data$centroid[df_data$ID == select_id][[1]]
+      coords <- sapply(coords, round, digits = 2)
+      cc.map::map_viewstate(
+        session = session,
+        map_ID = "map",
+        longitude = as.numeric(coords[1]),
+        latitude = as.numeric(coords[2]),
+        zoom = r[[page]]$zoom()
+      )
+
     }
+  }
 
   # Selection MUST be in the viewstate for the selection to happen. Add a longer
   # delay to make sure the viewstate changed. Then select.
   if (!is.na(select_id)) {
     shinyjs::delay(750, {
+      r[[page]]$select_id(select_id)
       cc.map::map_choropleth_update_selection(
         session = session,
         map_ID = "map",
