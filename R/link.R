@@ -39,7 +39,7 @@ link_get_zoom <- function(zoom_levels, df) {
 #'
 #' @export
 link <- function(session, r, page, region = r$region(),
-                 select_id = NA, df = NULL,
+                 select_id = NA, df = NULL, date = NULL,
                  zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
                  zoom = link_get_zoom(zoom_levels, df)) {
   # Detect if we're in a reactive context
@@ -69,6 +69,24 @@ link <- function(session, r, page, region = r$region(),
         selected = zoom_get_name(df, lang = r$lang())
       )
     }
+
+    if (!is.null(date)) {
+      shiny::updateCheckboxInput(
+        session = r$server_session(),
+        inputId = sprintf("%s-%s", page, ns_doubled(
+          page_id = page,
+          element = "cccheckbox_cbx"
+        )),
+        value = if (length(date) == 2) TRUE else FALSE)
+      shiny::updateSliderInput(
+        session = r$server_session(),
+        inputId = sprintf("%s-%s", page, ns_doubled(
+          page_id = page,
+          element = if (length(date) == 2) "ccslider_slb" else "ccslider_slu"
+        )),
+        value = date
+      )
+    }
   })
 
     if (!is.na(select_id)) {
@@ -96,13 +114,14 @@ link <- function(session, r, page, region = r$region(),
 
   # Selection MUST be in the viewstate for the selection to happen. Add a longer
   # delay to make sure the viewstate changed. Then select.
-  shinyjs::delay(750, {
-    if (!is.na(select_id)) {
+  if (!is.na(select_id)) {
+    shinyjs::delay(750, {
       cc.map::map_choropleth_update_selection(
         session = session,
         map_ID = "map",
         select_id = select_id
       )
-    }
-  })
+    })
+  }
+
 }
