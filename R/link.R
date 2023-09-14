@@ -69,28 +69,40 @@ link <- function(session, r, page, region = r$region(),
         selected = zoom_get_name(df, lang = r$lang())
       )
     }
+  })
 
     if (!is.na(select_id)) {
       if (!is.null(df)) {
         if (!is.null(zoom)) r[[page]]$zoom(zoom)
 
-        # df_data <- get_from_globalenv(df)
-        # # Skip the zoom update if the 'centroid' is not in the df
-        # if (!"centroid" %in% names(df_data)) {
-        #   return(NULL)
-        # }
-        # coords <- df_data$centroid[df_data$ID == select_id][[1]]
-        # coords <- sapply(coords, round, digits = 2)
-        # cc.map::map_viewstate(
-        #   session = session,
-        #   map_ID = "map",
-        #   longitude = as.numeric(coords[1]),
-        #   latitude = as.numeric(coords[2]),
-        #   zoom = r[[page]]$zoom()
-        # )
+        df_data <- get_from_globalenv(df)
+        # Skip the zoom update if the 'centroid' is not in the df
+        if (!"centroid" %in% names(df_data)) {
+          return(NULL)
+        }
+        coords <- df_data$centroid[df_data$ID == select_id][[1]]
+        coords <- sapply(coords, round, digits = 2)
+        cc.map::map_viewstate(
+          session = session,
+          map_ID = "map",
+          longitude = as.numeric(coords[1]),
+          latitude = as.numeric(coords[2]),
+          zoom = r[[page]]$zoom()
+        )
 
         r[[page]]$select_id(select_id)
       }
+    }
+
+  # Selection MUST be in the viewstate for the selection to happen. Add a longer
+  # delay to make sure the viewstate changed. Then select.
+  shinyjs::delay(750, {
+    if (!is.na(select_id)) {
+      cc.map::map_choropleth_update_selection(
+        session = session,
+        map_ID = "map",
+        select_id = select_id
+      )
     }
   })
 }

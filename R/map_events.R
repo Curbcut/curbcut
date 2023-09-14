@@ -44,7 +44,14 @@ get_click <- function(map_ID) {
 
   shiny::observeEvent(observed_click(),
     {
-      print(observed_click())
+      # In some cases, map_click() can ALREADY be NA. In that case, force a
+      # reaction by writing a character NA and, in the function `update_select_id`,
+      # turn it back to a logical NA
+      if (!is.null(map_click())) {
+        if (is.na(map_click()$ID) & is.na(observed_click()$ID)) {
+          return(map_click(list(ID = "NA")))
+        }
+      }
       map_click(observed_click())
     },
     ignoreNULL = TRUE,

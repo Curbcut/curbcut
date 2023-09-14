@@ -135,6 +135,7 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
           FALSE
         }
         id <- click_init()$ID
+        if (!is.na(id) & id == "NA") id <- NA
         attr(id, "stories_link") <- stories_link
         return(id)
       },
@@ -199,13 +200,13 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
     shiny::observeEvent(new_ID(), {
       # If the same ID has been selected twice, return NA. If not, return the
       # newly selected ID
-      out <- update_select_id_helper(
-        new_ID = new_ID(),
-        select_id = r[[id]]$select_id()
-      )
+        out <- update_select_id_helper(
+          new_ID = new_ID(),
+          select_id = r[[id]]$select_id()
+        )
 
-      # Save the new selected ID in the reactive.
-      r[[id]]$select_id(out)
+        # Save the new selected ID in the reactive.
+        r[[id]]$select_id(out)
     })
 
     # Update selected ID if there are default selections (from the advanced options,

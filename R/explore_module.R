@@ -124,8 +124,15 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     })
 
     # Clear selection on button click
-    shiny::observeEvent(input$clear_selection, r[[id]]$select_id(NA),
-      ignoreInit = TRUE
+    shiny::observeEvent(input$clear_selection, {
+      r[[id]]$select_id(NA)
+      cc.map::map_choropleth_update_selection(
+        session = session,
+        map_ID = "map",
+        select_id = NA
+      )
+    },
+    ignoreInit = TRUE
     )
   })
 }
