@@ -266,9 +266,12 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
         }, USE.NAMES = TRUE)
 
         # Filter
-        out <- mapply(\(id, scale) {
-          ids[[scale]][[id]]
+        out <- mapply(\(id, scales) {
+          lapply(scales, \(scale) {
+            ids[[scale]][[id]]
+          }) |> unlist()
         }, names(scales_keep), scales_keep, USE.NAMES = FALSE)
+        out <- unique(unlist(out))
 
         return(out)
       }

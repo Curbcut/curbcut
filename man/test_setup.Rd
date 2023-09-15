@@ -4,7 +4,7 @@
 \alias{test_setup}
 \title{Setup objects}
 \usage{
-test_setup(pos = 1, folder = "tests/testthat/resources")
+test_setup(pos = 1, folder = "tests/testthat/resources/")
 }
 \arguments{
 \item{pos}{<\code{numeric}> An integer value indicating the position in the search list where

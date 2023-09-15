@@ -61,7 +61,7 @@ use_curbcut_js <- function() {
     )),
     # Open URL with blank target
     shiny::tags$head(shiny::tags$script(
-      HTML("
+      shiny::HTML("
       Shiny.addCustomMessageHandler('openURL', function(url) {
         window.open(url, '_blank');
       });

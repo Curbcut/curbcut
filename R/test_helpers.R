@@ -135,7 +135,7 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
 #'
 #' @return Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
-test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
+test_setup <- function(pos = 1, folder = "tests/testthat/resources/") {
   # Variables present in the .GlobalEnv
   assign("all_choropleths",
     value = c(
@@ -191,7 +191,7 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
   invisible(lapply(
     data_files[grepl("qs$", data_files)],
     \(x) {
-      object_name <- gsub(sprintf("(%s/)|(\\.qs)", folder), "", x)
+      object_name <- gsub(sprintf("(%s)|(\\.qs)", folder), "", x)
       assign(object_name, qs::qread(x), envir = as.environment(pos))
     }
   ))
@@ -205,7 +205,7 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources") {
     assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
   })
 
-  conn <- DBI::dbConnect(RSQLite::SQLite(), paste0(folder, "/building.sqlite"))
+  conn <- DBI::dbConnect(RSQLite::SQLite(), paste0(folder, "building.sqlite"))
   tbs <- DBI::dbListTables(conn)
   tbs <- tbs[!grepl("city_", tbs)]
   lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))

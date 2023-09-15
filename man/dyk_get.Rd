@@ -4,7 +4,17 @@
 \alias{dyk_get}
 \title{Get Did You Know Contents}
 \usage{
-dyk_get(id, vars, df, select_id, poi, lang = NULL)
+dyk_get(
+  id,
+  vars,
+  df,
+  select_id,
+  poi,
+  region,
+  zoom_levels,
+  scales_as_DA = scales_as_DA,
+  lang = NULL
+)
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the module will appear,
@@ -13,8 +23,26 @@ e.g. \code{alp}.}
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}
 
+\item{df}{<\verb{reactive character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
+
+\item{select_id}{<\code{character}> A string indicating the ID of the currently
+selected region (if any). Usually \code{r[[id]]$select_id()}}
+
 \item{poi}{<\code{reactive}> (Optional) Point of interests. The output of
 \code{\link{update_df}}. Default is NULL.}
+
+\item{region}{<\code{character}> Character string specifying the name of the region.
+Usually equivalent of \code{r$region()}.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+\code{\link{zoom_get_levels}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 
 \item{lang}{<\code{character}> A character string specifying the language to
 translate the content. Defaults to NULL for no translation.}

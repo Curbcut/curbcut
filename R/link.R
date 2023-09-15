@@ -34,8 +34,21 @@ link_get_zoom <- function(zoom_levels, df) {
 #' @param page <`character`> The id of the tab to be opened.
 #' @param select_id <`character`> ID of the item to be selected within the newly
 #' opened page.
+#' @param region <`character`> Character string specifying the name of the region.
+#' Defaults to `r$region()`.
 #' @param df <`character`> Combination of region and scale to update the zoom
 #' of the newly opened page's map.
+#' @param date <`numeric vector`> Change the date on the page. It will be changing
+#' the dates widgets from the autovars module, with html id as `alp-alp-alp-ccslider_slb`.
+#' @param var_right <`reactive character`> Character string of the compare variable
+#' to update to. It will be changing the html id of the `alp-alp-compare-ccpicker_var`
+#' widget.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}.
+#' @param zoom <`numeric`> Zoom used to update the map viewstate. Defaults to
+#' using \code{\link{link_get_zoom}}, which will grab the values in the `zoom_levels`
+#' argument.
 #'
 #' @export
 link <- function(session, r, page, region = r$region(),

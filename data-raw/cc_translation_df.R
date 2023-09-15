@@ -338,11 +338,11 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "Search `{address}` wasn't found within an available region.",
-    fr = "La recherche `{adresse}` n'a pas \u00e9t\u00e9 trouv\u00e9e dans une r\u00e9gion disponible."
+    fr = "La recherche `{address}` n'a pas \u00e9t\u00e9 trouv\u00e9e dans une r\u00e9gion disponible."
   ) |>
   tibble::add_row(
     en = "Address `{address}` isn't within an available region.",
-    fr = "L'adresse `{adresse}` ne se trouve pas dans une r\u00e9gion disponible."
+    fr = "L'adresse `{address}` ne se trouve pas dans une r\u00e9gion disponible."
   ) |>
   tibble::add_row(
     en = "No zone has been found in a 1km radius of the provided address.",
@@ -350,7 +350,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "Address `{address}` saved as default.",
-    fr = "L'adresse `{adresse}` est sauvegard\u00e9e par d\u00e9faut."
+    fr = "L'adresse `{address}` est sauvegard\u00e9e par d\u00e9faut."
   ) |>
   tibble::add_row(
     en = "Advanced options",

@@ -29,8 +29,8 @@ home_server <- function(id = "home", r) {
     )
 
     # Detect discover card click and update the active page accordingly
-    discover_click <- reactive(get_landing_discover("landing"))
-    observeEvent(discover_click(), {
+    discover_click <- shiny::reactive(cc.landing::get_landing_discover("landing"))
+    shiny::observeEvent(discover_click(), {
       # Selected row
       disc_card <- discover_cards[discover_cards$id == discover_click(), ]
 
@@ -49,8 +49,8 @@ home_server <- function(id = "home", r) {
     }, ignoreNULL = TRUE)
 
     # Detect discover card click and update the active page accordingly
-    news_click <- reactive(get_landing_news("landing"))
-    observeEvent(news_click(), {
+    news_click <- shiny::reactive(cc.landing::get_landing_news("landing"))
+    shiny::observeEvent(news_click(), {
       # Selected row
       news_card <- news_cards[news_cards$id == news_click(), ]
 
