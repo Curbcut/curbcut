@@ -15,7 +15,7 @@ link_get_zoom <- function(zoom_levels, df) {
   zoom <- unname(zoom)
 
   if (zoom == 0) {
-    zoom <- if (length(zoom_levels) > 1) unname(zoom_levels[2] - 1) else 9
+    zoom <- if (length(zoom_levels) > 1) unname(zoom_levels[2] - 0.2) else 9
   }
 
   return(zoom)
