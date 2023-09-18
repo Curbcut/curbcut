@@ -8,13 +8,16 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/shinyjs/copy_current_url.js",
-    package = "curbcut"
+                                            package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/shinyjs/language.js",
-    package = "curbcut"
+                                        package = "curbcut"
   ))
   highlightOptions <- readLines(system.file("js_scripts/shinyjs/highlight_dropdown_option.js",
-    package = "curbcut"
+                                            package = "curbcut"
+  ))
+  checkForMapDiv <- readLines(system.file("js_scripts/shinyjs/checkForMapDiv.js",
+                                             package = "curbcut"
   ))
 
   # Add the JS resource path
@@ -28,7 +31,7 @@ use_curbcut_js <- function() {
     list.files(system.file("js_scripts", package = "curbcut"))
   )
   js_files <- js_files[grepl("\\.js$", js_files)]
-  js_files <- paste0(js_files, "?id=2")
+  js_files <- paste0(js_files, "?id=9")
   # Build the tags for the style files
   js_tags <- shiny::tagList(
     lapply(js_files, function(x) {
@@ -37,6 +40,11 @@ use_curbcut_js <- function() {
   )
 
   shiny::tagList(
+    # Check for map div
+    shiny::tags$head(shinyjs::extendShinyjs(
+      text = checkForMapDiv,
+      functions = c("checkForMapDiv")
+    )),
     # Copy URL
     shiny::tags$head(shinyjs::extendShinyjs(
       text = copy_current_url,

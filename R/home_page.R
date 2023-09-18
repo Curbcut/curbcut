@@ -157,9 +157,14 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
     translation_df[translation_df$en %in% unlist(pages), ]
   }
 
-  # Filter 4 discover cards randomly
-  discover_cards <- get_from_globalenv("discover_cards")
-  discover_cards <- discover_cards[sample(1:nrow(discover_cards), 4), ]
+  # Subset discover cards to not send too much data to the landing UI
+  discover_cards <-  get_from_globalenv("discover_cards")
+  card_types <- unique(discover_cards$type)
+  discover_cards <- lapply(card_types, \(type) {
+    out <- discover_cards[discover_cards$type == type, ]
+    out[sample(nrow(out), 2), ]
+  })
+  discover_cards <- Reduce(rbind, discover_cards)
 
   # Create landing page
   cc.landing::landing_input(
