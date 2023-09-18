@@ -119,8 +119,6 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
   x <- c(...)
   if (!is.list(x)) x <- paste0(..., collapse = "")
 
-  if (all(x == "Comparison")) print("before translation_df")
-
   # Grab translation_df and return input if missing
   translation_df <- get0("translation_df", .GlobalEnv)
   if (is.null(translation_df)) {
@@ -138,9 +136,6 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
     })
   }
 
-  if (all(x == "Comparison")) print("before isRunning")
-  if (all(x == "Comparison")) print(shiny::isRunning())
-
   # If Shiny isn't running, still return depending on translation language given
   if (!shiny::isRunning()) {
     if (is.null(lang) || lang == "en") {
@@ -149,8 +144,6 @@ cc_t <- function(..., .envir = parent.frame(), lang = NULL, force_span = FALSE) 
       return(french_translation(x, translation_df))
     }
   }
-
-  if (all(x == "Comparison")) print("before force_span")
 
   # If not in a reactive shiny context (is in UI), return 2 spans.
   if (is.null(shiny::getDefaultReactiveDomain()) || force_span) {
