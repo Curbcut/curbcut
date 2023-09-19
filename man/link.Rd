@@ -5,22 +5,19 @@
 \title{Update tabset panel and select an ID}
 \usage{
 link(
-  session,
   r,
   page,
   region = r$region(),
   select_id = NA,
   df = NULL,
   date = NULL,
+  var_left = NULL,
   var_right = NULL,
   zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
   zoom = link_get_zoom(zoom_levels, df)
 )
 }
 \arguments{
-\item{session}{<\code{session}> A shiny session object from the server function.
-The actual session of the module, should be  \code{session = session}}
-
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 

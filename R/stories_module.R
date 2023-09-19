@@ -15,7 +15,7 @@ stories_server <- function(id, r) {
     stories <- get_from_globalenv("stories")
     id_map <- paste0(id, "-map")
     themes_raw <- unique(unlist(stories$themes))
-    themes <- shiny::reactive(list(Themes = stats::setNames(themes_raw, themes_raw)))
+    themes <- shiny::reactive(list(Themes = sapply(themes_raw, list)))
 
     # Sidebar
     sidebar_server(id = id, r = r)
@@ -140,10 +140,10 @@ stories_server <- function(id, r) {
 
     # Add stories on the left-hand panel and react on a click
     themes_c <- picker_server(id = id,
-                                       picker_id = "var",
-                                       r = r,
-                                       var_list = themes,
-                                       selected = unlist(themes()))
+                              picker_id = "var",
+                              r = r,
+                              var_list = themes,
+                              selected = unlist(themes()))
 
     shiny::observeEvent(themes_c(), {
       in_theme <-

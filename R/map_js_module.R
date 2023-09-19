@@ -126,7 +126,7 @@ map_js_server <- function(id, r, tile, coords, zoom,
     shiny::observeEvent({coords()
       input$mapboxDivExists},
       {
-        if (isTRUE(input$mapboxDivExists) & !is.null(tileset_trigger())) {
+        if (isTRUE(input$mapboxDivExists) & !is.null(coords())) {
           map_loc <- get_from_globalenv("map_loc")
           if (!identical(map_loc, coords())) {
             cc.map::map_viewstate(

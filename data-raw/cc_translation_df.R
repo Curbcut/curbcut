@@ -81,6 +81,10 @@ cc_translation_df <-
     en = "Time",
     fr = "Temps"
   ) |>
+  tibble::add_row(
+    en = "Themes",
+    fr = "Thèmes"
+  ) |>
   # Legend ------------------------------------------------------------------
 
   tibble::add_row(

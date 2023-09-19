@@ -6,6 +6,7 @@ shinyjs.checkForMapDiv = function (id) {
   if (parentDiv) {
     var childDivs = parentDiv.querySelectorAll(".map-container.mapboxgl-map");
     console.log(childDivs);
+    console.log(childDivs[0].classList.contains("mapboxgl-map"));
 
     if (childDivs.length > 0) {
       Shiny.setInputValue(input_name, childDivs[0].classList.contains("mapboxgl-map"));
