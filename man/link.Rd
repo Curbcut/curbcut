@@ -35,9 +35,13 @@ of the newly opened page's map.}
 \item{date}{<\verb{numeric vector}> Change the date on the page. It will be changing
 the dates widgets from the autovars module, with html id as \code{alp-alp-alp-ccslider_slb}.}
 
-\item{var_right}{<\verb{reactive character}> Character string of the compare variable
+\item{var_left}{<\code{character}> Character string of the compare variable
 to update to. It will be changing the html id of the \code{alp-alp-compare-ccpicker_var}
 widget.}
+
+\item{var_right}{<\code{character}> Character string of the var_left variable
+to update to. It will be \code{r[[id]]$var_left_force()}, which will re-draw the
+autovars module with the new selected variable.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of

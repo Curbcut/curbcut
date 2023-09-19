@@ -86,7 +86,6 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     # Create observer
     shiny::observe({
-      shiny::isolate(print(input$mapboxDivExists))
       # Check if observer should continue running
       if (!isTRUE(shiny::isolate(shouldContinue()))) {
         return()

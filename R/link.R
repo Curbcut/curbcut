@@ -38,9 +38,12 @@ link_get_zoom <- function(zoom_levels, df) {
 #' of the newly opened page's map.
 #' @param date <`numeric vector`> Change the date on the page. It will be changing
 #' the dates widgets from the autovars module, with html id as `alp-alp-alp-ccslider_slb`.
-#' @param var_right <`reactive character`> Character string of the compare variable
+#' @param var_left <`character`> Character string of the compare variable
 #' to update to. It will be changing the html id of the `alp-alp-compare-ccpicker_var`
 #' widget.
+#' @param var_right <`character`> Character string of the var_left variable
+#' to update to. It will be `r[[id]]$var_left_force()`, which will re-draw the
+#' autovars module with the new selected variable.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}.
