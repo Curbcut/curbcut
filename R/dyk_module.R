@@ -56,10 +56,10 @@ dyk_server <- function(id, r, vars, df, select_id, region, zoom_levels,
 
     # Observe for clicks
     shiny::observeEvent(input$dyk_1, do.call(
-      link, c(session = session, r = list(r), attr(dyk()[[1]], "links"))
+      link, c(r = list(r), attr(dyk()[[1]], "links"))
     ))
     shiny::observeEvent(input$dyk_2, do.call(
-      link, c(session = session, r = list(r), attr(dyk()[[2]], "links"))
+      link, c(r = list(r), attr(dyk()[[2]], "links"))
     ))
 
     # Only show contents if dyk_output isn't empty

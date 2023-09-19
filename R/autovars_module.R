@@ -310,9 +310,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
           # Default selection
           tb <- page$var_left[[1]]
           default_selection <- if (is.data.frame(tb)) {
-            tb$group_name[tb$var_code == default_var]
+            tb$group_name[tb$var_code == r[[id]]$var_left_force()]
           } else {
-            default_var
+            r[[id]]$var_left_force()
           }
 
           shinyjs::hidden(shiny::div(
@@ -321,7 +321,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               id = widget_ns(id),
               picker_id = "mnd",
               var_list = w,
-              selected = default_selection,
+              selected = r[[id]]$var_left_force(),
               label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
             )
           ))
@@ -398,7 +398,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
       if (length(widgets()) > 0) {
         tb <- page$var_left[[1]]
-        default_selection <- tb$group_diff[tb$var_code == default_var][[1]]
+        default_selection <- tb$group_diff[tb$var_code == r[[id]]$var_left_force()][[1]]
 
         # Other widgets (dropdowns)
         shiny::insertUI(

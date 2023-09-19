@@ -34,18 +34,32 @@ home_server <- function(id = "home", r) {
       # Selected row
       disc_card <- discover_cards[discover_cards$id == discover_click(), ]
 
-      # Which tab, which selection
-      tab <- if (disc_card$type == "page") disc_card$id else if (disc_card$type == "stories") "stories"
-      select_id <- disc_card$select_id
+      # Card type
+      type <- disc_card$type
 
-      # Update the active tab and the selection
-      shiny::updateTabsetPanel(
-        session = r$server_session(), inputId = "cc_page",
-        selected = tab
-      )
-      shinyjs::delay(500, {
-        r[[tab]]$select_id(select_id)
-      })
+      if (type == "page") {
+        shiny::updateTabsetPanel(
+          session = r$server_session(), inputId = "cc_page",
+          selected = disc_card$id
+        )
+      }
+
+      if (type == "stories") {
+        shiny::updateTabsetPanel(
+          session = r$server_session(), inputId = "cc_page",
+          selected = "stories"
+        )
+        shinyjs::delay(500, {
+          r[[tab]]$select_id(select_id)
+        })
+      }
+
+      if (type == "dyk") {
+        link(r = r, page = disc_card$page, select_id = disc_card$select_id,
+             date = disc_card$date[[1]], var_right = disc_card$var_right,
+             var_left = disc_card$var_left)
+      }
+
     }, ignoreNULL = TRUE)
 
     # Detect discover card click and update the active page accordingly
@@ -162,7 +176,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   card_types <- unique(discover_cards$type)
   discover_cards <- lapply(card_types, \(type) {
     out <- discover_cards[discover_cards$type == type, ]
-    out[sample(nrow(out), 2), ]
+    out[sample(nrow(out), if (type == "stories") 0 else 4), ]
   })
   discover_cards <- Reduce(rbind, discover_cards)
 

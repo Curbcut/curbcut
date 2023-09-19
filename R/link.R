@@ -27,8 +27,6 @@ link_get_zoom <- function(zoom_levels, df) {
 #' the corresponding \code{select_id}. The \code{page} and \code{select_id}
 #' arguments must be reactive objects.
 #'
-#' @param session <`session`> A shiny session object from the server function.
-#' The actual session of the module, should be  `session = session`
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param page <`character`> The id of the tab to be opened.
@@ -51,8 +49,8 @@ link_get_zoom <- function(zoom_levels, df) {
 #' argument.
 #'
 #' @export
-link <- function(session, r, page, region = r$region(),
-                 select_id = NA, df = NULL, date = NULL, var_right = NULL,
+link <- function(r, page, region = r$region(), select_id = NA, df = NULL,
+                 date = NULL, var_left = NULL, var_right = NULL,
                  zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
                  zoom = link_get_zoom(zoom_levels, df)) {
   # Detect if we're in a reactive context
@@ -101,8 +99,11 @@ link <- function(session, r, page, region = r$region(),
       )
     }
 
+    if (!is.null(var_left)) {
+      r[[page]]$var_left_force(var_left)
+    }
+
     if (!is.null(var_right)) {
-      print(var_right)
       shinyWidgets::updatePickerInput(
         session = r$server_session(),
         inputId = ns_doubled(
@@ -126,8 +127,11 @@ link <- function(session, r, page, region = r$region(),
       coords <- df_data$centroid[df_data$ID == select_id][[1]]
       coords <- sapply(coords, round, digits = 2)
       cc.map::map_viewstate(
-        session = session,
-        map_ID = "map",
+        session = r$server_session(),
+        map_ID = ns_doubled(
+          page_id = page,
+          element = "map"
+        ),
         longitude = as.numeric(coords[1]),
         latitude = as.numeric(coords[2]),
         zoom = r[[page]]$zoom()
@@ -142,8 +146,11 @@ link <- function(session, r, page, region = r$region(),
     shinyjs::delay(750, {
       r[[page]]$select_id(select_id)
       cc.map::map_choropleth_update_selection(
-        session = session,
-        map_ID = "map",
+        session = r$server_session(),
+        map_ID = ns_doubled(
+          page_id = page,
+          element = "map"
+        ),
         select_id = select_id
       )
     })

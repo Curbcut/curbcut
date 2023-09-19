@@ -79,12 +79,13 @@ r_init <- function(server_session,
         time <- modules$dates[modules$id == i][[1]]
         if (!is.null(time)) {
           time <- max(time)
-          default_var <- sprintf("%s_%s", default_var, time)
+          default_var_yr <- sprintf("%s_%s", default_var, time)
         }
 
 
         r[[i]] <- shiny::reactiveValues(
-          vars = shiny::reactiveVal(vars_build(default_var, df = df)),
+          vars = shiny::reactiveVal(vars_build(default_var_yr, df = df)),
+          var_left_force = shiny::reactiveVal(default_var),
           select_id = shiny::reactiveVal(NA),
           df = shiny::reactiveVal(df),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
