@@ -50,7 +50,7 @@ home_server <- function(id = "home", r) {
           selected = "stories"
         )
         shinyjs::delay(500, {
-          r[[tab]]$select_id(select_id)
+          r[[disc_card$id]]$select_id(disc_card$select_id)
         })
       }
 

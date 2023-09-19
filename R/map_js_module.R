@@ -106,7 +106,7 @@ map_js_server <- function(id, r, tile, coords, zoom,
       }
 
       # Invalidate this observer after 500ms
-      invalidateLater(500, session)
+      shiny::invalidateLater(500, session)
     })
 
     shiny::observeEvent(input$mapboxDivExists, {

@@ -83,7 +83,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "Themes",
-    fr = "Thèmes"
+    fr = "Th\u00e8mes"
   ) |>
   # Legend ------------------------------------------------------------------
 
