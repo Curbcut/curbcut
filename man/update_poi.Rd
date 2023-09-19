@@ -13,7 +13,7 @@ e.g. \code{alp}.}
 \item{poi}{<\verb{character vector}> The current POIs showing on the map.}
 
 \item{map_viewstate}{<\code{list}> The map viewstate. Usually the output of the
-\code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}.}
+\code{\link{map_js_server}}.}
 }
 \value{
 A character vector of nearby POIs if new POIs are found; otherwise,

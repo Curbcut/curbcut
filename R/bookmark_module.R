@@ -1,8 +1,7 @@
-#' Server function for creating a bookmarkable URL with Curbcut widgets and an
-#' rdeck map
+#' Server function for creating a bookmarkable URL with Curbcut widgets and map
 #'
 #' This function creates a module server for bookmarkable app that use Curbcut
-#' widgets and an rdeck map. It bookmarks the tab id, the region, language,
+#' widgets and a map. It bookmarks the tab id, the region, language,
 #' widgets, the map view state (zoom and lat/lon coordinates), the selected id
 #' and the `df`.
 #'
@@ -13,7 +12,7 @@
 #' @param select_id <`reactive character`> the current selected ID, usually
 #' `r[[id]]$select_id()`. Defaults to `NULL` for when it is not a map module.
 #' @param map_viewstate <`reactive list`> The map viewstate. Usually the output of the
-#' \code{\link{map_server}}, or of \code{\link[rdeck]{get_view_state}}. Defaults
+#' \code{\link{map_js_server}}, or of \code{\link[cc.map]{get_map_viewstate}}. Defaults
 #' to `NULL` for when it is not a map module.
 #' @param exclude_input <`character vector`> Widget names to exclude from
 #' bookmarking. By default, the input monitoring the opening of dropdowns
@@ -32,7 +31,7 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
       if (length(all_input) == 0) {
         return(NULL)
       }
-      all_widgets <- grep(paste0(names(bookmark_shorts), collapse = "|"),
+      all_widgets <- grep(paste0(names(curbcut::bookmark_shorts), collapse = "|"),
         all_input,
         value = TRUE
       )
@@ -88,14 +87,13 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #' @param widgets A named list representing the values of the Curbcut widgets present
 #' on the page.
 #' @param map_viewstate <`named list`> An optional named list representing the
-#' state of the map view. Usually `rdeck::get_view_state("map")`.
+#' state of the map view. Usually `cc.map::get_map_viewstate("map")`.
 #' @param select_id <`character`> An optional string or numeric value representing
 #' the ID of the selected item.
 #'
 #' @return A character string representing the bookmarkable URL.
 bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
                                select_id) {
-
   # Make the region a numeric too
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   if (region %in% regions_dictionary$region) {

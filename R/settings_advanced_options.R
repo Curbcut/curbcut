@@ -9,30 +9,28 @@
 #'
 #' @param id <`character`> The ID of the module, in which this UI bit will
 #' be used. Necessary for namespacing reasons.
-#' @param region <`character`> A character string specifying the currently
-#' selected region.
 #' @param lang <`character`> A character string specifying the language in
 #' which the names of the regions should be translated. Defaults to `NULL`
 #' which means no translation.
 #'
 #' @return A shiny radio button input object.
 #' @export
-adv_opt_region <- function(id, region, lang = NULL) {
+adv_opt_region <- function(id, lang = NULL) {
   # Get the regions dictionary from the global environment
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   pickable_regions <- regions_dictionary[regions_dictionary$pickable, ]
 
   # Translate and get the text labels + the values
   choices_txt <-
-    sapply(unname(pickable_regions$name), cc_t, lang = lang, USE.NAMES = FALSE)
+    lapply(unname(pickable_regions$name), cc_t, lang = lang, force_span = TRUE)
   choices_values <- pickable_regions$region
 
   # Get the shiny input
   shiny::radioButtons(
-    inputId = shiny::NS(id, "region_change"),
-    label = cc_t(lang = lang, "Change default region"),
+    inputId = "region_change",
+    label = cc_t(lang = lang, "Change default region", force_span = TRUE),
     inline = TRUE,
-    selected = region,
+    selected = regions_dictionary$region[1],
     choiceNames = choices_txt,
     choiceValues = choices_values
   )
@@ -61,32 +59,33 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
     # Lock in address of zone for select_ids
     shiny::strong(cc_t(
       lang = lang, "Enter and save a default location (postal ",
-      "code or address)"
+      "code or address)", force_span = TRUE
     )),
-    shiny::HTML("<br><i>", cc_t(
+    shiny::HTML("<br>"),
+    cc_t(
       lang = lang,
       "Default location will be saved until ",
-      "manually cleared from advanced options"
-    ), "</i>"),
+      "manually cleared from advanced options", force_span = TRUE
+    ),
     shiny::HTML(paste0(
       '<div class="shiny-split-layout">',
       '<div style="width: 80%; margin-top: var(--padding-v-md); ',
       'width:auto;">',
       shiny::textInput(
-        inputId = shiny::NS(id, "lock_address_searched"),
+        inputId = "lock_address_searched",
         label = NULL,
         placeholder = default_random_address
       ),
       '</div><div style="width: 20%">',
       shiny::actionButton(
-        inputId = shiny::NS(id, "lock_search_button"),
+        inputId = "lock_search_button",
         label = shiny::icon("check", verify_fa = FALSE),
         style = "margin-top: var(--padding-v-md);"
       ),
       "</div></div>",
       shiny::actionButton(
-        inputId = shiny::NS(id, "cancel_lock_location"),
-        label = cc_t(lang = lang, "Clear default location"),
+        inputId = "cancel_lock_location",
+        label = cc_t(lang = lang, "Clear default location", force_span = TRUE),
         icon = shiny::icon("xmark", verify_fa = FALSE),
         style = "margin-top: var(--padding-v-md);"
       )
@@ -267,9 +266,12 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
         }, USE.NAMES = TRUE)
 
         # Filter
-        out <- mapply(\(id, scale) {
-          ids[[scale]][[id]]
+        out <- mapply(\(id, scales) {
+          lapply(scales, \(scale) {
+            ids[[scale]][[id]]
+          }) |> unlist()
         }, names(scales_keep), scales_keep, USE.NAMES = FALSE)
+        out <- unique(unlist(out))
 
         return(out)
       }

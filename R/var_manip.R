@@ -51,14 +51,15 @@ var_remove_time <- function(var) {
 #' `translate` is TRUE. If not specified, the function will not attempt to translate.
 #' @param check_year <`logical`> Should the year be removed from `var` to grab
 #' variable's info? Defaults to TRUE
+#' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
+#' from the global environment using \code{\link{get_from_globalenv}}.
 #'
 #' @return The requested information about the variable, with optional translation
 #' using the \code{\link{cc_t}} function.
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
-                         lang = NULL, check_year = TRUE) {
-  variables <- get_from_globalenv("variables")
-
+                         lang = NULL, check_year = TRUE,
+                         variables = get_from_globalenv("variables")) {
   if (!what %in% names(variables)) {
     stop(glue::glue_safe("`{what}` is not a column of the `variables` table."))
   }

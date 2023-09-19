@@ -19,37 +19,44 @@ create_ui_server_mods <- function(modules, pos = 1) {
   ui <- function(id) {
     default_region <- modules$regions[modules$id == id][[1]][1]
     mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
+    page <- modules[modules$id == id, ]
+    theme_lowercased <- gsub(" .*", "", tolower(page$theme))
+    stories <- get_from_globalenv("stories")
 
     shiny::tagList(
       # Sidebar
-      curbcut::sidebar_UI(
-        id = shiny::NS(id, id),
-        curbcut::autovars_UI(shiny::NS(id, id)),
-        curbcut::warnuser_UI(shiny::NS(id, id)),
-        bottom = shiny::tagList(
-          curbcut::legend_UI(shiny::NS(id, id)),
-          curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp)
-        )
-      ),
-
-      # Map
-      curbcut::map_UI(shiny::NS(id, id)),
-
-      # Tutorial
-      curbcut::tutorial_UI(id = shiny::NS(id, id)),
-
-      # Change view (Map/Data/Place explorer)
-      curbcut::panel_view_UI(id = shiny::NS(id, id)),
-
-      # Right panel
-      curbcut::right_panel(
-        id = id,
-        curbcut::compare_UI(
+      shiny::div(
+        `data-theme` = theme_lowercased,
+        curbcut::sidebar_UI(
           id = shiny::NS(id, id),
-          var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
+          curbcut::autovars_UI(shiny::NS(id, id)),
+          curbcut::warnuser_UI(shiny::NS(id, id)),
+          curbcut::compare_UI(
+            id = shiny::NS(id, id),
+            var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
+          ),
+          shiny::hr(),
+          curbcut::zoom_UI(shiny::NS(id, id), zoom_levels = mzp),
+          bottom = shiny::tagList(
+            curbcut::legend_UI(shiny::NS(id, id))
+          )
         ),
-        curbcut::explore_UI(shiny::NS(id, id)),
-        curbcut::dyk_UI(shiny::NS(id, id))
+
+        # Map
+        curbcut::map_js_UI(shiny::NS(id, id)),
+
+        # Tutorial
+        curbcut::tutorial_UI(id = shiny::NS(id, id)),
+
+        # Change view (Map/Data/Place explorer)
+        curbcut::panel_view_UI(id = shiny::NS(id, id)),
+
+        # Right panel
+        curbcut::right_panel(
+          id = shiny::NS(id, id),
+          curbcut::explore_UI(shiny::NS(id, id)),
+          dyk_UI(shiny::NS(id, id))
+        )
       )
     )
   }
@@ -65,6 +72,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
       suffix_zoom_levels <- modules$suffix_zoom_levels[modules$id == id]
+      stories <- get_from_globalenv("stories")
 
       # Initial zoom string reactive value
       rv_zoom_string <- shiny::reactiveVal(
@@ -91,14 +99,16 @@ create_ui_server_mods <- function(modules, pos = 1) {
           region = r$region(),
           suffix_zoom_levels = suffix_zoom_levels
         ))
+      current_region <- shiny::reactive(zoom_levels()$region)
+      current_zl <- shiny::reactive(zoom_levels()$zoom_levels)
 
       # Zoom string reactive
       shiny::observe({
         rv_zoom_string({
           curbcut::zoom_get_string(
             zoom = r[[id]]$zoom(),
-            zoom_levels = zoom_levels()$zoom_levels,
-            region = zoom_levels()$region
+            zoom_levels = current_zl(),
+            region = current_region()
           )
         })
       })
@@ -172,8 +182,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Data for tile coloring
       data_colours <- shiny::reactive(curbcut::data_get_colours(
         vars = r[[id]]$vars(),
-        region = zoom_levels()$region,
-        zoom_levels = zoom_levels()$zoom_levels
+        region = current_region(),
+        zoom_levels = current_zl()
       ))
 
       # Warn user
@@ -201,33 +211,27 @@ create_ui_server_mods <- function(modules, pos = 1) {
       )
 
       # Did-you-know panel
-      curbcut::dyk_server(
+      dyk_server(
         id = id,
         r = r,
         vars = r[[id]]$vars,
+        df = r[[id]]$df,
+        select_id = r[[id]]$select_id,
         poi = r[[id]]$poi,
-        df = r[[id]]$df
+        region = current_region,
+        zoom_levels = current_zl
       )
 
       # Update map in response to variable changes or zooming
-      map_viewstate <- curbcut::map_server(
+      map_viewstate <- curbcut::map_js_server(
         id = id,
         r = r,
         tile = tile,
-        data_colours = data_colours,
         select_id = r[[id]]$select_id,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
+        coords = r[[id]]$coords,
         zoom = r[[id]]$zoom,
-        coords = r[[id]]$coords
-      )
-
-      # Update map labels
-      curbcut::label_server(
-        id = id,
-        tile = tile,
-        zoom = r[[id]]$zoom,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels),
-        region = shiny::reactive(zoom_levels()$region)
+        data_colours = data_colours,
+        stories = stories
       )
 
       # Explore panel
@@ -235,7 +239,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         data = data,
-        region = shiny::reactive(zoom_levels()$region),
+        region = current_region,
         vars = r[[id]]$vars,
         df = r[[id]]$df,
         select_id = r[[id]]$select_id
@@ -253,10 +257,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::panel_view_server(
         id = id,
         r = r,
-        region = shiny::reactive(zoom_levels()$region),
+        region = current_region,
         vars = r[[id]]$vars,
         data = data,
-        zoom_levels = shiny::reactive(zoom_levels()$zoom_levels)
+        zoom_levels = current_zl
       )
     })
   }

@@ -52,24 +52,30 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
 #' @describeIn compare_server Create the UI for the compare module
 #' @export
 compare_UI <- function(id, var_list) {
-  shiny::div(
-    id = shiny::NS(id, "compare_panel"),
-    shiny::fluidRow(
-      shiny::column(width = 7, shiny::h4(
-        icon_material_title("balance"),
-        cc_t("Compare")
-      ))
+  shiny::tagList(
+    shiny::div(
+      id = shiny::NS(id, "compare_panel"),
+      shiny::hr(id = shiny::NS(id, "hr_compare_panel")),
+      shiny::div(
+        class = "shiny-split-layout sidebar-section-title",
+        shiny::div(
+          style = "width: 9%",
+          icon_material_title("balance")
+        ),
+        shiny::div(
+          style = "width: 89%",
+          cc_t_span("Comparison")
+        )
+      )
     ),
     shiny::div(
       id = shiny::NS(id, "compare_widgets"),
-      class = "right-panel-hidden",
+      class = "compare-dropdown",
       picker_UI(
         id = shiny::NS(id, "compare"),
         var_list = var_list,
-        open_left = FALSE # ,
-        # identifier = if (id %in% c("housing-housing", "housing")) "housing_comparedrop" else NULL
+        open_left = TRUE
       )
-    ),
-    shiny::hr()
+    )
   )
 }

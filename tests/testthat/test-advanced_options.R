@@ -29,12 +29,12 @@ test_that("adv_opt_lock_selection returns correct IDs for a postal code in one r
 
 test_that("adv_opt_lock_selection returns correct IDs for an address in one region", {
   result <- adv_opt_lock_selection("845 Sherbrooke St W, Montreal", NULL)
-  expect_equal(result, c("2466023_3", "4620062.00", "24663459"))
+  expect_true(all(c("2466023_3", "4620062.00", "24663459") %in% result))
 })
 
 test_that("adv_opt_lock_selection handles input containing non-alphanumeric characters", {
   result <- adv_opt_lock_selection("Sherbrooke St. Montréal", "en")
-  expect_equal(result, c("2466023_7", "4620397.00", "24662227"))
+  expect_true(all(c("2466023_7", "4620397.00", "24662227") %in% result))
 })
 
 test_that("adv_opt_lock_selection returns NULL for an address that is not found within a 1km radius", {

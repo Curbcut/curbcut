@@ -4,7 +4,7 @@
 \alias{right_panel}
 \title{Map page right panel}
 \usage{
-right_panel(id, ...)
+right_panel(id, ..., style = "")
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which this module will appear,
@@ -12,6 +12,8 @@ e.g. \code{alp}.}
 
 \item{...}{Additional arguments to be passed to the \code{\link[shiny]{absolutePanel}}
 function. Would normally be the \code{compare_UI}, \code{explore_UI}, \code{dyk_UI}. TKTK LINK}
+
+\item{style}{<\code{character}> Additional style to the panel.}
 }
 \value{
 An absolutePanel object with a custom class for the content div.

@@ -75,12 +75,16 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
     # selection is in `data`
     shiny::observe({
       pe_docs <- get_from_globalenv("pe_docs")
+      pe_main_card_data <- get_from_globalenv("pe_main_card_data")
       # When to show the place portrait button?
       show <- (\(x) {
         if (is.na(r[[id]]$select_id())) {
           return(FALSE)
         }
         if (!r[[id]]$select_id() %in% data()$ID) {
+          return(FALSE)
+        }
+        if (!r[[id]]$df() %in% pe_main_card_data$avail_df$df) {
           return(FALSE)
         }
         # Is the region 'pickable', meaning there could be a place explorer
@@ -125,7 +129,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
           src = pe_src,
           frameborder = 0
         ),
-        footer = shiny::modalButton(cc_t(lang = r$lang(), "Dismiss")),
+        footer = shiny::modalButton(cc_t(lang = r$lang(), "Close")),
         size = "xl",
         easyClose = TRUE
       ))
@@ -264,13 +268,17 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
         }
         coords <- df_data$centroid[df_data$ID == new_id][[1]]
         coords <- sapply(coords, round, digits = 2)
-        rdeck::rdeck_proxy(
-          id = "map",
-          initial_view_state =
-            rdeck::view_state(
-              center = coords,
-              zoom = r[[id]]$zoom()
-            )
+        cc.map::map_viewstate(
+          session = session,
+          map_ID = "map",
+          longitude = as.numeric(coords[1]),
+          latitude = as.numeric(coords[2]),
+          zoom = r[[id]]$zoom()
+        )
+        cc.map::map_choropleth_update_selection(
+          session = session,
+          map_ID = "map",
+          select_id = new_id
         )
       },
       ignoreNULL = FALSE,
@@ -299,15 +307,12 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
               shiny::incProgress(0.4)
 
               # Prepare data by attaching geometries
-              geo <- qs::qread(paste0(
-                "data/geometry_export/", treated_df(),
-                ".qs"
-              ))
+              require(sf)
+              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_df()))
               data <- merge(datas()$data, geo, by = "ID")
+              data <- sf::st_as_sf(data)
 
               shiny::incProgress(0.3)
-
-              print(file)
 
               # Set file names
               tmp_path <- dirname(file)
@@ -387,7 +392,7 @@ panel_view_UI <- function(id) {
     # To accompany the panel data button, create the div
     shinyjs::hidden(
       shiny::div(
-        class = "panel_view",
+        class = "panel_view scrollable-div",
         id = shiny::NS(id, "view_data"),
         shiny::div(
           style = "margin-bottom:20px;",
@@ -398,12 +403,12 @@ panel_view_UI <- function(id) {
         shiny::div(
           style = "text-align:right",
           shiny::downloadButton(
-            class = "download_csv",
+            class = "cc-download-btn",
             outputId = shiny::NS(id, "download_csv"),
             label = cc_t("Download '.csv'")
           ),
           shiny::downloadButton(
-            class = "download_shp",
+            class = "cc-download-btn",
             outputId = shiny::NS(id, "download_shp"),
             label = cc_t("Download '.shp'")
           )

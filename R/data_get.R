@@ -47,8 +47,8 @@ data_get_sql <- function(var, df, select = "*") {
 #' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
 #' @param df <`character`> A string specifying the name of the database to retrieve
 #' data from. Combination of the region and the scale, e.g. `CMA_DA`.
-#' @param data_path A string representing the path to the directory containing the
-#' QS files. Default is "data/".
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #'
 #' @return A data.frame object with the selected data from the specified table.
 data_get_qs <- function(var, df, data_path = "data/") {
@@ -72,8 +72,8 @@ data_get_qs <- function(var, df, data_path = "data/") {
 #' e.g. `c("housing_tenant_2006", "housing_tenant_2016")`
 #' @param df <`character`> A string specifying the name of the database to retrieve
 #' data from. Combination of the region and the scale, e.g. `CMA_DA`.
-#' @param data_path A string representing the path to the directory containing the
-#' QS files. Default is "data/".
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #'
 #' @return A data frame with the following columns: ID, var_1, var_2, and var.
 #' `ID` is the ID column from the original data, `var_1` and `var_2` are the
@@ -112,8 +112,8 @@ data_get_delta <- function(var_two_years, df, data_path = "data/") {
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param data_path A string representing the path to the directory containing the
-#' QS files. Default is "data/".
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #'
 #' @param ... Additional arguments passed to methods.
 #'
@@ -135,6 +135,8 @@ data_get <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data fresh out of the sqlite db, with an
@@ -166,6 +168,8 @@ data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the two variables fresh out of the sqlite db,
@@ -211,6 +215,8 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -223,8 +229,10 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve
-  data <- data_get_delta(var_two_years = vars$var_left, df = df,
-                         data_path  = data_path )
+  data <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
 
   # Add the `group` for the map colouring
@@ -250,6 +258,8 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -262,11 +272,15 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df,
-                            data_path  = data_path )
+  data_vl <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
-  data_vr <- data_get_delta(var_two_years = vars$var_right, df = df,
-                            data_path  = data_path )[-1]
+  data_vr <- data_get_delta(
+    var_two_years = vars$var_right, df = df,
+    data_path = data_path
+  )[-1]
   names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
   data <- cbind(data_vl, data_vr)
 
@@ -289,6 +303,8 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the percentage change between two
@@ -303,8 +319,10 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
   # Retrieve var_left and add a `q3 column`
-  data_vl <- data_get_delta(var_two_years = vars$var_left, df = df,
-                            data_path  = data_path )
+  data_vl <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
@@ -338,6 +356,8 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A data.frame containing the raw sql table for the first element of `vars`.

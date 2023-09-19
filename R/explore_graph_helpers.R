@@ -6,7 +6,7 @@
 #' @param vars <`named list`> A list object of variable codes with classes. The
 #' output of \code{\link{vars_build}}.
 #' @param font_family <`character`> A string specifying the font family for the
-#' plot, default is "SourceSansPro".
+#' plot, default is "acidgrotesk-book".
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
 #' @param df <`character`> The combination of the region under study and the
@@ -22,7 +22,7 @@
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A list containing the default theme and color data frames.
-explore_graph_info <- function(vars, font_family = "SourceSansPro", lang = NULL,
+explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NULL,
                                df, scales_as_DA, select_id, data, ...) {
   # Create the theme
   theme_default <- list(

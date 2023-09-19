@@ -6,7 +6,7 @@ test_that("data_get_colours.q5  works", {
   )
   expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
-  expect_equal(names(data_colours), c("ID", "fill"))
+  expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.bivar works", {
@@ -21,7 +21,7 @@ test_that("data_get_colours.bivar works", {
   )
   expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
-  expect_equal(names(data_colours), c("ID", "fill"))
+  expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.delta works", {
@@ -36,7 +36,7 @@ test_that("data_get_colours.delta works", {
   )
   expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
-  expect_equal(names(data_colours), c("ID", "fill"))
+  expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.delta_bivar works", {
@@ -51,7 +51,7 @@ test_that("data_get_colours.delta_bivar works", {
   )
   expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
-  expect_equal(names(data_colours), c("ID", "fill"))
+  expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.bivar_ldelta_rq3 works", {
@@ -66,5 +66,5 @@ test_that("data_get_colours.bivar_ldelta_rq3 works", {
   )
   expect_equal(nrow(data_colours), 3335)
   expect_equal(unique(nchar(data_colours$fill)), 7)
-  expect_equal(names(data_colours), c("ID", "fill"))
+  expect_equal(names(data_colours), c("ID_color", "fill"))
 })

@@ -9,7 +9,21 @@
 #' @export
 use_curbcut_css <- function(lang_init = FALSE) {
   # Add the CSS resource path
-  shiny::addResourcePath("curbcut_css", system.file("css", package = "curbcut"))
+  shiny::addResourcePath("curbcut_css", system.file("styles", package = "curbcut"))
+  shiny::addResourcePath("curbcut_fonts", system.file("fonts", package = "curbcut"))
+
+  # List all style files
+  style_files <- paste0(
+    "curbcut_css/",
+    list.files(system.file("styles", package = "curbcut"))
+  )
+  style_files <- paste0(style_files, "?id=1")
+  # Build the tags for the style files
+  style_tags <- shiny::tagList(
+    lapply(style_files, function(x) {
+      shiny::tags$head(shiny::tags$link(rel = "stylesheet", type = "text/css", href = x))
+    })
+  )
 
   shiny::tagList(
     shiny::tags$head(shiny::tags$link(
@@ -20,22 +34,7 @@ use_curbcut_css <- function(lang_init = FALSE) {
         "family=Material+Icons"
       )
     )),
-    shiny::tags$head(shiny::tags$link(
-      rel = "stylesheet", type = "text/css",
-      href = "curbcut_css/panel_view.css"
-    )),
-    shiny::tags$head(shiny::tags$link(
-      rel = "stylesheet", type = "text/css",
-      href = "curbcut_css/language_span.css"
-    )),
-    shiny::tags$head(shiny::tags$link(
-      rel = "stylesheet", type = "text/css",
-      href = "curbcut_css/place_explorer.css"
-    )),
-    shiny::tags$head(shiny::tags$link(
-      rel = "stylesheet", type = "text/css",
-      href = "curbcut_css/tutorial.css"
-    )),
+    style_tags,
     if (lang_init) shiny::tags$body(class = "user-lang-fr")
   )
 }

@@ -1,3 +1,29 @@
+#' Creates a UI label element with an icon and a title
+#'
+#' This function generates a UI element for a Shiny application. The output
+#' is a div with two child divs. One contains a Material Design icon, the
+#' other contains the 'Select an indicator' title.
+#'
+#' @param id A character string specifying the id attribute for the outer div.
+#'
+#' @return A shiny::div object that includes the specified icon and title.
+#' @export
+label_indicators <- function(id) {
+  shiny::div(
+    id = id,
+    class = "shiny-split-layout sidebar-section-title",
+    shiny::div(
+      style = "width: 9%",
+      icon_material_title("tune")
+    ),
+    shiny::div(
+      style = "width: 88%",
+      cc_t("Indicator")
+    )
+  )
+}
+
+
 #' Retrieve Group Names for a Specific Module
 #'
 #' This function retrieves the group names associated with a specific module ID.
@@ -5,6 +31,9 @@
 #' They are used to populate the main dropdown.
 #'
 #' @param id <`character`> Identifying the module in modules$id
+#' @param pres <`logical`> If TRUE, will return a logical on if the there should
+#' be a widgets existing at all. Defaults to FALSE, which returns the default
+#' return of this function.
 #'
 #' If 'var_lefts' (the variables left to be selected) is a data frame,
 #' it returns the unique group names from the 'group_name' column.
@@ -13,16 +42,28 @@
 #'
 #' @return A character vector of group names or a list prepared for a dropdown selection,
 #' depending on the type of 'var_lefts'.
-autovars_groupnames <- function(id) {
+autovars_groupnames <- function(id, pres = FALSE) {
   modules <- get_from_globalenv("modules")
 
   var_lefts <- modules$var_left[modules$id == id][[1]]
 
   # If it is a dataframe. Just supply the group name as a character vector.
   if (is.data.frame(var_lefts)) {
+    # If want to know about presence of a widget, return TRUE
+    if (pres) {
+      return(TRUE)
+    }
     options <- unique(var_lefts$group_name)
     options <- options[order(options)]
     return(options)
+  }
+
+  # If want to know about presence of a widget,
+  if (pres) {
+    if (length(var_lefts) == 1) {
+      return(FALSE)
+    }
+    return(TRUE)
   }
 
   # If it's a character vector, supply a full dropdown list
@@ -141,53 +182,59 @@ autovars_widgets <- function(id, group_name, common_vals) {
 
   # TKTKTK If it is to ever crash, return no additional widgets (must be a temporary
   # thing only and the module will rise back)
-  tryCatch({
-    # Grab the difference between the variables
-    groups <- tb$group_diff[tb$group_name == group_name]
+  tryCatch(
+    {
+      # Grab the difference between the variables
+      groups <- tb$group_diff[tb$group_name == group_name]
 
-    # Filter in only the groups that share the common widgets' values
-    if (!is.null(common_vals) & !is.null(groups)) {
-      share_common_values_index <- sapply(groups, \(g) {
-        # For all the values in `common_vals`, which are the same as the observed
-        # row?
-        share_common_values <- sapply(names(common_vals), \(cv) {
-          same_feat_val <- g[names(g) == cv]
+      # Filter in only the groups that share the common widgets' values
+      if (!is.null(common_vals) & !is.null(groups)) {
+        share_common_values_index <- sapply(groups, \(g) {
+          # For all the values in `common_vals`, which are the same as the observed
+          # row?
+          share_common_values <- sapply(names(common_vals), \(cv) {
+            same_feat_val <- g[names(g) == cv]
 
-          if ("levels" %in% names(attributes(same_feat_val[[1]]))) {
-            f_lvl <- which(attributes(same_feat_val[[1]])$levels == common_vals[cv])
-            return(unlist(same_feat_val) == f_lvl)
-          }
-          # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
+            if ("levels" %in% names(attributes(same_feat_val[[1]]))) {
+              f_lvl <- which(attributes(same_feat_val[[1]])$levels == common_vals[cv])
+              return(unlist(same_feat_val) == f_lvl)
+            }
+            # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
 
-          unlist(same_feat_val) == common_vals[cv]
+            unlist(same_feat_val) == common_vals[cv]
+          })
 
+          # If ALL the values are the same
+          all(share_common_values)
         })
 
-        # If ALL the values are the same
-        all(share_common_values)
-      })
+        # Filter in only the observations sharing the values of the common values
+        groups <- groups[share_common_values_index]
+      }
+      groups <- unlist(groups)
 
-      # Filter in only the observations sharing the values of the common values
-      groups <- groups[share_common_values_index]
+      # Return no additional widgets if groups has a length of zero
+      if (length(groups) == 0) {
+        return(list())
+      }
+
+      # Filter out groups that are already part of the common widgets
+      groups <- groups[!names(groups) %in% names(common_vals)]
+
+      widgets <- sapply(unique(names(groups)), \(n) {
+        options <- unique(unname(groups[names(groups) == n]))
+        options <- options[order(options)]
+        # If there is a total, put it first
+        if ("Total" %in% options) options <- c("Total", options[options != "Total"])
+        options
+      }, simplify = FALSE, USE.NAMES = TRUE)
+
+      return(widgets)
+    },
+    error = function(e) {
+      return(list())
     }
-    groups <- unlist(groups)
-
-    # Return no additional widgets if groups has a length of zero
-    if (length(groups) == 0) return(list())
-
-    # Filter out groups that are already part of the common widgets
-    groups <- groups[!names(groups) %in% names(common_vals)]
-
-    widgets <- sapply(unique(names(groups)), \(n) {
-      options <- unique(unname(groups[names(groups) == n]))
-      options <- options[order(options)]
-      # If there is a total, put it first
-      if ("Total" %in% options) options <- c("Total", options[options != "Total"])
-      options
-    }, simplify = FALSE, USE.NAMES = TRUE)
-
-    return(widgets)
-  }, error = function(e) return(list()))
+  )
 }
 
 #' Determine Final Value
@@ -209,7 +256,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
 #' data frame, the function returns the 'var_code' associated with
 #' the maximum sum of fits.
 autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
-  modules <- curbcut:::get_from_globalenv("modules")
+  modules <- get_from_globalenv("modules")
 
   # Grab the correct tibble
   tb <- modules$var_left[modules$id == id][[1]]
@@ -247,7 +294,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(ordered_val_fit) == 0) {
     return(previous_var)
   }
-  sum_fits <- rowSums(tibble::as_tibble(ordered_val_fit))
+  sum_fits <- rowSums(as.data.frame(ordered_val_fit))
   if (length(sum_fits) == 0) {
     return(previous_var)
   }
@@ -270,13 +317,9 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
 autovars_placeholder_var <- function(id) {
   modules <- get_from_globalenv("modules")
 
-  var_lefts <- modules$var_left[modules$id == id][[1]]
+  # Grab the default variable
+  default_var <- modules$default_var[modules$id == id]
 
-  # If it is a dataframe. Just grab the first element of the `var_code` column
-  if (is.data.frame(var_lefts)) {
-    return(var_lefts$var_code[[1]])
-  }
-
-  # If it's a character vector, grab the first element
-  return(var_lefts[[1]])
+  # Return it
+  return(default_var)
 }

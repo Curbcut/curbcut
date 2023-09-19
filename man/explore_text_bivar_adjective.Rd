@@ -7,11 +7,32 @@
 \title{Helper function for generating adjective to describe bivariate relationship
 between text variables}
 \usage{
-explore_text_bivar_adjective(var, left, positive, lang = NULL, ...)
+explore_text_bivar_adjective(
+  var,
+  left,
+  positive,
+  style = TRUE,
+  lang = NULL,
+  ...
+)
 
-\method{explore_text_bivar_adjective}{dollar}(var, left, positive, lang, ...)
+\method{explore_text_bivar_adjective}{dollar}(
+  var,
+  left,
+  positive,
+  style = TRUE,
+  lang = NULL,
+  ...
+)
 
-\method{explore_text_bivar_adjective}{default}(var, left, positive, lang, ...)
+\method{explore_text_bivar_adjective}{default}(
+  var,
+  left,
+  positive,
+  style = TRUE,
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text needs to be
@@ -20,13 +41,17 @@ generated. \code{vars$var_left} or \code{vars$var_right}}
 \item{left}{<\verb{logical>} Whether the \code{var} supplied is the var_left
 or the \code{var_right}. If \code{var_left}, TRUE.}
 
-\item{positive}{<\code{logical}> Wheter the bivariate relationship is positive
-or negative. One of the output of \code{\link{explore_text_bivar_correlation}}}
+\item{positive}{<\code{logical}> Whether the bivariate relationship is positive
+or negative. One of the output of
+\code{\link{explore_text_bivar_correlation}}.}
+
+\item{style}{<\code{logical}> Whether the output should have text styling (e.g.
+\if{html}{\out{<b>}}).}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}
 
-\item{...}{Additional arguments to be passed.}
+\item{...}{Additional arguments to be passed to methods.}
 }
 \value{
 A text string containing an adjective to describe the bivariate

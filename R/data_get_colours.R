@@ -3,7 +3,7 @@
 #' This function retrieves the colors of all ID of a specified region by matching
 #' the \code{group} column in the data with the colors in the correct \code{colours}
 #' data frame. The resulting data frame contains only the \code{ID} and \code{fill}
-#' columns, to use in an `rdeck` scale function.
+#' columns, to use in an `cc.map::map_choropleth_fill_fun`-like  function.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
@@ -25,7 +25,7 @@
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
-#' an `rdeck` scale function.
+#' an `cc.map::map_choropleth_fill_fun`-like scale function.
 data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
                                     scales_as_DA = c("building", "street"),
                                     ...) {
@@ -52,6 +52,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
   mapping <- match(data$group, colour_table$group)
   data$fill <- colour_table$fill[mapping]
   data <- data[c("ID", "fill")]
+  names(data)[1] <- c("ID_color")
 
   # Switch NA to the right "NA" colour
   data$fill[is.na(data$fill)] <- colour_table$fill[colour_table$group == "NA"]
@@ -65,7 +66,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' This function retrieves the colors of all ID of a specified region by matching
 #' the \code{group} column in the data with the colors in the correct \code{colours}
 #' data frame. The resulting data frame contains only the \code{ID} and \code{fill}
-#' columns, to use in an `rdeck` scale function.
+#' columns, to use in an `cc.map::map_choropleth_fill_fun`-like scale function.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
@@ -83,7 +84,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
-#' an `rdeck` scale function.
+#' an `cc.map::map_choropleth_fill_fun`-like scale function.
 #' @export
 data_get_colours <- function(vars, region, zoom_levels,
                              scales_as_DA = c("building", "street"), ...) {

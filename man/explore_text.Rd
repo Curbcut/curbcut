@@ -6,7 +6,7 @@
 \alias{explore_text.bivar}
 \alias{explore_text.delta}
 \alias{explore_text.delta_bivar}
-\title{Generate text for the given variables and region}
+\title{Generate Explore text for the given variables and region}
 \usage{
 explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
 
@@ -72,8 +72,8 @@ scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 observations to be compared. The output of \code{\link{data_get}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
-that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their info will be the one of their DA.}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
+default, their info will be the one of their DA.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}

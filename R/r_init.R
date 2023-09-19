@@ -9,9 +9,6 @@
 #' itself.
 #' @param lang_init <`character`> An optional character string specifying the
 #' initial language for the Curbcut. Default is \code{NULL}.
-#' @param default_region <`character`> The default region for the app. By default,
-#' this value is retrieved from the \code{default_region} variable in the global
-#' environment.
 #' @param map_zoom <`numeric`> The default zoom level for the map. By default,
 #' this value is retrieved from the \code{map_zoom} variable in the global environment.
 #' @param map_loc <`numeric vector`> The default location for the map. By default,
@@ -32,17 +29,18 @@
 #' @export
 r_init <- function(server_session,
                    lang_init = NULL,
-                   default_region = get_from_globalenv("default_region"),
                    map_zoom = get_from_globalenv("map_zoom"),
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
+
+  regions_dictionary <- get_from_globalenv("regions_dictionary")
+
   # Initate
   r <- shiny::reactiveValues(
     server_session = shiny::reactiveVal(server_session),
     lang = shiny::reactiveVal(lang_init),
-    region = shiny::reactiveVal(default_region),
+    region = shiny::reactiveVal(regions_dictionary$region[1]),
     default_select_ids = shiny::reactiveVal(NULL),
-    stories = shiny::reactiveValues(select_id = shiny::reactiveVal(NA)),
     place_explorer = shiny::reactiveValues(
       select_id = shiny::reactiveVal(NA),
       df = shiny::reactiveVal("DA")
@@ -74,20 +72,20 @@ r_init <- function(server_session,
       df <- paste(reg, first_mzl, sep = "_")
       # Grab a variable part of the module for the var_left placeholder
       modules <- get_from_globalenv("modules")
-      tb <- modules$var_left[modules$id == i][[1]]
+      default_var <- modules$default_var[modules$id == i]
       # If there are var_left in the `modules`
-      if (!is.null(tb)) {
-        var_left <- if (is.data.frame(tb)) tb$var_code[[1]] else tb[[1]]
+      if (!is.na(default_var)) {
         variables <- get_from_globalenv("variables")
         time <- modules$dates[modules$id == i][[1]]
         if (!is.null(time)) {
           time <- max(time)
-          var_left <- sprintf("%s_%s", var_left, time)
+          default_var_yr <- sprintf("%s_%s", default_var, time)
         }
 
 
         r[[i]] <- shiny::reactiveValues(
-          vars = shiny::reactiveVal(vars_build(var_left, df = df)),
+          vars = shiny::reactiveVal(vars_build(default_var_yr, df = df)),
+          var_left_force = shiny::reactiveVal(default_var),
           select_id = shiny::reactiveVal(NA),
           df = shiny::reactiveVal(df),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),

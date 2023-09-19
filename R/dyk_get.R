@@ -11,56 +11,43 @@
 #' \code{\link{update_df}}. Default is NULL.
 #' @param lang <`character`> A character string specifying the language to
 #' translate the content. Defaults to NULL for no translation.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param select_id <`character`> A string indicating the ID of the currently
+#' selected region (if any). Usually `r[[id]]$select_id()`
+#' @param region <`character`> Character string specifying the name of the region.
+#' Usually equivalent of `r$region()`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' \code{\link{zoom_get_levels}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #'
 #' @return An HTML list of DYK content with the "links" attribute containing the
 #' necessary arguments for the link function (except r, which is added subsequently).
 #' @export
-dyk_get <- function(id, vars, poi, lang = NULL) {
-  # For the moment, only include POIs
-  if (!is.null(poi)) {
-    # Get POIs; currently just Stories. Return nothing if the `stories` df is
-    # missing.
-    stories <- get0("stories", envir = .GlobalEnv)
-    if (is.null(stories)) {
-      return(NULL)
-    }
-    pois <- stories[c("ID", "name_id", "preview")]
+dyk_get <- function(id, vars, df, select_id, poi, region, zoom_levels,
+                    scales_as_DA = scales_as_DA, lang = NULL) {
+  # Start with a NULL output
+  dyk_out <- NULL
 
-    # Grab two stories
-    out <- pois[pois$name_id %in% poi, ]
-    out <- out[min(1, nrow(out)):min(2, nrow(out)), ]
+  # If there are POIs, take them
+  if (!is.null(poi)) dyk_out <- dyk_poi(id = id, poi = poi, lang = lang)
 
-    # Make the a tag links as if they were action buttons
-    previews_links <- lapply(seq_along(out$name_id), \(x) {
-      button_id <- ns_doubled(page_id = id, element = sprintf("dyk_%s", x))
-
-      shiny::tags$li(
-        cc_t(out$preview[x], lang = lang),
-        shiny::tags$a(
-          id = button_id,
-          href = "#",
-          class = "action-button shiny-bound-input",
-          curbcut::cc_t("[LEARN MORE]", lang = lang)
-        )
-      )
-    })
-
-    # Arguments necessary for the `link` function (except `r` which is added
-    # subsequently)
-    link_attrs <- lapply(
-      seq_along(out$name_id),
-      \(x) list(page = "stories", select_id = out$ID[x])
+  # Otherwise take standard DYKs
+  if (is.null(dyk_out)) {
+    dyk_out <- dyk_text(
+      vars = vars,
+      df = df,
+      select_id = select_id,
+      region = region,
+      zoom_levels = zoom_levels,
+      scales_as_DA = scales_as_DA,
+      lang = lang
     )
-
-    # Construct the HTML list
-    previews_links <- shiny::tags$ul(previews_links)
-
-    # Flag that these are links
-    attr(previews_links, "links") <- link_attrs
-
-    # Return
-    return(previews_links)
   }
 
-  return(NULL)
+  return(dyk_out)
 }

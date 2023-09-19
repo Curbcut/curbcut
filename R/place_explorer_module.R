@@ -46,67 +46,74 @@ place_explorer_server <- function(id, r,
 
     # Get df ------------------------------------------------------------------
 
-    # Initial reactives
-    rv_zoom_string <- shiny::reactiveVal(
-      zoom_get_string(
-        zoom = map_zoom,
-        zoom_levels = pe_vars$map_zoom_levels,
-        region = pe_vars$default_region
-      )
-    )
+    # # Initial reactives
+    # rv_zoom_string <- shiny::reactiveVal(
+    #   zoom_get_string(
+    #     zoom = map_zoom,
+    #     zoom_levels = pe_vars$map_zoom_levels,
+    #     region = pe_vars$default_region
+    #   )
+    # )
 
     # Get the map view state
-    map_viewstate <- shiny::reactive(rdeck::get_view_state(id_map))
+    map_viewstate <- get_viewstate(id_map)
 
     # Zoom reactive when the view state of the map changes.
     shiny::observeEvent(map_viewstate(), {
       r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
     })
 
-    # Map zoom levels change depending on r$region()
-    zoom_levels_ <-
-      shiny::reactive(zoom_get_levels(id = id, region = r$region()))
-    # Do not include scales as DA like buildings or streets
-    zoom_levels <- shiny::reactive({
-      zoom_lvls <- zoom_levels_()$zoom_levels
-      zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
+    # Now that we only get the first scale of every region, the following can
+    # be simpler
+    zoom_levels <- shiny::reactive(zoom_get_levels(id = id, region = r$region()))
 
-      return(list(
-        zoom_levels = zoom_levels,
-        region = zoom_levels_()$region
-      ))
-    })
+    # # Map zoom levels change depending on r$region()
+    # zoom_levels_ <-
+    #   shiny::reactive(zoom_get_levels(id = id, region = r$region()))
+    # # Do not include scales as DA like buildings or streets
+    # zoom_levels <- shiny::reactive({
+    #   zoom_lvls <- zoom_levels_()$zoom_levels
+    #   zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
+    #
+    #   return(list(
+    #     zoom_levels = zoom_levels,
+    #     region = zoom_levels_()$region
+    #   ))
+    # })
+    #
+    # # Zoom string reactive
+    # shiny::observe({
+    #   rv_zoom_string({
+    #     zoom_get_string(
+    #       zoom = r[[id]]$zoom(),
+    #       zoom_levels = zoom_levels()$zoom_levels,
+    #       region = zoom_levels()$region
+    #     )
+    #   })
+    # })
+    #
+    # # Choose tileset
+    # tile <- zoom_server(
+    #   id = id,
+    #   r = r,
+    #   zoom_string = rv_zoom_string,
+    #   zoom_levels = zoom_levels
+    # )
 
-    # Zoom string reactive
-    shiny::observe({
-      rv_zoom_string({
-        zoom_get_string(
-          zoom = r[[id]]$zoom(),
-          zoom_levels = zoom_levels()$zoom_levels,
-          region = zoom_levels()$region
-        )
-      })
-    })
-
-    # Choose tileset
-    tile <- zoom_server(
-      id = id,
-      r = r,
-      zoom_string = rv_zoom_string,
-      zoom_levels = zoom_levels
-    )
+    tile <- shiny::reactive(sprintf("%s_%s", r$region(), names(zoom_levels()$zoom_levels)[1]))
 
     # Get df
     shiny::observeEvent(
       {
         tile()
-        rv_zoom_string()
+        # rv_zoom_string()
       },
       {
-        r[[id]]$df(update_df(
-          tile = tile(),
-          zoom_string = rv_zoom_string()
-        ))
+        # r[[id]]$df(update_df(
+        #   tile = tile(),
+        #   zoom_string = rv_zoom_string()
+        # ))
+        r[[id]]$df(tile())
       }
     )
 
@@ -149,31 +156,15 @@ place_explorer_server <- function(id, r,
 
     # Map ---------------------------------------------------------------------
 
-    output[[id_map]] <- rdeck::renderRdeck(
-      rdeck::rdeck(
-        map_style = map_base_style, initial_view_state =
-          rdeck::view_state(center = map_loc, zoom = map_zoom),
-        layer_selector = FALSE
-      ) |>
-        rdeck::add_mvt_layer(
-          id = "place_explorer",
-          name = "place_explorer",
-          pickable = TRUE,
-          auto_highlight = TRUE,
-          highlight_color = "#AAB6CF80",
-          get_fill_color = "#AAB6CF20",
-          get_line_color = "#FFFFFF00"
-        )
+    map_js_server(
+      id = id,
+      r = r,
+      tile = r[[id]]$df,
+      coords = r[[id]]$coords,
+      zoom = r[[id]]$zoom,
+      fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF90")),
+      stories = NULL
     )
-
-    # Update the map whenever the `df` changes
-    shiny::observe({
-      rdeck::rdeck_proxy(id_map) |>
-        rdeck::update_mvt_layer(
-          id = "place_explorer",
-          data = tilejson(mapbox_username, tileset_prefix, r[[id]]$df())
-        )
-    })
 
     # Map click
     update_select_id(id = id, r = r)
@@ -227,9 +218,20 @@ place_explorer_server <- function(id, r,
         return(list(
           div = shiny::div(
             class = "main_panel_popup",
-            style = "height:100%;overflow:hidden;",
+            shiny::div(
+              class = "back-to-map",
+              shiny::actionLink(
+                shiny::NS(id, "back"), "X"
+              )
+            ),
+            shiny::downloadButton(
+              class = "cc-download-btn",
+              style = "right:75px;position:absolute;top:15px;min-height:auto;",
+              outputId = shiny::NS(id, "download_portrait"),
+              label = cc_t("Download regional portrait")
+            ),
             shiny::tags$iframe(
-              style = "width:100%;height:100%;",
+              style = "width:100%;height: calc(100% - 38px); margin-top: 38px;",
               title = "place_ex",
               src = pe_links$src,
               frameborder = 0
@@ -276,56 +278,51 @@ place_explorer_server <- function(id, r,
 place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   # Get default values for the place explorer
   pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA)
+  modules <- get_from_globalenv("modules")
+  page <- modules[modules$id == id, ]
+  theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
   shiny::tagList(
+    shiny::div(
+      `data-theme` = theme_lowercased,
 
-    # Sidebar
-    sidebar_UI(
-      shiny::NS(id, id),
-      # Search box
-      shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
-      # Imitate a split layout which only works this way on iOS
-      shiny::HTML(paste0(
-        '<div class="shiny-split-layout">
+      # Sidebar
+      sidebar_UI(
+        shiny::NS(id, id),
+        # Search box
+        shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
+        # Imitate a split layout which only works this way on iOS
+        shiny::HTML(paste0(
+          '<div class="shiny-split-layout">
                      <div style="width: 80%;">',
-        shiny::textInput(
-          inputId = shiny::NS(id, "address_searched"),
-          label = NULL, placeholder = "H3A 2T5"
-        ),
-        '</div><div style="width: 20%;">',
-        shiny::actionButton(
-          inputId = shiny::NS(id, "search_button"),
-          label = shiny::icon("search", verify_fa = FALSE),
-          style = "margin-top: var(--padding-v-md);"
-        ),
-        "</div></div>"
-      )),
-      # Back button. The CSS file places it at the right spot
-      shiny::actionLink(
-        shiny::NS(id, "back"),
-        curbcut::cc_t("Back to the place explorer")
+          shiny::textInput(
+            inputId = shiny::NS(id, "address_searched"),
+            label = NULL, placeholder = "H3A 2T5"
+          ),
+          '</div><div style="width: 20%;">',
+          shiny::actionButton(
+            inputId = shiny::NS(id, "search_button"),
+            label = shiny::icon("search", verify_fa = FALSE),
+          ),
+          "</div></div>"
+        )),
+        # bottom =
+        # # Scale slider
+        #   curbcut::zoom_UI(
+        #     id = shiny::NS(id, id),
+        #     zoom_levels = pe_vars$map_zoom_levels
+        #   ),
       ),
-      bottom =
-      # Scale slider
-        curbcut::zoom_UI(
-          id = shiny::NS(id, id),
-          zoom_levels = pe_vars$map_zoom_levels
-        ),
-    ),
 
-    # Map
-    map_UI(id = shiny::NS(id, id)),
+      # Map
+      map_js_UI(id = shiny::NS(id, id)),
 
-    # Main panel
-    shinyjs::hidden(
-      shiny::div(
-        id = shiny::NS(id, "place_exp_main_panel"),
-        shiny::htmlOutput(shiny::NS(id, "loader")),
-        shiny::htmlOutput(shiny::NS(id, "main_panel")),
-        shiny::downloadButton(
-          class = "download_portrait",
-          outputId = shiny::NS(id, "download_portrait"),
-          label = cc_t("Download regional portrait")
+      # Main panel
+      shinyjs::hidden(
+        shiny::div(
+          id = shiny::NS(id, "place_exp_main_panel"),
+          shiny::htmlOutput(shiny::NS(id, "loader")),
+          shiny::htmlOutput(shiny::NS(id, "main_panel")),
         )
       )
     )

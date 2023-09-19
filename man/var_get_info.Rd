@@ -9,7 +9,8 @@ var_get_info(
   what = "var_title",
   translate = FALSE,
   lang = NULL,
-  check_year = TRUE
+  check_year = TRUE,
+  variables = get_from_globalenv("variables")
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ information using the \code{\link{cc_t}} function. Defaults to \code{FALSE}.}
 
 \item{check_year}{<\code{logical}> Should the year be removed from \code{var} to grab
 variable's info? Defaults to TRUE}
+
+\item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
+from the global environment using \code{\link{get_from_globalenv}}.}
 }
 \value{
 The requested information about the variable, with optional translation

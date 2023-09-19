@@ -15,31 +15,48 @@
 #' @export
 sidebar_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
+    # Simple listener if there is a change in the theme dropdown menu
+    theme_dropdown_server(id = id, r = r)
+
+    # Setting button
+    settings_server(id = id, r = r)
+
+    # Add the title
     modules <- get_from_globalenv("modules")
-
-    # Get the right row
     title <- modules[modules$id == id, ]
-
-    # More info
-    shiny::observeEvent(input$more_info, {
-      shinyjs::toggle("title_extra", condition = input$more_info %% 2 == 1)
-      txt <- cc_t(
-        lang = r$lang(),
-        switch(input$more_info %% 2 + 1,
-          "Learn more",
-          "Hide"
-        )
-      )
-      shiny::updateActionLink(session, "more_info", label = txt)
-    })
-
-    # Output the translated strings
     output$title <-
       shiny::renderUI(shiny::h3(cc_t(lang = r$lang(), title$title_text_title)))
-    output$title_main <-
-      shiny::renderUI(shiny::HTML(cc_t(lang = r$lang(), title$title_text_main)))
-    output$title_extra <-
-      shiny::renderUI(shiny::HTML(cc_t(lang = r$lang(), title$title_text_extra)))
+
+    # Get the right row
+    modules <- get_from_globalenv("modules")
+    page <- modules[modules$id == id, ]
+
+    shiny::observeEvent(input$expand_title_text, {
+      cc.landing::update_title_box(
+        session = session,
+        inputId = "title_box",
+        configuration = list(
+          # lang = r$lang(),
+          show = "true" # ,
+          # title_text_title = cc_t(page$title_text_title, lang = r$lang()),
+          # title_text_main = cc_t(page$title_text_main, lang = r$lang()),
+          # title_text_extra = cc_t(page$title_text_extra, lang = r$lang())
+        )
+      )
+    })
+
+    shiny::observeEvent(r$lang(), {
+      cc.landing::update_title_box(
+        session = session,
+        inputId = "title_box",
+        configuration = list(
+          lang = r$lang(),
+          title_text_title = cc_t(page$title_text_title, lang = r$lang()),
+          title_text_main = cc_t(page$title_text_main, lang = r$lang()),
+          title_text_extra = cc_t(page$title_text_extra, lang = r$lang())
+        )
+      )
+    })
   })
 }
 
@@ -64,37 +81,60 @@ sidebar_server <- function(id, r) {
 #' Curbcut.
 #' @export
 sidebar_UI <- function(id, ..., bottom = NULL) {
+  page <- page_get(id)
+
   shiny::tagList(
-    shiny::div(class = "sus-map-sidebar-shadow"),
     shiny::div(
-      id = "title_bar", class = "sus-map-sidebar",
+      class = "left-side-bar",
+      theme_dropdown_UI(id = shiny::NS(id, id)),
+      settings_UI(id = shiny::NS(id, id)),
       shiny::div(
-        class = "sus-map-sidebar-container",
+        id = "title_bar", class = "sus-map-sidebar",
         shiny::div(
-          class = "sus-map-sidebar-content sus-scroll",
+          class = "sus-map-sidebar-container",
           shiny::div(
-            class = "sus-scroll-content",
-            shiny::tagList(
-              shiny::div(
-                id = shiny::NS(id, "title_texts"),
-                shiny::uiOutput(shiny::NS(id, "title")),
-                shiny::p(shiny::uiOutput(shiny::NS(id, "title_main"))),
-                shiny::p(shiny::actionLink(shiny::NS(id, "more_info"),
-                  class = "sus-small-link",
-                  cc_t(
-                    "Learn more"
-                  )
-                ))
-              ),
-              shinyjs::hidden(shiny::uiOutput(outputId = shiny::NS(id, "title_extra"))),
-              shiny::div(
-                class = "sus-sidebar-widgets",
-                id = shiny::NS(id, "left_widgets"), ...
+            class = "sus-map-sidebar-content scrollable-div",
+            shiny::div(
+              shiny::tagList(
+                shiny::div(
+                  id = shiny::NS(id, "title_texts"),
+                  shiny::div(
+                    class = "title_text",
+                    shiny::uiOutput(shiny::NS(id, "title")),
+                    shiny::actionLink(
+                      inputId = shiny::NS(id, "expand_title_text"),
+                      label = NULL,
+                      shiny::icon("info-circle", class = "title-text-info")
+                    ),
+                    shiny::div(
+                      class = "mobile-sidebar-menu",
+                      icon_material("menu")
+                    ),
+                  ),
+                ),
               )
+            ),
+            shiny::div(
+              class = "sus-sidebar-widgets",
+              id = shiny::NS(id, "left_widgets"), ...
             )
+          ),
+          shiny::div(
+            class = "bottom_sidebar",
+            style = if (is.null(bottom)) "display:none;" else "",
+            bottom
           )
-        ),
-        shiny::div(class = "bottom_sidebar", bottom)
+        )
+      )
+    ),
+    shiny::div(
+      class = "sus-title-box scrollable-div",
+      cc.landing::title_box_input(
+        inputId = shiny::NS(id, "title_box"),
+        theme = page$theme,
+        title_text_title = page$title_text_title,
+        title_text_main = page$title_text_main,
+        title_text_extra = page$title_text_extra
       )
     )
   )

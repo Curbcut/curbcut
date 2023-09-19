@@ -1,0 +1,16 @@
+.user-lang-fr .lang-en {
+  visibility: hidden;
+  display: none !important;
+}
+.user-lang-en .lang-fr {
+  visibility: hidden;
+  display: none !important;
+}
+.user-lang-en .lang-en {
+  visibility: visible !important;
+  display: inline;
+}
+.user-lang-fr .lang-fr {
+  visibility: visible !important;
+  display: inline;
+}

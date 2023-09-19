@@ -1,4 +1,4 @@
-#' Generate text for the given variables and region
+#' Generate Explore text for the given variables and region
 #'
 #' This function dispatches to the appropriate text-generating function based on
 #' the type of `vars` and returns the resulting text.
@@ -15,8 +15,8 @@
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The output of \code{\link{data_get}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their info will be the one of their DA.
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
+#' default, their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param ... Additional arguments passed to the dispatched function.
@@ -201,7 +201,7 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 
   # Make the region values as characters
   pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-  count_string <- convert_unit(x = region_values$count, decimal = 1)
+  count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
 
   # Build the return
   out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
@@ -272,7 +272,7 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
   }
 
   # Make the region values as characters
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Build the return
   out <- sprintf("%s %s %s", count_string, parent_string, exp)
@@ -406,7 +406,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
   if (is.na(select_id)) {
     # Construct the region values
     pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-    count_string <- convert_unit(x = region_values$count, decimal = 1)
+    count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
 
     # Grab the explanation
     exp_q5 <- var_get_info(
@@ -512,7 +512,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   # If there is no selection
   if (is.na(select_id)) {
     # Construct the region values
-    count_string <- convert_unit(x = region_values$val, decimal = 1)
+    count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
     # Grab the explanation
     exp_q5 <- var_get_info(
@@ -537,7 +537,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   )
 
   # Build the return
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
   out <- sprintf(cc_t("%s is %s", lang = lang), exp, count_string)
 
   # Return
@@ -599,7 +599,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
   }
 
   # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Grab the explanation
   exp_q5 <- var_get_info(
@@ -702,7 +702,7 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
   }
 
   # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1)
+  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
 
   # Grab the explanation
   exp_q5 <- var_get_info(
@@ -1091,23 +1091,27 @@ explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
 #' generated. `vars$var_left` or `vars$var_right`
 #' @param left <`logical>` Whether the `var` supplied is the var_left
 #' or the `var_right`. If `var_left`, TRUE.
-#' @param positive <`logical`> Wheter the bivariate relationship is positive
-#' or negative. One of the output of \code{\link{explore_text_bivar_correlation}}
+#' @param positive <`logical`> Whether the bivariate relationship is positive
+#' or negative. One of the output of
+#' \code{\link{explore_text_bivar_correlation}}.
+#' @param style <`logical`> Whether the output should have text styling (e.g.
+#' <b>).
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
-#' @param ... Additional arguments to be passed.
+#' @param ... Additional arguments to be passed to methods.
 #'
 #' @return A text string containing an adjective to describe the bivariate
 #' relationship.
 #' @export
-explore_text_bivar_adjective <- function(var, left, positive, lang = NULL, ...) {
+explore_text_bivar_adjective <- function(var, left, positive, style = TRUE,
+                                         lang = NULL, ...) {
   UseMethod("explore_text_bivar_adjective", var)
 }
 
 #' @rdname explore_text_bivar_adjective
 #' @export
-explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
-                                                ...) {
+explore_text_bivar_adjective.dollar <- function(var, left, positive,
+                                                style = TRUE, lang = NULL, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("higher", lang = lang))
@@ -1118,13 +1122,15 @@ explore_text_bivar_adjective.dollar <- function(var, left, positive, lang,
     return(cc_t("lower", lang = lang))
   })()
 
-  return(sprintf("<b>%s</b>", string))
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
 }
 
 #' @rdname explore_text_bivar_adjective
 #' @export
-explore_text_bivar_adjective.default <- function(var, left, positive, lang,
-                                                 ...) {
+explore_text_bivar_adjective.default <- function(var, left, positive,
+                                                 style = TRUE, lang = NULL, ...) {
   string <- (\(x) {
     if (left) {
       return(cc_t("a higher", lang = lang))
@@ -1135,7 +1141,9 @@ explore_text_bivar_adjective.default <- function(var, left, positive, lang,
     return(cc_t("a lower", lang = lang))
   })()
 
-  return(sprintf("<b>%s</b>", string))
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
 }
 
 
@@ -1213,8 +1221,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   }
   exp_nodet <- var_get_info(vars$var_left,
     what = "explanation_nodet", translate = TRUE,
-    lang =
-    )
+    lang = lang
+  )
   # If the explanation is a bullet point, switch to something more generic
   if (grepl("</ul>", exp_nodet)) {
     exp_nodet <- cc_t("the value", lang = lang)
@@ -1451,7 +1459,7 @@ explore_text_delta_exp.default <- function(var, region, select_id,
     region_vals <- rev(region_vals)
   }
 
-  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1)
+  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1, precise_round = FALSE)
 
   # Return
   return(list(

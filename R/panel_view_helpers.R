@@ -69,20 +69,22 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
     if (which_zl == 1) {
       "Scale"
     } else {
-      zoom_get_name(names(zoom_levels)[1])
+      zoom_get_name(names(zoom_levels)[1], lang = lang)
     }
 
   # Add a new column 'Scale' to be clear which scale the user is seeing
   if (which_zl > 1) {
-    pretty_dat$Scale <- zoom_get_name(names(zoom_levels)[which_zl])
+    pretty_dat$Scale <- zoom_get_name(names(zoom_levels)[which_zl], lang = lang)
     first_cols <- c("ID", "Scale")
     rest_cols <- names(pretty_dat)[!names(pretty_dat) %in% first_cols]
     pretty_dat <- pretty_dat[, c(first_cols, rest_cols)]
+  } else {
+    pretty_dat$Scale <- sapply(pretty_dat$Scale, cc_t, lang = lang)
   }
 
   # Start with the basic usual ones
   to_sentence_vector <-
-    names(pretty_dat) %in% c("name", "population", "households")
+    names(pretty_dat) %in% c("name", "population", "households", "Scale")
   names(pretty_dat)[to_sentence_vector] <-
     sapply(s_sentence(names(pretty_dat)[to_sentence_vector]), cc_t, lang = lang)
 
@@ -691,8 +693,10 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
         # Bind two parts
         sprintf("%s %s", s, e)
       } else {
-        sprintf(cc_t("The source of the data is '%s'.", lang = lang),
-                cc_t(source, lang = lang))
+        sprintf(
+          cc_t("The source of the data is '%s'.", lang = lang),
+          cc_t(source, lang = lang)
+        )
       }
     out <- paste0(out, sprintf("<p>%s</p>", source_bit))
   }

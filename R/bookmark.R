@@ -59,7 +59,7 @@ use_bookmark <- function(r) {
       if ("crds" %in% names(query)) {
         coords <- query$crds
         coords <- strsplit(coords, ";")[[1]]
-        r[[tab]]$coords(coords)
+        r[[tab]]$coords(c(lat = coords[1], lon = coords[2]))
       }
 
       # Update widgets

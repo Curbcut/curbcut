@@ -17,7 +17,7 @@ checked for any match with the \code{r$default_select_ids()} changed in
 the advanced options.}
 
 \item{id_map}{<\code{character}> Indicates the ID of the object map, usually
-created by \code{\link{map_server}}. Defaults to \code{"map"} as it is
+created by \code{\link{map_js_server}}. Defaults to \code{"map"} as it is
 the default of the \code{map_server} function.}
 }
 \value{
@@ -26,7 +26,7 @@ This function does not return a value. Instead, it updates the
 }
 \description{
 This module function updates the selected ID on a Curbcut map page. It uses the
-\code{\link[rdeck]{get_clicked_object}} to get the ID of the clicked map.
+\code{\link{get_click}} function to get the ID of the clicked map.
 It looks if the selection has been made on a 'stories' bubble and if so,
 links to the stories page.
 If a new ID is selected, the function updates the \code{select_id} reactive to

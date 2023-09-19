@@ -25,8 +25,8 @@ and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
-\item{data_path}{A string representing the path to the directory containing the
-QS files. Default is "data/".}
+\item{data_path}{<\code{character}> A string representing the path to the directory
+containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
 }

@@ -6,7 +6,7 @@
 \usage{
 explore_graph_info(
   vars,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   lang = NULL,
   df,
   scales_as_DA,
@@ -20,7 +20,7 @@ explore_graph_info(
 output of \code{\link{vars_build}}.}
 
 \item{font_family}{<\code{character}> A string specifying the font family for the
-plot, default is "SourceSansPro".}
+plot, default is "acidgrotesk-book".}
 
 \item{lang}{<\code{character}> A character string indicating the language to
 translate variable titles to.}

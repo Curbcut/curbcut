@@ -2,15 +2,10 @@
 title: "`r params$title`"
 output:
   html_document:
+    css: !expr system.file("styles", "fonts.css", package = "curbcut")
     theme: 
-      bg: "#ffffff" 
-      fg: "#7f7f7f"
       primary: "#4a5c83"
-      base_font: !expr bslib::font_google("Outfit")
-      heading_font: !expr bslib::font_google("Source Sans Pro")
-      code_font: !expr bslib::font_google("Outfit")
       code-color: skyblue
-      font-base-size: 1.25rem
 params: 
     title: "Main indicators"
     select_id: "24663185"
@@ -20,7 +15,7 @@ params:
     scale_sing: "Dissemination area (count)"
     map_loc: c("lat", "lon")
     map_zoom: 13.75
-    mapbox_username: "sus-mcgill"
+    mapbox_username: "curbcut"
     title_card_data: ""
     variables: ""
     scale_df: ""
@@ -103,6 +98,8 @@ params:
 
 ```{r map, echo = FALSE}
 
+require(curbcut)
+
 # Which of the title cards do this ID have data for
 avail_dat <- sapply(params$title_card_data, \(x)  "hex_cat" %in% names(x))
 with_data <- params$title_card_data[avail_dat]
@@ -115,10 +112,9 @@ if (is.na(map_col)) map_col <- "#A9A9A995"
 map_col_light <- gsub("95$", "20", map_col)
 
 # Necessary for the rdeck map
-map_token <- paste0("pk.eyJ1Ijoic3VzLW1jZ2lsbCIsImEiOiJjbDBxMTcyNWwyNTl0M2",
-                    "RtZzRremNxOHA3In0.V2Ah5lxy-3RZlF2QKOvIjg")
+map_token <- paste0("pk.eyJ1IjoiY3VyYmN1dCIsImEiOiJjbGprYnVwOTQwaDAzM2xwaWdjbTB6bzdlIn0.Ks1cOI6v2i8jiIjk38s_kg")
 options(rdeck.mapbox_access_token = map_token)
-map_style_building <- "mapbox://styles/sus-mcgill/cl2bwtrsp000516rwyrkt9ior"
+map_style_building <- "mapbox://styles/curbcut/cljkciic3002h01qveq5z1wrp"
 
 # The MVT json
 mvt <- curbcut::tilejson(mapbox_username = params$mapbox_username,
@@ -281,7 +277,7 @@ contents <- lapply(all_themes, \(t) {
     # Some type need to have access to the parent string. The function in Curbcut
     # will search in the global environent if it's not able to load the `data`.
     parent_string <- variables$parent_vec[variables$var_code == var]
-    if (!is.na(parent_string) & !parent_string %in% c("population", "households")) {
+    if (!is.na(parent_string) & parent_string %in% params$variables$var_code) {
       date <- max(params$variables$dates[params$variables$var_code == parent_string][[1]])
       parent_string <- if (is.na(date)) {
         parent_string
@@ -293,7 +289,7 @@ contents <- lapply(all_themes, \(t) {
     # Construct the text
     # If the data is NA, return nothing
     if (is.na(data$var_left[data$ID == params$select_id])) return(NULL)
-    text <- curbcut:::explore_text_values_q5(var = var_class, region = params$region,
+    text <- curbcut::explore_text_values_q5(var = var_class, region = params$region,
                                              select_id = params$select_id, data = data,
                                              df = df, lang = "fr")$text
     text <- curbcut::s_sentence(text)
@@ -434,7 +430,7 @@ boxes <- mapply(\(ind, ind_name) {
                                        ";", round(params$map_loc[2], digits = 2)), 
                       "&sid=", params$select_id)
         if (!is.na(ind$link_dropdown)) {
-          variables <- curbcut:::get_from_globalenv("variables")
+          variables <- get_from_globalenv("variables")
           code_n <- which(variables$var_code == ind$link_var_code)
           out <- paste0(out, "&wgt=", ind$link_dropdown, ":", code_n)
         }

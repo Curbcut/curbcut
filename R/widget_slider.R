@@ -75,7 +75,7 @@ slider_server <- function(id, slider_id = "sld",
 #' @export
 slider_UI <- function(id, slider_id = "sld", label = cc_t("Select a year"),
                       step = 5, min, max, sep = "", value = max,
-                      width = "95%", ...) {
+                      width = "100%", ...) {
   # Verify if the widget ID will interfere with bookmark
   slider_id <- widget_id_verif(widget_id = slider_id)
 

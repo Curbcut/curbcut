@@ -16,6 +16,9 @@
 #' are included.
 #' @param lang <`character`> A string specifying the language of the tutorial.
 #' Defaults to NULL for no translation.
+#' @param window_size <`numeric vector`> Numeric vector, normally
+#' `r$server_session()$input$dimension` giving window dimension. If on mobile (<768px),
+#' the tutorial will not be shown.
 #'
 #' @return The function does not explicitly return a value. It triggers the tutorial
 #' using \code{\link[rintrojs]{introjs}} and sets a cookie recording the last time the tutorial
@@ -27,10 +30,18 @@
 #' are removed from the dataframe. The tutorial is then triggered using
 #' \code{\link[rintrojs]{introjs}}, with instructions and titles drawn from the dataframe.
 #' Finally, a cookie is set to record the last time the tutorial was seen.
-tutorial_trigger <- function(id, session, server_session, skip_elements, lang = NULL) {
+tutorial_trigger <- function(id, session, server_session, skip_elements, lang = NULL,
+                             window_size) {
   # Build the correct namespace
   build_element <- function(element) {
     sprintf("#%s", session$ns(element))
+  }
+
+  if (is.null(window_size)) {
+    return(NULL)
+  }
+  if (window_size[1] <= 768) {
+    return(NULL)
   }
 
   # Default elements which need the tutorial
@@ -40,9 +51,9 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
         build_element("map_div"),
         build_element("title_texts"),
         build_element("left_widgets"),
-        build_element("legend_div"),
-        build_element("zoom_div"),
         build_element("compare_panel"),
+        build_element("zoom_div"),
+        build_element("legend_div"),
         build_element("explore_full"),
         build_element("floating-panel-content"),
         build_element("tutorial")
@@ -88,8 +99,8 @@ tutorial_trigger <- function(id, session, server_session, skip_elements, lang = 
           "Both show the same information!",
           lang = lang
         ),
-        cc_t("Congratulations, you’ve completed the tutorial! You can revisit ",
-             "it by clicking this button.",
+        cc_t("Congratulations, you've completed the tutorial! You can revisit ",
+          "it by clicking this button.",
           lang = lang
         )
       ),

@@ -4,7 +4,14 @@
 \alias{tutorial_trigger}
 \title{Trigger the Curbcut map tutorial}
 \usage{
-tutorial_trigger(id, session, server_session, skip_elements, lang = NULL)
+tutorial_trigger(
+  id,
+  session,
+  server_session,
+  skip_elements,
+  lang = NULL,
+  window_size
+)
 }
 \arguments{
 \item{id}{<\code{character}> A string representing the ID of the page for which
@@ -23,6 +30,10 @@ are included.}
 
 \item{lang}{<\code{character}> A string specifying the language of the tutorial.
 Defaults to NULL for no translation.}
+
+\item{window_size}{<\verb{numeric vector}> Numeric vector, normally
+\code{r$server_session()$input$dimension} giving window dimension. If on mobile (<768px),
+the tutorial will not be shown.}
 }
 \value{
 The function does not explicitly return a value. It triggers the tutorial

@@ -18,8 +18,7 @@
 #' @return A string representation of the input value with a suffix of M, K,
 #' or B as appropriate.
 compact_big_marks <- function(x, min_dig, scale_fun = scales::comma) {
-
-  adjust_if_unique <- function(x, scale_fun, scale, suffix){
+  adjust_if_unique <- function(x, scale_fun, scale, suffix) {
     # Initialize the variables
     result <- do.call(scale_fun, list(x, 1, scale = scale, suffix = suffix))
     unique_length <- length(unique(result))
@@ -190,18 +189,35 @@ convert_unit.dollar <- function(var, x, compact = FALSE, ...) {
   return(out)
 }
 
+#' Convert a numeric vector into a character vector with a degrees sign
+#'
+#' @param var Same as in the generic function.
+#' @param x Same as in the generic function.
+#' @param ... Additional arguments to be passed to the method.
+#'
+#' @return A character vector with a percentage sign.
+#'
+#' @method convert_unit degree
+#' @export
+convert_unit.degree <- function(var, x, ...) {
+  paste0(scales::comma(x, 0.1), "\u00B0C")
+}
+
 #' Convert a numeric vector into a character vector with a default separator
 #'
 #' @param var Same as in the generic function.
 #' @param x Same as in the generic function.
 #' @param compact <`logical`> Whether to attempt to compact large numbers.
+#' @param precise_round <`logical`> If the rounding should be precise (show more
+#' decimals). Defaults to TRUE. It changes to 2 decimal for numbers between 0 and 10,
+#' and 1 decimal for between 10 and 100. If FALSE, it's 1 and 0.
 #' @param ... Additional arguments to be passed to the method.
 #'
 #' @return A character vector with a default separator.
 #'
 #' @method convert_unit default
 #' @export
-convert_unit.default <- function(var, x, compact = FALSE, ...) {
+convert_unit.default <- function(var, x, compact = FALSE, precise_round = TRUE, ...) {
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(x)
 
@@ -222,8 +238,18 @@ convert_unit.default <- function(var, x, compact = FALSE, ...) {
   if (max(abs(x)) >= 100 || all(round(x) == x)) {
     return(scales::comma(x, 1))
   }
-  if (max(abs(x)) >= 10) {
+
+  # If precise round, get a decimal more
+  if (!precise_round) {
+    if (max(abs(x)) >= 10) {
+      return(scales::comma(x, 1))
+    }
     return(scales::comma(x, 0.1))
+  } else {
+    if (max(abs(x)) >= 10) {
+      return(scales::comma(x, 0.1))
+    }
+    return(scales::comma(x, 0.01))
   }
-  return(scales::comma(x, 0.01))
+
 }

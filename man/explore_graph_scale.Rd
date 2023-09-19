@@ -4,6 +4,7 @@
 \alias{explore_graph_scale}
 \alias{explore_graph_scale.pct}
 \alias{explore_graph_scale.dollar}
+\alias{explore_graph_scale.degree}
 \alias{explore_graph_scale.ind}
 \alias{explore_graph_scale.default}
 \title{Explore graph scale based on the variable type}
@@ -13,6 +14,8 @@ explore_graph_scale(var, x_y, ...)
 \method{explore_graph_scale}{pct}(var, x_y, ...)
 
 \method{explore_graph_scale}{dollar}(var, x_y, data_vals, ...)
+
+\method{explore_graph_scale}{degree}(var, x_y, ...)
 
 \method{explore_graph_scale}{ind}(var, x_y, df, data_vals, lang = NULL, ...)
 
@@ -51,6 +54,9 @@ percentage scale to the x-axis.
 \item \code{explore_graph_scale(dollar)}: The method for dollar values. Applies a
 dollar scale to the x-axis with appropriate suffixes based on the magnitude
 of the data.
+
+\item \code{explore_graph_scale(degree)}: The method for degrees Celsius values.
+Applies a degrees Celsius scale to the x-axis.
 
 \item \code{explore_graph_scale(ind)}: The method for ordinal values.
 

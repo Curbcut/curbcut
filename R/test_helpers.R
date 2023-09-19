@@ -65,23 +65,6 @@ test_resources_creation <- function(additional_vars = c()) {
   mapply(file.copy, paste0("data/", other_files), paste0("resources/", other_files))
 }
 
-#' Assign a ind ordinal delta vars/data to the global environment
-#'
-#' @param pos <`numeric`> Defaults to 1, the environment in which to assign the
-#' values. This argument is to appease RMD check.
-#'
-#' @return Assigns `df`, `vars`, `data`
-test_assign_delta_ind_ord <- function(pos = 1) {
-  df <- "grid_grid250"
-  vars <- vars_build(c("climate_drought_2015", "climate_drought_2022"), df = df)
-  data <- data_get(vars = vars, df = df)
-
-  assign("df", df, envir = as.environment(pos))
-  assign("region", "grid", envir = as.environment(pos))
-  assign("vars", vars, envir = as.environment(pos))
-  assign("data", data, envir = as.environment(pos))
-}
-
 #' Assign Values to specific Variables in the environment
 #'
 #' This function is used to recreate a variable selection, data, df, ... in the
@@ -100,6 +83,9 @@ test_assign_delta_ind_ord <- function(pos = 1) {
 #' @param pos <`numeric`> An integer value indicating the position in the search list where
 #' the environment to be used for assignment is located. Default is 1, which is
 #' typically the global environment.
+#' @param data_path <`character`> Path to a Curbcut repo data folder.
+#' eg, `C:/.../curbcut-montreal/data/`. Defaults to grabbing
+#' .curbcut_montreal_data from the environment.
 #'
 #' @details This function uses the vars_build function to create a new set of
 #' variables using var_left, var_right, and df. It then retrieves the
@@ -110,13 +96,16 @@ test_assign_delta_ind_ord <- function(pos = 1) {
 #' @return This function doesn't return a value. It modifies the specified
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
-                            select_id = NA, pos = 1, data_path = .curbcut_montreal_data) {
+                            select_id = NA, pos = 1, data_path = get0(".curbcut_montreal_data")) {
+  if (is.null(data_path)) {
+    stop("Set a path from which to grab the data (data folder of a Curbcut repo).")
+  }
 
   # Assign necessary setup objects to the global environment
-  test_setup()
+  test_setup(folder = data_path)
 
   # Subset the variables table
-  variables <- qs::qread(sprintf("%svariables.qs", .curbcut_montreal_data))
+  variables <- qs::qread(sprintf("%svariables.qs", data_path))
   possible_vars <- unique(sapply(c(var_left, var_right), var_remove_time))
   parents <- variables$parent_vec[variables$var_code %in% possible_vars]
   variables <- variables[variables$var_code %in% c(possible_vars, parents), ]
@@ -138,29 +127,94 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
 #' Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
 #'
+#' @param pos <`numeric`> An integer value indicating the position in the search list where
+#' the environment to be used for assignment is located. Default is 1, which is
+#' typically the global environment.
+#' @param folder <`character`> Folder from which to grab the test resources. Defaults
+#' to `tests/testthat/resources` from coding within the `curbcut` package repo.
+#'
 #' @return Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
-test_setup <- function() {
+test_setup <- function(pos = 1, folder = "tests/testthat/resources/") {
   # Variables present in the .GlobalEnv
   assign("all_choropleths",
-         value = c("CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
-                   "cmhczone"),
-         envir = .GlobalEnv
+    value = c(
+      "CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
+      "cmhczone"
+    ),
+    envir = as.environment(pos)
+  )
+
+  # Assign translation_df
+  translation_df <- qs::qread(sprintf("%stranslation_df.qs", folder))
+  assign("translation_df",
+         value = translation_df,
+         envir = as.environment(pos)
+  )
+
+  # Assign scales_dictionary
+  scales_dictionary <- qs::qread(sprintf("%sscales_dictionary.qs", folder))
+  assign("scales_dictionary",
+         value = scales_dictionary,
+         envir = as.environment(pos)
+  )
+
+  # Assign regions_dictionary
+  regions_dictionary <- qs::qread(sprintf("%sregions_dictionary.qs", folder))
+  assign("regions_dictionary",
+         value = regions_dictionary,
+         envir = as.environment(pos)
   )
 
   # Default random address
   assign("default_random_address",
-         value = "845 Sherbrooke",
-         envir = .GlobalEnv
+    value = "845 Sherbrooke",
+    envir = as.environment(pos)
   )
 
   # Default tileset info
   assign("tileset_prefix",
-         value = "mtl",
-         envir = .GlobalEnv
+    value = "mtl",
+    envir = as.environment(pos)
   )
   assign("mapbox_username",
-         value = "sus-mcgill",
-         envir = .GlobalEnv
+    value = "sus-mcgill",
+    envir = as.environment(pos)
   )
+
+  # All qs and qsm files
+  data_files <- list.files(folder, full.names = TRUE)
+  invisible(lapply(data_files[grepl("qsm$", data_files)],
+    qs::qload,
+    env = as.environment(pos)
+  ))
+  invisible(lapply(
+    data_files[grepl("qs$", data_files)],
+    \(x) {
+      object_name <- gsub(sprintf("(%s)|(\\.qs)", folder), "", x)
+      assign(object_name, qs::qread(x), envir = as.environment(pos))
+    }
+  ))
+
+  # All sqlite files
+  dbs <- list.files(folder, full.names = TRUE)
+  dbs <- subset(dbs, grepl(".sqlite$", dbs))
+
+  lapply(dbs, \(x) {
+    connection_name <- paste0(s_extract("(?<=/).*?(?=\\.)", x), "_conn")
+    assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
+  })
+
+  # When testing, we want to reduce the size of the resources folder. When
+  # the test runs, slim it down to only city (the only necessary scales for
+  # testing on curbcut package).
+  conn <- DBI::dbConnect(RSQLite::SQLite(), paste0(folder, "building.sqlite"))
+  if (folder == "resources/") {
+    tbs <- DBI::dbListTables(conn)
+    tbs <- tbs[!grepl("city_", tbs)]
+    lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
+    suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
+  }
+
+  return()
 }

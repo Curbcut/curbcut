@@ -1,0 +1,92 @@
+.loader-page {
+	opacity: 0;
+	animation: loader-page 2s ease forwards;
+	height: calc(100vh - var(--padding-h-md) - 5rem);
+	overflow: hidden;
+}
+
+@keyframes loader-page {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.main_panel_popup {
+	position: absolute;
+	top: var(--side-bar-top);
+	box-sizing: border-box;
+	margin-left: calc(var(--w-sidebar) + var(--padding-h-md) * 2);
+	width: var(--panel-width);
+	background-color: #e9ecef;
+	padding: 0.5rem 1rem 0.5rem 1rem;
+	border-radius: 15px;
+	border: 1px solid #000;
+	height: calc(100vh - var(--side-bar-top) - var(--padding-h-md));
+	padding-left: 100px;
+}
+
+.main_panel_popup::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100px;
+	height: 100%;
+	background-color: var(--theme-color);
+	border-radius: 15px 0 0 15px;
+}
+
+.main_panel_popup::after {
+	content: '';
+	position: absolute;
+	top: 20px; /* provide space from the top */
+	left: calc((50px - 5px) / 2); /* center the SVG horizontally */
+	width: 50px;
+	height: 50px;
+	background-image: var(--theme-svg);
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center; /* to center the SVG within the defined width and height */
+	color: white;
+	padding: 10px; /* add padding around the SVG */
+	box-sizing: border-box; /* to include padding and border in the element's total width and height */
+}
+
+.back-to-map {
+	position: absolute;
+	top: 15px;
+	right: 40px;
+	font-size: larger;
+}
+
+.back-to-map > a {
+	color: black;
+	font-weight: bold;
+}
+
+@media (max-width: 768px) {
+	.main_panel_popup {
+		position: absolute;
+		top: calc(var(--side-bar-top) + 60px);
+		box-sizing: border-box;
+		margin-left: var(--padding-h-md);
+		margin-right: var(--padding-h-md);
+		width: calc(100vw - var(--padding-h-md) - var(--padding-h-md));
+		background-color: #e9ecef;
+		padding: 0.5rem 1rem 0.5rem 1rem;
+		border-radius: 15px;
+		border: 1px solid #000;
+		height: calc(100vh - var(--side-bar-top) - 60px - var(--padding-h-md));
+	}
+
+	.main_panel_popup::before {
+		display: none;
+	}
+
+	.main_panel_popup::after {
+		display: none;
+	}
+}

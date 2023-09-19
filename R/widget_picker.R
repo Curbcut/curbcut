@@ -182,7 +182,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       options = shinyWidgets::pickerOptions(
         dropdownAlignRight = !open_left,
         container = "body",
-        identifier = identifier
+        identifier = identifier,
       ),
       ...
     )

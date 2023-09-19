@@ -13,8 +13,8 @@ data from. Single variable (year) = single table. e.g. \code{housing_tenant_2016
 \item{df}{<\code{character}> A string specifying the name of the database to retrieve
 data from. Combination of the region and the scale, e.g. \code{CMA_DA}.}
 
-\item{data_path}{A string representing the path to the directory containing the
-QS files. Default is "data/".}
+\item{data_path}{<\code{character}> A string representing the path to the directory
+containing the QS files. Default is "data/".}
 }
 \value{
 A data.frame object with the selected data from the specified table.

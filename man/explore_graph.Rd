@@ -18,7 +18,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -29,7 +29,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -40,7 +40,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -51,7 +51,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -62,7 +62,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -73,7 +73,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -84,7 +84,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 
@@ -95,7 +95,7 @@ explore_graph(
   data,
   scales_as_DA = c("building", "street"),
   lang = NULL,
-  font_family = "SourceSansPro",
+  font_family = "acidgrotesk-book",
   ...
 )
 }
@@ -121,7 +121,7 @@ their graph will be the one of their DA.}
 translate variable titles to.}
 
 \item{font_family}{<\code{character}> A string specifying the font family for the
-plot, default is "SourceSansPro".}
+plot, default is "acidgrotesk-book".}
 
 \item{...}{Additional arguments passed to the specific method.}
 }

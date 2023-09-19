@@ -76,7 +76,7 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
     # Get the heading
     name <- sprintf(cc_t("around %s", lang = lang), bs$name)
     heading <- sprintf(
-      cc_t("Dissemination area around %s", lang = lang),
+      cc_t("Dissemination area %s", lang = lang),
       cc_t(scale$place_heading, lang = lang)
     )
 
@@ -129,7 +129,7 @@ explore_text_parent_title <- function(var, lang = NULL) {
   variables <- get_from_globalenv("variables")
   if (!parent_string %in% variables$var_code) {
     if (parent_string == "population") {
-      return("individuals")
+      return(cc_t("individuals", lang = lang))
     }
     return(cc_t(parent_string, lang = lang))
   }
