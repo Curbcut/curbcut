@@ -205,11 +205,16 @@ test_setup <- function(pos = 1, folder = "tests/testthat/resources/") {
     assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
   })
 
+  # When testing, we want to reduce the size of the resources folder. When
+  # the test runs, slim it down to only city (the only necessary scales for
+  # testing on curbcut package).
   conn <- DBI::dbConnect(RSQLite::SQLite(), paste0(folder, "building.sqlite"))
-  tbs <- DBI::dbListTables(conn)
-  tbs <- tbs[!grepl("city_", tbs)]
-  lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
-  suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
+  if (folder == "resources/") {
+    tbs <- DBI::dbListTables(conn)
+    tbs <- tbs[!grepl("city_", tbs)]
+    lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
+    suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
+  }
 
   return()
 }

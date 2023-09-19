@@ -64,7 +64,7 @@ compare_UI <- function(id, var_list) {
         ),
         shiny::div(
           style = "width: 89%",
-          cc_t("Comparison")
+          cc_t_span("Comparison")
         )
       )
     ),

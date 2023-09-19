@@ -140,7 +140,7 @@ zoom_UI <- function(id, zoom_levels) {
         ),
         shiny::div(
           style = "width: 24%",
-          cc_t("Scale")
+          cc_t_span("Scale")
         ),
         shiny::div(
           id = shiny::NS(id, "zoom_cbx_loc"),

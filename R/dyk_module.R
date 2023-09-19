@@ -85,7 +85,7 @@ dyk_UI <- function(id) {
           width = 7,
           shiny::h4(
             icon_material_title("info"),
-            cc_t("Did you know?")
+            cc_t_span("Did you know?")
           )
         )
       ),

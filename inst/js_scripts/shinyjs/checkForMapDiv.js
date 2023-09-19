@@ -8,10 +8,10 @@ shinyjs.checkForMapDiv = function (id) {
     console.log(childDivs);
 
     if (childDivs.length > 0) {
-      Shiny.setInputValue(input_name, true);
-    } else {
-      Shiny.setInputValue(input_name, false);
-    }
+      Shiny.setInputValue(input_name, childDivs[0].classList.contains("mapboxgl-map"));
+  } else {
+    Shiny.setInputValue(input_name, false);
+  }
   } else {
     Shiny.setInputValue(input_name, false);
   }
