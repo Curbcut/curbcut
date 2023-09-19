@@ -1,10 +1,10 @@
-.lang-en {
+.user-lang-fr .lang-en {
   visibility: hidden;
-  display: none;
+  display: none !important;
 }
-.lang-fr {
+.user-lang-en .lang-fr {
   visibility: hidden;
-  display: none;
+  display: none !important;
 }
 .user-lang-en .lang-en {
   visibility: visible !important;

@@ -4,7 +4,8 @@ shinyjs.checkForMapDiv = function (id) {
   var parentDiv = document.getElementById(map_ph);
 
   if (parentDiv) {
-    var childDivs = parentDiv.querySelectorAll(".mapboxgl-map");
+    var childDivs = parentDiv.querySelectorAll(".map-container.mapboxgl-map");
+    console.log(childDivs);
 
     if (childDivs.length > 0) {
       Shiny.setInputValue(input_name, true);
