@@ -80,14 +80,36 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     # Make complete sure the map is loaded: Check every x ms if the map is
     # loaded, and in the case it's not loaded, load it!
+    # Initialize reactive variables
+    counter <- shiny::reactiveVal(0)
+    shouldContinue <- shiny::reactiveVal(TRUE)
+
+    # Create observer
     shiny::observe({
-      # Check if input$mapboxDivExists is TRUE, and invalidate this observer otherwise
-      if (!isTRUE(input$mapboxDivExists)) {
-        shinyjs::js$checkForMapDiv(id)
-        # Invalidate this observer after 100ms
-        invalidateLater(250, session)
+      shiny::isolate(print(input$mapboxDivExists))
+      # Check if observer should continue running
+      if (!isTRUE(shiny::isolate(shouldContinue()))) {
+        return()
       }
+
+      # Increment counter
+      shiny::isolate({
+        new_count <- counter() + isTRUE(input$mapboxDivExists)
+        counter(new_count)
+      })
+
+      # Check if input$mapboxDivExists is TRUE, and invalidate this observer otherwise
+      shinyjs::js$checkForMapDiv(id)
+
+      # Stop observer after 10 runs
+      if (shiny::isolate(counter()) >= 3) {
+        shiny::isolate(shouldContinue(FALSE))
+      }
+
+      # Invalidate this observer after 500ms
+      invalidateLater(500, session)
     })
+
     shiny::observeEvent(input$mapboxDivExists, {
       if (isFALSE(input$mapboxDivExists)) {
         output$map_ph <- shiny::renderUI({

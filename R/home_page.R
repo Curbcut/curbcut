@@ -179,6 +179,8 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
     out[sample(nrow(out), if (type == "stories") 2 else 1), ]
   })
   discover_cards <- Reduce(rbind, discover_cards)
+  # Randomize row placement
+  discover_cards <- discover_cards[sample(nrow(discover_cards)), ]
 
   # Create landing page
   cc.landing::landing_input(

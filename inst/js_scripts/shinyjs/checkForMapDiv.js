@@ -4,15 +4,18 @@ shinyjs.checkForMapDiv = function (id) {
   var parentDiv = document.getElementById(map_ph);
 
   if (parentDiv) {
-    var childDivs = parentDiv.querySelectorAll(".map-container.mapboxgl-map");
+    var childDivs = parentDiv.querySelectorAll(".map-container");
     console.log(childDivs);
-    console.log(childDivs[0].classList.contains("mapboxgl-map"));
+    var found = false;
 
-    if (childDivs.length > 0) {
-      Shiny.setInputValue(input_name, childDivs[0].classList.contains("mapboxgl-map"));
-  } else {
-    Shiny.setInputValue(input_name, false);
-  }
+    for (let i = 0; i < childDivs.length; i++) {
+      if (childDivs[i].classList.contains('mapboxgl-map')) {
+        found = true;
+        break;
+      }
+    }
+
+    Shiny.setInputValue(input_name, found);
   } else {
     Shiny.setInputValue(input_name, false);
   }
