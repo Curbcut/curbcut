@@ -176,7 +176,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   card_types <- unique(discover_cards$type)
   discover_cards <- lapply(card_types, \(type) {
     out <- discover_cards[discover_cards$type == type, ]
-    out[sample(nrow(out), if (type == "stories") 0 else 4), ]
+    out[sample(nrow(out), if (type == "stories") 2 else 1), ]
   })
   discover_cards <- Reduce(rbind, discover_cards)
 
