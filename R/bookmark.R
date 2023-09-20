@@ -62,6 +62,12 @@ use_bookmark <- function(r) {
         r[[tab]]$coords(c(lat = coords[1], lon = coords[2]))
       }
 
+      # Finish by the ID selection
+      if ("sid" %in% names(query)) {
+        new_id <- if (query$sid %in% c("", "NA")) NA else query$sid
+        r[[tab]]$select_id(new_id)
+      }
+
       # Update widgets
       wgt <- query$wgt
       # If no widgets, do nothing
@@ -116,12 +122,6 @@ use_bookmark <- function(r) {
           })
         })
       })
-
-      # Finish by the ID selection
-      if ("sid" %in% names(query)) {
-        new_id <- if (query$sid %in% c("", "NA")) NA else query$sid
-        r[[tab]]$select_id(new_id)
-      }
     },
     priority = -5
   )

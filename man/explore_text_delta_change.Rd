@@ -4,7 +4,7 @@
 \alias{explore_text_delta_change}
 \alias{explore_text_delta_change.pct}
 \alias{explore_text_delta_change.dollar}
-\alias{explore_text_delta_change.count}
+\alias{explore_text_delta_change.default}
 \alias{explore_text_delta_change.ind}
 \title{Explore Text Delta Change}
 \usage{
@@ -14,7 +14,7 @@ explore_text_delta_change(var, exp_vals, ...)
 
 \method{explore_text_delta_change}{dollar}(var, exp_vals, ...)
 
-\method{explore_text_delta_change}{count}(var, exp_vals, ...)
+\method{explore_text_delta_change}{default}(var, exp_vals, ...)
 
 \method{explore_text_delta_change}{ind}(var, exp_vals, lang, ...)
 }

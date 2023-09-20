@@ -1621,14 +1621,21 @@ explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
 }
 
 #' @rdname explore_text_delta_change
+#' @param lang <`character`> Active language. Defaults to NULL for no translation
 #' @export
-explore_text_delta_change.count <- function(var, exp_vals, ...) {
+explore_text_delta_change.ind <- function(var, exp_vals, lang, ...) {
+  explore_text_delta_change.pct(var, exp_vals, lang = lang)
+}
+
+#' @rdname explore_text_delta_change
+#' @export
+explore_text_delta_change.default <- function(var, exp_vals, ...) {
   # Calculate the absolute and variation changes
   abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
   pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
 
   # Get the percentage change as percentage points
-  abs_change_string <- convert_unit(x = abs_change)
+  abs_change_string <- convert_unit(var, x = abs_change)
 
   # Pretty pct change
   pretty_pct_change <- convert_unit.pct(x = pct_change, decimal = 1)
@@ -1641,12 +1648,6 @@ explore_text_delta_change.count <- function(var, exp_vals, ...) {
   ))
 }
 
-#' @rdname explore_text_delta_change
-#' @param lang <`character`> Active language. Defaults to NULL for no translation
-#' @export
-explore_text_delta_change.ind <- function(var, exp_vals, lang, ...) {
-  explore_text_delta_change.pct(var, exp_vals, lang = lang)
-}
 
 
 # DELTA BIVAR -------------------------------------------------------------

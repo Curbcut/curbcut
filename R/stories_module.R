@@ -178,7 +178,7 @@ stories_server <- function(id, r) {
     })
 
     # If language changes, update the selection to NA
-    shiny::observeEvent(r$lang(), r[[id]]$select_id(NA))
+    shiny::observeEvent(r$lang(), r[[id]]$select_id(NA), ignoreInit = TRUE)
 
     # If there's a click on the story in the sidebar
     shiny::observeEvent(input$clicked_linked, {
@@ -191,7 +191,7 @@ stories_server <- function(id, r) {
     })
 
     # Hide main panel when "Go back to map" button is clicked
-    shiny::observeEvent(input$back, r[[id]]$select_id(NA))
+    shiny::observeEvent(input$back, r[[id]]$select_id(NA), ignoreInit = TRUE)
     shiny::observeEvent(r[[id]]$select_id(), {
       shinyjs::toggle("back", condition = !is.na(r[[id]]$select_id()))
       shinyjs::toggle("stories", condition = !is.na(r[[id]]$select_id()))
