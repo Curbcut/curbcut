@@ -55,9 +55,12 @@ home_server <- function(id = "home", r) {
       }
 
       if (type == "dyk") {
+        df <- disc_card$df
+        df <- if (is.na(df)) NULL else df
+
         link(r = r, page = disc_card$page, select_id = disc_card$select_id,
              date = disc_card$date[[1]], var_right = disc_card$var_right,
-             var_left = disc_card$var_left)
+             var_left = disc_card$var_left, df = df)
       }
 
     }, ignoreNULL = TRUE)
