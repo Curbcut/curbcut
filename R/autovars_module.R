@@ -321,7 +321,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               id = widget_ns(id),
               picker_id = "mnd",
               var_list = w,
-              selected = r[[id]]$var_left_force(),
+              selected = default_selection,
               label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
             )
           ))

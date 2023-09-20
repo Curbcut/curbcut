@@ -32,7 +32,7 @@ settings_advanced <- function(r = r, input = input, show_lang_button = FALSE) {
         ),
       if (show_lang_button) shiny::hr(),
       # Change the region
-      adv_opt_region(id = id, lang = r$lang()),
+      adv_opt_region(id = id, region = r$region(), lang = r$lang()),
       shiny::hr(),
       adv_opt_lock_selection_UI(id = id, lang = r$lang()),
       title = cc_t(lang = r$lang(), "Advanced options", force_span = TRUE),
