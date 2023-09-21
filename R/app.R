@@ -119,7 +119,8 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' @param twitter_handler <`character`> The Twitter handle associated with the
 #' website for metadata.e.g. `"@curbcutca"`
 #' @param google_analytics <`character`> The Google Analytics script location
-#' for tracking user activity. e.g. `"www/google_analytics.html"`
+#' for tracking user activity. e.g. `"www/google_analytics.html"`. Defaults
+#' to NULL for no analytics (during development, for example).
 #' @param website_url <`character`> The URL of the website for metadata.
 #' e.g. `"https://montreal.curbcut.ca"`
 #' @param share_jpg <`character`> ABSOLUTE path to he URL of the image for sharing
@@ -134,7 +135,7 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
 ui <- function(site_name, web_description, web_title, placeholder_video_src,
-               video_src, twitter_handler, google_analytics, website_url,
+               video_src, twitter_handler, google_analytics = NULL, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE) {
   modules_panel_calculated <- get0("modules_panel_calculated")
 
@@ -155,7 +156,7 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
     shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),
 
     # Google analytics --------------------------------------------------------
-    shiny::tags$head(shiny::includeHTML(google_analytics)),
+    if (!is.null(google_analytics)) shiny::tags$head(shiny::includeHTML(google_analytics)),
 
     # Sharing card ---------------------------------------------------------------
     shiny::tags$head(

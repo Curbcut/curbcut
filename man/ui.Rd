@@ -11,7 +11,7 @@ ui(
   placeholder_video_src,
   video_src,
   twitter_handler,
-  google_analytics,
+  google_analytics = NULL,
   website_url,
   share_jpg,
   apple_touch_icon,
@@ -40,7 +40,8 @@ they click on to watch the intro video. e.g. \verb{https://s3.amazonaws.com/curb
 website for metadata.e.g. \code{"@curbcutca"}}
 
 \item{google_analytics}{<\code{character}> The Google Analytics script location
-for tracking user activity. e.g. \code{"www/google_analytics.html"}}
+for tracking user activity. e.g. \code{"www/google_analytics.html"}. Defaults
+to NULL for no analytics (during development, for example).}
 
 \item{website_url}{<\code{character}> The URL of the website for metadata.
 e.g. \code{"https://montreal.curbcut.ca"}}
