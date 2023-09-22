@@ -34,7 +34,7 @@ breaks_delta <- function(vars, df, character = FALSE, data = NULL) {
 
   # If the last break is lower than 2% (which is the forced middle bracket),
   # override the last bracket to 10%
-  if (breaks[2] <= 0.02) {
+  if (breaks[2] <= 0.03) {
     breaks[2] <- 0.1
     breaks[3] <- 0.15
   }
