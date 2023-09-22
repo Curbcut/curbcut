@@ -24,7 +24,7 @@ explore_graph_labels.delta <- function(vars, lang = NULL, ...) {
   legend_labels.bivar(vars = list(
     var_left = vars$var_left[2],
     var_right = vars$var_left[1]
-  ))[[1]]
+  ), lang = lang)[[1]]
 }
 
 #' @rdname explore_graph_labels
