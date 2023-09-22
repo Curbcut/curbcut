@@ -466,42 +466,120 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 
   # Get all necessary information
   leg_info <- legend_get_info(vars,
-    font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
-  )
+                              font_family = font_family,
+                              scales_as_DA = scales_as_DA,
+                              df = df, ...)
 
   # Adapt breaks to add the `NA` bar
-  leg <- rbind(
-    data.frame(group = 0, y = 1, fill = "#B3B3BB"),
-    leg_info$colours_dfs$delta[1:5, ]
-  )
-  leg$group <- suppressWarnings(as.double(leg$group))
-  leg[1, ]$group <- 0.5
-  leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
-  leg[2, ] <- list(x = 0.75, y = 1, fill = "#FFFFFFFF")
+  leg <- leg_info$colours_dfs$delta[1:5, 2:3]
 
-  # Adjust breaks and labels
-  breaks <- c(-0.375, 1:4)
-  labels <- c("NA", "-10%", "-2%", "+2%", "+10%")
+  # Get breaks as numeric
+  brks <- breaks_delta(vars = vars, df = df, character = FALSE)
+
+  # If all NA, don't bother draw a legend. Return NULL
+  if (all(is.na(brks))) {
+    return(NULL)
+  }
+
+  # Complete the xmin and xmax
+  leg$xmin <- brks[1:(length(brks) - 1)]
+  leg$xmax <- brks[2:(length(brks))]
+
+  # Tweak the min and max breaks so that they take a minimum of 15% of the
+  # plot space
+  rect_size <- leg$xmax - leg$xmin
+  size_pct <- rect_size / sum(rect_size)
+
+  # Go over each value (that isn't the blank space or the NA) and make sure it
+  # takes at least 15% of the plot space. Reduce the size of the other rectangle
+  # that are larger than 15% of the plot space.
+  rect_pct_vals <- size_pct
+
+  if ((sum(rect_pct_vals < 0.15) > 0)) {
+    while (sum(rect_pct_vals < 0.15) > 0) {
+      for (i in which(rect_pct_vals < 0.15)) {
+        # How much it's increased
+        inc <- 0.15 - rect_pct_vals[i]
+
+        # Its new value
+        rect_pct_vals[i] <- 0.15
+
+        # Which other vars can be increased
+        can_reduce <- which(rect_pct_vals > 0.15)
+        can_reduce_vals <- rect_pct_vals[can_reduce]
+        for (c in can_reduce) {
+          prop_reduce <- rect_pct_vals[c] / sum(rect_pct_vals[can_reduce])
+
+          rect_pct_vals[c] <- rect_pct_vals[c] - (inc * prop_reduce)
+        }
+      }
+    }
+  }
+
+  # The new values for each rectangle that leads to a minimum of 15% plot space
+  values_updated <- rect_pct_vals * (brks[length(brks)] - brks[1])
+  # cumsum the values to get the xmax and xmax
+  values_updated <- cumsum(values_updated)
+  leg$xmax <- values_updated
+  leg$xmin <- c(0, values_updated[1:(length(values_updated) - 1)])
+
+  # Blank space addition
+  blank <- (brks[length(brks)] - brks[1]) / 16
+  leg <- rbind(
+    data.frame(
+      y = 1,
+      fill = "#FFFFFFFF",
+      xmin = leg$xmin[1] - blank,
+      xmax = leg$xmin[1]
+    ),
+    leg
+  )
+
+  # NA (grey) space addition
+  leg <- rbind(
+    data.frame(
+      y = 1,
+      fill = "#B3B3BB",
+      xmin = leg$xmin[1] - blank,
+      xmax = leg$xmin[1]
+    ),
+    leg
+  )
+
+  # Breaks placement
+  breaks_placement <- c(-(blank + (blank / 2)), 0, values_updated)
+
+  # Grab labels to check length
+  breaks_label <- leg_info$break_labs[!is.na(leg_info$break_labs)]
+  breaks_label <- c("NA", breaks_label)
+  if (length(breaks_placement) != length(breaks_label)) {
+    warning(paste0(
+      "The number of breaks is not the same as the number of break ",
+      "labels. For a `q5` map, there needs to be 6 breaks in the ",
+      "`variables$break_q5` table (for ranks 0:5)."
+    ))
+    return(NULL)
+  }
 
   # Make the plot
   leg |>
     ggplot2::ggplot(
       ggplot2::aes(
-        xmin = group - 1, xmax = group, ymin = y - 1,
+        xmin = xmin, xmax = xmax, ymin = y - 1,
         ymax = y, fill = fill
       )
     ) +
     ggplot2::geom_rect() +
     ggplot2::scale_x_continuous(
-      breaks = breaks,
-      labels = labels
+      breaks = breaks_placement,
+      labels = breaks_label
     ) +
     ggplot2::scale_y_continuous(labels = NULL) +
     ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
-    leg_info$labs_xy[[1]] +
+    leg_info$labs_xy +
     leg_info$theme_default
 }
+
 
 #' Render the legend for a `q100` class
 #'

@@ -13,9 +13,10 @@ home_UI(id = "home", placeholder_video_src, video_src, lang_init = "en")
 mp4 video. The video will be used as the placeholder, until the user click on
 to watch the intro video. e.g. \verb{https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4}}
 
-\item{video_src}{<\code{character}> External link to a publicly available
-mp4 video. This is the full length official video the user will see when
-they click on to watch the intro video. e.g. \verb{https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4}}
+\item{video_src}{<\verb{named list}> Every video must be named by the language it uses.
+The videos are as external link to a publicly available mp4 video. This is the
+full length official video the user will see when they click on to watch the
+intro video. e.g. \code{list(en = "https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_en.mp4")}}
 
 \item{lang_init}{<\code{character}> Language which should be used to initiate the
 app.}

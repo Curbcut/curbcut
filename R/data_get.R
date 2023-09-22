@@ -235,12 +235,15 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
   )
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
 
+  # Grab the breaks in the data
+  breaks <- breaks_delta(vars = vars, df = df, character = FALSE, data = data)
+
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
-  data$var_left_q5[data$var_left < 0.1] <- 4
-  data$var_left_q5[data$var_left < 0.02] <- 3
-  data$var_left_q5[data$var_left < -0.02] <- 2
-  data$var_left_q5[data$var_left < -0.1] <- 1
+  data$var_left_q5[data$var_left < breaks[5]] <- 4
+  data$var_left_q5[data$var_left < breaks[4]] <- 3
+  data$var_left_q5[data$var_left < breaks[3]] <- 2
+  data$var_left_q5[data$var_left < breaks[2]] <- 1
   data$var_left_q5[is.na(data$var_left)] <- NA
   data$group <- as.character(data$var_left_q5)
 

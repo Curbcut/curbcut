@@ -153,9 +153,10 @@ home_server <- function(id = "home", r) {
 #' @param placeholder_video_src <`character`> External link to a publicly available
 #' mp4 video. The video will be used as the placeholder, until the user click on
 #' to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
-#' @param video_src <`character`> External link to a publicly available
-#' mp4 video. This is the full length official video the user will see when
-#' they click on to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
+#' @param video_src <`named list`> Every video must be named by the language it uses.
+#' The videos are as external link to a publicly available mp4 video. This is the
+#' full length official video the user will see when they click on to watch the
+#' intro video. e.g. `list(en = "https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_en.mp4")`
 #' @param lang_init <`character`> Language which should be used to initiate the
 #' app.
 #'
@@ -176,12 +177,17 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
 
   # Subset discover cards to not send too much data to the landing UI
   discover_cards <-  get_from_globalenv("discover_cards")
-  card_types <- unique(discover_cards$type)
-  discover_cards <- lapply(card_types, \(type) {
-    out <- discover_cards[discover_cards$type == type, ]
-    out[sample(nrow(out), if (type == "stories") 2 else 1), ]
-  })
-  discover_cards <- Reduce(rbind, discover_cards)
+  ## Filter 2 items of type 'stories'
+  stories_df <- discover_cards[discover_cards$type == "stories", ]
+  stories_sample <- stories_df[sample(nrow(stories_df), 2), ]
+  ## Filter 1 item of type 'page'
+  page_df <- discover_cards[discover_cards$type == "page", ]
+  page_sample <- page_df[sample(nrow(page_df), 1), ]
+  ## Filter 1 item of type 'dyk' with different 'theme' from 'page'
+  dyk_df <- discover_cards[discover_cards$type == "dyk" & !(discover_cards$theme %in% page_sample$theme), ]
+  dyk_sample <- dyk_df[sample(nrow(dyk_df), 1), ]
+  # Combine the subsets
+  discover_cards <- rbind(stories_sample, page_sample, dyk_sample)
   # Randomize row placement
   discover_cards <- discover_cards[sample(nrow(discover_cards)), ]
 

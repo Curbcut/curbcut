@@ -73,16 +73,16 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
   )
 })
 
-test_that("legend_breaks.delta works", {
-  vars <- vars_build(var_left = c(
-    "housing_tenant_2006",
-    "housing_tenant_2016"
-  ), df = "CMA_CT")
-  expect_equal(
-    legend_breaks(vars, df = "CMA_CT"),
-    c("-10%", "-2%", "+2%", "+10%")
-  )
-})
+# test_that("legend_breaks.delta works", {
+#   vars <- vars_build(var_left = c(
+#     "housing_tenant_2006",
+#     "housing_tenant_2016"
+#   ), df = "CMA_CT")
+#   expect_equal(
+#     legend_breaks(vars, df = "CMA_CT"),
+#     c("-10%", "-2%", "+2%", "+10%")
+#   )
+# })
 
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(

@@ -127,12 +127,15 @@ legend_breaks.qual <- function(vars, df, lang = NULL, ...) {
 #' Compute legend breaks for a single variable of two date times
 #'
 #' @param vars <`named list`> A list object of class `delta`.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with hardcoded labels.
 #' @export
-legend_breaks.delta <- function(vars, ...) {
-  c("-10%", "-2%", "+2%", "+10%")
+legend_breaks.delta <- function(vars, df, ...) {
+  breaks_delta(vars = vars, df = df, character = TRUE)
 }
 
 #' Compute legend breaks for a comparison of a single variable of two date times

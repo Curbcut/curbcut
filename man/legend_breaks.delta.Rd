@@ -4,10 +4,14 @@
 \alias{legend_breaks.delta}
 \title{Compute legend breaks for a single variable of two date times}
 \usage{
-\method{legend_breaks}{delta}(vars, ...)
+\method{legend_breaks}{delta}(vars, df, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object of class \code{delta}.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
 
 \item{...}{Additional arguments passed to methods.}
 }
