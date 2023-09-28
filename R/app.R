@@ -150,7 +150,7 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
 
     # Styling objects ------------------------------------------------------------
     use_curbcut_js(),
-    use_curbcut_css(lang_init = TRUE),
+    use_curbcut_css(lang_init = lang_init),
 
     # Favicon -----------------------------------------------------------------
     shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),

@@ -3,11 +3,11 @@
 #' This function adds the Curbcut shared CSS files by creating a resource path to
 #' the curbcut package and linking to the CSS stylesheet in the HTML head.
 #'
-#' @param lang_init <`logical`> Is the app bilingual? In that case, there must
-#' be an added class to the body to inform the app it starts as `fr`.
+#' @param lang_init <`character`> The language that should be used as the default
+#' language to display.
 #'
 #' @export
-use_curbcut_css <- function(lang_init = FALSE) {
+use_curbcut_css <- function(lang_init = "en") {
   # Add the CSS resource path
   shiny::addResourcePath("curbcut_css", system.file("styles", package = "curbcut"))
   shiny::addResourcePath("curbcut_fonts", system.file("fonts", package = "curbcut"))
@@ -35,6 +35,6 @@ use_curbcut_css <- function(lang_init = FALSE) {
       )
     )),
     style_tags,
-    if (lang_init) shiny::tags$body(class = "user-lang-fr")
+    shiny::tags$body(class = sprintf("user-lang-%s", lang_init))
   )
 }

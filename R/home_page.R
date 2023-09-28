@@ -175,21 +175,50 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
     translation_df[translation_df$en %in% unlist(pages), ]
   }
 
-  # Subset discover cards to not send too much data to the landing UI
-  discover_cards <-  get_from_globalenv("discover_cards")
-  ## Filter 2 items of type 'stories'
+  # Get 'discover_cards' from the global environment
+  discover_cards <- get_from_globalenv("discover_cards")
+
+  # Initialize an empty data frame to store the final sample
+  final_sample <- data.frame()
+
+  # Filter 2 items of type 'stories'
   stories_df <- discover_cards[discover_cards$type == "stories", ]
-  stories_sample <- stories_df[sample(nrow(stories_df), 2), ]
-  ## Filter 1 item of type 'page'
+  if (nrow(stories_df) >= 2) {
+    stories_sample <- stories_df[sample(nrow(stories_df), 2), ]
+    final_sample <- rbind(final_sample, stories_sample)
+  } else {
+    # If less than 2 'stories', take additional 'page' or 'dyk'
+    num_needed <- 2 - nrow(stories_df)
+    extra_df <- discover_cards[discover_cards$type %in% c("page", "dyk"), ]
+    extra_sample <- extra_df[sample(nrow(extra_df), num_needed), ]
+    final_sample <- rbind(final_sample, stories_df, extra_sample)
+  }
+
+  # Filter 1 item of type 'page'
   page_df <- discover_cards[discover_cards$type == "page", ]
   page_sample <- page_df[sample(nrow(page_df), 1), ]
-  ## Filter 1 item of type 'dyk' with different 'theme' from 'page'
+  final_sample <- rbind(final_sample, page_sample)
+
+  # Filter 1 item of type 'dyk' with different 'theme' from 'page'
   dyk_df <- discover_cards[discover_cards$type == "dyk" & !(discover_cards$theme %in% page_sample$theme), ]
   dyk_sample <- dyk_df[sample(nrow(dyk_df), 1), ]
-  # Combine the subsets
-  discover_cards <- rbind(stories_sample, page_sample, dyk_sample)
+  final_sample <- rbind(final_sample, dyk_sample)
+
+  final_sample <- unique(final_sample)
+
+  # Ensure there are 4 cards in the final sample
+  if (nrow(final_sample) < 4) {
+    num_needed <- 4 - nrow(final_sample)
+    extra_df <- discover_cards[!(discover_cards$type %in% final_sample$type), ]
+    extra_sample <- extra_df[sample(nrow(extra_df), num_needed), ]
+    final_sample <- rbind(final_sample, extra_sample)
+  }
+
   # Randomize row placement
-  discover_cards <- discover_cards[sample(nrow(discover_cards)), ]
+  final_sample <- final_sample[sample(nrow(final_sample)), ]
+
+  # Update 'discover_cards'
+  discover_cards <- final_sample
 
   # Create landing page
   cc.landing::landing_input(

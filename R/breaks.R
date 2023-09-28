@@ -29,7 +29,7 @@ breaks_delta <- function(vars, df, character = FALSE, data = NULL) {
   if (length(which_out) > 0) data_vl <- data_vl[-which_out]
 
   # Use the 50th and 100th percentile for the last bracket
-  breaks <- quantile(data_vl, na.rm = TRUE)[c(3, 5)]
+  breaks <- stats::quantile(data_vl, na.rm = TRUE)[c(3, 5)]
   breaks <- c(0.02, breaks)
 
   # If the last break is lower than 2% (which is the forced middle bracket),
