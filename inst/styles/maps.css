@@ -332,6 +332,14 @@
 	line-height: 0;
 }
 
+@media (max-width: 768px) {
+	/* Place the gear on the right on mobile */
+	.settings-gear {
+		left: auto;
+		right: 0px;
+	}
+}
+
 .settings-gear .fa-gear {
 	color: white;
 	font-size: large;
