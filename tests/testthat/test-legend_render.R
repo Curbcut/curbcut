@@ -45,7 +45,7 @@ test_that("legend_render.delta  works", {
     var_left = c("housing_tenant_2006", "housing_tenant_2016"),
     var_right = " ", df = "CMA_CSD"
   )
-  p <- legend_render(vars, df = "CMA_CSD", font_family = NULL)
+  p <- legend_render(vars, df = "city_CSD", font_family = NULL)
   expect_error(p, NA)
 })
 

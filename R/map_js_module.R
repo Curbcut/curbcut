@@ -101,7 +101,7 @@ map_js_server <- function(id, r, tile, coords, zoom,
       shinyjs::js$checkForMapDiv(id)
 
       # Stop observer after 10 runs
-      if (shiny::isolate(counter()) >= 5) {
+      if (shiny::isolate(counter()) >= 7) {
         shiny::isolate(shouldContinue(FALSE))
       }
 
