@@ -428,3 +428,12 @@
 .scale-panel {
 	margin-bottom: 15px;
 }
+
+.dyk-panel-title {
+	border-top: 1px solid #000;
+	padding-top: var(--padding-v-md);
+}
+
+.explore-panel {
+	padding-bottom: var(--padding-v-md);
+}

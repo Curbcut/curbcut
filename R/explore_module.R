@@ -143,6 +143,7 @@ explore_UI <- function(id) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "explore_full"),
+      class = "explore-panel",
       shiny::div(
         id = shiny::NS(id, "explore_title"),
         shiny::fluidRow(

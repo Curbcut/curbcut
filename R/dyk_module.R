@@ -79,8 +79,8 @@ dyk_UI <- function(id) {
   shiny::tagList(
     shinyjs::hidden(shiny::div(
       id = shiny::NS(id, "dyk_panel"),
-      shiny::hr(),
       shiny::fluidRow(
+        class = "dyk-panel-title",
         shiny::column(
           width = 7,
           shiny::h4(
