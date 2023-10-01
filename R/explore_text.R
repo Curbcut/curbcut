@@ -531,14 +531,14 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
   }
 
   # If there is a selection
-  exp <- var_get_info(
-    var = var, what = "explanation", translate = TRUE,
+  exp_q5 <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE,
     lang = lang
   )
 
   # Build the return
   count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-  out <- sprintf(cc_t("%s is %s", lang = lang), exp, count_string)
+  out <- gsub("_X_", count_string, exp_q5)
 
   # Return
   return(list(
