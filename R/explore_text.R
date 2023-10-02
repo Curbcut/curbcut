@@ -1513,8 +1513,8 @@ explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
     sprintf(
       cc_t("%s, %s changed from %s in %s to %s in %s.", lang = lang),
       s_sentence(context$p_start), exp_vals$exp,
-      exp_vals$region_vals_strings[2], exp_vals$times[1],
-      exp_vals$region_vals_strings[1], exp_vals$times[2]
+      exp_vals$region_vals_strings[1], exp_vals$times[1],
+      exp_vals$region_vals_strings[2], exp_vals$times[2]
     )
   }
 
