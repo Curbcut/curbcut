@@ -55,5 +55,5 @@ selected observation.
 This function calculates the percentage of observations with a lower value
 than the selected observation for a given variable and ranks the selected
 observation within predefined groups (as a character extracted from the
-\code{variables} table.
+\code{variables} table.)
 }

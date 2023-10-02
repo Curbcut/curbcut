@@ -234,10 +234,22 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @description This function dispatches the data retrieval based on the class
 #' of the `vars` object.
 #'
+#' @param vars <`named list`> Named list with a class. Object built using the
+#' \code{\link{vars_build}} function.
+#' @param df <`character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
+#' @param ... Additional arguments passed to methods.
+#'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun <- function(vars, select_id, df, data,
                                scales_as_DA = c("building", "street"), lang = NULL,
-                               font_family = "acidgrotesk-book", ...) {
+                               font_family = "acidgrotesk-book", data_path, ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 

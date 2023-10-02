@@ -393,7 +393,7 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 #' This function calculates the percentage of observations with a lower value
 #' than the selected observation for a given variable and ranks the selected
 #' observation within predefined groups (as a character extracted from the
-#' `variables` table.
+#' `variables` table.)
 #'
 #' @param var <`character`> A variable code specifying the variable of interest. This
 #' variable will be compared across observations.
