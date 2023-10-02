@@ -437,7 +437,7 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 
 #' Render the legend for a `delta` class (variation between two years).
 #'
-#' The legend displays a color scale going from red to blue, representing the
+#' The legend displays a color scale going from delta colours, representing the
 #' changes in the data between two years. The function generates a plot with a
 #' rectangle for each color and a label indicating the percentage change
 #' associated with the color. The first rectangle is a neutral gray color, with
@@ -460,6 +460,23 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"), df, ...) {
+  legend_render_delta(vars = vars, font_family = font_family,
+                      scales_as_DA = scales_as_DA, df = df, ...)
+}
+
+#' Internal function for dispatching `legend_render_delta`.
+legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
+                                scales_as_DA = c("building", "street"), df, ...) {
+  UseMethod("legend_render_delta", vars)
+}
+
+#' Render legend for a `delta` class for scalar data.
+#'
+#' @inheritParams legend_render.delta
+#'
+#' @return A ggplot object representing the `delta` legend for scalar data.
+legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
+                                       scales_as_DA = c("building", "street"), df, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <-  NULL
@@ -577,6 +594,58 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
     ggplot2::scale_y_continuous(labels = NULL) +
     ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
     leg_info$labs_xy +
+    leg_info$theme_default
+}
+
+#' Render legend for a `delta` class for ordinal data.
+#'
+#' @inheritParams legend_render.delta
+#'
+#' @return A ggplot object representing the `delta` legend for ordinal data.
+legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",
+                                       scales_as_DA = c("building", "street"), df,
+                                       lang = NULL, ...) {
+  # NULL out problematic variables for the R CMD check (no visible binding for
+  # global variable)
+  group <- y <- fill <- NULL
+
+  # Get all necessary information
+  leg_info <- legend_get_info(vars,
+                              font_family = font_family,
+                              scales_as_DA = scales_as_DA,
+                              df = df, ...)
+
+  # Adapt breaks to add the `NA` bar
+  leg <- rbind(
+    data.frame(group = 0, y = 1, fill = "#B3B3BB"),
+    leg_info$colours_dfs$delta[1:5, ]
+  )
+  leg$group <- suppressWarnings(as.double(leg$group))
+  leg[1, ]$group <- 0.5
+  leg[seq(2 + 1, nrow(leg) + 1), ] <- leg[seq(2, nrow(leg)), ]
+  leg[2, ] <- list(x = 0.75, y = 1, fill = "#FFFFFFFF")
+
+  # Adjust breaks and labels
+  breaks <- c(-0.375, 0.75, 2.5, 4.25)
+  labels <- c("NA", "Decrease", "No change", "Increase")
+  labels <- sapply(labels, cc_t, lang = lang, USE.NAMES = FALSE)
+
+  # Make the plot
+  leg |>
+    ggplot2::ggplot(
+      ggplot2::aes(
+        xmin = group - 1, xmax = group, ymin = y - 1,
+        ymax = y, fill = fill
+      )
+    ) +
+    ggplot2::geom_rect() +
+    ggplot2::scale_x_continuous(
+      breaks = breaks,
+      labels = labels
+    ) +
+    ggplot2::scale_y_continuous(labels = NULL) +
+    ggplot2::scale_fill_manual(values = stats::setNames(leg$fill, leg$fill)) +
+    leg_info$labs_xy[[1]] +
     leg_info$theme_default
 }
 

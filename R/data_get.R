@@ -225,6 +225,30 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @export
 data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
                            data_path = "data/", ...) {
+  data_get_delta_fun(vars = vars, df = df, scales_as_DA = scales_as_DA,
+                     data_path = data_path, ...)
+}
+
+#' @title Inner function to get data based on the type of `vars`
+#'
+#' @description This function dispatches the data retrieval based on the class
+#' of the `vars` object.
+#'
+#' @seealso \code{\link{data_get.delta}}
+data_get_delta_fun <- function(vars, select_id, df, data,
+                               scales_as_DA = c("building", "street"), lang = NULL,
+                               font_family = "acidgrotesk-book", ...) {
+  UseMethod("data_get_delta_fun", vars)
+}
+
+#' @title Retrieve `delta` data for scalar variables
+#'
+#' @description This function retrieves data for scalar variables
+#' and performs additional operations for map coloring.
+#'
+#' @seealso \code{\link{data_get.delta}}
+data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
+                                      data_path = "data/", ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 
@@ -244,6 +268,42 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
   data$var_left_q5[data$var_left < breaks[4]] <- 3
   data$var_left_q5[data$var_left < breaks[3]] <- 2
   data$var_left_q5[data$var_left < breaks[2]] <- 1
+  data$var_left_q5[is.na(data$var_left)] <- NA
+  data$group <- as.character(data$var_left_q5)
+
+  # Return
+  return(data)
+}
+
+#' @title Retrieve `delta` data for ordinal variables
+#'
+#' @description This function retrieves data for ordinal variables
+#' and performs additional operations for map coloring.
+#'
+#' @seealso \code{\link{data_get.delta}}
+data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
+                                       data_path = "data/", ...) {
+  # Treat certain scales as DA
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+
+  # Retrieve
+  data <- data_get_delta(
+    var_two_years = vars$var_left, df = df,
+    data_path = data_path
+  )
+  names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
+
+  # var_left_q5 will go off of bins change. 0 bin change vs 1 bin change vs multiple
+  # bin changes.
+  var_left_binchange <- data$var_left_2 - data$var_left_1
+
+
+  # Add the `group` for the map colouring
+  data$var_left_q5 <- 5
+  data$var_left_q5[var_left_binchange == 1] <- 4
+  data$var_left_q5[var_left_binchange == 0] <- 3
+  data$var_left_q5[var_left_binchange == -1] <- 2
+  data$var_left_q5[var_left_binchange < -1] <- 1
   data$var_left_q5[is.na(data$var_left)] <- NA
   data$group <- as.character(data$var_left_q5)
 

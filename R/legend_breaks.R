@@ -75,7 +75,7 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
       cc_t(lang = lang, "High")
     )
   } else {
-    breaks <- sapply(breaks, cc_t)
+    breaks <- sapply(breaks, cc_t, lang = lang)
   }
 
   # Return

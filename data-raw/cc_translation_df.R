@@ -609,6 +609,22 @@ cc_translation_df <-
     fr = "diminu\u00e9"
   ) |>
   tibble::add_row(
+    en = "Increase",
+    fr = "Augment\u00e9"
+  ) |>
+  tibble::add_row(
+    en = "Decrease",
+    fr = "Diminu\u00e9"
+  ) |>
+  tibble::add_row(
+    en = "No change",
+    fr = "Aucun changement"
+  ) |>
+  tibble::add_row(
+    en = "NA",
+    fr = "NA"
+  ) |>
+  tibble::add_row(
     en = "%s, %s changed from %s in %s to %s in %s.",
     fr = "%s, %s a chang\u00e9 de %s en %s \u00e0 %s en %s."
   ) |>

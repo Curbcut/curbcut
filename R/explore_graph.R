@@ -206,8 +206,7 @@ explore_graph.delta_ind <- function(vars, select_id, df, data,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
   explore_graph_delta_ind(vars, select_id, df, data, scales_as_DA,
-    lang = lang,
-    font_family = "acidgrotesk-book", ...
+    lang = lang, font_family = font_family, ...
   )
 }
 
@@ -712,8 +711,7 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, df, data,
                                            font_family = "acidgrotesk-book", ...) {
   explore_graph.delta(
     vars = vars, select_id = select_id, df = df, data = data,
-    scales_as_DA = scales_as_DA, lang = lang,
-    font_family = "acidgrotesk-book", ...
+    scales_as_DA = scales_as_DA, lang = lang, font_family = font_family, ...
   )
 }
 
@@ -735,6 +733,8 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
 
   # Color as function
   clr_df <- shared_info$colours_dfs$delta
+  clr_df$fill[2] <- clr_df$fill[1]
+  clr_df$fill[4] <- clr_df$fill[5]
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
@@ -755,18 +755,23 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, df, data,
     data_vals = data$var_left_2
   )
 
-  # Calculate frequency to use as opacity
+  # Calculate frequency to use as opacity (except when var_left_1 == var_left_2)
   dat <- data
   dat$frequency <- 1
-  dat <- stats::aggregate(frequency ~ var_left_1 + var_left_2 + group,
-    data = dat,
-    FUN = sum
-  )
-  dat$frequency <- scales::rescale(dat$frequency)
 
-  # clr_df$fill[5] <- "#0571B0"
-  # clr_df$fill[3] <- "#777777"
-  # clr_df$fill[1] <- "#CA0020"
+  # Aggregate by groups and variables
+  dat <- stats::aggregate(frequency ~ var_left_1 + var_left_2 + group,
+                          data = dat,
+                          FUN = sum)
+
+  # Unchanged vs changed
+  unchanged <- dat[dat$var_left_1 == dat$var_left_2, ]
+  changed <- dat[dat$var_left_1 != dat$var_left_2, ]
+
+  # Rescale frequency; skip rows with frequency = 0
+  changed$frequency <- scales::rescale(changed$frequency)^(0.4)
+  unchanged$frequency <- scales::rescale(unchanged$frequency)^(0.4)
+  dat <- rbind(changed, unchanged)
 
   # Draw plot
   plot <-

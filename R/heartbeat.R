@@ -34,7 +34,7 @@ heartbeat <- function(input) {
   # re-triggered. Alike a while loop. After 2 hours, then the heartbeat will
   # stop and the app can disconnect with usual Shiny timeout.
   shiny::observe({
-    rerun <- timeout_start() + 7200 > Sys.time()
+    rerun <- timeout_start() + 28800 > Sys.time()
     if (rerun) shiny::invalidateLater(10000)
   })
 }
