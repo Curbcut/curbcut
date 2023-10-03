@@ -54,29 +54,6 @@ map_js_server <- function(id, r, tile, coords, zoom,
   stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
-    map_zoom <- get_from_globalenv("map_zoom")
-    map_loc <- get_from_globalenv("map_loc")
-    tileset_prefix <- get_from_globalenv("tileset_prefix")
-    map_token <- get_from_globalenv("map_token")
-    map_base_style <- get_from_globalenv("map_base_style")
-    mapbox_username <- get_from_globalenv("mapbox_username")
-    tileset_prefix <- get_from_globalenv("tileset_prefix")
-
-    # Initiate the map.
-    output$map_ph <- shiny::renderUI({
-      cc.map::map_input(
-        map_ID = shiny::NS(id, shiny::NS(id, "map")),
-        username = mapbox_username,
-        token = map_token,
-        longitude = map_loc[1],
-        latitude = map_loc[2],
-        zoom = map_zoom,
-        map_style_id = map_base_style,
-        tileset_prefix = tileset_prefix,
-        stories = stories,
-        stories_min_zoom = stories_min_zoom
-      )
-    })
 
     # Make complete sure the map is loaded: Check every x ms if the map is
     # loaded, and in the case it's not loaded, load it!

@@ -74,6 +74,28 @@ create_ui_server_mods <- function(modules, pos = 1) {
       suffix_zoom_levels <- modules$suffix_zoom_levels[modules$id == id]
       stories <- get_from_globalenv("stories")
 
+      map_loc <- get_from_globalenv("map_loc")
+      tileset_prefix <- get_from_globalenv("tileset_prefix")
+      map_token <- get_from_globalenv("map_token")
+      map_base_style <- get_from_globalenv("map_base_style")
+      mapbox_username <- get_from_globalenv("mapbox_username")
+
+      # Initiate the map.
+      output$map_ph <- shiny::renderUI({
+        cc.map::map_input(
+          map_ID = shiny::NS(id, shiny::NS(id, "map")),
+          username = mapbox_username,
+          token = map_token,
+          longitude = map_loc[1],
+          latitude = map_loc[2],
+          zoom = map_zoom,
+          map_style_id = map_base_style,
+          tileset_prefix = tileset_prefix,
+          stories = stories,
+          stories_min_zoom = stories_min_zoom
+        )
+      })
+
       # Initial zoom string reactive value
       rv_zoom_string <- shiny::reactiveVal(
         curbcut::zoom_get_string(
