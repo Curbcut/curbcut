@@ -5,7 +5,6 @@ shinyjs.checkForMapDiv = function (id) {
 
   if (parentDiv) {
     var childDivs = parentDiv.querySelectorAll(".map-container");
-    console.log(childDivs);
     var found = false;
 
     for (let i = 0; i < childDivs.length; i++) {
