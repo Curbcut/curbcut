@@ -201,24 +201,6 @@ place_explorer_server <- function(id, r,
     # Add a loader page, which is an empty document with white background that
     # appears with an animation of 2 seconds. It gives time for the place
     # explorer to be fully concatenated and shown.
-    output$loader <- shiny::renderUI({
-      if (!is.na(r[[id]]$select_id())) {
-        shiny::div(
-          class = "main_panel_popup loader-page",
-          shiny::tags$iframe(
-            style = "width:100%;height:100%;",
-            title = "place_ex",
-            srcdoc = paste0(
-              "<!DOCTYPE html><html><head><title></title><style",
-              ">body {background-color: white;}</style></head><",
-              "body><body></html>"
-            ),
-            frameborder = 0
-          )
-        )
-      }
-    })
-
     main_panel <- shiny::reactive({
       if (!is.na(r[[id]]$select_id())) {
         pe_links <- place_explorer_html_links(
@@ -336,7 +318,6 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
       shinyjs::hidden(
         shiny::div(
           id = shiny::NS(id, "place_exp_main_panel"),
-          shiny::htmlOutput(shiny::NS(id, "loader")),
           shiny::htmlOutput(shiny::NS(id, "main_panel")),
         )
       )

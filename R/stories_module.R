@@ -132,7 +132,7 @@ stories_server <- function(id, r) {
             shiny::HTML(paste0('<img src="', list_photos_rv()[photo_id], '" width = 100%>')),
             easyClose = TRUE,
             size = "l",
-            footer = modalButton("Close")
+            footer = modalButton(cc_t("Close", lang = r$lang()))
           ))
         })
       })
