@@ -20,6 +20,22 @@ stories_server <- function(id, r) {
     # Sidebar
     sidebar_server(id = id, r = r)
 
+    # Initiate the map.
+    output[[shiny::NS(id, "map_ph")]] <- shiny::renderUI({
+      cc.map::map_input(
+        map_ID = shiny::NS(id, shiny::NS(id, "map")),
+        username = mapbox_username,
+        token = map_token,
+        longitude = map_loc[1],
+        latitude = map_loc[2],
+        zoom = map_zoom,
+        map_style_id = map_base_style,
+        tileset_prefix = tileset_prefix,
+        stories = stories,
+        stories_min_zoom = 2
+      )
+    })
+
     # Map
     map_js_server(id = id,
                   r = r,
@@ -116,7 +132,7 @@ stories_server <- function(id, r) {
             shiny::HTML(paste0('<img src="', list_photos_rv()[photo_id], '" width = 100%>')),
             easyClose = TRUE,
             size = "l",
-            footer = NULL
+            footer = modalButton("Close")
           ))
         })
       })
@@ -184,6 +200,11 @@ stories_server <- function(id, r) {
     # Update the select_id if clicked on a story title in the top navigation panel
     shiny::observeEvent(input$select_nav, {
       r[[id]]$select_id(input$select_nav)
+    })
+
+    # When the popup is closed, return the selection to NA
+    shiny::observeEvent(input[["stories-back"]], {
+      r[[id]]$select_id(NA)
     })
 
     # Bookmarking

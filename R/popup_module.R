@@ -20,17 +20,19 @@ popup_server <- function(id, content, show_popup) {
 
     # Initiate the content
     content_val <- shiny::reactiveVal(NULL)
+    show_popup_val <- shiny::reactiveVal(FALSE)
 
     # Update content when it changes. Also, if show_pop changes, make sure
     # the content is up to date.
     shiny::observeEvent({content()
       show_popup()}, {
         content_val(content())
+        show_popup_val(show_popup())
       })
 
     # If show_popup is true, show the popup with an X
     output$popup <- shiny::renderUI({
-      if (!show_popup()) return(NULL)
+      if (!show_popup_val()) return(NULL)
       if (is.null(content_val())) return(NULL)
 
       shiny::div(
@@ -47,6 +49,7 @@ popup_server <- function(id, content, show_popup) {
     # When the X is clicked, update the content reactive to nothing
     shiny::observeEvent(input$back, {
       content_val(NULL)
+      show_popup_val(FALSE)
     })
 
   })

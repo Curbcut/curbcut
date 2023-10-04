@@ -2,7 +2,7 @@
 $(document).ready(function () {
 	$(document).on(
 		'wheel',
-		'.scrollable-div, .dropdown, #shiny-modal-wrapper',
+		'.scrollable-div, .dropdown, #shiny-modal-wrapper, .main_panel_popup',
 		function (e) {
 			e.stopPropagation()
 		}
@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 	$(document).on(
 		'touchstart touchmove touchend',
-		'.scrollable-div, .dropdown, #shiny-modal-wrapper',
+		'.scrollable-div, .dropdown, #shiny-modal-wrapper, .main_panel_popup',
 		function (e) {
 			e.stopPropagation()
 		}

@@ -44,6 +44,21 @@ place_explorer_server <- function(id, r,
     # Get default values for the place explorer
     pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA())
 
+    # Initiate the map.
+    output[[shiny::NS(id, "map_ph")]] <- shiny::renderUI({
+      cc.map::map_input(
+        map_ID = shiny::NS(id, shiny::NS(id, "map")),
+        username = mapbox_username,
+        token = map_token,
+        longitude = map_loc[1],
+        latitude = map_loc[2],
+        zoom = map_zoom,
+        map_style_id = map_base_style,
+        tileset_prefix = tileset_prefix,
+        stories = NULL
+      )
+    })
+
     # Get df ------------------------------------------------------------------
 
     # # Initial reactives
