@@ -32,28 +32,24 @@ stories_server <- function(id, r) {
     # Click reactive
     update_select_id(id = id, r = r)
 
-    # Render the story in question, now only in english (_en)
-    output$stories <- shiny::renderUI({
+    # Render the story in question
+    content <- shiny::reactive({
       if (is.na(r[[id]]$select_id())) return(NULL)
 
       rmd_name <- stories$name_id[stories$ID == r[[id]]$select_id()]
       story_link <- paste0("stories/", rmd_name, "_", r$lang(), ".html")
 
-      shiny::div(
-        class = "main_panel_popup",
-        shiny::div(class = "back-to-map",
-                   shiny::actionLink(
-                     shiny::NS(id, "back"), "X"
-                   )
-        ),
-        shiny::tags$iframe(
-          style = "width:100%;height:100%;",
-          title = "stories",
-          src = story_link,
-          frameborder = 0
-        )
+      shiny::tags$iframe(
+        style = "width:100%;height:100%;",
+        title = "stories",
+        src = story_link,
+        frameborder = 0
       )
     })
+    show_popup <- shiny::reactive(!is.na(r[[id]]$select_id()))
+    popup_server(id = id,
+                 content = content,
+                 show_popup = show_popup)
 
     # Prepare reactive values to get which stories are available
     photo_ids_rv <- shiny::reactiveVal(character())
@@ -190,13 +186,6 @@ stories_server <- function(id, r) {
       r[[id]]$select_id(input$select_nav)
     })
 
-    # Hide main panel when "Go back to map" button is clicked
-    shiny::observeEvent(input$back, r[[id]]$select_id(NA), ignoreInit = TRUE)
-    shiny::observeEvent(r[[id]]$select_id(), {
-      shinyjs::toggle("back", condition = !is.na(r[[id]]$select_id()))
-      shinyjs::toggle("stories", condition = !is.na(r[[id]]$select_id()))
-    })
-
     # Bookmarking
     bookmark_server(
       id = id,
@@ -246,8 +235,7 @@ stories_UI <- function(id) {
       map_js_UI(id = shiny::NS(id, id)),
 
       # Main panel
-      shiny::htmlOutput(shiny::NS(id, "stories")),
-
+      popup_UI(id = shiny::NS(id, id)),
 
       # Right panel when the stories are shown
       shinyjs::hidden(

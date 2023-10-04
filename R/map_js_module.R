@@ -86,26 +86,6 @@ map_js_server <- function(id, r, tile, coords, zoom,
       shiny::invalidateLater(500, session)
     })
 
-    shiny::observeEvent(input$mapboxDivExists, {
-      if (isFALSE(input$mapboxDivExists)) {
-        output$map_ph <- shiny::renderUI({
-          cc.map::map_input(
-            map_ID = shiny::NS(id, shiny::NS(id, "map")),
-            username = mapbox_username,
-            token = map_token,
-            longitude = map_loc[1],
-            latitude = map_loc[2],
-            zoom = map_zoom,
-            map_style_id = map_base_style,
-            tileset_prefix = tileset_prefix,
-            stories = stories,
-            stories_min_zoom = stories_min_zoom
-          )
-        })
-      }
-    }, ignoreNULL = TRUE)
-
-
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
     # if it hasn't changed.
     tileset <- shiny::reactive(sprintf("%s_%s", tileset_prefix, tile()))
@@ -121,42 +101,35 @@ map_js_server <- function(id, r, tile, coords, zoom,
     })
 
     # Update map coordinates if needed
-    shiny::observeEvent({coords()
-      input$mapboxDivExists},
-      {
-        if (isTRUE(input$mapboxDivExists) & !is.null(coords())) {
-          map_loc <- get_from_globalenv("map_loc")
-          if (!identical(map_loc, coords())) {
-            cc.map::map_viewstate(
-              session = session,
-              map_ID = "map",
-              longitude = as.numeric(unname(coords()[1])),
-              latitude = as.numeric(unname(coords()[2])),
-              zoom = zoom()
-            )
-          }
-        }
+    shiny::observeEvent(coords(), {
+      map_loc <- get_from_globalenv("map_loc")
+      if (!identical(map_loc, coords())) {
+        cc.map::map_viewstate(
+          session = session,
+          map_ID = "map",
+          longitude = as.numeric(unname(coords()[1])),
+          latitude = as.numeric(unname(coords()[2])),
+          zoom = zoom()
+        )
       }
-    )
+    })
 
     # Whenever the tileset changes, load it with the according data_colours.
-    shiny::observeEvent({tileset_trigger()
-      input$mapboxDivExists}, {
-        if (isTRUE(input$mapboxDivExists) & !is.null(tileset_trigger())) {
-          cc.map::map_choropleth(
-            session = session,
-            map_ID = "map",
-            tileset = tileset_trigger(),
-            fill_colour = data_colours(),
-            select_id = select_id(),
-            fill_fun = fill_fun(),
-            fill_fun_args = fill_fun_args(),
-            pickable = pickable(),
-            outline_width = outline_width(),
-            outline_color = outline_color()
-          )
-        }
-      })
+    shiny::observeEvent(tileset_trigger(), {
+      print("tileset got triggered")
+      cc.map::map_choropleth(
+        session = session,
+        map_ID = "map",
+        tileset = tileset_trigger(),
+        fill_colour = data_colours(),
+        select_id = select_id(),
+        fill_fun = fill_fun(),
+        fill_fun_args = fill_fun_args(),
+        pickable = pickable(),
+        outline_width = outline_width(),
+        outline_color = outline_color()
+      )
+    }, ignoreNULL = TRUE)
 
     # Only update the fill_colour when data_colours change
     shiny::observe({
@@ -176,6 +149,17 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     # Grab the viewstate (lat, lon, zoom)
     viewstate <- curbcut::get_viewstate("map")
+
+    shiny::observeEvent(input$mapboxDivExists, {
+      if (isFALSE(input$mapboxDivExists)) {
+        print("tilesets got redrawn")
+        # The following follows if a map redraw should be asked for (in cases
+        # where the map faults are initiation, or if the tileset_trigger() event
+        # happens, at first, before the map is loaded.)
+        shinyjs::delay(1500, map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(3000, map_choropleth_redraw(session = session, map_ID = "map"))
+      }
+    }, ignoreNULL = TRUE)
 
     # Return
     return(viewstate)

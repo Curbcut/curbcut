@@ -81,7 +81,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       mapbox_username <- get_from_globalenv("mapbox_username")
 
       # Initiate the map.
-      output$map_ph <- shiny::renderUI({
+      output[[shiny::NS(id, "map_ph")]] <- shiny::renderUI({
         cc.map::map_input(
           map_ID = shiny::NS(id, shiny::NS(id, "map")),
           username = mapbox_username,
@@ -92,7 +92,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
           map_style_id = map_base_style,
           tileset_prefix = tileset_prefix,
           stories = stories,
-          stories_min_zoom = stories_min_zoom
+          stories_min_zoom = 13
         )
       })
 
