@@ -116,7 +116,6 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     # Whenever the tileset changes, load it with the according data_colours.
     shiny::observeEvent(tileset_trigger(), {
-      print("tileset got triggered")
       cc.map::map_choropleth(
         session = session,
         map_ID = "map",
@@ -152,12 +151,12 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     shiny::observeEvent(input$mapboxDivExists, {
       if (isFALSE(input$mapboxDivExists)) {
-        print("tilesets got redrawn")
         # The following follows if a map redraw should be asked for (in cases
         # where the map faults are initiation, or if the tileset_trigger() event
         # happens, at first, before the map is loaded.)
         shinyjs::delay(1500, map_choropleth_redraw(session = session, map_ID = "map"))
         shinyjs::delay(3000, map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(5000, map_choropleth_redraw(session = session, map_ID = "map"))
       }
     }, ignoreNULL = TRUE)
 
