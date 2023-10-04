@@ -683,7 +683,9 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
   )
 
   # Adapt breaks
-  leg <- leg_info$colours_dfs$viridis
+  # leg <- leg_info$colours_dfs$viridis
+  ### Instead of viridis, q100 now also uses the well known left_5 scale
+  leg <- leg_info$colours_dfs$left_5[2:6, ]
   leg$group <- as.double(leg$group)
 
   # Make the plot
@@ -694,7 +696,7 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
     )) +
     ggplot2::geom_rect() +
     ggplot2::scale_x_continuous(
-      breaks = 0:10,
+      breaks = 0:5,
       labels = leg_info$break_labs
     ) +
     ggplot2::scale_y_continuous(labels = NULL) +

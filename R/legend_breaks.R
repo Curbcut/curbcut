@@ -98,7 +98,9 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
 legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
   c(
     cc_t(lang = lang, "Low"),
-    sapply(1:9, \(x) NULL),
+    # sapply(1:9, \(x) NULL),
+    # From viridis with 10 bins to well known left_5
+    sapply(1:4, \(x) NULL),
     cc_t(lang = lang, "High")
   )
 }
