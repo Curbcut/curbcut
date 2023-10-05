@@ -294,7 +294,7 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #' looking at. The combination of the region and the scale, e.g. `CMA_CSD`
 #'
 #' @export
-update_df <- function(tile, zoom_string) {
+update_scale <- function(tile, zoom_string) {
 
   #' NDS: Probably we just delete this whole function, since we can directly
   #' reference scale and/or region when needed. Alternatively, this probably

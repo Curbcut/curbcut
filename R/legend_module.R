@@ -22,9 +22,8 @@
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param df <`reactive character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param hide <`reactive logical`> Should the legend be hidden? Defaults to
@@ -44,12 +43,12 @@
 #'
 #' @return The legend Shiny UI and server module functions
 #' @export
-legend_server <- function(id, r, vars, df, data, hide = shiny::reactive(FALSE),
+legend_server <- function(id, r, vars, scale, data, hide = shiny::reactive(FALSE),
                           breaks = shiny::reactive(NULL),
                           scales_as_DA = shiny::reactive(c("building", "street")),
                           legend_fun = shiny::reactive(legend_render),
                           legend_args = shiny::reactive(list(
-                            vars = vars(), lang = r$lang(), df = df(),
+                            vars = vars(), lang = r$lang(), scale = scale(),
                             data = data(), breaks = breaks(),
                             scales_as_DA = scales_as_DA()
                           )),

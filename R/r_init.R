@@ -80,6 +80,7 @@ r_init <- function(server_session,
       if (!is.na(default_var)) {
         variables <- get_from_globalenv("variables")
         time <- modules$dates[modules$id == i][[1]]
+        region <- modules$regions[modules$id == i][[1]][1]
         if (!is.null(time)) {
           time <- max(time)
           default_var_yr <- sprintf("%s_%s", default_var, time)
@@ -91,6 +92,7 @@ r_init <- function(server_session,
           var_left_force = shiny::reactiveVal(default_var),
           time = shiny::reactiveVal(time),
           select_id = shiny::reactiveVal(NA),
+          region = shiny::reactiveVal(region),
           scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),
