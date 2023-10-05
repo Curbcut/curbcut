@@ -465,6 +465,22 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 }
 
 #' Internal function for dispatching `legend_render_delta`.
+#'
+#' @param vars <`named list`> A list object with a `delta` class. The
+#' output of \code{\link{vars_build}}.
+#' @param font_family <`character`> Which font family should be used to render
+#' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
+#' the default font family og ggplot2, use `NULL`.
+#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
+#' @param df <`reactive character`> The combination of the region under study
+#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_df}}.
+#' @param ... Additional arguments passed to other functions.
+#'
+#' @return A ggplot object that represents the `delta` legend.
+#' @export
 legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"), df, ...) {
   UseMethod("legend_render_delta", vars)
@@ -472,7 +488,7 @@ legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
 
 #' Render legend for a `delta` class for scalar data.
 #'
-#' @inheritParams legend_render.delta
+#' @inheritParams legend_render_delta
 #'
 #' @return A ggplot object representing the `delta` legend for scalar data.
 legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
@@ -599,7 +615,8 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
 
 #' Render legend for a `delta` class for ordinal data.
 #'
-#' @inheritParams legend_render.delta
+#' @inheritParams legend_render_delta
+#' @param lang <`character`> Language in use. `en` or `fr`. Defaults to NULL.
 #'
 #' @return A ggplot object representing the `delta` legend for ordinal data.
 legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",

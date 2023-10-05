@@ -71,7 +71,7 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
   if (!element_id %in% c(1, 2)) stop("`element_id` must be either 1 or 2.")
 
   # Make the a tag links as if they were action buttons
-  button_id <- curbcut:::ns_doubled(page_id = id, element = sprintf("dyk_%s", element_id))
+  button_id <- ns_doubled(page_id = id, element = sprintf("dyk_%s", element_id))
 
   text_link <- shiny::tags$li(
     # Grab the preview column, in the correct language

@@ -63,11 +63,7 @@ link <- function(r, page, region = r$region(), select_id = NA, df = NULL,
 
   # Update the current tab
   if (!is.null(page)) {
-    shiny::updateTabsetPanel(
-      session = r$server_session(),
-      inputId = "cc_page",
-      selected = page
-    )
+    update_tab(session = r$server_session(), selected = page)
   }
 
   # After half a second and the tab is opened, update the widgets

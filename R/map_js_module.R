@@ -55,6 +55,8 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
   shiny::moduleServer(id, function(input, output, session) {
 
+    tileset_prefix <- get_from_globalenv("tileset_prefix")
+
     # Make complete sure the map is loaded: Check every x ms if the map is
     # loaded, and in the case it's not loaded, load it!
     # Initialize reactive variables
@@ -154,9 +156,9 @@ map_js_server <- function(id, r, tile, coords, zoom,
         # The following follows if a map redraw should be asked for (in cases
         # where the map faults are initiation, or if the tileset_trigger() event
         # happens, at first, before the map is loaded.)
-        shinyjs::delay(1500, map_choropleth_redraw(session = session, map_ID = "map"))
-        shinyjs::delay(3000, map_choropleth_redraw(session = session, map_ID = "map"))
-        shinyjs::delay(5000, map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(1500, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
       }
     }, ignoreNULL = TRUE)
 

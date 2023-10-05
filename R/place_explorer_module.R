@@ -39,6 +39,9 @@ place_explorer_server <- function(id, r,
                                   map_base_style = get_from_globalenv("map_base_style"),
                                   temp_folder = get_from_globalenv("temp_folder")) {
   shiny::moduleServer(id, function(input, output, session) {
+
+    map_token <- get_from_globalenv("map_token")
+
     # Declare the map id
     id_map <- paste0(id, "-map")
     # Get default values for the place explorer

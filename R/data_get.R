@@ -247,9 +247,9 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @param ... Additional arguments passed to methods.
 #'
 #' @seealso \code{\link{data_get.delta}}
-data_get_delta_fun <- function(vars, select_id, df, data,
-                               scales_as_DA = c("building", "street"), lang = NULL,
-                               font_family = "acidgrotesk-book", data_path, ...) {
+data_get_delta_fun <- function(vars, df,
+                               scales_as_DA = c("building", "street"),
+                               data_path = "data/", ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 
@@ -257,6 +257,8 @@ data_get_delta_fun <- function(vars, select_id, df, data,
 #'
 #' @description This function retrieves data for scalar variables
 #' and performs additional operations for map coloring.
+#'
+#' @inheritParams data_get_delta_fun
 #'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
@@ -291,6 +293,8 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' @description This function retrieves data for ordinal variables
 #' and performs additional operations for map coloring.
+#'
+#' @inheritParams data_get_delta_fun
 #'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),

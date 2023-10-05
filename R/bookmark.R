@@ -48,11 +48,9 @@ use_bookmark <- function(r) {
           tab <- translation_df$en[which(tab == translation_df$fr)]
         }
       }
-      shiny::updateTabsetPanel(
-        session = r$server_session(),
-        inputId = "cc_page",
-        selected = tab
-      )
+
+      # Update the current tab
+      update_tab(session = r$server_session(), selected = tab)
 
       # Start by the map viewstate (if a map module)
       if ("zm" %in% names(query)) r[[tab]]$zoom(as.numeric(query$zm))

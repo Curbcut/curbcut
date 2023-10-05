@@ -33,7 +33,7 @@ test_that("legend_breaks.q100 works", {
   expect_equal(
     legend_breaks(vars, df = "raster"),
     list(
-      "Low", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+      "Low", NULL, NULL, NULL, NULL,
       "High"
     )
   )

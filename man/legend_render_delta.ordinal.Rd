@@ -29,6 +29,8 @@ their colour will be the one of their DA.}
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_df}}.}
 
+\item{lang}{<\code{character}> Language in use. \code{en} or \code{fr}. Defaults to NULL.}
+
 \item{...}{Additional arguments passed to other functions.}
 }
 \value{

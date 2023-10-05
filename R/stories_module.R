@@ -16,6 +16,12 @@ stories_server <- function(id, r) {
     id_map <- paste0(id, "-map")
     themes_raw <- unique(unlist(stories$themes))
     themes <- shiny::reactive(list(Themes = sapply(themes_raw, list)))
+    mapbox_username <- get_from_globalenv("mapbox_username")
+    map_token <- get_from_globalenv("map_token")
+    map_loc <- get_from_globalenv("map_loc")
+    map_zoom <- get_from_globalenv("map_zoom")
+    map_base_style <- get_from_globalenv("map_base_style")
+    tileset_prefix <- get_from_globalenv("tileset_prefix")
 
     # Sidebar
     sidebar_server(id = id, r = r)
@@ -132,7 +138,7 @@ stories_server <- function(id, r) {
             shiny::HTML(paste0('<img src="', list_photos_rv()[photo_id], '" width = 100%>')),
             easyClose = TRUE,
             size = "l",
-            footer = modalButton(cc_t("Close", lang = r$lang()))
+            footer = shiny::modalButton(cc_t("Close", lang = r$lang()))
           ))
         })
       })

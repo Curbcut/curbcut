@@ -6,13 +6,9 @@
 \usage{
 data_get_delta_fun(
   vars,
-  select_id,
   df,
-  data,
   scales_as_DA = c("building", "street"),
-  lang = NULL,
-  font_family = "acidgrotesk-book",
-  data_path,
+  data_path = "data/",
   ...
 )
 }

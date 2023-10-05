@@ -12,6 +12,27 @@ legend_render_delta(
   ...
 )
 }
+\arguments{
+\item{vars}{<\verb{named list}> A list object with a \code{delta} class. The
+output of \code{\link{vars_build}}.}
+
+\item{font_family}{<\code{character}> Which font family should be used to render
+the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
+the default font family og ggplot2, use \code{NULL}.}
+
+\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
+
+\item{df}{<\verb{reactive character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
+
+\item{...}{Additional arguments passed to other functions.}
+}
+\value{
+A ggplot object that represents the \code{delta} legend.
+}
 \description{
 Internal function for dispatching \code{legend_render_delta}.
 }

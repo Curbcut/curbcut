@@ -19,15 +19,9 @@ theme_dropdown_server <- function(id, r) {
       session = session
     ))
 
-    shiny::observeEvent(page_click(),
-      {
-        shiny::updateTabsetPanel(
-          session = r$server_session(), inputId = "cc_page",
-          selected = page_click()
-        )
-      },
-      ignoreNULL = TRUE
-    )
+    shiny::observeEvent(page_click(), {
+      update_tab(session = r$server_session(), selected = page_click())
+    }, ignoreNULL = TRUE)
 
     # If language changes, update the pages list
     shiny::observeEvent(r$lang(), {

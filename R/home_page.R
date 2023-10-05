@@ -18,15 +18,9 @@ home_server <- function(id = "home", r) {
 
     # Detect page clicks on other pages and update the active page accordingly
     page_click <- shiny::reactive(cc.landing::get_landing_click("landing"))
-    shiny::observeEvent(page_click(),
-                        {
-                          shiny::updateTabsetPanel(
-                            session = r$server_session(), inputId = "cc_page",
-                            selected = page_click()
-                          )
-                        },
-                        ignoreNULL = TRUE
-    )
+    shiny::observeEvent(page_click(), {
+      update_tab(session = r$server_session(), selected = page_click())
+    }, ignoreNULL = TRUE)
 
     # Detect discover card click and update the active page accordingly
     discover_click <- shiny::reactive(cc.landing::get_landing_discover("landing"))
@@ -38,17 +32,11 @@ home_server <- function(id = "home", r) {
       type <- disc_card$type
 
       if (type == "page") {
-        shiny::updateTabsetPanel(
-          session = r$server_session(), inputId = "cc_page",
-          selected = disc_card$id
-        )
+        update_tab(session = r$server_session(), selected = disc_card$id)
       }
 
       if (type == "stories") {
-        shiny::updateTabsetPanel(
-          session = r$server_session(), inputId = "cc_page",
-          selected = "stories"
-        )
+        update_tab(session = r$server_session(), selected = "stories")
         shinyjs::delay(500, {
           r[["stories"]]$select_id(disc_card$select_id)
         })
@@ -74,10 +62,7 @@ home_server <- function(id = "home", r) {
       if (grepl("^https://", news_card$link)) {
         session$sendCustomMessage(type = 'openURL', message = news_card$link)
       } else if (news_card$link %in% modules$id) {
-        shiny::updateTabsetPanel(
-          session = r$server_session(), inputId = "cc_page",
-          selected = news_card$link
-        )
+        update_tab(session = r$server_session(), selected = news_card$link)
       }
 
     }, ignoreNULL = TRUE)
@@ -87,6 +72,9 @@ home_server <- function(id = "home", r) {
       active_page <- r$server_session()$input$cc_page
 
       turn_on_off <- if (active_page == "home") "on" else "off"
+      if (turn_on_off == "on") {
+        shiny::updateQueryString(session = r$server_session(), queryString = "")
+      }
 
       cc.landing::update_landing(
         session = session,
@@ -105,41 +93,39 @@ home_server <- function(id = "home", r) {
       name = "lang"
     ))
     shiny::observeEvent(lang_cookie(),
-      {
-        # Update the website language (span + r$lang)
-        update_lang(r = r, lang = lang_cookie())
+                        {
+                          # Update the website language (span + r$lang)
+                          update_lang(r = r, lang = lang_cookie())
 
-        # Update the language of the landing UI
-        cc.landing::update_landing(
-          session = session,
-          inputId = "landing",
-          configuration = list(
-            lang = lang_cookie()
-          )
-        )
-      },
-      once = TRUE,
-      ignoreNULL = TRUE
+                          # Update the language of the landing UI
+                          cc.landing::update_landing(
+                            session = session,
+                            inputId = "landing",
+                            configuration = list(
+                              lang = lang_cookie()
+                            )
+                          )
+                        },
+                        once = TRUE,
+                        ignoreNULL = TRUE
     )
 
     # Detect lang button click
     lang_click <- shiny::reactive(cc.landing::get_lang_click("landing"))
     shiny::observeEvent(lang_click(),
-      {
-        # Update the website language (span + r$lang)
-        update_lang(r = r, lang_click())
-        # Set the cookie
-        cookie_set(
-          session = r$server_session(), name = "lang",
-          value = lang_click()
-        )
-      },
-      ignoreNULL = TRUE,
-      ignoreInit = TRUE
+                        {
+                          # Update the website language (span + r$lang)
+                          update_lang(r = r, lang_click())
+                          # Set the cookie
+                          cookie_set(
+                            session = r$server_session(), name = "lang",
+                            value = lang_click()
+                          )
+                        },
+                        ignoreNULL = TRUE,
+                        ignoreInit = TRUE
     )
 
-    # Bookmark
-    bookmark_server(id = "home", r = r)
   })
 }
 
