@@ -33,7 +33,8 @@ vars_build <- function(var_left, var_right = " ", df,
   #' status and to handle cases where data isn't available for the same year for
   #' var_left and var_right. Finally, the `df` argument should be removed and
   #' replaced with `region` and `scale` arguments. (Verify if we need both, or
-  #' maybe just `scale`.)
+  #' maybe just `scale`.) And vars_build should gives its output a
+  #' `time` attribute which it can pass to other functions.
 
   # If the `var` displays twice the same year
   var_left <- unique(var_left)
