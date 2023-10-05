@@ -351,6 +351,20 @@ update_vars <- function(id, r, var_left, var_right) {
     } else {
       r[[id]]$vars(vr)
     }
+
+    # # NDS: Draft on how `vars_build` can output both `vars` and `time`
+    # if (identical(vr$vars, r[[id]]$vars())) {
+    #   return()
+    # } else {
+    #   r[[id]]$vars(vr$vars)
+    # }
+    #
+    # if (identical(vr$time, r[[id]]$time())) {
+    #   return()
+    # } else {
+    #   r[[id]]$time(vr$time)
+    # }
+
   })
 }
 
