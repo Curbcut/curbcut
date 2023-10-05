@@ -171,6 +171,7 @@ picker_return_var <- function(input, time) {
   closest_year <- sapply(time, \(x) dates[which.min(abs(dates - x))],
     USE.NAMES = FALSE
   )
+  closest_year <- unique(closest_year)
 
   # Flag wrong year with an attribute
   # if (time != closest_year) attr(var, "wrong_year") <- TRUE

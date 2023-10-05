@@ -345,25 +345,17 @@ update_vars <- function(id, r, var_left, var_right) {
       df = r[[id]]$df()
     )
 
-    # If the new built variable is the same as before, don't do anything
-    if (identical(vr, r[[id]]$vars())) {
+    if (identical(vr$vars, r[[id]]$vars())) {
       return()
     } else {
-      r[[id]]$vars(vr)
+      r[[id]]$vars(vr$vars)
     }
 
-    # # NDS: Draft on how `vars_build` can output both `vars` and `time`
-    # if (identical(vr$vars, r[[id]]$vars())) {
-    #   return()
-    # } else {
-    #   r[[id]]$vars(vr$vars)
-    # }
-    #
-    # if (identical(vr$time, r[[id]]$time())) {
-    #   return()
-    # } else {
-    #   r[[id]]$time(vr$time)
-    # }
+    if (identical(vr$time, r[[id]]$time())) {
+      return()
+    } else {
+      r[[id]]$time(vr$time)
+    }
 
   })
 }
