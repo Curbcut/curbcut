@@ -27,6 +27,9 @@ vars_build <- function(var_left, var_right = " ", scale, time,
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
 
+  # Unique time
+  time <- unique(time)
+
   # Use picker_return_var() to add the `time` to var_left and var_right
   vl <- picker_return_var(var_left, time)
   vr <- picker_return_var(var_right, time)
@@ -40,27 +43,27 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   )[[1]]
   # var_left_m <- var_left_m$measurement[var_left_m$df == df]
   var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
-  class(vl) <- c(var_left_m, class(var_left))
+  class(vl$var) <- c(var_left_m, class(var_left))
 
   if (var_right != " ") {
     var_right_m <- var_get_info(var_right, "var_measurement",
       variables = variables
     )[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
-    class(vr) <- c(var_right_m, class(var_right))
+    class(vr$var) <- c(var_right_m, class(var_right))
   } else {
     var_right_m <- " "
   }
 
   # Add var left and right types as classes
-  class(vl) <- c(
+  class(vl$var) <- c(
     unlist(var_get_info(var_left, "type", variables = variables)),
-    class(vl)
+    class(vl$var)
   )
   if (var_right != " ") {
-    class(vr) <- c(
+    class(vr$var) <- c(
       unlist(var_get_info(var_right, "type", variables = variables)),
-      class(vr)
+      class(vr$var)
     )
   }
 
@@ -99,7 +102,7 @@ vars_build <- function(var_left, var_right = " ", scale, time,
       }
 
       # bivar, one time
-      if ("ind" %in% class(vl)) {
+      if ("ind" %in% class(vl$var)) {
         return(c("bivar_ind", "bivar"))
       }
       return("bivar")
@@ -107,14 +110,14 @@ vars_build <- function(var_left, var_right = " ", scale, time,
 
     # single variable, two time
     if (length(time) == 2) {
-      if ("ind" %in% class(vl)) {
+      if ("ind" %in% class(vl$var)) {
         return(c("delta_ind", "delta"))
       }
       return("delta")
     }
 
     # Single variable, 1 time
-    if ("ind" %in% class(vl)) {
+    if ("ind" %in% class(vl$var)) {
       return(c("q5_ind", "q5"))
     }
     return("q5")
@@ -130,10 +133,12 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   out_class <- c(z, current_measurement_var[meas])
 
   # Output vars and time
-  vars <- structure(list(var_left = var_left, var_right = var_right),
+  vars <- structure(list(var_left = vl[["var"]],
+                         var_right = if (all(vr != " ")) vr[["var"]] else " "),
                     class = out_class
   )
-  time <- list(var_left = vl$closest_year, var_right = vr$closest_year)
+  time <- list(var_left = vl[["closest_year"]])
+  if (all(vr != " ")) time$var_Right <- vr[["closest_year"]]
 
   # Return
   return(list(vars = vars, time = time))
