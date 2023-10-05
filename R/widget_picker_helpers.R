@@ -144,6 +144,9 @@ picker_multi_year_disable <- function(var_list, disable) {
 #' dates at which the variable is available, and then finds the closest year to
 #' the given \code{time} value.
 picker_return_var <- function(input, time) {
+
+  #' NDS: We should be returning `time` here instead of input
+
   # If `time` is NULL, return the input
   if (is.null(time)) {
     return(input)

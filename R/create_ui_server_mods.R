@@ -97,6 +97,9 @@ create_ui_server_mods <- function(modules, pos = 1) {
       })
 
       # Initial zoom string reactive value
+      #' NDS: This should be changed to r[[id]]$scale, and not combine scale
+      #' with region. So the function can drop the region argument (and maybe
+      #' should be renamed `get_scale`)
       rv_zoom_string <- shiny::reactiveVal(
         curbcut::zoom_get_string(
           zoom = map_zoom,
@@ -121,10 +124,14 @@ create_ui_server_mods <- function(modules, pos = 1) {
           region = r$region(),
           suffix_zoom_levels = suffix_zoom_levels
         ))
+      #' NDS: Why is this not r[[id]]$region?
       current_region <- shiny::reactive(zoom_levels()$region)
       current_zl <- shiny::reactive(zoom_levels()$zoom_levels)
 
       # Zoom string reactive
+      #' NDS: This reactive should become r[[id]]$scale, the function is
+      #' probably being renamed `get_scale`, and the region argument can be
+      #' dropped.
       shiny::observe({
         rv_zoom_string({
           curbcut::zoom_get_string(
@@ -142,12 +149,15 @@ create_ui_server_mods <- function(modules, pos = 1) {
       tile <- curbcut::zoom_server(
         id = id,
         r = r,
+        #' NDS: This reactive should be r[[id]]$scale instead
         zoom_string = rv_zoom_string,
         zoom_levels = zoom_levels,
         suffix_zoom_levels = suffix_zoom_levels
       )
 
       # Get df
+      #' NDS: Can this all be deleted? Anywhere df is needed, we'll directly
+      #' supply scale and/or region, and maybe tile. So probably just delete.
       shiny::observeEvent(
         {
           tile()
@@ -196,6 +206,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::sidebar_server(id = id, r = r)
 
       # Data
+      #' NDS: The arguments here change to:
+      #' vars = r[[id]]$vars(),
+      #' scale = r[[id]]$scale(),
+      #' region = r[[id]]$region()
       data <- shiny::reactive(curbcut::data_get(
         vars = r[[id]]$vars(),
         df = r[[id]]$df()
@@ -204,6 +218,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Data for tile coloring
       data_colours <- shiny::reactive(curbcut::data_get_colours(
         vars = r[[id]]$vars(),
+        # NDS: Does this change to r[[id]]$region() ?
         region = current_region(),
         zoom_levels = current_zl()
       ))
@@ -229,6 +244,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         vars = r[[id]]$vars,
         data = data,
+        #' NDS: This changes to r[[id]]$scale, probably, and we also need to
+        #' add a `time` variable to select the right column from data.
         df = r[[id]]$df
       )
 
@@ -237,9 +254,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         vars = r[[id]]$vars,
+        #' NDS: This changes to r[[id]]$ scale, probably
         df = r[[id]]$df,
         select_id = r[[id]]$select_id,
         poi = r[[id]]$poi,
+        # NDS: This changes to r[[id]]$region
         region = current_region,
         zoom_levels = current_zl
       )
@@ -252,6 +271,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         select_id = r[[id]]$select_id,
         coords = r[[id]]$coords,
         zoom = r[[id]]$zoom,
+        #' NDS: data_colours is going to need to be updated to work with `time`
         data_colours = data_colours,
         stories = stories
       )
@@ -261,8 +281,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         data = data,
+        # NDS: We need to add `time`
+        # NDS: This changes to r[[id]]$region
         region = current_region,
         vars = r[[id]]$vars,
+        # NDS: This changes to r[[id]]$ scale, probably
         df = r[[id]]$df,
         select_id = r[[id]]$select_id
       )
@@ -279,9 +302,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::panel_view_server(
         id = id,
         r = r,
+        # NDS: This changes to r[[id]]$region
         region = current_region,
         vars = r[[id]]$vars,
         data = data,
+        # NDS: Do we need to add `time` here as well?
         zoom_levels = current_zl
       )
     })

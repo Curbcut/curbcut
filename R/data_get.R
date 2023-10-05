@@ -52,6 +52,9 @@ data_get_sql <- function(var, df, select = "*") {
 #'
 #' @return A data.frame object with the selected data from the specified table.
 data_get_qs <- function(var, df, data_path = "data/") {
+
+  #' NDS: This needs to change to taking `scale` as an argument instead of `df`.
+
   # Switch _ to / , as _ is the separation between the region and the scale.
   df_path <- gsub("_", "/", df)
 
@@ -80,6 +83,12 @@ data_get_qs <- function(var, df, data_path = "data/") {
 #' values of the two variables being compared, and `var` is the percentage
 #' change between the two variables.
 data_get_delta <- function(var_two_years, df, data_path = "data/") {
+
+  #' NDS: This should change to take `vars`, `time`, and `scale` arguments. Or,
+  #' in fact, maybe it doesn't exist any more, since we're always importing all
+  #' years of data for a variable, and the data_get.delta method simply
+  #' performs the additional calculations directly inside the method.
+
   # Retrieve
   data <- lapply(var_two_years, \(x) data_get_qs(x, df, data_path = data_path)[1:2])
   names(data[[1]])[2] <- "var_1"
@@ -144,6 +153,12 @@ data_get <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @export
 data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"),
                         data_path = "data/", ...) {
+
+  #' NDS: This function should take a `scale` argument instead of `df`, and
+  #' needs to have q5 breaks calculated. We need to think about how `time` works
+  #' here; probably we just return the full dataset for all years, and let
+  #' downstream functions sort out the correct time?
+
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
 

@@ -50,6 +50,10 @@ r_init <- function(server_session,
   # Loop over all modules to add the rest of the needed reactives
   modules <- get_from_globalenv("modules")
 
+  #' NDS: We need to add `region` and `scale`, and there shouldn't be any
+  #' special casing. So every id gets every variable, and unused ones get NULL
+  #' values. This means modifying vars_build() to return NULL when it gets
+  #' missing inputs I guess.
 
   for (i in modules$id) {
     reg <- modules$regions[modules$id == i]

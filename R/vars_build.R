@@ -26,6 +26,15 @@ vars_build <- function(var_left, var_right = " ", df,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
+
+  #' NDS: The function needs to start accepting missing inputs for all arguments
+  #' and returning NULL when a valid set of variables can't be constructed. It
+  #' also needs to get a `time` argument which it uses to decide on `delta`
+  #' status and to handle cases where data isn't available for the same year for
+  #' var_left and var_right. Finally, the `df` argument should be removed and
+  #' replaced with `region` and `scale` arguments. (Verify if we need both, or
+  #' maybe just `scale`.)
+
   # If the `var` displays twice the same year
   var_left <- unique(var_left)
   var_right <- unique(var_right)

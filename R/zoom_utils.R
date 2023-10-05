@@ -32,6 +32,10 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #' separated by an underscore
 #' @export
 zoom_get_string <- function(zoom, zoom_levels, region) {
+
+  #' NDS: This should change to only returning scale, so it can drop the
+  #' region argument. Maybe the function should be renamed `get_scale`?
+
   zoom_levels <- sort(zoom_levels)
   out <- names(zoom_levels)[zoom >= zoom_levels]
   out <- out[length(out)]
