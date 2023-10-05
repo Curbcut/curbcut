@@ -22,7 +22,7 @@
 #' a class attached.
 #'
 #' @export
-vars_build <- function(var_left, var_right = " ", df,
+vars_build <- function(var_left, var_right = " ", region, scale, time,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
@@ -36,18 +36,20 @@ vars_build <- function(var_left, var_right = " ", df,
   #' maybe just `scale`.) And vars_build should gives its output a
   #' `time` attribute which it can pass to other functions.
 
-  # If the `var` displays twice the same year
-  var_left <- unique(var_left)
-  var_right <- unique(var_right)
+  # Use picker_return_var() to add the `time` to var_left and var_right!
+  vl <- picker_return_var(var_left, time)
+  vr <- picker_return_var(var_right, time)
 
   # Switch scales to DA if necessary
-  df <- treat_to_DA(scales_as_DA, df)
+  scale <- treat_to_DA(scales_as_DA, scale)
 
   # Add var left and right measurement variable as classes
-  var_left_m <- var_get_info(var_left[[1]], "var_measurement",
+  var_left_m <- var_get_info(var_left, "var_measurement",
     variables = variables
   )[[1]]
-  var_left_m <- var_left_m$measurement[var_left_m$df == df]
+  # var_left_m <- var_left_m$measurement[var_left_m$df == df]
+  var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
+
   class(var_left) <- c(var_left_m, class(var_left))
   if (var_right[[1]] != " ") {
     var_right_m <- var_get_info(var_right[[1]], "var_measurement",
@@ -74,13 +76,13 @@ vars_build <- function(var_left, var_right = " ", df,
   # Grab the class
   z <- (\(x) {
     # General cases
-    if (is_scale_df("raster", df)) {
+    if (is_scale_in("raster", df)) {
       return("q100")
     }
-    if (is_scale_df(c("heatmap", "point"), df)) {
+    if (is_scale_in(c("heatmap", "point"), df)) {
       return("point")
     }
-    if (is_scale_df("qual", var_left[1])) {
+    if (is_scale_in("qual", var_left[1])) {
       return("qual")
     }
 
@@ -88,7 +90,7 @@ vars_build <- function(var_left, var_right = " ", df,
     if (check_choropleth) {
       choropleths <- get_from_globalenv("all_choropleths")
 
-      if (!is_scale_df(choropleths, df)) {
+      if (!is_scale_in(choropleths, df)) {
         return(df)
       }
     }

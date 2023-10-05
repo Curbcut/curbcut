@@ -99,10 +99,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     # })
 
     # Append the `time`
-    var <- shiny::reactive(picker_return_var(
-      input = input[[picker_id]],
-      time = time()
-    ))
+    var <- shiny::reactive(input[[picker_id]])
 
     # Return the picked variable as a reactive
     return(var)

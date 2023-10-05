@@ -43,7 +43,7 @@ explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NU
   colours_dfs <- colours_get()
 
   # In the case where the selected ID must be updated
-  if (curbcut::is_scale_df(scales_as_DA, df) & !is.na(select_id)) {
+  if (curbcut::is_scale_in(scales_as_DA, df) & !is.na(select_id)) {
     select_id <- grab_DA_ID_from_bslike(df = df, select_id = select_id)
   }
 

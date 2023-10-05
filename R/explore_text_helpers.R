@@ -40,7 +40,7 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
   # Grab the right scale
   scales_dictionary <- get_from_globalenv("scales_dictionary")
   scale <- scales_dictionary[
-    is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE),
+    is_scale_in(scales_dictionary$scale, df = df, vectorized = TRUE),
   ]
 
   # Normal retrieval when the `df` is not part of the scales to treat as
@@ -87,7 +87,7 @@ explore_context <- function(region, select_id, df, switch_DA, lang = NULL) {
     treated_df <- sprintf("%s_DA", region)
 
     # Switch the scale
-    scale <- scales_dictionary[is_scale_df(scales_dictionary$scale,
+    scale <- scales_dictionary[is_scale_in(scales_dictionary$scale,
       treated_df,
       vectorized = TRUE
     ), ]

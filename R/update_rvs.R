@@ -339,7 +339,7 @@ update_vars <- function(id, r, var_left, var_right) {
   #' to take region and scale instead of df.
 
   shiny::observe({
-    vr <- curbcut::vars_build(
+    vr <- vars_build(
       var_left = var_left(),
       var_right = var_right(),
       df = r[[id]]$df()

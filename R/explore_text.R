@@ -38,7 +38,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
                             lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, df)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
@@ -763,7 +763,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, df)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
@@ -903,7 +903,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
   # Scales
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_vec <- is_scale_in(scales_dictionary$scale, df, vectorized = TRUE)
   scale_plur <- cc_t(scales_dictionary$plur[scale_vec], lang = lang)
 
   # Correlation
@@ -1156,7 +1156,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
                                lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, df)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
@@ -1659,7 +1659,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
                                      lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, df)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
@@ -1788,7 +1788,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
 
   # Grab the scale definition
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_vec <- is_scale_in(scales_dictionary$scale, df, vectorized = TRUE)
   scale_plur <- cc_t(scales_dictionary$plur[scale_vec], lang = lang)
 
   # Correlation

@@ -64,7 +64,7 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   # Switch df to scale as it can cause a bug where the region is the same as the
   # scale. centraide_CT catches both the `centraide` and the `CT` scale.
   scale <- gsub(".*_", "", df)
-  which_zl <- which(is_scale_df(names(zoom_levels), scale, vectorized = TRUE))
+  which_zl <- which(is_scale_in(names(zoom_levels), scale, vectorized = TRUE))
   names(pretty_dat)[names(pretty_dat) == "name_2"] <-
     if (which_zl == 1) {
       "Scale"

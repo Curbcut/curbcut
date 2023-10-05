@@ -598,10 +598,10 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
     )
 
   map_zoom <- (\(x) {
-    if (is_scale_df("CT", df)) {
+    if (is_scale_in("CT", df)) {
       return(11)
     }
-    if (is_scale_df("DA", df)) {
+    if (is_scale_in("DA", df)) {
       return(13)
     }
     # For first level
@@ -610,7 +610,7 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
 
   # Add title
   scale <- scales_dictionary[
-    is_scale_df(scales_dictionary$scale, df = df, vectorized = TRUE),
+    is_scale_in(scales_dictionary$scale, df = df, vectorized = TRUE),
   ]
   # Get the place heading and glue it
   dat <- grab_row_from_bslike(

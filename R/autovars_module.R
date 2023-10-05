@@ -467,24 +467,8 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       out_var(z[[1]])
     })
 
-
-    # If there is a `time` value, attach it to the variable
-    #' NDS: Here we should NOT append the time to the variable, but instead
-    #' use a modified version of picker_return_var() to change the time()
-    #' output to match the closest year. So this becomes
-    #' final_time <- shiny::reactive({
-
-    # If there is a `time` value, attach it to the variable
-    final_var <- shiny::reactive({
-      if (is.null(time())) {
-        # NDS: return(time())
-        return(out_var())
-      }
-      picker_return_var(input = out_var(), time = time())
-    })
-
     # NDS: So this can just be var = out_var
-    return(shiny::reactive(list(var = final_var(), time = time())))
+    return(shiny::reactive(list(var = out_var(), time = time())))
   })
 }
 

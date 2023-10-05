@@ -139,25 +139,19 @@ ntile <- function(x, n) {
 
 #' Test if x scale is under study
 #'
-#' @param scales <`character vector`> All scales to test if it is part of `df`.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scales <`character vector`> All scales to test if `scale` is in them..
+#' @param scale <`character`> Scale at which the user is on.
 #' @param vectorized <`logical`> Should all elements of `scales` be evaluated
 #' and return a logical vector the same length of `scales`?
 #'
 #' @return Returns TRUE or FALSE
 #' @export
-#'
-#' @examples
-#' is_scale_df(scales = c("CSD", "CT", "DA"), df = "CMA_DA") # TRUE
-#' is_scale_df(scales = c("CSD", "CT"), df = "CMA_DA") # FALSE
-is_scale_df <- function(scales, df, vectorized = FALSE) {
+is_scale_in <- function(scales, scale, vectorized = FALSE) {
   if (!vectorized) {
-    scls <- paste0(scales, "$", collapse = "|")
-    return(grepl(scls, df))
+    return(scale %in% scales)
   }
 
-  sapply(paste0(scales, "$"), grepl, df, USE.NAMES = FALSE)
+  scales == scale
 }
 
 #' Extract substrings from a character vector that matches a regular
@@ -254,20 +248,20 @@ colours_get <- function() {
 #'
 #' @param scales_as_DA <`character vector`> dfs to check if they should be
 #' treated like a DA scale
-#' @param df <`character`> The `df` to check if it is a DA scale
+#' @param scale <`character`> The `scale` to check if it is a DA scale
 #'
 #' @return If the current `df` is part of the scales that should be treated
 #' as a DA, thye function appends "_DA" to the `df` string instead of the
 #' current scale, and returns the new name. If not, the original `df` is returned.
 #' @export
-treat_to_DA <- function(scales_as_DA, df) {
+treat_to_DA <- function(scales_as_DA, scale) {
   if (length(scales_as_DA) == 0) {
-    return(df)
+    return(scale)
   }
-  if (is_scale_df(scales_as_DA, df)) {
-    return(paste0(s_extract(".*(?=_)", df), "_DA"))
+  if (is_scale_in(scales_as_DA, scale)) {
+    return("DA")
   }
-  return(df)
+  return(scale)
 }
 
 #' Get object from global environment
@@ -348,7 +342,7 @@ tilejson <- function(mapbox_username, tileset_prefix, tile, return_error = FALSE
   out <- tryCatch(
     suppressWarnings(rdeck::tile_json(tile_link)),
     error = function(e) {
-      if (curbcut::is_scale_df("building", tile)) {
+      if (curbcut::is_scale_in("building", tile)) {
         regions_dictionary <- get_from_globalenv("regions_dictionary")
         base_building_tile <-
           sprintf(

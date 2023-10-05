@@ -1,10 +1,10 @@
-test_that("is_scale_df works", {
+test_that("is_scale_in works", {
   expect_equal(
-    is_scale_df(c("CSD", "CT", "DA"), "CMA_DA"),
+    is_scale_in(c("CSD", "CT", "DA"), "CMA_DA"),
     TRUE
   )
   expect_equal(
-    is_scale_df(c("CSD", "CT", "DA"), "grid_grid50"),
+    is_scale_in(c("CSD", "CT", "DA"), "grid_grid50"),
     FALSE
   )
 })

@@ -172,9 +172,6 @@ picker_return_var <- function(input, time) {
     USE.NAMES = FALSE
   )
 
-  # Attach it to the variable code
-  var <- paste(input, closest_year, sep = "_")
-
   # Flag wrong year with an attribute
   # if (time != closest_year) attr(var, "wrong_year") <- TRUE
   # TKTK Isn't functional in a sapply. The output vector of the sapply needs to
@@ -182,5 +179,5 @@ picker_return_var <- function(input, time) {
   # get a list output.
 
   # Return the var
-  return(var)
+  return(list(var = input, closest_year = closest_year))
 }

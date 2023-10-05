@@ -11,7 +11,7 @@ link_get_zoom <- function(zoom_levels, df) {
   if (is.null(df)) {
     return(NULL)
   }
-  zoom <- zoom_levels[is_scale_df(names(zoom_levels), df, vectorized = TRUE)]
+  zoom <- zoom_levels[is_scale_in(names(zoom_levels), df, vectorized = TRUE)]
   zoom <- unname(zoom)
 
   if (zoom == 0) {
