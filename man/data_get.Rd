@@ -2,11 +2,12 @@
 % Please edit documentation in R/data_get.R
 \name{data_get}
 \alias{data_get}
-\title{Get data from the SQLite database}
+\title{Get data}
 \usage{
 data_get(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = "data/",
   ...
@@ -17,27 +18,31 @@ data_get(
 \code{\link{vars_build}} function. The class of the vars object is
 used to determine how to grab de data and output it.}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> The scale of the data to be retrieved, e.g. \code{CSD}.
+The output of \code{\link{update_scale}}.}
+
+\item{region}{<\verb{character vector}> A vector of IDs with which to filter the
+retrieved data for a specific region, probably retrieved from
+\code{regions_dictionary$scales}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
-that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their colour will be the one of their DA.}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
+default, their colour will be the one of their DA.}
 
-\item{data_path}{<\code{character}> A string representing the path to the directory
-containing the QS files. Default is "data/".}
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
 }
 \value{
-A dataframe containing the data according to the class of \code{vars}
-along with a \code{group} column for map colouring.
+A dataframe containing the data according to the class of \code{vars},
+with an ID column, one column per year of data, and one \code{group} column per
+year of data.
 }
 \description{
-This function retrieves data from an SQLite database using the appropriate
-method based on the class of the input vars object. vars should be a named
-list with a class, built using the \code{\link{vars_build}} function.
-Depending on the class of vars, different methods will be used to retrieve
-and process the data.
+This function retrieves data from QS files on disk or an SQLite database
+using the appropriate method based on the class of the input vars object.
+vars should be a named list with a class, built using the
+\code{\link{vars_build}} function. Depending on the class of vars, different
+methods will be used to retrieve and process the data.
 }

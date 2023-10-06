@@ -37,29 +37,24 @@ data_get_sql <- function(var, df, select = "*") {
   ))
 }
 
-#' Retrieve data from a QS file based on variable and df
+#' Retrieve data from a QS file based on variable and scale
 #'
-#' This function takes in a variable code and the df to retrieve data from a QS
-#' file. The function constructs the file path based on the input, then reads
+#' This function takes in a variable code and the scale to retrieve data from a
+#' QS file. The function constructs the file path based on the input, then reads
 #' the data using the qs package's \code{\link[qs]{qread}} function.
 #'
-#' @param var <`character`> A string specifying the name of the table to retrieve
-#' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
-#' @param df <`character`> A string specifying the name of the database to retrieve
-#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
+#' @param var <`character`> A string specifying the name of the table to
+#' retrieve data from. Single variable = single table. e.g. `housing_tenant`
+#' @param scale <`character`> A string specifying the scale at which to retrieve
+#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return A data.frame object with the selected data from the specified table.
-data_get_qs <- function(var, df, data_path = "data/") {
-
-  #' NDS: This needs to change to taking `scale` as an argument instead of `df`.
-
-  # Switch _ to / , as _ is the separation between the region and the scale.
-  df_path <- gsub("_", "/", df)
+data_get_qs <- function(var, scale, data_path = "data/") {
 
   # Construct the file path
-  path <- sprintf("%s%s/%s.qs", data_path, df_path, var)
+  path <- sprintf("%s%s/%s.qs", data_path, scale, var)
 
   # Read the data
   qs::qread(path)
@@ -104,73 +99,96 @@ data_get_delta <- function(var_two_years, df, data_path = "data/") {
   return(data)
 }
 
-#' Get data from the SQLite database
+#' Get data
 #'
-#' This function retrieves data from an SQLite database using the appropriate
-#' method based on the class of the input vars object. vars should be a named
-#' list with a class, built using the \code{\link{vars_build}} function.
-#' Depending on the class of vars, different methods will be used to retrieve
-#' and process the data.
+#' This function retrieves data from QS files on disk or an SQLite database
+#' using the appropriate method based on the class of the input vars object.
+#' vars should be a named list with a class, built using the
+#' \code{\link{vars_build}} function. Depending on the class of vars, different
+#' methods will be used to retrieve and process the data.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine how to grab de data and output it.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> The scale of the data to be retrieved, e.g. `CSD`.
+#' The output of \code{\link{update_scale}}.
+#' @param region <`character vector`> A vector of IDs with which to filter the
+#' retrieved data for a specific region, probably retrieved from
+#' `regions_dictionary$scales`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#'
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
+#' default, their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return A dataframe containing the data according to the class of `vars`
-#' along with a `group` column for map colouring.
+#' @return A dataframe containing the data according to the class of `vars`,
+#' with an ID column, one column per year of data, and one `group` column per
+#' year of data.
 #' @export
-data_get <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get <- function(vars, scale, region,
+                     scales_as_DA = c("building", "street"),
                      data_path = "data/", ...) {
   UseMethod("data_get", vars)
 }
 
-#' Get data from the SQLite database for a `q5` class
+#' Get data for a `q5` class
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{vars_build}} function. The class of the vars object is
+#' used to determine how to grab de data and output it.
+#' @param scale <`character`> The scale of the data to be retrieved, e.g. `CSD`.
+#' The output of \code{\link{update_scale}}.
+#' @param region <`character vector`> A vector of IDs with which to filter the
+#' retrieved data for a specific region, probably retrieved from
+#' `regions_dictionary$scales`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
+#' default, their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return A dataframe containing the data fresh out of the sqlite db, with an
-#' added `group` column for map colouring.
+#' @return A dataframe containing the data, with an ID column, one column per
+#' year of data, and one `group` column per year of data.
 #' @export
-data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get.q5 <- function(vars, scale, region,
+                        scales_as_DA = c("building", "street"),
                         data_path = "data/", ...) {
 
-  #' NDS: This function should take a `scale` argument instead of `df`, and
-  #' needs to have q5 breaks calculated. We need to think about how `time` works
-  #' here; probably we just return the full dataset for all years, and let
-  #' downstream functions sort out the correct time?
-
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df, data_path = data_path)
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  # Get data
+  data <- data_get_qs(vars$var_left, scale, data_path = data_path)
 
-  # Add the `group` for the map colouring
-  data$group <- data$var_left_q5
+  # Filter to region
+  data_reg <- data[data$ID %in% region,]
 
-  # Return
+  # Calculate breaks
+  data_val <- data_reg[-1]
+  data_vec <- data_reg[[attr(data_val, "breaks_var")]]
+  data_vec <- data_vec[!is.na(data_vec)]
+
+  if (attr(data_reg, "quintiles")) {
+    breaks <- find_breaks_quintiles(var_vec, min(var_vec), max(var_vec), "q5")
+  } else {
+    breaks <- find_breaks_q5(min(var_vec), max(var_vec))
+  }
+
+  # Assemble output
+  out <- as.data.frame(lapply(var_val, .bincode, breaks, include.lowest = TRUE))
+  out <- setNames(out, paste0(names(var_val), "_q5"))
+  data <- cbind(var_reg$ID, out)
+  data <- tibble::as_tibble(data)
+  attr(data, "breaks") <- breaks
+
+  # Rename fields
+  names(data) <- gsub(vars$var_left, "var_left", names(data))
+
+  # Return output
   return(data)
+
 }
 
 #' Get data from the SQLite database for a `bivar` class

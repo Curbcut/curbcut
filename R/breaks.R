@@ -54,3 +54,97 @@ breaks_delta <- function(vars, df, character = FALSE, data = NULL) {
   if (!character) return(as.numeric(out))
   out
 }
+
+#' Find quintile breaks
+#'
+#' @param dist <`numeric`> Distribution (numerics) with no NAs.
+#' @param min_val <`numeric`>
+#' @param max_val <`numeric`>
+#'
+#' @return Returns a numeric vector with quintile breaks.
+#' @export
+find_breaks_quintiles <- function(dist, min_val, max_val, q3_q5 = "q5") {
+
+  # Take out min and max values (outliers)
+  if (length(unique(no_outliers)) >= 10) {
+    no_outliers <- unique(dist[dist > min_val & dist < max_val])
+  } else no_outliers <- unique(dist)
+
+  # Calculate quintiles
+  by <- if (q3_q5 == "q5") {
+    0.2
+  } else if (q3_q5 == "q3") {
+    0.33
+  } else stop("`q3_q5` argument needs to be q3 or q5")
+
+  q <- stats::quantile(no_outliers, probs = seq(0, 1, by = by), names = FALSE)
+
+  # Create empty breaks vector
+  breaks <- numeric(length(q))
+
+  # Initialize first break and previous_q
+  previous_q <- 0
+
+  # Loop through all the quantiles
+  for (i in seq_along(q)) {
+
+    # Check if difference between current quantile and previous one is zero
+    if (q[i] - previous_q == 0) {
+      round_base <- 1
+    } else {
+      # Determine the rounding base for each quantile difference
+      round_base <- 10 ^ floor(log10(abs(q[i] - previous_q)))
+    }
+
+    # Create a "pretty" break ensuring it's different from the previous one
+    new_break <- round(q[i] / round_base) * round_base
+
+    # If it's the first break and it's equal to zero, do nothing.
+    # If the new break is the same as the previous one, decrease rounding base
+    # until they are different
+    if (!(i == 1 && new_break == 0)) {
+      while (new_break %in% breaks) {
+        round_base <- round_base / 10
+        new_break <- round(q[i] / round_base) * round_base
+      }
+    }
+
+    # Assign the new break to the breaks vector
+    breaks[i] <- new_break
+    previous_q <- new_break
+  }
+
+  # Check if the first break is much closer to 0 than the second break
+  if (breaks[2] / breaks[1] > 10) {
+    breaks[1] <- 0
+  }
+
+  # If the minimum value was already 0
+  if (min_val == 0) {
+    breaks[1] <- 0
+  }
+
+  # Make sure the order is lowest to highest
+  breaks <- breaks[order(breaks)]
+
+  return(breaks)
+
+}
+
+#' Find pretty q5 breaks
+#'
+#' @param min_val <`numeric`>
+#' @param max_val <`numeric`>
+#'
+#' @return Returns a numeric vector with pretty q5 break values.
+#' @export
+find_breaks_q5 <- function(min_val, max_val) {
+  breaks <- unlist(lapply(
+    -4:7, \(x) (10 ^ x) * c(0.75, 1, 1.5, 2, 2.5, 3, 4, 5, 6)))
+  range <- max_val - min_val
+  break_val <- range / 5
+  break_val <- breaks[as.numeric(cut(break_val, breaks)) + 1]
+  break_digits <- floor(log10(break_val))
+  new_min <- floor(min_val / (10 ^ break_digits)) * 10 ^ break_digits
+  return(c(new_min + 0:5 * break_val))
+}
