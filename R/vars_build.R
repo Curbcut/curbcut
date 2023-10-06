@@ -22,23 +22,17 @@
 #' a class attached.
 #'
 #' @export
-vars_build <- function(var_left, var_right = " ", region, scale, time,
+vars_build <- function(var_left, var_right = " ", scale, time,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
 
-  #' NDS: The function needs to start accepting missing inputs for all arguments
-  #' and returning NULL when a valid set of variables can't be constructed. It
-  #' also needs to get a `time` argument which it uses to decide on `delta`
-  #' status and to handle cases where data isn't available for the same year for
-  #' var_left and var_right. Finally, the `df` argument should be removed and
-  #' replaced with `region` and `scale` arguments. (Verify if we need both, or
-  #' maybe just `scale`.) And vars_build should gives its output a
-  #' `time` attribute which it can pass to other functions.
+  # Unique time
+  time <- unique(time)
 
-  # Use picker_return_var() to add the `time` to var_left and var_right!
-  vl <- picker_return_var(var_left, time)
-  vr <- picker_return_var(var_right, time)
+  # Use var_closest_year() to add the `time` to var_left and var_right
+  vl <- var_closest_year(var_left, time)
+  vr <- var_closest_year(var_right, time)
 
   # Switch scales to DA if necessary
   scale <- treat_to_DA(scales_as_DA, scale)
@@ -49,40 +43,40 @@ vars_build <- function(var_left, var_right = " ", region, scale, time,
   )[[1]]
   # var_left_m <- var_left_m$measurement[var_left_m$df == df]
   var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
+  class(vl$var) <- c(var_left_m, class(var_left))
 
-  class(var_left) <- c(var_left_m, class(var_left))
-  if (var_right[[1]] != " ") {
-    var_right_m <- var_get_info(var_right[[1]], "var_measurement",
+  if (var_right != " ") {
+    var_right_m <- var_get_info(var_right, "var_measurement",
       variables = variables
     )[[1]]
-    var_right_m <- var_right_m$measurement[var_right_m$df == df]
-    class(var_right) <- c(var_right_m, class(var_right))
+    var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
+    class(vr$var) <- c(var_right_m, class(var_right))
   } else {
     var_right_m <- " "
   }
 
   # Add var left and right types as classes
-  class(var_left) <- c(
-    unlist(var_get_info(var_left[[1]], "type", variables = variables)),
-    class(var_left)
+  class(vl$var) <- c(
+    unlist(var_get_info(var_left, "type", variables = variables)),
+    class(vl$var)
   )
-  if (var_right[[1]] != " ") {
-    class(var_right) <- c(
-      unlist(var_get_info(var_right[[1]], "type", variables = variables)),
-      class(var_right)
+  if (var_right != " ") {
+    class(vr$var) <- c(
+      unlist(var_get_info(var_right, "type", variables = variables)),
+      class(vr$var)
     )
   }
 
   # Grab the class
   z <- (\(x) {
     # General cases
-    if (is_scale_in("raster", df)) {
+    if (is_scale_in("raster", scale)) {
       return("q100")
     }
-    if (is_scale_in(c("heatmap", "point"), df)) {
+    if (is_scale_in(c("heatmap", "point"), scale)) {
       return("point")
     }
-    if (is_scale_in("qual", var_left[1])) {
+    if (is_scale_in("qual", var_left)) {
       return("qual")
     }
 
@@ -90,48 +84,44 @@ vars_build <- function(var_left, var_right = " ", region, scale, time,
     if (check_choropleth) {
       choropleths <- get_from_globalenv("all_choropleths")
 
-      if (!is_scale_in(choropleths, df)) {
-        return(df)
+      if (!is_scale_in(choropleths, scale)) {
+        return(scale)
       }
     }
 
-    # Impossible cases
-    if (length(var_left) == 2 && var_left[1] == var_left[2]) {
-      return("NA")
-    }
-
-    # Normal choropleth possible classes
-    if (length(var_right) == 2 && var_right[1] == var_right[2]) {
-      return("bivar_ldelta_rq3")
-    }
-    if (length(var_left) == 2 && length(unique(var_right)) == 1 &&
-      var_right[1] != " ") {
-      return("bivar_ldelta_rq3")
-    }
-    if (length(var_left) == 1 && var_right[1] == " ") {
-      if ("ind" %in% class(var_left)) {
-        return(c("q5_ind", "q5"))
+    # bivariate
+    if (all(vr != " ")) {
+      # 2 time
+      if (length(time) == 2) {
+        # single possible right value
+        if (length(vr$closest_year) == 1) {
+          return("bivar_ldelta_rq3")
+        }
+        # propertly delta_bivar (bivar, 2 time, 2 possible valid time)
+        return("delta_bivar")
       }
-      return("q5")
-    }
-    if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ") {
-      if ("ind" %in% class(var_left)) {
+
+      # bivar, one time
+      if ("ind" %in% class(vl$var)) {
         return(c("bivar_ind", "bivar"))
       }
       return("bivar")
     }
-    if (length(var_left) == 2 && length(var_right) == 2) {
-      return("delta_bivar")
-    }
-    if (length(var_left) == 2 && var_right[1] == " ") {
-      if ("ind" %in% class(var_left)) {
+
+    # single variable, two time
+    if (length(time) == 2) {
+      if ("ind" %in% class(vl$var)) {
         return(c("delta_ind", "delta"))
       }
       return("delta")
     }
 
-    # Return `df` if nothing found
-    return(df)
+    # Single variable, 1 time
+    if ("ind" %in% class(vl$var)) {
+      return(c("q5_ind", "q5"))
+    }
+    return("q5")
+
   })()
 
   # Add the measurement variable as a class to the main output, in order.
@@ -142,8 +132,14 @@ vars_build <- function(var_left, var_right = " ", region, scale, time,
 
   out_class <- c(z, current_measurement_var[meas])
 
+  # Output vars and time
+  vars <- structure(list(var_left = vl[["var"]],
+                         var_right = if (all(vr != " ")) vr[["var"]] else " "),
+                    class = out_class
+  )
+  time <- list(var_left = vl[["closest_year"]])
+  if (all(vr != " ")) time$var_Right <- vr[["closest_year"]]
+
   # Return
-  return(structure(list(var_left = var_left, var_right = var_right),
-    class = out_class
-  ))
+  return(list(vars = vars, time = time))
 }

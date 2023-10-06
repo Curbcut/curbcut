@@ -4,13 +4,13 @@
 \alias{treat_to_DA}
 \title{Treat data frames as a DA (DA) scale}
 \usage{
-treat_to_DA(scales_as_DA, df)
+treat_to_DA(scales_as_DA, scale)
 }
 \arguments{
 \item{scales_as_DA}{<\verb{character vector}> dfs to check if they should be
 treated like a DA scale}
 
-\item{df}{<\code{character}> The \code{df} to check if it is a DA scale}
+\item{scale}{<\code{character}> The \code{scale} to check if it is a DA scale}
 }
 \value{
 If the current \code{df} is part of the scales that should be treated

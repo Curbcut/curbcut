@@ -79,6 +79,12 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
 
     # Return the tile() reactive, indicating if the map should show an
     # auto-scale or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
+
+    # NDS: This won't use map_zoom_levels. `modules` will hold paths of
+    # possible scales combinations (`borough_CT_DA_building`). On auto-zoom,
+    # if the top-scale of the user is borough, this is what will be the output
+    # of `tile` as it must inform the map tileset to show. If the user is
+    # not on autozoom, then tile will be the scale the user selected on the slider.
     tile <- shiny::reactive({
       # On auto-scale, return the auto_zoom
       if (zoom_auto() && !no_autozoom()) {

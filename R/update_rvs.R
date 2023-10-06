@@ -294,20 +294,15 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #' looking at. The combination of the region and the scale, e.g. `CMA_CSD`
 #'
 #' @export
-update_df <- function(tile, zoom_string) {
+update_scale <- function(tile, zoom_string) {
 
-  #' NDS: Probably we just delete this whole function, since we can directly
-  #' reference scale and/or region when needed. Alternatively, this probably
-  #' doesn't need changing, since `auto_zoom` will remain as
-  #' is, and `tile` will start just being the scale, e.g. "CSD" instead of
-  #' "CMA_CSD". But then the function should be renamed `update_scale`
-
-  # If on auto-scale, simply return the zoom_string
-  if (grepl("auto_zoom", tile)) {
+  # If on auto-scale (when tile contains an underscore declaring it's a combination
+  # of scales), simply return the zoom_string
+  if (grepl("_", tile)) {
     return(zoom_string)
   }
 
-  # Outside of auto_zoom, return the tile
+  # Outside of autozoom, return the tile
   return(tile)
 }
 
@@ -329,41 +324,33 @@ update_df <- function(tile, zoom_string) {
 #' #' "housing_tenant_2016").
 #' @param var_right <`reactive character`> A reactive character string of the
 #' selected compared variable, e.g. housing_value_2016.
+#' @param widget_time <`reactive vector`> The time selected by the user on the
+#' time widget. Length 1 (single year) or 2 (compare years).
 #'
 #' @return An observer that updates the vars reactive value `r[[id]]$vars`
 #' whenever var_left, var_right and or df changes.
 #' @export
-update_vars <- function(id, r, var_left, var_right) {
-
-  #' NDS: This function needs to be updated to take time() as an input, and
-  #' to take region and scale instead of df.
+update_vars <- function(id, r, var_left, var_right, widget_time) {
 
   shiny::observe({
     vr <- vars_build(
       var_left = var_left(),
       var_right = var_right(),
-      df = r[[id]]$df()
+      scale = r[[id]]$scale(),
+      time = widget_time()
     )
 
-    # If the new built variable is the same as before, don't do anything
-    if (identical(vr, r[[id]]$vars())) {
+    if (identical(vr$vars, r[[id]]$vars())) {
       return()
     } else {
-      r[[id]]$vars(vr)
+      r[[id]]$vars(vr$vars)
     }
 
-    # # NDS: Draft on how `vars_build` can output both `vars` and `time`
-    # if (identical(vr$vars, r[[id]]$vars())) {
-    #   return()
-    # } else {
-    #   r[[id]]$vars(vr$vars)
-    # }
-    #
-    # if (identical(vr$time, r[[id]]$time())) {
-    #   return()
-    # } else {
-    #   r[[id]]$time(vr$time)
-    # }
+    if (identical(vr$time, r[[id]]$time())) {
+      return()
+    } else {
+      r[[id]]$time(vr$time)
+    }
 
   })
 }

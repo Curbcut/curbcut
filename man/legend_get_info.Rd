@@ -4,7 +4,13 @@
 \alias{legend_get_info}
 \title{Get information (labels, breaks, themes, ...) for legend creation}
 \usage{
-legend_get_info(vars, font_family = "acidgrotesk-book", scales_as_DA, df, ...)
+legend_get_info(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA,
+  scale,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
@@ -14,13 +20,12 @@ output of \code{\link{vars_build}}.}
 the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> Scale under study. The output of
+\code{\link{update_scale}}.}
 
 \item{...}{Additional arguments to be passed to \code{\link{legend_labels}}
 and \code{\link{legend_breaks}}, such as \code{lang}, \code{df}, ...}

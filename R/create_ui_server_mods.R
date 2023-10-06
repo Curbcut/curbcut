@@ -97,14 +97,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
       })
 
       # Initial zoom string reactive value
-      #' NDS: This should be changed to r[[id]]$scale, and not combine scale
-      #' with region. So the function can drop the region argument (and maybe
-      #' should be renamed `get_scale`)
       rv_zoom_string <- shiny::reactiveVal(
         curbcut::zoom_get_string(
           zoom = map_zoom,
-          zoom_levels = mzp,
-          region = default_region
+          zoom_levels = mzp
         )
       )
 
@@ -124,20 +120,19 @@ create_ui_server_mods <- function(modules, pos = 1) {
           region = r$region(),
           suffix_zoom_levels = suffix_zoom_levels
         ))
-      #' NDS: Why is this not r[[id]]$region?
-      current_region <- shiny::reactive(zoom_levels()$region)
+
+      shiny::observe({
+        r[[id]]$region(zoom_levels()$region)
+      })
+
       current_zl <- shiny::reactive(zoom_levels()$zoom_levels)
 
       # Zoom string reactive
-      #' NDS: This reactive should become r[[id]]$scale, the function is
-      #' probably being renamed `get_scale`, and the region argument can be
-      #' dropped.
       shiny::observe({
         rv_zoom_string({
           curbcut::zoom_get_string(
             zoom = r[[id]]$zoom(),
-            zoom_levels = current_zl(),
-            region = current_region()
+            zoom_levels = current_zl()
           )
         })
       })
@@ -149,22 +144,19 @@ create_ui_server_mods <- function(modules, pos = 1) {
       tile <- curbcut::zoom_server(
         id = id,
         r = r,
-        #' NDS: This reactive should be r[[id]]$scale instead
         zoom_string = rv_zoom_string,
         zoom_levels = zoom_levels,
         suffix_zoom_levels = suffix_zoom_levels
       )
 
       # Get df
-      #' NDS: Can this all be deleted? Anywhere df is needed, we'll directly
-      #' supply scale and/or region, and maybe tile. So probably just delete.
       shiny::observeEvent(
         {
           tile()
           rv_zoom_string()
         },
         {
-          r[[id]]$df(curbcut::update_df(
+          r[[id]]$scale(curbcut::update_scale(
             tile = tile(),
             zoom_string = rv_zoom_string()
           ))
@@ -181,7 +173,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         )
 
       var_left <- shiny::reactive(autovars()$var)
-      time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
+      widget_time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
 
       # Right variable / compare panel
       var_right <- curbcut::compare_server(
@@ -193,13 +185,13 @@ create_ui_server_mods <- function(modules, pos = 1) {
         )),
         # If there are no time in the page, use the latest census for date of
         # comparisons
-        time = if (time() != "") time else shiny::reactive(2021)
+        time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021)
       )
 
       # Update the `r[[id]]$vars` reactive
       curbcut::update_vars(
         id = id, r = r, var_left = var_left,
-        var_right = var_right
+        var_right = var_right, widget_time = widget_time
       )
 
       # Sidebar
@@ -212,14 +204,14 @@ create_ui_server_mods <- function(modules, pos = 1) {
       #' region = r[[id]]$region()
       data <- shiny::reactive(curbcut::data_get(
         vars = r[[id]]$vars(),
-        df = r[[id]]$df()
+        df = r[[id]]$scale()
       ))
 
       # Data for tile coloring
       data_colours <- shiny::reactive(curbcut::data_get_colours(
         vars = r[[id]]$vars(),
         # NDS: Does this change to r[[id]]$region() ?
-        region = current_region(),
+        region = r[[id]]$region(),
         zoom_levels = current_zl()
       ))
 
@@ -228,7 +220,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         vars = r[[id]]$vars,
-        time = time,
+        time = r[[id]]$time,
         data = data
       )
 
@@ -246,7 +238,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         data = data,
         #' NDS: This changes to r[[id]]$scale, probably, and we also need to
         #' add a `time` variable to select the right column from data.
-        df = r[[id]]$df
+        scale = r[[id]]$scale
       )
 
       # Did-you-know panel
@@ -255,11 +247,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         vars = r[[id]]$vars,
         #' NDS: This changes to r[[id]]$ scale, probably
-        df = r[[id]]$df,
+        df = r[[id]]$scale,
         select_id = r[[id]]$select_id,
         poi = r[[id]]$poi,
         # NDS: This changes to r[[id]]$region
-        region = current_region,
+        region = r[[id]]$region,
         zoom_levels = current_zl
       )
 
@@ -283,10 +275,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
         data = data,
         # NDS: We need to add `time`
         # NDS: This changes to r[[id]]$region
-        region = current_region,
+        region = r[[id]]$region,
         vars = r[[id]]$vars,
         # NDS: This changes to r[[id]]$ scale, probably
-        df = r[[id]]$df,
+        df = r[[id]]$scale,
         select_id = r[[id]]$select_id
       )
 
@@ -303,7 +295,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         # NDS: This changes to r[[id]]$region
-        region = current_region,
+        region = r[[id]]$region,
         vars = r[[id]]$vars,
         data = data,
         # NDS: Do we need to add `time` here as well?

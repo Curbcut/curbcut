@@ -8,12 +8,11 @@
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_labels}}
 #' and \code{\link{legend_breaks}}, such as `lang`, `df`, ...
 #'
@@ -21,11 +20,11 @@
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
 legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA,
-                            df, ...) {
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+                            scale, ...) {
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   labs_xy <- legend_labels(vars, ...)
-  break_labs <- legend_breaks(vars, df = df, ...)
+  break_labs <- legend_breaks(vars, scale = scale, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
@@ -55,19 +54,18 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #'
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns a ggplot object
 #' @export
 legend_render <- function(vars, font_family = "acidgrotesk-book",
-                          scales_as_DA = c("building", "street"), df, ...) {
+                          scales_as_DA = c("building", "street"), scale, ...) {
   UseMethod("legend_render", vars)
 }
 
@@ -87,18 +85,17 @@ legend_render <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
 legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
-                             scales_as_DA = c("building", "street"), df, ...) {
+                             scales_as_DA = c("building", "street"), scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <- NULL
@@ -106,7 +103,7 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
+    scale = scale, ...
   )
 
   # Adapt breaks to add the `NA` bar
@@ -236,18 +233,17 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
 legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
-                                 scales_as_DA = c("building", "street"), df, ...) {
+                                 scales_as_DA = c("building", "street"), scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
@@ -255,7 +251,7 @@ legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
+    scale = scale, ...
   )
 
   # Adapt breaks to add the `NA` bar
@@ -313,18 +309,17 @@ legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
 legend_render.qual <- function(vars, font_family = "acidgrotesk-book",
-                               scales_as_DA = c("building", "street"), df, ...) {
+                               scales_as_DA = c("building", "street"), scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
@@ -332,7 +327,7 @@ legend_render.qual <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
+    scale = scale, ...
   )
 
   # Cut for the number of breaks
@@ -381,12 +376,11 @@ legend_render.qual <- function(vars, font_family = "acidgrotesk-book",
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the bivariate legend.
@@ -401,7 +395,7 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     lang = lang, font_family = font_family,
-    scales_as_DA = scales_as_DA, df = df, ...
+    scales_as_DA = scales_as_DA, scale = scale, ...
   )
 
   # Prepare the grid's labels location and the colours
@@ -448,20 +442,19 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
-                                scales_as_DA = c("building", "street"), df, ...) {
+                                scales_as_DA = c("building", "street"), scale, ...) {
   legend_render_delta(vars = vars, font_family = font_family,
-                      scales_as_DA = scales_as_DA, df = df, ...)
+                      scales_as_DA = scales_as_DA, scale = scale, ...)
 }
 
 #' Internal function for dispatching `legend_render_delta`.
@@ -471,18 +464,17 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
 legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
-                                scales_as_DA = c("building", "street"), df, ...) {
+                                scales_as_DA = c("building", "street"), scale, ...) {
   UseMethod("legend_render_delta", vars)
 }
 
@@ -492,7 +484,7 @@ legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
 #'
 #' @return A ggplot object representing the `delta` legend for scalar data.
 legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
-                                       scales_as_DA = c("building", "street"), df, ...) {
+                                       scales_as_DA = c("building", "street"), scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <-  NULL
@@ -501,7 +493,7 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
   leg_info <- legend_get_info(vars,
                               font_family = font_family,
                               scales_as_DA = scales_as_DA,
-                              df = df, ...)
+                              scale = scale, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$delta[1:5, 2:3]
@@ -620,7 +612,7 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
 #'
 #' @return A ggplot object representing the `delta` legend for ordinal data.
 legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",
-                                       scales_as_DA = c("building", "street"), df,
+                                       scales_as_DA = c("building", "street"), scale,
                                        lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
@@ -630,7 +622,7 @@ legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",
   leg_info <- legend_get_info(vars,
                               font_family = font_family,
                               scales_as_DA = scales_as_DA,
-                              df = df, ...)
+                              scale = scale, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- rbind(
@@ -677,18 +669,17 @@ legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",
 #' @param font_family <`character`> Which font family should be used to render
 #' the legend (breaks, axis titles, ...). Defaults to `acidgrotesk-book`. To use
 #' the default font family og ggplot2, use `NULL`.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `q100` legend.
 #' @export
 legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
-                               scales_as_DA = c("building", "street"), df, ...) {
+                               scales_as_DA = c("building", "street"), scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
@@ -696,7 +687,7 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    df = df, ...
+    scale = scale, ...
   )
 
   # Adapt breaks
@@ -737,12 +728,11 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `delta_bivar` legend.
@@ -757,7 +747,7 @@ legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     lang = lang, font_family = font_family,
-    scales_as_DA = scales_as_DA, df = df, ...
+    scales_as_DA = scales_as_DA, scale = scale, ...
   )
 
   # Prepare the grid's labels location and the colours
@@ -807,12 +797,11 @@ legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
 #' the default font family og ggplot2, use `NULL`.
 #' @param lang <`character`> The language to use for the text labels. Defaults
 #' to NULL for no translation.
-#' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to other functions.
 #'
 #' @return A ggplot object that represents the `bivar_ldelta_rq3` legend.
@@ -827,7 +816,7 @@ legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "acidgrotesk-book
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     lang = lang, font_family = font_family,
-    scales_as_DA = scales_as_DA, df = df, ...
+    scales_as_DA = scales_as_DA, scale = scale, ...
   )
 
   # Prepare the grid's labels location and the colours

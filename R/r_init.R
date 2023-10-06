@@ -72,8 +72,7 @@ r_init <- function(server_session,
     } else {
       # Grab the first zoom level to be the default `df`
       first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", reg))[1]
-      first_mzl <- names(first_mzl)
-      df <- paste(reg, first_mzl, sep = "_")
+      scale <- names(first_mzl)
       # Grab a variable part of the module for the var_left placeholder
       modules <- get_from_globalenv("modules")
       default_var <- modules$default_var[modules$id == i]
@@ -81,6 +80,7 @@ r_init <- function(server_session,
       if (!is.na(default_var)) {
         variables <- get_from_globalenv("variables")
         time <- modules$dates[modules$id == i][[1]]
+        region <- modules$regions[modules$id == i][[1]][1]
         if (!is.null(time)) {
           time <- max(time)
           default_var_yr <- sprintf("%s_%s", default_var, time)
@@ -88,10 +88,12 @@ r_init <- function(server_session,
 
 
         r[[i]] <- shiny::reactiveValues(
-          vars = shiny::reactiveVal(vars_build(default_var_yr, df = df)),
+          vars = shiny::reactiveVal(vars_build(default_var, scale = scale, time = time)),
           var_left_force = shiny::reactiveVal(default_var),
+          time = shiny::reactiveVal(time),
           select_id = shiny::reactiveVal(NA),
-          df = shiny::reactiveVal(df),
+          region = shiny::reactiveVal(region),
+          scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),
           poi = shiny::reactiveVal(NULL),

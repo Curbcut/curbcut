@@ -9,14 +9,14 @@ legend_server(
   id,
   r,
   vars,
-  df,
+  scale,
   data,
   hide = shiny::reactive(FALSE),
   breaks = shiny::reactive(NULL),
   scales_as_DA = shiny::reactive(c("building", "street")),
   legend_fun = shiny::reactive(legend_render),
-  legend_args = shiny::reactive(list(vars = vars(), lang = r$lang(), df = df(), data =
-    data(), breaks = breaks(), scales_as_DA = scales_as_DA())),
+  legend_args = shiny::reactive(list(vars = vars(), lang = r$lang(), scale = scale(),
+    data = data(), breaks = breaks(), scales_as_DA = scales_as_DA())),
   force_height = shiny::reactive(NULL)
 )
 
@@ -32,10 +32,6 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
-
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
@@ -59,6 +55,9 @@ that will be placed as the legend. Defaults to \code{\link{legend_render}}.}
 \item{force_height}{<\verb{reactive numeric}> Optional argument. Use to overwrite
 the height of the legend. Default height is 60 pixels, and 150 on a \code{bivar}
 class.}
+
+\item{df}{<\verb{reactive character}> Scale under study. The output of
+\code{\link{update_scale}}.}
 }
 \value{
 The legend Shiny UI and server module functions
