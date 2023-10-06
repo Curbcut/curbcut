@@ -18,6 +18,7 @@ containing the QS files. Default is "data/".}
 }
 \value{
 A data.frame object with the selected data from the specified table.
+NDS: This needs to change to taking \code{scale} as an argument instead of \code{df}.
 }
 \description{
 This function takes in a variable code and the df to retrieve data from a QS

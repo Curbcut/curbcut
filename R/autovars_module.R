@@ -467,7 +467,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       out_var(z[[1]])
     })
 
-    # NDS: So this can just be var = out_var
     return(shiny::reactive(list(var = out_var(), time = time())))
   })
 }

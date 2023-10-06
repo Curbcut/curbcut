@@ -324,20 +324,20 @@ update_scale <- function(tile, zoom_string) {
 #' #' "housing_tenant_2016").
 #' @param var_right <`reactive character`> A reactive character string of the
 #' selected compared variable, e.g. housing_value_2016.
+#' @param widget_time <`reactive vector`> The time selected by the user on the
+#' time widget. Length 1 (single year) or 2 (compare years).
 #'
 #' @return An observer that updates the vars reactive value `r[[id]]$vars`
 #' whenever var_left, var_right and or df changes.
 #' @export
-update_vars <- function(id, r, var_left, var_right) {
-
-  #' NDS: This function needs to be updated to take time() as an input, and
-  #' to take region and scale instead of df.
+update_vars <- function(id, r, var_left, var_right, widget_time) {
 
   shiny::observe({
     vr <- vars_build(
       var_left = var_left(),
       var_right = var_right(),
-      df = r[[id]]$df()
+      scale = r[[id]]$scale(),
+      time = widget_time()
     )
 
     if (identical(vr$vars, r[[id]]$vars())) {

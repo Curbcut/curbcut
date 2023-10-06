@@ -4,13 +4,12 @@
 \alias{is_scale_in}
 \title{Test if x scale is under study}
 \usage{
-is_scale_in(scales, df, vectorized = FALSE)
+is_scale_in(scales, scale, vectorized = FALSE)
 }
 \arguments{
-\item{scales}{<\verb{character vector}> All scales to test if it is part of \code{df}.}
+\item{scales}{<\verb{character vector}> All scales to test if \code{scale} is in them..}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}.}
+\item{scale}{<\code{character}> Scale at which the user is on.}
 
 \item{vectorized}{<\code{logical}> Should all elements of \code{scales} be evaluated
 and return a logical vector the same length of \code{scales}?}
@@ -20,8 +19,4 @@ Returns TRUE or FALSE
 }
 \description{
 Test if x scale is under study
-}
-\examples{
-is_scale_in(scales = c("CSD", "CT", "DA"), df = "CMA_DA") # TRUE
-is_scale_in(scales = c("CSD", "CT"), df = "CMA_DA") # FALSE
 }

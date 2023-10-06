@@ -191,7 +191,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Update the `r[[id]]$vars` reactive
       curbcut::update_vars(
         id = id, r = r, var_left = var_left,
-        var_right = var_right
+        var_right = var_right, widget_time = widget_time
       )
 
       # Sidebar

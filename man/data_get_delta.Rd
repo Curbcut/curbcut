@@ -22,6 +22,10 @@ A data frame with the following columns: ID, var_1, var_2, and var.
 \code{ID} is the ID column from the original data, \code{var_1} and \code{var_2} are the
 values of the two variables being compared, and \code{var} is the percentage
 change between the two variables.
+NDS: This should change to take \code{vars}, \code{time}, and \code{scale} arguments. Or,
+in fact, maybe it doesn't exist any more, since we're always importing all
+years of data for a variable, and the data_get.delta method simply
+performs the additional calculations directly inside the method.
 }
 \description{
 This function takes two variables representing the same quantity measured two

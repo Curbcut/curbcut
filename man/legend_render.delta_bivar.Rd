@@ -21,18 +21,17 @@ output of \code{\link{vars_build}}.}
 the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
-
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
 
 \item{lang}{<\code{character}> The language to use for the text labels. Defaults
 to NULL for no translation.}
 
 \item{...}{Additional arguments passed to other functions.}
+
+\item{scale}{<\code{character}> Scale under study. The output of
+\code{\link{update_scale}}.}
 }
 \value{
 A ggplot object that represents the \code{delta_bivar} legend.

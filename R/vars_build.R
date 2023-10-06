@@ -30,9 +30,9 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   # Unique time
   time <- unique(time)
 
-  # Use picker_return_var() to add the `time` to var_left and var_right
-  vl <- picker_return_var(var_left, time)
-  vr <- picker_return_var(var_right, time)
+  # Use var_closest_year() to add the `time` to var_left and var_right
+  vl <- var_closest_year(var_left, time)
+  vr <- var_closest_year(var_right, time)
 
   # Switch scales to DA if necessary
   scale <- treat_to_DA(scales_as_DA, scale)
