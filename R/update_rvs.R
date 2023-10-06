@@ -296,18 +296,13 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #' @export
 update_scale <- function(tile, zoom_string) {
 
-  #' NDS: Probably we just delete this whole function, since we can directly
-  #' reference scale and/or region when needed. Alternatively, this probably
-  #' doesn't need changing, since `auto_zoom` will remain as
-  #' is, and `tile` will start just being the scale, e.g. "CSD" instead of
-  #' "CMA_CSD". But then the function should be renamed `update_scale`
-
-  # If on auto-scale, simply return the zoom_string
-  if (grepl("auto_zoom", tile)) {
+  # If on auto-scale (when tile contains an underscore declaring it's a combination
+  # of scales), simply return the zoom_string
+  if (grepl("_", tile)) {
     return(zoom_string)
   }
 
-  # Outside of auto_zoom, return the tile
+  # Outside of autozoom, return the tile
   return(tile)
 }
 

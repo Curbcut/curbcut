@@ -13,11 +13,9 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #' Generate zoom string based on given zoom level and region name
 #'
 #' Given a named numeric vector of zoom levels, a numeric value representing the current
-#' zoom level, and a character string representing the name of the region, this
-#' function returns a string representing the zoom level and region name,
-#' separated by an underscore. The zoom level is determined by finding the
-#' highest value in the zoom levels vector that is less than or equal to the
-#' current zoom level.
+#' zoom level, this function returns a string representing the zoom level
+#' The zoom level is determined by finding the highest value in the zoom levels
+#' vector that is less than or equal to the current zoom level.
 #'
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
@@ -25,21 +23,14 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
-#' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually one of the output of \code{\link{zoom_get_levels}}.
 #'
 #' @return A character string representing the zoom level and region name,
 #' separated by an underscore
 #' @export
-zoom_get_string <- function(zoom, zoom_levels, region) {
-
-  #' NDS: This should change to only returning scale, so it can drop the
-  #' region argument. Maybe the function should be renamed `get_scale`?
-
+zoom_get_string <- function(zoom, zoom_levels) {
   zoom_levels <- sort(zoom_levels)
   out <- names(zoom_levels)[zoom >= zoom_levels]
   out <- out[length(out)]
-  out <- paste(region, out, sep = "_")
   return(out)
 }
 

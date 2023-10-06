@@ -100,8 +100,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       rv_zoom_string <- shiny::reactiveVal(
         curbcut::zoom_get_string(
           zoom = map_zoom,
-          zoom_levels = mzp,
-          region = default_region
+          zoom_levels = mzp
         )
       )
 
@@ -133,8 +132,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         rv_zoom_string({
           curbcut::zoom_get_string(
             zoom = r[[id]]$zoom(),
-            zoom_levels = current_zl(),
-            region = r[[id]]$region()
+            zoom_levels = current_zl()
           )
         })
       })
