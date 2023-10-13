@@ -114,7 +114,7 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param region <`character`> Character string specifying the name of the region.

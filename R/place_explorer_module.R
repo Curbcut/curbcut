@@ -127,7 +127,7 @@ place_explorer_server <- function(id, r,
         # rv_zoom_string()
       },
       {
-        # r[[id]]$df(update_df(
+        # r[[id]]$df(update_scale(
         #   tile = tile(),
         #   zoom_string = rv_zoom_string()
         # ))
@@ -228,7 +228,7 @@ place_explorer_server <- function(id, r,
               class = "cc-download-btn",
               style = "right:75px;position:absolute;top:15px;min-height:auto;",
               outputId = shiny::NS(id, "download_portrait"),
-              label = cc_t("Download regional portrait")
+              label = cc_t("Download regional portrait", lang = r$lang())
             ),
             shiny::tags$iframe(
               style = "width:100%;height: calc(100% - 38px); margin-top: 38px;",

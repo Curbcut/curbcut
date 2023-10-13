@@ -4,7 +4,7 @@
 \alias{explore_context}
 \title{Get region text info}
 \usage{
-explore_context(region, select_id, df, switch_DA, lang = NULL)
+explore_context(region, select_id, scale, switch_DA, lang = NULL)
 }
 \arguments{
 \item{region}{<\code{character}> String specifying the code of the region to
@@ -14,9 +14,8 @@ retrieve, e.g. \code{CMA}. Usually equivalent of \code{r$region()}.}
 \code{r[[id]]$select_id()}. If there is a selection (select_id is not NA), the
 name of the selected polygon will appear.}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{switch_DA}{<\code{logical}> Is the \code{df} part of the scales that should be
 switched as DAs instead.}

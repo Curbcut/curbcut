@@ -282,7 +282,7 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 
 #' Get or update the `df` rv output
 #'
-#' The \code{update_df} function returns the zoom string if the tile is on auto-scale,
+#' The \code{update_scale} function returns the zoom string if the tile is on auto-scale,
 #' otherwise it returns the tile.
 #'
 #' @param tile <`character`> a character string indicating the tile, the output

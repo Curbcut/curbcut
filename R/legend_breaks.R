@@ -19,49 +19,46 @@ legend_breaks <- function(vars, ...) {
 #'
 #' @param vars <`named list`> A list object of class `q5`. The output of
 #' \code{\link{vars_build}}.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.q5 <- function(vars, df, lang = NULL, ...) {
-  # Get the breaks
-  breaks <- var_get_breaks(
-    var = vars$var_left, df = df,
-    q3_q5 = "q5", pretty = TRUE, compact = TRUE
+legend_breaks.q5 <- function(vars, data, lang = NULL, ...) {
+  # Get pretty breaks
+  pretty_breaks <- convert_unit(
+    var = vars$var_left,
+    x = attr(data, "breaks"),
+    compact = TRUE
   )
 
   # Return
-  return(breaks)
+  return(pretty_breaks)
 }
 
 #' Compute legend breaks for a single `ind` `var_left`
 #'
 #' @param vars <`named list`> A list object of class `q5_ind`. The output of
 #' \code{\link{vars_build}}.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.
 #' @export
-legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
+legend_breaks.q5_ind <- function(vars, lang = NULL, ...) {
   # Grab the breaks from the variables table
+
+  # NDS: take out the tryCatch once it's in vars
   breaks <-
-    var_get_breaks(
-      # In the cases we want to supply `var` instead of vars, ex. for graph
-      # creation in `explore_graph_scale.ordinal`
-      var = if (is.list(vars)) vars$var_left else vars, df = df,
-      break_col = "rank_name_short", q3_q5 = "q5",
-      pretty = TRUE, compact = TRUE, lang = NULL
-    )
+    tryCatch(
+      var_get_info(var = if (is.list(vars)) vars$var_left else vars, what = "rank_name_short",
+                   translate = FALSE, lang = NULL)[[1]],
+      error = function(e) {
+        return(c("Very low", "Low", "Moderate", "High", "Very high"))
+      })
   breaks <- breaks[!is.na(breaks)]
 
   # If the default, filter out some breaks to lighten the legend
@@ -88,7 +85,7 @@ legend_breaks.q5_ind <- function(vars, df, lang = NULL, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' `Low` and `High` breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -111,7 +108,7 @@ legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' breaks to. Defaults to `NULL`, which is no translation.
 #' @param ... Additional arguments passed to methods.
@@ -131,7 +128,7 @@ legend_breaks.qual <- function(vars, df, lang = NULL, ...) {
 #' @param vars <`named list`> A list object of class `delta`.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with hardcoded labels.
@@ -152,7 +149,7 @@ legend_breaks.delta <- function(vars, df, ...) {
 #' output of \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param data <`data.frame`> Must contains the `var_left` and `var_left_q3`
 #' columns, which are used to extract the `q3` breaks (variation) for the single
 #' variable of two date times.
@@ -191,7 +188,7 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, df, data, ...) {
 #' \code{\link{vars_build}}.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A vector of legend breaks with pretty labels.

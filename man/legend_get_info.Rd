@@ -9,6 +9,7 @@ legend_get_info(
   font_family = "acidgrotesk-book",
   scales_as_DA,
   scale,
+  data,
   ...
 )
 }
@@ -26,6 +27,8 @@ their colour will be the one of their DA.}
 
 \item{scale}{<\code{character}> Scale under study. The output of
 \code{\link{update_scale}}.}
+
+\item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
 
 \item{...}{Additional arguments to be passed to \code{\link{legend_labels}}
 and \code{\link{legend_breaks}}, such as \code{lang}, \code{df}, ...}

@@ -10,7 +10,8 @@ explore_text_selection_comparison(
   select_id,
   col = "var_left",
   ranks_override = NULL,
-  lang = NULL
+  lang = NULL,
+  time_col
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ matter.}
 
 \item{lang}{<\code{character}> Language the ranking character should be translated
 to. Defaults to NULL for no translation.}
+
+\item{time_col}{}
 }
 \value{
 A named list with two elements:

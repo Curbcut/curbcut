@@ -71,13 +71,14 @@ test_resources_creation <- function(additional_vars = c()) {
 #' global environment, helping to test line-by-line functions.
 #'
 #' @param var_left <`reactive character`> Character string of the selected
-#' variable, e.g. `alp_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
+#' variable, e.g. `alp`
 #' @param var_right <`reactive character`> Character string of the selected
-#' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
+#' compared variable, e.g. `housing_value`. Defaults to what no compared
 #' variable is represented by (" ").
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. Defaults to
-#' `city_CSD`.
+#' @param region <`character`> The region. Defaults to CMA.
+#' @param scale <`character`> The scale. Defaults to CSD.
+#' @param time <`numeric vector`> Time the user would be interested in. (represents
+#' the widget time).
 #' @param select_id <`character`> The select_id to assign in the global environment.
 #' Defaults to NA.
 #' @param pos <`numeric`> An integer value indicating the position in the search list where
@@ -95,7 +96,8 @@ test_resources_creation <- function(additional_vars = c()) {
 #'
 #' @return This function doesn't return a value. It modifies the specified
 #' environment by assigning values to certain variables.
-test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
+test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
+                            region = "CMA", scale = "CSD", time = 2021,
                             select_id = NA, pos = 1, data_path = get0(".curbcut_montreal_data")) {
   if (is.null(data_path)) {
     stop("Set a path from which to grab the data (data folder of a Curbcut repo).")
@@ -106,20 +108,24 @@ test_assign_any <- function(var_left, var_right = " ", df = "city_CSD",
 
   # Subset the variables table
   variables <- qs::qread(sprintf("%svariables.qs", data_path))
-  possible_vars <- unique(sapply(c(var_left, var_right), var_remove_time))
+  possible_vars <- c(var_left, var_right)
   parents <- variables$parent_vec[variables$var_code %in% possible_vars]
   variables <- variables[variables$var_code %in% c(possible_vars, parents), ]
   assign("variables", variables, envir = as.environment(pos))
 
-  vars <- vars_build(var_left, var_right, df = df)
-  data <- data_get(vars = vars, df = df, data_path = data_path)
-  region <- gsub("_.*", "", df)
+  vars <- vars_build(var_left, var_right, scale = scale, time = time)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale, region = region, data_path = data_path)
 
-  assign("df", df, envir = as.environment(pos))
+  assign("scale", scale, envir = as.environment(pos))
   assign("region", region, envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
+  assign("time", time, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
   assign("select_id", select_id, envir = as.environment(pos))
+  assign("scales_as_DA", c("building", "street"), envir = as.environment(pos))
+  assign("lang", NULL, envir = as.environment(pos))
 }
 
 #' Setup objects

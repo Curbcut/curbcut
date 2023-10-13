@@ -139,9 +139,9 @@ data_get <- function(vars, scale, region,
 #' used to determine how to grab de data and output it.
 #' @param scale <`character`> The scale of the data to be retrieved, e.g. `CSD`.
 #' The output of \code{\link{update_scale}}.
-#' @param region <`character vector`> A vector of IDs with which to filter the
-#' retrieved data for a specific region, probably retrieved from
-#' `regions_dictionary$scales`.
+#' @param region <`character`> The region from which to grab the vector of IDs with
+#' which to filter the retrieved data for a specific region. Defaults to NULL
+#' if no filtering is needed.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By
 #' default, their colour will be the one of their DA.
@@ -152,7 +152,7 @@ data_get <- function(vars, scale, region,
 #' @return A dataframe containing the data, with an ID column, one column per
 #' year of data, and one `group` column per year of data.
 #' @export
-data_get.q5 <- function(vars, scale, region,
+data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
                         data_path = "data/", ...) {
 
@@ -163,23 +163,31 @@ data_get.q5 <- function(vars, scale, region,
   data <- data_get_qs(vars$var_left, scale, data_path = data_path)
 
   # Filter to region
-  data_reg <- data[data$ID %in% region,]
+  if (!is.null(region)) {
+    # Get the regions dictionary to grab the vector of IDs with which to filter
+    # the retrieved data
+    regions_dictionary <- get_from_globalenv("regions_dictionary")
+    # Vector of IDs for the current region and scale
+    scales <- regions_dictionary$scales[regions_dictionary$region == region][[1]]
+    id_reg <- scales[[scale]]
+    data <- data[data$ID %in% id_reg, ]
+  }
 
   # Calculate breaks
-  data_val <- data_reg[-1]
-  data_vec <- data_reg[[attr(data_val, "breaks_var")]]
+  data_val <- data[-1]
+  data_vec <- data[[attr(data_val, "breaks_var")]]
   data_vec <- data_vec[!is.na(data_vec)]
 
-  if (attr(data_reg, "quintiles")) {
-    breaks <- find_breaks_quintiles(var_vec, min(var_vec), max(var_vec), "q5")
+  if (attr(data, "quintiles")) {
+    breaks <- find_breaks_quintiles(data_vec, "q5")
   } else {
-    breaks <- find_breaks_q5(min(var_vec), max(var_vec))
+    breaks <- find_breaks_q5(min(data_vec), max(data_vec))
   }
 
   # Assemble output
-  out <- as.data.frame(lapply(var_val, .bincode, breaks, include.lowest = TRUE))
-  out <- setNames(out, paste0(names(var_val), "_q5"))
-  data <- cbind(var_reg$ID, out)
+  out <- as.data.frame(lapply(data_val, .bincode, breaks, include.lowest = TRUE))
+  out <- setNames(out, sprintf("%s_q5", names(data_val)))
+  data <- cbind(data, out) # bind the data
   data <- tibble::as_tibble(data)
   attr(data, "breaks") <- breaks
 
@@ -197,7 +205,7 @@ data_get.q5 <- function(vars, scale, region,
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -211,7 +219,7 @@ data_get.q5 <- function(vars, scale, region,
 data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
                            data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Get var_left and rename
   data <- data_get_qs(vars$var_left, df, data_path = data_path)
@@ -244,7 +252,7 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -271,7 +279,7 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -297,7 +305,7 @@ data_get_delta_fun <- function(vars, df,
 data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
                                       data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data <- data_get_delta(
@@ -333,7 +341,7 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
 data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
                                        data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data <- data_get_delta(
@@ -366,7 +374,7 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -381,7 +389,7 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
 data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
                                  data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data_vl <- data_get_delta(
@@ -411,7 +419,7 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 #' \code{\link{vars_build}} function.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -428,7 +436,7 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
                                       data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve var_left and add a `q3 column`
   data_vl <- data_get_delta(
@@ -464,7 +472,7 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #' `vars` as the `var` argument for the  \code{\link{data_get_qs}} call.
 #' @param df <`character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -474,16 +482,16 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
-data_get.default <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get.default <- function(vars, scale, scales_as_DA = c("building", "street"),
                              data_path = "data/", ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_qs(var = vars[[1]], df = df, data_path = data_path)
+  data <- data_get_qs(var = vars[[1]], scale = scale, data_path = data_path)
 
   # To keep it constant, rename with var_left
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  names(data) <- gsub(vars[[1]], "var_left", names(data))
 
   # Return
   return(data)

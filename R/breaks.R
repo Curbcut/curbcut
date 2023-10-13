@@ -7,7 +7,7 @@
 #' output of \code{\link{vars_build}}.
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param character <`Logical`>, if `TRUE`, the breaks are returned as characters.
 #' @param data <`data.frame`> Optional, a data frame to use instead of recovering it
 #' from the file.
@@ -58,17 +58,20 @@ breaks_delta <- function(vars, df, character = FALSE, data = NULL) {
 #' Find quintile breaks
 #'
 #' @param dist <`numeric`> Distribution (numerics) with no NAs.
-#' @param min_val <`numeric`>
-#' @param max_val <`numeric`>
+#' @param q3_q5 <`character`> How many bins? `q3` or `q5`.
 #'
 #' @return Returns a numeric vector with quintile breaks.
 #' @export
-find_breaks_quintiles <- function(dist, min_val, max_val, q3_q5 = "q5") {
+find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
 
-  # Take out min and max values (outliers)
-  if (length(unique(no_outliers)) >= 10) {
-    no_outliers <- unique(dist[dist > min_val & dist < max_val])
-  } else no_outliers <- unique(dist)
+  # Remove outliers
+  which_out <- find_outliers(x = dist)
+  no_outliers <- dist[-which_out]
+
+  # If there are not enough values once the outliers are gone, grab all the
+  # distribution.
+  dat <- if (length(unique(no_outliers)) >= 10) no_outliers else dist
+  dat <- unique(dat)
 
   # Calculate quintiles
   by <- if (q3_q5 == "q5") {
@@ -77,7 +80,7 @@ find_breaks_quintiles <- function(dist, min_val, max_val, q3_q5 = "q5") {
     0.33
   } else stop("`q3_q5` argument needs to be q3 or q5")
 
-  q <- stats::quantile(no_outliers, probs = seq(0, 1, by = by), names = FALSE)
+  q <- stats::quantile(dat, probs = seq(0, 1, by = by), names = FALSE)
 
   # Create empty breaks vector
   breaks <- numeric(length(q))
@@ -120,12 +123,13 @@ find_breaks_quintiles <- function(dist, min_val, max_val, q3_q5 = "q5") {
   }
 
   # If the minimum value was already 0
-  if (min_val == 0) {
+  if (min(dist) == 0) {
     breaks[1] <- 0
   }
 
   # Make sure the order is lowest to highest
   breaks <- breaks[order(breaks)]
+
 
   return(breaks)
 

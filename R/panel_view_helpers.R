@@ -6,7 +6,7 @@
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function

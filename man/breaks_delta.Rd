@@ -12,7 +12,7 @@ output of \code{\link{vars_build}}.}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{character}{<\code{Logical}>, if \code{TRUE}, the breaks are returned as characters.}
 

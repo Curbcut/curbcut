@@ -13,6 +13,7 @@
 #' their colour will be the one of their DA.
 #' @param scale <`character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_labels}}
 #' and \code{\link{legend_breaks}}, such as `lang`, `df`, ...
 #'
@@ -20,11 +21,11 @@
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
 legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA,
-                            scale, ...) {
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+                            scale, data, ...) {
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   labs_xy <- legend_labels(vars, ...)
-  break_labs <- legend_breaks(vars, scale = scale, ...)
+  break_labs <- legend_breaks(vars, data, scale = scale, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
@@ -59,13 +60,15 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
 #' their colour will be the one of their DA.
 #' @param scale <`character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #'
 #' @param ... Arguments to be passed to the methods, e.g. optionally `lang`
 #'
 #' @return It returns a ggplot object
 #' @export
 legend_render <- function(vars, font_family = "acidgrotesk-book",
-                          scales_as_DA = c("building", "street"), scale, ...) {
+                          scales_as_DA = c("building", "street"), scale, data,
+                          ...) {
   UseMethod("legend_render", vars)
 }
 
@@ -90,12 +93,14 @@ legend_render <- function(vars, font_family = "acidgrotesk-book",
 #' their colour will be the one of their DA.
 #' @param scale <`reactive character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @param ... additional arguments to be passed to \code{\link{legend_get_info}}.
 #'
 #' @return A plot generated using ggplot2.
 #' @export
 legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
-                             scales_as_DA = c("building", "street"), scale, ...) {
+                             scales_as_DA = c("building", "street"), scale,
+                             data, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <- NULL
@@ -103,15 +108,14 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    scale = scale, ...
+    scale = scale, data = data, ...
   )
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$left_5[2:6, 2:3]
 
   # Get real q5 breaks
-  brks <- var_get_info(vars$var_left, what = "breaks_q5")[[1]]
-  brks <- brks$var[brks$df == df]
+  brks <- attr(data, "breaks")
 
   # If all NA, don't bother draw a legend. Return NULL
   if (all(is.na(brks))) {

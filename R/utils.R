@@ -473,13 +473,13 @@ remove_outliers_df <- function(df, cols) {
 #' Grab DA_ID from a building-street-like dataframe (large!)
 #'
 #' This function fetches the DA_ID matching with the selected ID from a given
-#' dataframe `df` based on a provided `select_id`. It can also fetch the DA_ID
+#' dataframe `scale` based on a provided `select_id`. It can also fetch the DA_ID
 #' from a connected database when the `df` is not found in the global environment
 #' but is identified as a scales_as_DA'. In such cases, it uses the established
 #' connection and fetches the DA_ID via a SQL query.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
-#' for DA_ID. The dataframe should be in the global environment, and if it isn't,
+#' @param scale <`character`> A string, the name of the dataframe in which to look
+#' for row. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #' @param select_id <`character`> A value representing the ID that needs to be
 #' selected in order to fetch the corresponding DA_ID.
@@ -488,12 +488,12 @@ remove_outliers_df <- function(df, cols) {
 #' `select_id` is found in the `df` in the global environment, the corresponding
 #' DA_ID is returned. If `df` is a 'scales_as_DA' and not in the global
 #' environment, the function fetches DA_ID from the connected database.
-grab_DA_ID_from_bslike <- function(df, select_id) {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_DA_ID_from_bslike <- function(scale, select_id) {
+  dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
+  # NDS: Rework this with new building sql db.
   if (is.null(dat)) {
-    scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
     call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", df, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
@@ -508,12 +508,12 @@ grab_DA_ID_from_bslike <- function(df, select_id) {
 #' Grab row from a building-street-like dataframe (large!)
 #'
 #' This function fetches the row matching with the selected ID from a given
-#' dataframe `df` based on a provided `select_id`. It can also fetch the row
+#' dataframe `scale` based on a provided `select_id`. It can also fetch the row
 #' from a connected database when the `df` is not found in the global environment
 #' but is identified as a scales_as_DA'. In such cases, it uses the established
 #' connection and fetches the row via a SQL query.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' @param scale <`character`> A string, the name of the dataframe in which to look
 #' for row. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #' @param select_id <`character`> A value representing the ID that needs to be
@@ -525,11 +525,12 @@ grab_DA_ID_from_bslike <- function(df, select_id) {
 #' `select_id` is found in the `df` in the global environment, the corresponding
 #' row is returned. If `df` is a 'scales_as_DA' and not in the global
 #' environment, the function fetches row from the connected database.
-grab_row_from_bslike <- function(df, select_id, cols = "*") {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_row_from_bslike <- function(scale, select_id, cols = "*") {
+  dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   if (is.null(dat)) {
+    # NDS: this needs to work for buildings. single table in the DB?
     scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
     cols <- paste0(cols, collapse = ", ")

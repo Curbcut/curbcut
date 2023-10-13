@@ -31,7 +31,7 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
 selected region (if any). Usually \code{r[[id]]$select_id()}}

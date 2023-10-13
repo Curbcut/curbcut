@@ -4,14 +4,12 @@
 \alias{find_breaks_quintiles}
 \title{Find quintile breaks}
 \usage{
-find_breaks_quintiles(dist, min_val, max_val, q3_q5 = "q5")
+find_breaks_quintiles(dist, q3_q5 = "q5")
 }
 \arguments{
 \item{dist}{<\code{numeric}> Distribution (numerics) with no NAs.}
 
-\item{min_val}{<\code{numeric}>}
-
-\item{max_val}{<\code{numeric}>}
+\item{q3_q5}{<\code{character}> How many bins? \code{q3} or \code{q5}.}
 }
 \value{
 Returns a numeric vector with quintile breaks.

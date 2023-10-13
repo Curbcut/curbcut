@@ -236,8 +236,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         vars = r[[id]]$vars,
         data = data,
-        #' NDS: This changes to r[[id]]$scale, probably, and we also need to
-        #' add a `time` variable to select the right column from data.
         scale = r[[id]]$scale
       )
 
@@ -273,13 +271,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         data = data,
-        # NDS: We need to add `time`
-        # NDS: This changes to r[[id]]$region
         region = r[[id]]$region,
         vars = r[[id]]$vars,
-        # NDS: This changes to r[[id]]$ scale, probably
-        df = r[[id]]$scale,
-        select_id = r[[id]]$select_id
+        scale = r[[id]]$scale,
+        select_id = r[[id]]$select_id,
+        time = r[[id]]$time
       )
 
       # Bookmarking

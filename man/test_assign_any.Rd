@@ -7,7 +7,9 @@
 test_assign_any(
   var_left,
   var_right = " ",
-  df = "city_CSD",
+  region = "CMA",
+  scale = "CSD",
+  time,
   select_id = NA,
   pos = 1,
   data_path = get0(".curbcut_montreal_data")
@@ -15,15 +17,18 @@ test_assign_any(
 }
 \arguments{
 \item{var_left}{<\verb{reactive character}> Character string of the selected
-variable, e.g. \code{alp_2016} or \code{c("housing_tenant_2006", "housing_tenant_2016")}.}
+variable, e.g. \code{alp}}
 
 \item{var_right}{<\verb{reactive character}> Character string of the selected
-compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
+compared variable, e.g. \code{housing_value}. Defaults to what no compared
 variable is represented by (" ").}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. Defaults to
-\code{city_CSD}.}
+\item{region}{<\code{character}> The region. Defaults to CMA.}
+
+\item{scale}{<\code{character}> The scale. Defaults to CSD.}
+
+\item{time}{<\verb{numeric vector}> Time the user would be interested in. (represents
+the widget time).}
 
 \item{select_id}{<\code{character}> The select_id to assign in the global environment.
 Defaults to NA.}

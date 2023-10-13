@@ -10,6 +10,7 @@ explore_text_region_val_df(
   select_id,
   col = "var_left",
   lang = NULL,
+  time_col,
   ...
 )
 }

@@ -9,11 +9,36 @@
 \usage{
 explore_text_select_val(var, ...)
 
-\method{explore_text_select_val}{pct}(var, select_id, data, df, col = "var_left", ...)
+\method{explore_text_select_val}{pct}(
+  var,
+  select_id,
+  data,
+  scale,
+  col = "var_left",
+  time_col,
+  ...
+)
 
-\method{explore_text_select_val}{ind}(var, data, df, select_id, col = "var_left", lang, ...)
+\method{explore_text_select_val}{ind}(
+  var,
+  data,
+  df,
+  select_id,
+  col = "var_left",
+  time_col,
+  lang,
+  ...
+)
 
-\method{explore_text_select_val}{default}(var, data, df, select_id, col = "var_left", ...)
+\method{explore_text_select_val}{default}(
+  var,
+  data,
+  df,
+  select_id,
+  col = "var_left",
+  time_col,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code of the variable for which the
@@ -27,13 +52,17 @@ values need to be generated. Usually one element of the output of
 
 \item{data}{<\code{data.frame}>The output of \code{\link{data_get}}.}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}>}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{time_col}{<\code{numeric}> Time at which to show the data.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_df}}.}
 
 \item{lang}{<\code{character}> Active language. \code{"en"} or \code{"fr"}}
 }

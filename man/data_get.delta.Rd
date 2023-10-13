@@ -18,7 +18,7 @@
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

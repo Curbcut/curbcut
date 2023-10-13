@@ -4,7 +4,7 @@
 \alias{explore_text_check_na}
 \title{Checks if data is NA for a given selection}
 \usage{
-explore_text_check_na(context, data, select_id, vars, lang = NULL)
+explore_text_check_na(context, data, select_id, vars, time, lang = NULL)
 }
 \arguments{
 \item{context}{<\code{list}> list that should include 'p_start' which is used as
@@ -19,6 +19,9 @@ name of the selected polygon will appear.}
 
 \item{vars}{<\code{character}> A list containing the variable names for which the
 text needs to be generated. Usually the output of \code{\link{vars_build}}.}
+
+\item{time}{<\verb{list of numeric vector}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}

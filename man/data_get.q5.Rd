@@ -7,7 +7,7 @@
 \method{data_get}{q5}(
   vars,
   scale,
-  region,
+  region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = "data/",
   ...
@@ -21,9 +21,9 @@ used to determine how to grab de data and output it.}
 \item{scale}{<\code{character}> The scale of the data to be retrieved, e.g. \code{CSD}.
 The output of \code{\link{update_scale}}.}
 
-\item{region}{<\verb{character vector}> A vector of IDs with which to filter the
-retrieved data for a specific region, probably retrieved from
-\code{regions_dictionary$scales}.}
+\item{region}{<\code{character}> The region from which to grab the vector of IDs with
+which to filter the retrieved data for a specific region. Defaults to NULL
+if no filtering is needed.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By

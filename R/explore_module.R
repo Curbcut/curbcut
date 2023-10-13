@@ -20,15 +20,17 @@
 #' @param vars <`reactive named list`> Named list with a class. Object built
 #' using the \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param region <`reactive character`> A string or numeric value representing the
 #' selected region.
-#' @param select_id <`reactive character`> the current selected ID, usually
+#' @param select_id <`reactive character`> The current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param time <`reactive numeric vector`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' Usually r[[id]]$time.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -61,25 +63,25 @@
 #'
 #' @return The explore Shiny UI and server module functions
 #' @export
-explore_server <- function(id, r, data, vars, region, df, select_id,
+explore_server <- function(id, r, data, vars, region, scale, select_id, time,
                            scales_as_DA = shiny::reactive(c("building", "street")),
                            graph_fun = shiny::reactive(explore_graph),
                            graph_args = shiny::reactive(list(
-                             r = r, data = data(), vars = vars(), df = df(),
-                             select_id = select_id(), region = region(),
+                             r = r, data = data(), vars = vars(), scale = scale(),
+                             time = time(), select_id = select_id(), region = region(),
                              scales_as_DA = scales_as_DA(), lang = r$lang()
                            )),
                            table_fun = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
-                             r = r, data = data(), vars = vars(),
-                             select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), df = df(),
-                             lang = r$lang()
+                             r = r, data = data(), vars = vars(), scale = scale(),
+                             time = time(), select_id = select_id(), region = region(),
+                             scales_as_DA = scales_as_DA(), lang = r$lang()
                            ))) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
-  stopifnot(shiny::is.reactive(df))
+  stopifnot(shiny::is.reactive(scale))
+  stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(scales_as_DA))
   stopifnot(shiny::is.reactive(graph_fun))

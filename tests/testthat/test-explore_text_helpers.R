@@ -10,7 +10,7 @@ test_that("explore_context works", {
   expected_names <-
     c(
       "heading", "p_start", "name", "to_compare_determ", "to_compare_short",
-      "scale_plur", "select_id", "treated_df"
+      "scale_plur", "select_id", "treated_scale"
     )
   actual_names <-
     explore_context(

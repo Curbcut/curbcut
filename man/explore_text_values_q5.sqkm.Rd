@@ -9,9 +9,10 @@
   region,
   select_id,
   data,
-  df,
+  scale,
   col = "var_left",
   lang,
+  time,
   ...
 )
 }
@@ -27,9 +28,8 @@ Usually equivalent of \code{r$region()}.}
 
 \item{data}{<\code{data.frame}> The output of \code{\link{data_get}}.}
 
-\item{df}{<\code{character}>The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or

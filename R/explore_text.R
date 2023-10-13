@@ -9,9 +9,8 @@
 #' Usually equivalent of `r$region()`.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The output of \code{\link{data_get}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
@@ -19,11 +18,13 @@
 #' default, their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
+#' @param time <`numeric vector`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text <- function(vars, region, select_id, df, data, scales_as_DA,
+explore_text <- function(vars, region, select_id, scale, time, data, scales_as_DA,
                          lang, ...) {
   UseMethod("explore_text", vars)
 }
@@ -33,19 +34,19 @@ explore_text <- function(vars, region, select_id, df, data, scales_as_DA,
 
 #' @rdname explore_text
 #' @export
-explore_text.q5 <- function(vars, region, select_id, df, data,
+explore_text.q5 <- function(vars, region, select_id, scale, time, data,
                             scales_as_DA = c("building", "street"),
                             lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `df` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_in(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, scale)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, df = df,
+    region = region, select_id = select_id, scale = scale,
     switch_DA = switch_DA, lang = lang
   )
 
@@ -57,7 +58,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    time = time, lang = lang
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -67,7 +68,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   value_string <- explore_text_values_q5(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, lang = lang
+    scale = context$treated_scale, lang = lang,
+    time = time
   )
 
   # Put it all together
@@ -84,7 +86,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     # Get the information on how the selection compares
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
-      select_id = select_id, lang = lang
+      select_id = select_id, lang = lang,
+      time_col = time$var_left
     )
 
     # Make the first sentence of the paragraph
@@ -116,7 +119,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   }
 
   # Append date
-  date <- var_get_time(vars$var_left)
+  date <- time$var_left
   if (!is.na(date)) {
     out <- sprintf(cc_t("%s <i>(Data from %s.)</i>", lang = lang), out, date)
   }
@@ -153,9 +156,8 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -163,12 +165,13 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' `var_left_1` in delta.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
+#' @param time
 #' @param ... Additional arguments passed to the function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.pct <- function(var, region, data, df, select_id,
-                                       col = "var_left", lang, ...) {
+explore_text_values_q5.pct <- function(var, region, data, scale, select_id,
+                                       col = "var_left", lang, time, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -183,10 +186,11 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
     var = var,
     region = region,
     data = data,
-    df = df,
+    scale = scale,
     select_id = select_id,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]],
   )
 
   # NA message
@@ -223,9 +227,8 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -237,8 +240,8 @@ explore_text_values_q5.pct <- function(var, region, data, df, select_id,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.count <- function(var, region, data, df, select_id,
-                                         col = "var_left", lang, ...) {
+explore_text_values_q5.count <- function(var, region, data, scale, select_id,
+                                         col = "var_left", lang, time, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -253,7 +256,8 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
     df = df,
     select_id = select_id,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -306,7 +310,7 @@ explore_text_values_q5.count <- function(var, region, data, df, select_id,
 #' @return The resulting text.
 #' @export
 explore_text_values_q5.dollar <- function(var, region, data, select_id,
-                                          col = "var_left", lang, ...) {
+                                          col = "var_left", lang, time, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -314,7 +318,8 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
     data = data,
     select_id = select_id,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -357,9 +362,8 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -371,8 +375,8 @@ explore_text_values_q5.dollar <- function(var, region, data, select_id,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.ind <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
+explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
+                                       col = "var_left", lang, time, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -384,7 +388,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
     data = data,
     df = df,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -464,9 +469,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -478,8 +482,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, df,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.avg <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
+explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
+                                       col = "var_left", lang, time, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -491,7 +495,8 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
     data = data,
     df = df,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -557,9 +562,8 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -571,8 +575,8 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, df,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
-                                        col = "var_left", lang, ...) {
+explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
+                                        col = "var_left", lang, time, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -580,7 +584,8 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
     data = data,
     select_id = select_id,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -628,9 +633,8 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -642,11 +646,11 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
-                                         col = "var_left", lang = lang, ...) {
+explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
+                                         col = "var_left", lang = lang, time, ...) {
   explore_text_values_q5.sqkm(
     var = var, region = region, select_id = select_id,
-    data = data, df = df, col = col, lang = lang, ...
+    data = data, df = df, col = col, lang = lang, time = time, ...
   )
 }
 
@@ -660,9 +664,8 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -674,8 +677,8 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
+explore_text_values_q5.ppo <- function(var, region, select_id, data, scale,
+                                       col = "var_left", lang, time, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -683,7 +686,8 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
     data = data,
     select_id = select_id,
     col = col,
-    lang = lang
+    lang = lang,
+    time_col = time[[col]]
   )
 
   # NA message
@@ -794,14 +798,14 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     value_string_left <- explore_text_values_q5(
       var = vars$var_left, region = region,
       select_id = select_id, data = data,
-      df = context$treated_df, lang = lang
+      df = context$treated_scale, lang = lang
     )
 
     # Grab the value string
     value_string_right <- explore_text_values_q5(
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
-      df = context$treated_df,
+      df = context$treated_scale,
       col = "var_right", lang = lang
     )
 
@@ -1185,7 +1189,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "left", lang = lang
+    df = context$treated_scale, left_right = "left", lang = lang
   )
 
   # Get the necessary information for the second paragraph
@@ -1290,7 +1294,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
 #' options are "left" or "right".
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
@@ -1688,12 +1692,12 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   exp_vals_left <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "left", lang = lang
+    df = context$treated_scale, left_right = "left", lang = lang
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "right", lang = lang
+    df = context$treated_scale, left_right = "right", lang = lang
   )
 
   # If there is a selection, return a completely different text

@@ -42,7 +42,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
 
   shiny::moduleServer(id, function(input, output, session) {
     # Switch scales to DA if necessary
-    treated_df <-
+    treated_scale <-
       shiny::reactive(treat_to_DA(
         scales_as_DA = scales_as_DA(),
         df = r[[id]]$df()
@@ -165,7 +165,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       dat <- table_view_prep_table(
         vars = vars(),
         data = data(),
-        df = treated_df(),
+        df = treated_scale(),
         zoom_levels = zoom_levels(),
         lang = r$lang()
       )
@@ -261,7 +261,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
         r[[id]]$select_id(new_id)
 
         # If there is a selection, update the central coordinates of the map
-        df_data <- grab_df_from_bslike(df = treated_df())
+        df_data <- grab_df_from_bslike(df = treated_scale())
         # Skip the zoom update if the 'centroid' is not in the df
         if (!"centroid" %in% names(df_data)) {
           return(NULL)
@@ -308,7 +308,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
 
               # Prepare data by attaching geometries
               require(sf)
-              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_df()))
+              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_scale()))
               data <- merge(datas()$data, geo, by = "ID")
               data <- sf::st_as_sf(data)
 

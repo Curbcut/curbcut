@@ -9,9 +9,8 @@
 #' plot, default is "acidgrotesk-book".
 #' @param lang <`character`> A character string indicating the language to
 #' translate variable titles to.
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their graph will be the one of their DA.
@@ -19,11 +18,13 @@
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The output of \code{\link{data_get}}.
+#' @param time <`numeric vector`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments passed to the specific method.
 #'
 #' @return A list containing the default theme and color data frames.
 explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NULL,
-                               df, scales_as_DA, select_id, data, ...) {
+                               scale, scales_as_DA, select_id, data, time, ...) {
   # Create the theme
   theme_default <- list(
     ggplot2::theme_minimal(),
@@ -43,12 +44,12 @@ explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NU
   colours_dfs <- colours_get()
 
   # In the case where the selected ID must be updated
-  if (curbcut::is_scale_in(scales_as_DA, df) & !is.na(select_id)) {
-    select_id <- grab_DA_ID_from_bslike(df = df, select_id = select_id)
+  if (is_scale_in(scales_as_DA, scale) & !is.na(select_id)) {
+    select_id <- grab_DA_ID_from_bslike(scale = scale, select_id = select_id)
   }
 
   # df treatment if it's in the scales as DA
-  treated_df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  treated_scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # In the case where the selected ID is not in data, clear the selection
   if (!is.na(select_id) & !select_id %in% data$ID) {
@@ -61,7 +62,7 @@ explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NU
     colours_dfs = colours_dfs,
     labs = labs,
     select_id = select_id,
-    treated_df = treated_df
+    treated_scale = treated_scale
   ))
 }
 

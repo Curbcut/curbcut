@@ -108,7 +108,7 @@ selected region (if any). Usually \code{r[[id]]$select_id()}}
 
 \item{df}{<\code{character}> The combination of the region under study and the
 scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The output of \code{\link{data_get}}.}

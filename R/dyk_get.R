@@ -8,12 +8,12 @@
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
 #' @param poi <`reactive`> (Optional) Point of interests. The output of
-#' \code{\link{update_df}}. Default is NULL.
+#' \code{\link{update_scale}}. Default is NULL.
 #' @param lang <`character`> A character string specifying the language to
 #' translate the content. Defaults to NULL for no translation.
 #' @param df <`reactive character`> The combination of the region under study
 #' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param region <`character`> Character string specifying the name of the region.

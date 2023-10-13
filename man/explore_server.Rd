@@ -11,17 +11,18 @@ explore_server(
   data,
   vars,
   region,
-  df,
+  scale,
   select_id,
+  time,
   scales_as_DA = shiny::reactive(c("building", "street")),
   graph_fun = shiny::reactive(explore_graph),
-  graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), df = df(),
-    select_id = select_id(), region = region(), scales_as_DA = scales_as_DA(), lang =
-    r$lang())),
+  graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
+    time = time(), select_id = select_id(), region = region(), scales_as_DA =
+    scales_as_DA(), lang = r$lang())),
   table_fun = shiny::reactive(explore_text),
-  table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), select_id =
-    select_id(), region = region(), scales_as_DA = scales_as_DA(), df = df(), lang =
-    r$lang()))
+  table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
+    time = time(), select_id = select_id(), region = region(), scales_as_DA =
+    scales_as_DA(), lang = r$lang()))
 )
 
 explore_UI(id)
@@ -43,12 +44,15 @@ used to determine which type of legend to draw.}
 \item{region}{<\verb{reactive character}> A string or numeric value representing the
 selected region.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
-\item{select_id}{<\verb{reactive character}> the current selected ID, usually
+\item{select_id}{<\verb{reactive character}> The current selected ID, usually
 \code{r[[id]]$select_id()}.}
+
+\item{time}{<\verb{reactive numeric vector}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+Usually r[\link{id}]$time.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
