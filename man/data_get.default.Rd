@@ -6,9 +6,9 @@
 \usage{
 \method{data_get}{default}(
   vars,
-  df,
+  scale,
   scales_as_DA = c("building", "street"),
-  data_path = "data/",
+  data_path = get_data_path(),
   ...
 )
 }
@@ -16,10 +16,6 @@
 \item{vars}{<\verb{named list}> A list object with an unknown class. For this \code{default}
 method, no need for vars to have a class. It will extract the first element of
 \code{vars} as the \code{var} argument for the  \code{\link{data_get_qs}} call.}
-
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_scale}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
@@ -29,6 +25,10 @@ their colour will be the one of their DA.}
 containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to other functions.}
+
+\item{df}{<\code{character}> The combination of the region under study
+and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_scale}}.}
 }
 \value{
 A data.frame containing the raw sql table for the first element of \code{vars}.

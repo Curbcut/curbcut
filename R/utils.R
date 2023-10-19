@@ -147,6 +147,8 @@ ntile <- function(x, n) {
 #' @return Returns TRUE or FALSE
 #' @export
 is_scale_in <- function(scales, scale, vectorized = FALSE) {
+  if (!is.character(scale)) stop("`scale` cannot be empty.")
+
   if (!vectorized) {
     return(scale %in% scales)
   }
@@ -495,7 +497,7 @@ grab_DA_ID_from_bslike <- function(scale, select_id) {
   # NDS: Rework this with new building sql db.
   if (is.null(dat)) {
     db_df <- sprintf("%s_conn", scale)
-    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", df, select_id)
+    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", scale, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
     out <- unname(unlist(out))
   } else {
@@ -663,4 +665,43 @@ hex_to_rgb_or_rgba <- function(hex) {
   } else {
     stop("Invalid HEX code length. Must be HEX6 or HEX8.")
   }
+}
+
+#' Match schema list to right column in `data`
+#'
+#' This function identifies the column in a `data` (output of \code{\link{get_data}})
+#' that matches a given schema named list. It is designed to be used in situations where
+#' the schema for the data frame can be dynamic. For example, if the schema is
+#' based on the time of the data, this function can be used to identify the
+#' column in the data frame that corresponds to the given time.
+#'
+#' @param data <`data.frame`> A data frame containing the data. The output of
+#' output of \code{\link{get_data}}.
+#' @param time <`numeric`> The specific time value to match against.
+#' @param schema <`named list`> A list containing the schema information, specifically the
+#' 'time' attribute. Typically obtained, and defaulted, as an attribute to
+#' `data` (output of \code{\link{get_data}}).
+#'
+#' @return Returns the name of the variable that corresponds to the given
+#' schema as a character string.
+#' @export
+match_schema_to_col <- function(data, time, schema = attr(data, "schema")) {
+
+  # Get the possible variables that hold the schema
+  pv <- names(data)[grepl(schema$time, names(data))]
+
+  # Which var out of those correspond to the right time
+  # NDS: this now only works with time. Need to make sure if works dynamically
+  # for whatever is fed in the schema.
+  var <- pv[s_extract(schema$time, pv) == time]
+
+  # Return the var as a character
+  return(var)
+
+}
+
+get_data_path <- function() {
+  data_path <- Sys.getenv("CURBCUT_DATA")
+  if (data_path == "") return("data/")
+  return(data_path)
 }

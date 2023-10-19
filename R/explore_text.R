@@ -18,7 +18,7 @@
 #' default, their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param time <`numeric vector`> The `time` at which data is displayed.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
@@ -252,6 +252,7 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
+    scale = scale,
     data = data,
     df = df,
     select_id = select_id,
@@ -309,12 +310,13 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5.dollar <- function(var, region, data, select_id,
+explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
                                           col = "var_left", lang, time, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
+    scale = scale,
     data = data,
     select_id = select_id,
     col = col,
@@ -384,6 +386,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
+    scale = scale,
     select_id = select_id,
     data = data,
     df = df,
@@ -420,9 +423,8 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
     )
 
     # Sub the placeholder for the two last brackets
-    breaks <- var_get_info(var = var, what = "breaks_q5")[[1]]
-    breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
+    breaks <- attr(data, "breaks")
+    two_last_ranks <- var_get_info(var = var, what = "rank_name")[[1]][4:5]
     two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
     two_last_ranks <- tolower(two_last_ranks)
     # If the two last brackets is recognized as the default, write a particular string
@@ -492,6 +494,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
     var = var,
     region = region,
     select_id = select_id,
+    scale = scale,
     data = data,
     df = df,
     col = col,
@@ -581,6 +584,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
   region_values <- explore_text_region_val_df(
     var = var,
     region = region,
+    scale = scale,
     data = data,
     select_id = select_id,
     col = col,
@@ -649,7 +653,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
 explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
                                          col = "var_left", lang = lang, time, ...) {
   explore_text_values_q5.sqkm(
-    var = var, region = region, select_id = select_id,
+    var = var, region = region, scale = scale, select_id = select_id,
     data = data, df = df, col = col, lang = lang, time = time, ...
   )
 }

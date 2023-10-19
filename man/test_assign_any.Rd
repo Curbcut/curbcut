@@ -5,11 +5,11 @@
 \title{Assign Values to specific Variables in the environment}
 \usage{
 test_assign_any(
-  var_left,
+  var_left = "housing_tenant",
   var_right = " ",
   region = "CMA",
   scale = "CSD",
-  time,
+  time = 2021,
   select_id = NA,
   pos = 1,
   data_path = get0(".curbcut_montreal_data")

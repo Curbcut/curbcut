@@ -9,8 +9,9 @@
 explore_graph_bivar_ind(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -20,8 +21,9 @@ explore_graph_bivar_ind(
 \method{explore_graph_bivar_ind}{scalar}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -31,8 +33,9 @@ explore_graph_bivar_ind(
 \method{explore_graph_bivar_ind}{ordinal}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -45,10 +48,6 @@ output of \code{\link{vars_build}}.}
 
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
 selected region (if any). Usually \code{r[[id]]$select_id()}}
-
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The output of \code{\link{data_get}}.}
@@ -64,6 +63,10 @@ translate variable titles to.}
 plot, default is "acidgrotesk-book".}
 
 \item{...}{Additional arguments passed to the specific method.}
+
+\item{df}{<\code{character}> The combination of the region under study and the
+scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\code{\link{update_scale}}.}
 }
 \value{
 A ggplot2 object representing the plot.

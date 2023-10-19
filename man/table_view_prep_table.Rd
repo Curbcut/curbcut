@@ -15,7 +15,7 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
 \item{df}{<\verb{reactive character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of

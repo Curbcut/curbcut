@@ -9,7 +9,7 @@
   scale,
   region = NULL,
   scales_as_DA = c("building", "street"),
-  data_path = "data/",
+  data_path = get_data_path(),
   ...
 )
 }

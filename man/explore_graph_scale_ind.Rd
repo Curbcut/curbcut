@@ -6,21 +6,17 @@
 \alias{explore_graph_scale_ind.ordinal}
 \title{Explore Graph Scale Indice}
 \usage{
-explore_graph_scale_ind(var, x_y, df, lang = NULL, ...)
+explore_graph_scale_ind(var, x_y, scale, lang = NULL, ...)
 
-\method{explore_graph_scale_ind}{scalar}(var, x_y, df, lang = NULL, data_vals, ...)
+\method{explore_graph_scale_ind}{scalar}(var, x_y, scale, lang = NULL, data_vals, ...)
 
-\method{explore_graph_scale_ind}{ordinal}(var, x_y, df, lang = NULL, ...)
+\method{explore_graph_scale_ind}{ordinal}(var, x_y, scale, lang = NULL, data, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable with its type as a class, either "scale",
 "ordinal".}
 
 \item{x_y}{<\code{character}> x or y axis?}
-
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
 
 \item{lang}{<\code{character} Which language should the label be translated to.
 Defaults to NULL for no translation.}

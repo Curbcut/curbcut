@@ -28,7 +28,7 @@ explore_context <- function(region, select_id, scale, switch_DA, lang = NULL) {
     to_compare <- cc_t(region_df$to_compare, lang = lang)
 
     # Return as a sentence
-    return(list(p_start = to_compare))
+    return(list(p_start = to_compare, treated_scale = scale))
   }
 
   # If there is no selection, return the region text only
@@ -176,16 +176,11 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
 explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
-                                       lang = NULL, time_col, ...) {
+                                       scale, data, lang = NULL, time_col, ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
-    region_values <- var_get_info(var = var, what = "region_values")[[1]]
-
-    # Subset current region
-    region_values <- region_values[region_values$region == region, ]
-
-    # With time, filter the right row
-    region_values <- region_values[region_values[["year"]] == time_col, ]
+    region_values <- region_value(var = var, data = data, time = time_col,
+                                  scale = scale, region = region)
 
     # Return the values
     return(region_values)

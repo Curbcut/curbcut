@@ -148,7 +148,7 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       # Postal code found
       # Check all IDs that fit with the DA around the postal code
       all_ids <- sapply(regions_dictionary$region, \(x) {
-        dat <- get0(paste0(x, "_DA"), envir = .GlobalEnv)
+        dat <- get0("DA", envir = .GlobalEnv)
         if (is.null(dat)) {
           return("")
         }
@@ -163,7 +163,11 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
           type = "default"
         )
       }
-      return(unique(unlist(all_ids)))
+      # Take out NAs
+      out <- unique(unlist(all_ids))
+      out <- out[!is.na(out)]
+
+      return(out)
     }
   }
 
@@ -185,11 +189,8 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
     }
 
     # Grab all the DA df and get their distance to the point
-    all_ids <- sapply(regions_dictionary$region, \(x) {
-      dat <- get0(paste0(x, "_DA"), envir = .GlobalEnv)
-      if (is.null(dat)) {
-        return("")
-      }
+    all_ids <- {
+      dat <- get_from_globalenv("DA")
 
       # Get the distance from the selected location to all DAs
       dat$lat <- sapply(dat$centroid, `[`, 1)
@@ -200,15 +201,18 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       # Grab the closest DA
       dat <- dat[which(dist_vec == min_dist), ]
 
+      # Only take ONE ID for each scale
+      IDs <- sapply(dat[grepl("_ID$", names(dat))], `[[`, 1)
+
+      # Drop NAs
+      IDs <- IDs[!is.na(IDs)]
+
       # Grab all the IDs
       list(
-        IDs = unlist(dat[grepl("_ID$", names(dat))]),
+        IDs = IDs,
         min_dist = min_dist
       )
-    }, simplify = FALSE, USE.NAMES = TRUE)
-
-    # Grab only the regions that have IDs
-    all_ids <- all_ids[sapply(all_ids, length) > 1]
+    }
 
     # If no region has IDs, return a notification and NULL
     if (length(all_ids) == 0) {
@@ -223,11 +227,9 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       }
       return(NULL)
     } else {
-      # Grab the minimum of all minimum distance
-      min_of_min_dist <- min(unlist(sapply(all_ids, `[`, "min_dist")))
 
       # If no DA has been found in a 1km radius, return a notification and NULL
-      if (min_of_min_dist > 1000) {
+      if (all_ids$min_dist > 1000) {
         if (!is.null(shiny::getDefaultReactiveDomain())) {
           shiny::showNotification(
             cc_t(
@@ -246,35 +248,7 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
           )
         }
 
-        # Do not double `CSD_ID`. Keep only the one closer to the address
-        ids <- lapply(all_ids, `[[`, 1)
-        dist <- lapply(all_ids, `[[`, 2)
-
-        scale_ids_available <-
-          unique(unlist(sapply(ids, names, simplify = FALSE)))
-
-        # For all scales with an ID available, which is the closer one to the address
-        scales_keep <- sapply(scale_ids_available, \(scale) {
-          # Include only the region that share the ID
-          includes <- sapply(ids, \(n) scale %in% names(n))
-          includes <- includes[includes]
-
-          # Filter in only the distance for the region that share the ID
-          d <- dist[names(dist) %in% names(includes)]
-
-          # Which region is closer to the address
-          names(includes[which(unlist(d) == min(unlist(d)))])
-        }, USE.NAMES = TRUE)
-
-        # Filter
-        out <- mapply(\(id, scales) {
-          lapply(scales, \(scale) {
-            ids[[scale]][[id]]
-          }) |> unlist()
-        }, names(scales_keep), scales_keep, USE.NAMES = FALSE)
-        out <- unique(unlist(out))
-
-        return(out)
+        return(all_ids$IDs)
       }
     }
   }

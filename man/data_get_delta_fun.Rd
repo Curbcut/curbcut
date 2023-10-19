@@ -8,7 +8,7 @@ data_get_delta_fun(
   vars,
   df,
   scales_as_DA = c("building", "street"),
-  data_path = "data/",
+  data_path = get_data_path(),
   ...
 )
 }

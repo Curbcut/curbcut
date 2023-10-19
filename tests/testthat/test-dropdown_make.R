@@ -6,7 +6,9 @@ test_that("dropdown_make generates a dropdown list for variables in one theme", 
   expect_identical(as.numeric(vec_dep(actual_output)), 3)
   expect_identical(unname(unlist(actual_output))[
     order(unname(unlist(actual_output)))
-  ], vars[order(vars)])
+  ],
+
+  vars[order(vars)])
 })
 
 # Test generating a dropdown list with 'no comparison' option

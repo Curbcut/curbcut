@@ -77,7 +77,7 @@ test_resources_creation <- function(additional_vars = c()) {
 #' variable is represented by (" ").
 #' @param region <`character`> The region. Defaults to CMA.
 #' @param scale <`character`> The scale. Defaults to CSD.
-#' @param time <`numeric vector`> Time the user would be interested in. (represents
+#' @param time <`numeric named list`> Time the user would be interested in. (represents
 #' the widget time).
 #' @param select_id <`character`> The select_id to assign in the global environment.
 #' Defaults to NA.
@@ -141,86 +141,15 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
 #'
 #' @return Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
-test_setup <- function(pos = 1, folder = "tests/testthat/resources/") {
-  # Variables present in the .GlobalEnv
-  assign("all_choropleths",
-    value = c(
-      "CSD", "CT", "DA", "building", "grid50", "grid100", "grid250",
-      "cmhczone"
-    ),
-    envir = as.environment(pos)
-  )
-
-  # Assign translation_df
-  translation_df <- qs::qread(sprintf("%stranslation_df.qs", folder))
-  assign("translation_df",
-         value = translation_df,
-         envir = as.environment(pos)
-  )
-
-  # Assign scales_dictionary
-  scales_dictionary <- qs::qread(sprintf("%sscales_dictionary.qs", folder))
-  assign("scales_dictionary",
-         value = scales_dictionary,
-         envir = as.environment(pos)
-  )
-
-  # Assign regions_dictionary
-  regions_dictionary <- qs::qread(sprintf("%sregions_dictionary.qs", folder))
-  assign("regions_dictionary",
-         value = regions_dictionary,
-         envir = as.environment(pos)
-  )
-
-  # Default random address
-  assign("default_random_address",
-    value = "845 Sherbrooke",
-    envir = as.environment(pos)
-  )
-
-  # Default tileset info
-  assign("tileset_prefix",
-    value = "mtl",
-    envir = as.environment(pos)
-  )
-  assign("mapbox_username",
-    value = "sus-mcgill",
-    envir = as.environment(pos)
-  )
-
-  # All qs and qsm files
-  data_files <- list.files(folder, full.names = TRUE)
-  invisible(lapply(data_files[grepl("qsm$", data_files)],
-    qs::qload,
-    env = as.environment(pos)
-  ))
-  invisible(lapply(
-    data_files[grepl("qs$", data_files)],
-    \(x) {
-      object_name <- gsub(sprintf("(%s)|(\\.qs)", folder), "", x)
-      assign(object_name, qs::qread(x), envir = as.environment(pos))
-    }
-  ))
-
-  # All sqlite files
-  dbs <- list.files(folder, full.names = TRUE)
-  dbs <- subset(dbs, grepl(".sqlite$", dbs))
-
-  lapply(dbs, \(x) {
-    connection_name <- paste0(s_extract("(?<=/).*?(?=\\.)", x), "_conn")
-    assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
-  })
-
-  # When testing, we want to reduce the size of the resources folder. When
-  # the test runs, slim it down to only city (the only necessary scales for
-  # testing on curbcut package).
-  conn <- DBI::dbConnect(RSQLite::SQLite(), paste0(folder, "building.sqlite"))
-  if (folder == "resources/") {
-    tbs <- DBI::dbListTables(conn)
-    tbs <- tbs[!grepl("city_", tbs)]
-    lapply(tbs, \(x) DBI::dbRemoveTable(conn, x))
-    suppressWarnings(DBI::dbGetQuery(conn, "VACUUM"))
-  }
-
-  return()
+test_setup <- function(pos = 1, folder = get(".curbcut_montreal_data")) {
+  load_data(data_folder = folder,
+            pos = 1,
+            site_name = "Curbcut Montréal",
+            site_url = "https://montreal.curbcut.ca",
+            stories_page = "Montréal stories",
+            tileset_prefix = "mtl",
+            mapbox_username = "curbcut",
+            default_random_address = "845 Sherbrooke Ouest, Montréal, Quebec",
+            map_zoom = 9.9,
+            map_loc = c(lat = -73.70, lon = 45.53))
 }

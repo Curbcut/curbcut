@@ -30,10 +30,12 @@ dropdown_make <- function(vars, compare = FALSE) {
         cat_vecs <-
           vars[vars$theme == cat, c("var_code", "var_title")]
 
-        lapply(cat_vecs$var_title, \(name) {
+        unique_title <- unique(cat_vecs$var_title)
+
+        lapply(unique_title, \(name) {
           cat_vecs$var_code[cat_vecs$var_title == name]
         }) |>
-          stats::setNames(cat_vecs$var_title)
+          stats::setNames(unique_title)
       }
     )
 

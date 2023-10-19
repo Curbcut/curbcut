@@ -62,7 +62,7 @@ value information. Defaults to \code{var_left}, but could also be \code{var_righ
 
 \item{df}{<\code{character}> The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\code{\link{update_scale}}.}
 
 \item{lang}{<\code{character}> Active language. \code{"en"} or \code{"fr"}}
 }

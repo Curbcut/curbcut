@@ -11,7 +11,7 @@
 #' observations to be compared. The output of \code{\link{data_get}}.
 #' @param scale <`character`> Current scale. The output of
 #' \code{\link{update_scale}}.
-#' @param time <`numeric vector`> The `time` at which data is displayed.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -37,7 +37,7 @@ explore_graph.q5_ind <- function(vars, select_id, scale, data, time,
                                  font_family = "acidgrotesk-book", ...) {
   explore_graph_q5_ind(vars = vars, select_id = select_id, scale = scale,
                        data = data, scales_as_DA = scales_as_DA,
-                       lang = lang,
+                       lang = lang, time = time,
                        font_family = "acidgrotesk-book", ...
   )
 }
@@ -84,7 +84,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   plot <-
     data[!is.na(data[[rcol]]), ] |>
     remove_outliers_df(cols = rcol) |>
-    ggplot2::ggplot(ggplot2::aes_string(rcol)) +
+    ggplot2::ggplot(ggplot2::aes({{rcol}})) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
       bins = bin_number
     ) +
@@ -100,7 +100,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data$var_left[data$ID == shared_info$select_id]
+    val <- data[[rcol]][data$ID == shared_info$select_id]
     if (!any(is.na(val))) {
       plot <-
         plot +
@@ -464,7 +464,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
   plot <-
     data[!is.na(data[[rcol]]), ] |>
     # remove_outliers_df(cols = c("var_left")) |>
-    ggplot2::ggplot(ggplot2::aes_string(rcol)) +
+    ggplot2::ggplot(ggplot2::aes({{rcol}})) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
       bins = bin_number
     ) +
@@ -480,7 +480,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data$var_left[data$ID == shared_info$select_id]
+    val <- data[[rcol]][data$ID == shared_info$select_id]
     if (!any(is.na(val))) {
       plot <-
         plot +

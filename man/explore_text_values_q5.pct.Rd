@@ -25,7 +25,7 @@ Usually equivalent of \code{r$region()}.}
 
 \item{data}{<\code{data.frame}> The output of \code{\link{data_get}}.}
 
-\item{scale}{<\verb{reactive character}> Current scale. The output of
+\item{scale}{<\code{character}> Current scale. The output of
 \code{\link{update_scale}}.}
 
 \item{select_id}{<\code{character}> the current selected ID, usually

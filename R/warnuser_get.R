@@ -5,7 +5,7 @@
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
-#' @param time <`numeric vector`> Vector of time values to use for
+#' @param time <`numeric named list`> Vector of time values to use for
 #' appending a time to the variables picked.
 #' @param data <`data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.

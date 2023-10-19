@@ -51,7 +51,7 @@ data_get_sql <- function(var, df, select = "*") {
 #' directory containing the QS files. Default is "data/".
 #'
 #' @return A data.frame object with the selected data from the specified table.
-data_get_qs <- function(var, scale, data_path = "data/") {
+data_get_qs <- function(var, scale, data_path = get_data_path()) {
 
   # Construct the file path
   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
@@ -77,7 +77,7 @@ data_get_qs <- function(var, scale, data_path = "data/") {
 #' `ID` is the ID column from the original data, `var_1` and `var_2` are the
 #' values of the two variables being compared, and `var` is the percentage
 #' change between the two variables.
-data_get_delta <- function(var_two_years, df, data_path = "data/") {
+data_get_delta <- function(var_two_years, df, data_path = get_data_path()) {
 
   #' NDS: This should change to take `vars`, `time`, and `scale` arguments. Or,
   #' in fact, maybe it doesn't exist any more, since we're always importing all
@@ -128,7 +128,7 @@ data_get_delta <- function(var_two_years, df, data_path = "data/") {
 #' @export
 data_get <- function(vars, scale, region,
                      scales_as_DA = c("building", "street"),
-                     data_path = "data/", ...) {
+                     data_path = get_data_path(), ...) {
   UseMethod("data_get", vars)
 }
 
@@ -154,7 +154,7 @@ data_get <- function(vars, scale, region,
 #' @export
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
-                        data_path = "data/", ...) {
+                        data_path = get_data_path(), ...) {
 
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
@@ -163,15 +163,12 @@ data_get.q5 <- function(vars, scale, region = NULL,
   data <- data_get_qs(vars$var_left, scale, data_path = data_path)
 
   # Filter to region
-  if (!is.null(region)) {
-    # Get the regions dictionary to grab the vector of IDs with which to filter
-    # the retrieved data
-    regions_dictionary <- get_from_globalenv("regions_dictionary")
-    # Vector of IDs for the current region and scale
-    scales <- regions_dictionary$scales[regions_dictionary$region == region][[1]]
-    id_reg <- scales[[scale]]
-    data <- data[data$ID %in% id_reg, ]
-  }
+  data <- filter_region(data = data, scale = scale, region = region)
+
+  # Keep track of previous attributes
+  prev_attr <- attributes(data)
+  prev_attr <- prev_attr[!names(prev_attr) %in% c("names", "row.names", "class",
+                                                  "quintiles", "breaks")]
 
   # Calculate breaks
   data_val <- data[-1]
@@ -190,6 +187,11 @@ data_get.q5 <- function(vars, scale, region = NULL,
   data <- cbind(data, out) # bind the data
   data <- tibble::as_tibble(data)
   attr(data, "breaks") <- breaks
+
+  # Keep the previous attributes
+  for (i in names(prev_attr)) {
+    attr(data, i) <- prev_attr[[i]]
+  }
 
   # Rename fields
   names(data) <- gsub(vars$var_left, "var_left", names(data))
@@ -217,7 +219,7 @@ data_get.q5 <- function(vars, scale, region = NULL,
 #' binded in the same dataframe with an added `group` column for map colouring.
 #' @export
 data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
-                           data_path = "data/", ...) {
+                           data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -265,7 +267,7 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
 #' to the `group` column for map colouring.
 #' @export
 data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
-                           data_path = "data/", ...) {
+                           data_path = get_data_path(), ...) {
   data_get_delta_fun(vars = vars, df = df, scales_as_DA = scales_as_DA,
                      data_path = data_path, ...)
 }
@@ -290,7 +292,7 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun <- function(vars, df,
                                scales_as_DA = c("building", "street"),
-                               data_path = "data/", ...) {
+                               data_path = get_data_path(), ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 
@@ -303,7 +305,7 @@ data_get_delta_fun <- function(vars, df,
 #'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
-                                      data_path = "data/", ...) {
+                                      data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -339,7 +341,7 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
-                                       data_path = "data/", ...) {
+                                       data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -387,7 +389,7 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
 #' `group` column for the map colouring.
 #' @export
 data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
-                                 data_path = "data/", ...) {
+                                 data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -434,7 +436,7 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 #' column for map colouring.
 #' @export
 data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
-                                      data_path = "data/", ...) {
+                                      data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -460,6 +462,38 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
   return(data)
 }
 
+#' Filter data by region
+#'
+#' Filters a given data frame by the region and scale specified. The function
+#' grabs a global variable \code{regions_dictionary} to identify the IDs
+#' associated with the given region and scale.
+#'
+#' @param data <`data.frame`> Data.frame containing the data to be filtered.
+#' It must have an \code{ID} column that matches the IDs in \code{regions_dictionary}.
+#' @param scale <`character`> The scale at which to filter the data (e.g., 'CSD', 'CT').
+#' @param region <`character`> The code of the region for filtering (e.g., 'CMA').
+#'
+#' @return Returns a filtered data frame containing only the rows corresponding
+#' to the specified region and scale.
+#' @export
+filter_region <- function(data, scale, region) {
+
+  # If no region supplied, return all
+  if (is.null(region)) return(data)
+
+  # Get the regions dictionary to grab the vector of IDs with which to filter
+  # the retrieved data
+  regions_dictionary <- get_from_globalenv("regions_dictionary")
+
+  # Vector of IDs for the current region and scale
+  scales <- regions_dictionary$scales[regions_dictionary$region == region][[1]]
+  id_reg <- scales[[scale]]
+  data <- data[data$ID %in% id_reg, ]
+
+  # Return filtered data
+  return(data)
+}
+
 #' Default data method
 #'
 #' This is the default data method, which simply returns the table taken out
@@ -482,16 +516,25 @@ data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "st
 #'
 #' @return A data.frame containing the raw sql table for the first element of `vars`.
 #' @export
-data_get.default <- function(vars, scale, scales_as_DA = c("building", "street"),
-                             data_path = "data/", ...) {
+data_get.default <- function(vars, scale, region = NULL,
+                             scales_as_DA = c("building", "street"),
+                             data_path = get_data_path(), ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+
+  # Grab var and modify if necessary
+  var <- vars[[1]]
+  if (var == "population") var <- "c_population"
+  if (var == "households") var <- "private_households"
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_qs(var = vars[[1]], scale = scale, data_path = data_path)
+  data <- data_get_qs(var = var, scale = scale, data_path = data_path)
+
+  # Filter by region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # To keep it constant, rename with var_left
-  names(data) <- gsub(vars[[1]], "var_left", names(data))
+  names(data) <- gsub(var, "var_left", names(data))
 
   # Return
   return(data)

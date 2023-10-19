@@ -4,7 +4,7 @@
 \alias{explore_get_parent_data}
 \title{Get parent data for a given variable and ID}
 \usage{
-explore_get_parent_data(var, select_id, scale, col = "var_left", time)
+explore_get_parent_data(var, select_id, scale, col = "var_left", time_col = NA)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable for which to retrieve the

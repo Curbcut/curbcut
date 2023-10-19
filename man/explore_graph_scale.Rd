@@ -17,7 +17,7 @@ explore_graph_scale(var, x_y, ...)
 
 \method{explore_graph_scale}{degree}(var, x_y, ...)
 
-\method{explore_graph_scale}{ind}(var, x_y, df, data_vals, lang = NULL, ...)
+\method{explore_graph_scale}{ind}(var, x_y, scale, data_vals, lang = NULL, ...)
 
 \method{explore_graph_scale}{default}(var, x_y, ...)
 }
@@ -31,10 +31,6 @@ explore_graph_scale(var, x_y, ...)
 
 \item{data_vals}{A numeric vector containing data values, required only for the
 "dollar" method.}
-
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
 
 \item{lang}{<\code{character} Which language should the label be translated to.
 Defaults to NULL for no translation.}

@@ -18,6 +18,6 @@ a character string indicating the string of the data the user is
 looking at. The combination of the region and the scale, e.g. \code{CMA_CSD}
 }
 \description{
-The \code{update_df} function returns the zoom string if the tile is on auto-scale,
+The \code{update_scale} function returns the zoom string if the tile is on auto-scale,
 otherwise it returns the tile.
 }

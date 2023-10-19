@@ -10,6 +10,8 @@
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
 #' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' @param time <`numeric`> The `time` at which data is displayed. A subset of the list
+#' `time`. Only the numeric vector.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
@@ -26,19 +28,25 @@
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
-data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
+data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_table,
                                     scales_as_DA = c("building", "street"),
-                                    ...) {
+                                    data_path = get_data_path(), ...) {
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
-  dfs <- paste(region, dfs, sep = "_")
 
   # Get all the data
-  data <- sapply(dfs, \(x) data_get(vars, x),
+  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
     simplify = FALSE,
     USE.NAMES = TRUE
   )
-  data <- Reduce(rbind, data)
+  data <- Reduce(rbind, data_r)
+
+  # Get the right complete variable, using schema
+  schema <- attr(data_r[[1]], "schema")
+
+  # Grab the correct column from which to use colors on
+  var <- match_schema_to_col(data = data, schema = schema, time = time)
+  group <- sprintf("%s_q5", var)
 
   # Deal with colours
   colours <- colours_get()
@@ -49,7 +57,7 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
     ))
   }
   colour_table <- colours[[colours_table]]
-  mapping <- match(data$group, colour_table$group)
+  mapping <- match(data[[group]], colour_table$group)
   data$fill <- colour_table$fill[mapping]
   data <- data[c("ID", "fill")]
   names(data)[1] <- c("ID_color")
@@ -73,6 +81,8 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
 #' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
@@ -86,76 +96,83 @@ data_get_colours_helper <- function(vars, region, zoom_levels, colours_table,
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
 #' @export
-data_get_colours <- function(vars, region, zoom_levels,
-                             scales_as_DA = c("building", "street"), ...) {
+data_get_colours <- function(vars, region, time, zoom_levels,
+                             scales_as_DA = c("building", "street"),
+                             data_path = get_data_path(), ...) {
   UseMethod("data_get_colours", vars)
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.q5 <- function(vars, region, zoom_levels,
-                                scales_as_DA = c("building", "street"), ...) {
+data_get_colours.q5 <- function(vars, region, time, zoom_levels,
+                                scales_as_DA = c("building", "street"),
+                                data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region,
+    vars = vars, region = region, time = time,
     zoom_levels = zoom_levels, colours_table = "left_5",
-    scales_as_DA = scales_as_DA
+    scales_as_DA = scales_as_DA, data_path = data_path
   )
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.bivar <- function(vars, region, zoom_levels,
-                                   scales_as_DA = c("building", "street"), ...) {
+data_get_colours.bivar <- function(vars, region, time, zoom_levels,
+                                   scales_as_DA = c("building", "street"),
+                                   data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region,
+    vars = vars, region = region, time = time,
     zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA
+    scales_as_DA = scales_as_DA, data_path = data_path
   )
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.delta <- function(vars, region, zoom_levels,
-                                   scales_as_DA = c("building", "street"), ...) {
+data_get_colours.delta <- function(vars, region, time, zoom_levels,
+                                   scales_as_DA = c("building", "street"),
+                                   data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region,
+    vars = vars, region = region, time = time,
     zoom_levels = zoom_levels, colours_table = "delta",
-    scales_as_DA = scales_as_DA
+    scales_as_DA = scales_as_DA, data_path = data_path
   )
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.delta_bivar <- function(vars, region, zoom_levels,
-                                         scales_as_DA = c("building", "street"), ...) {
+data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
+                                         scales_as_DA = c("building", "street"),
+                                         data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region,
+    vars = vars, region = region, time = time,
     zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA
+    scales_as_DA = scales_as_DA, data_path = data_path
   )
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.bivar_ldelta_rq3 <- function(vars, region, zoom_levels,
-                                              scales_as_DA = c("building", "street"), ...) {
+data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
+                                              scales_as_DA = c("building", "street"),
+                                              data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region,
+    vars = vars, region = region, time = time,
     zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA
+    scales_as_DA = scales_as_DA, data_path = data_path
   )
 }
 
 #' @rdname data_get_colours
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.default <- function(vars, region, zoom_levels,
-                                     scales_as_DA = c("building", "street"), ...) {
+data_get_colours.default <- function(vars, region, time, zoom_levels,
+                                     scales_as_DA = c("building", "street"),
+                                     data_path = get_data_path(), ...) {
   data <- data.frame(ID = "NA")
   data$fill <- "#B3B3BB"
   return(data)

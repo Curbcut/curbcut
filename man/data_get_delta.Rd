@@ -4,7 +4,7 @@
 \alias{data_get_delta}
 \title{Calculate the percentage change between two variables over two years}
 \usage{
-data_get_delta(var_two_years, df, data_path = "data/")
+data_get_delta(var_two_years, df, data_path = get_data_path())
 }
 \arguments{
 \item{var_two_years}{<\verb{character vector}> A character vector of length 2,
