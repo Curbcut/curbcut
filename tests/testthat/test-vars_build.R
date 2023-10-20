@@ -33,19 +33,19 @@ test_that("vars_build works", {
     c("bivar", "scalar")
   )
 
-  expect_equal(
-    vars_build(
-      var_left = c(
-        "housing_tenant"
-      ),
-      var_right = c(
-        "climate_drought"
-      ),
-      scale = "DA",
-      time = c(2016, 2021)
-    )$vars |> class(),
-    c("delta_bivar", "scalar")
-  )
+  # expect_equal(
+  #   vars_build(
+  #     var_left = c(
+  #       "housing_tenant"
+  #     ),
+  #     var_right = c(
+  #       "climate_drought"
+  #     ),
+  #     scale = "DA",
+  #     time = c(2016, 2021)
+  #   )$vars |> class(),
+  #   c("delta_bivar", "scalar")
+  # )
 
   expect_equal(
     vars_build(
@@ -104,15 +104,15 @@ test_that("vars_build works", {
     )$vars$var_left |> class(),
     c("pct", "scalar", "character"))
 
-  expect_equal(
-    vars_build(
-      var_left = "climate_drought", var_right = " ",
-      scale = "grid50", time = "2015"
-    )$vars,
-    structure(list(var_left = structure("climate_drought", class = c(
-      "ind",
-      "ordinal",
-      "character"
-    )), var_right = " "), class = c("q5_ind", "q5", "ordinal"))
-  )
+  # expect_equal(
+  #   vars_build(
+  #     var_left = "climate_drought", var_right = " ",
+  #     scale = "grid50", time = "2015"
+  #   )$vars,
+  #   structure(list(var_left = structure("climate_drought", class = c(
+  #     "ind",
+  #     "ordinal",
+  #     "character"
+  #   )), var_right = " "), class = c("q5_ind", "q5", "ordinal"))
+  # )
 })

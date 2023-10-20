@@ -40,18 +40,15 @@ zoom_get_string <- function(zoom, zoom_levels) {
 #' corresponding slider title ("Borough/City" , "Census tract", "Dissemination area")
 #' in the same order in which it was fed.
 #'
-#' @param dfs <`character vector`> A character vector of scales codes
+#' @param scales <`character vector`> A character vector of scales codes
 #' @param lang <`character`> String indicating the language to translate the
 #' slider titles to. Defaults to `NULL`, which is no translation.
 #'
 #' @return A character vector of slider titles.
 #' @export
-zoom_get_name <- function(dfs, lang = NULL) {
+zoom_get_name <- function(scales, lang = NULL) {
   # Get the scales dictionary
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-
-  # Extract only the scale, remove the region
-  scales <- gsub(".*_", "", dfs)
 
   # Error check
   if (sum(!scales %in% scales_dictionary$scale) > 0) {
@@ -180,6 +177,10 @@ zoom_get_levels <- function(id, region, suffix_zoom_levels = NA) {
 
   # Grab the possible regions for the module
   possible_regions <- modules$regions[modules$id == id][[1]]
+
+  # NDS: WARN THAT THIS IS WHERE THE REGION / SCALE NEW WIDGETS' LOGIC WILL
+  # LIVE. IT WILL OUTPUT THE SAME AS OF NOW: A zoom_levels WHICH WILL BE ONE OF
+  # mzl_* AND THE CURRENT REGION OF THE USER.
 
   # Declare a 'get map zoom level' function, and append to it the
   # `suffix_zoom_levels`, which lets the user decide if there's more to the
