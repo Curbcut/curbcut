@@ -4,21 +4,19 @@
 \alias{table_view_prep_table}
 \title{Prepare table to be shown to user}
 \usage{
-table_view_prep_table(vars, data, df, zoom_levels, lang = NULL)
+table_view_prep_table(vars, data, scale, zoom_levels, time, lang = NULL)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function.}
 
-\item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
+\item{data}{<\code{data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_scale}}.}
+\item{scale}{<\code{numeric}>}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+levels. Usually one of the \code{mzl_x}, or the output of
 \code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-scale).}

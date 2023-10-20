@@ -9,9 +9,9 @@
 \alias{panel_view_prepare_text.default}
 \title{Prepare the panel view text for the given variables.}
 \usage{
-panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
+panel_view_prepare_text(vars, scale, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{q5}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{q5}(vars, scale, dat, time, lang = NULL, ...)
 
 \method{panel_view_prepare_text}{delta}(vars, df, dat, lang = NULL, ...)
 
@@ -25,8 +25,7 @@ panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}.}
+\item{scale}{<\code{character}>}
 
 \item{dat}{<\code{data.frame}> The data frame containing the columns under analysis}
 

@@ -141,7 +141,7 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
 #'
 #' @return Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
-test_setup <- function(pos = 1, folder = get(".curbcut_montreal_data")) {
+test_setup <- function(pos = 1, folder = get_data_path()) {
   load_data(data_folder = folder,
             pos = 1,
             site_name = "Curbcut Montréal",

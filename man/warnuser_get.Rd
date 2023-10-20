@@ -13,7 +13,7 @@ warnuser_get(vars, data, time, more_text, lang = NULL)
 \item{data}{<\code{data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
-\item{time}{<\verb{numeric vector}> Vector of time values to use for
+\item{time}{<\verb{numeric named list}> Vector of time values to use for
 appending a time to the variables picked.}
 
 \item{more_text}{<\code{character}> Optional additional text to be added to the

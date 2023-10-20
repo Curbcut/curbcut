@@ -27,7 +27,7 @@ variable is represented by (" ").}
 
 \item{scale}{<\code{character}> The scale. Defaults to CSD.}
 
-\item{time}{<\verb{numeric vector}> Time the user would be interested in. (represents
+\item{time}{<\verb{numeric named list}> Time the user would be interested in. (represents
 the widget time).}
 
 \item{select_id}{<\code{character}> The select_id to assign in the global environment.

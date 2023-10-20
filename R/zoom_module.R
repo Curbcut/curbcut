@@ -86,26 +86,28 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
     # of `tile` as it must inform the map tileset to show. If the user is
     # not on autozoom, then tile will be the scale the user selected on the slider.
     tile <- shiny::reactive({
-      # On auto-scale, return the auto_zoom
-      if (zoom_auto() && !no_autozoom()) {
-        out <- paste(zoom_levels()$region, "auto_zoom", sep = "_")
-        if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
-        return(out)
-      }
-
-      scale <- zoom_get_code(zoom_slider(), lang = r$lang())
-
-      # A change in region should switch the tile back to auto-scale to deal with
-      # the fact that some scales are not available in some regions
-      get_mzl <- paste0("map_zoom_levels_", zoom_levels()$region)
-      mzl <- tryCatch(get_from_globalenv(get_mzl),
-        error = function(e) c(missing = "missing")
-      )
-      if (!scale %in% names(mzl)) {
-        scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
-      }
-
-      return(paste(zoom_levels()$region, scale, sep = "_"))
+      # # On auto-scale, return the auto_zoom
+      # if (zoom_auto() && !no_autozoom()) {
+      #   out <- paste(zoom_levels()$region, "auto_zoom", sep = "_")
+      #   if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
+      #   return(out)
+      # }
+      #
+      # scale <- zoom_get_code(zoom_slider(), lang = r$lang())
+      #
+      # # A change in region should switch the tile back to auto-scale to deal with
+      # # the fact that some scales are not available in some regions
+      # get_mzl <- paste0("map_zoom_levels_", zoom_levels()$region)
+      # mzl <- tryCatch(get_from_globalenv(get_mzl),
+      #   error = function(e) c(missing = "missing")
+      # )
+      # if (!scale %in% names(mzl)) {
+      #   scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
+      # }
+      #
+      # return(paste(zoom_levels()$region, scale, sep = "_"))
+      # NDS temporary
+      return("CSD_CT_DA_building")
     })
 
     # If there's only one zoom level, hide the slider and the auto-zoom

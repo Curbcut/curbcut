@@ -155,6 +155,10 @@ data_get <- function(vars, scale, region,
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
                         data_path = get_data_path(), ...) {
+  # print(vars)
+  # print(scale)
+  # print(region)
+  # print(data_path)
 
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
@@ -172,7 +176,8 @@ data_get.q5 <- function(vars, scale, region = NULL,
 
   # Calculate breaks
   data_val <- data[-1]
-  data_vec <- data[[attr(data_val, "breaks_var")]]
+  # print(data_val)
+  data_vec <- data[[attr(data, "breaks_var")]]
   data_vec <- data_vec[!is.na(data_vec)]
 
   if (attr(data, "quintiles")) {

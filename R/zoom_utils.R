@@ -198,5 +198,8 @@ zoom_get_levels <- function(id, region, suffix_zoom_levels = NA) {
   region <- if (region %in% possible_regions) region else possible_regions[1]
 
   # Return both the region and the `map_zoom_levels_x`
-  return(list(zoom_levels = get_mzl(region), region = region))
+  # return(list(zoom_levels = get_mzl(region), region = region))
+
+  # NDS
+  return(list(zoom_levels = mzl_CSD_CT_DA_building, region = region))
 }

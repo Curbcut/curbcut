@@ -34,7 +34,6 @@ dyk_server <- function(id, r, vars, df, select_id, region, zoom_levels,
 
   # Error checking
   stopifnot(shiny::is.reactive(vars))
-  stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(poi))
   stopifnot(shiny::is.reactive(region))

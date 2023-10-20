@@ -709,6 +709,12 @@ match_schema_to_col <- function(data, time, schema = attr(data, "schema")) {
 #' @return A character string representing the path where data is stored.
 #' @export
 get_data_path <- function() {
+  # Are you in the `curbcut` repo developping?
+  cc_repo <- grepl("/curbcut$", getwd())
+
+  # If not, return data/ as default
+  if (!cc_repo) return("data/")
+
   # Retrieve the value of the CURBCUT_DATA environment variable
   data_path <- Sys.getenv("CURBCUT_DATA")
 

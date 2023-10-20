@@ -9,6 +9,8 @@ explore_text_region_val_df(
   region,
   select_id,
   col = "var_left",
+  scale,
+  data,
   lang = NULL,
   time_col,
   ...

@@ -4,10 +4,10 @@
 \alias{zoom_get_name}
 \title{Get the zoom name for a set of scale codes}
 \usage{
-zoom_get_name(dfs, lang = NULL)
+zoom_get_name(scales, lang = NULL)
 }
 \arguments{
-\item{dfs}{<\verb{character vector}> A character vector of scales codes}
+\item{scales}{<\verb{character vector}> A character vector of scales codes}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 slider titles to. Defaults to \code{NULL}, which is no translation.}

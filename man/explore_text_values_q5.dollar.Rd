@@ -8,6 +8,7 @@
   var,
   region,
   data,
+  scale,
   select_id,
   col = "var_left",
   lang,

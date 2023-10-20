@@ -53,7 +53,6 @@ legend_server <- function(id, r, vars, scale, data, hide = shiny::reactive(FALSE
                             scales_as_DA = scales_as_DA()
                           )),
                           force_height = shiny::reactive(NULL)) {
-  stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(hide))

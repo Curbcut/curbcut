@@ -12,6 +12,7 @@ panel_view_server(
   vars,
   data,
   zoom_levels,
+  time,
   temp_folder = get_from_globalenv("temp_folder"),
   scales_as_DA = shiny::reactive(c("building", "street"))
 )

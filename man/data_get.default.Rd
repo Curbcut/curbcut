@@ -7,6 +7,7 @@
 \method{data_get}{default}(
   vars,
   scale,
+  region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...

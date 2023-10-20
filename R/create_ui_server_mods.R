@@ -18,7 +18,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
   # Create the `basic` function
   ui <- function(id) {
     default_region <- modules$regions[modules$id == id][[1]][1]
-    mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
+    # NDS
+    mzp <- mzl_CSD_CT_DA_building
     page <- modules[modules$id == id, ]
     theme_lowercased <- gsub(" .*", "", tolower(page$theme))
     stories <- get_from_globalenv("stories")
@@ -66,12 +67,12 @@ create_ui_server_mods <- function(modules, pos = 1) {
     shiny::moduleServer(id, function(input, output, session) {
       map_zoom <- get_from_globalenv("map_zoom")
       default_region <- modules$regions[modules$id == id][[1]][1]
-      mzp <- eval(parse(text = paste0("map_zoom_levels_", default_region)))
+      # NDS
+      mzp <- mzl_CSD_CT_DA_building
       main_dropdown_title <- modules$main_dropdown_title[modules$id == id]
       default_year <- modules$dates[modules$id == id][[1]]
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- modules$var_right[modules$id == id][[1]]
-      suffix_zoom_levels <- modules$suffix_zoom_levels[modules$id == id]
       stories <- get_from_globalenv("stories")
 
       map_loc <- get_from_globalenv("map_loc")
@@ -86,8 +87,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
           map_ID = shiny::NS(id, shiny::NS(id, "map")),
           username = mapbox_username,
           token = map_token,
-          longitude = map_loc[1],
-          latitude = map_loc[2],
+          longitude =map_loc[["lon"]],
+          latitude = map_loc[["lat"]],
           zoom = map_zoom,
           map_style_id = map_base_style,
           tileset_prefix = tileset_prefix,
@@ -104,21 +105,20 @@ create_ui_server_mods <- function(modules, pos = 1) {
         )
       )
 
-      # Zoom and POI reactives when the view state of the map changes.
-      shiny::observeEvent(map_viewstate(), {
-        r[[id]]$zoom(curbcut::zoom_get(zoom = map_viewstate()$zoom))
-        r[[id]]$poi(curbcut::update_poi(
-          id = id, poi = r[[id]]$poi(),
-          map_viewstate = map_viewstate()
-        ))
-      })
+      # # Zoom and POI reactives when the view state of the map changes.
+      # shiny::observeEvent(map_viewstate(), {
+      #   r[[id]]$zoom(curbcut::zoom_get(zoom = map_viewstate()$zoom))
+      #   r[[id]]$poi(curbcut::update_poi(
+      #     id = id, poi = r[[id]]$poi(),
+      #     map_viewstate = map_viewstate()
+      #   ))
+      # }, ignoreInit = TRUE)
 
       # Map zoom levels change depending on r$region()
       zoom_levels <-
         shiny::reactive(curbcut::zoom_get_levels(
           id = id,
-          region = r$region(),
-          suffix_zoom_levels = suffix_zoom_levels
+          region = r[[id]]$region()
         ))
 
       shiny::observe({
@@ -198,37 +198,34 @@ create_ui_server_mods <- function(modules, pos = 1) {
       curbcut::sidebar_server(id = id, r = r)
 
       # Data
-      #' NDS: The arguments here change to:
-      #' vars = r[[id]]$vars(),
-      #' scale = r[[id]]$scale(),
-      #' region = r[[id]]$region()
       data <- shiny::reactive(curbcut::data_get(
         vars = r[[id]]$vars(),
-        df = r[[id]]$scale()
+        scale = r[[id]]$scale(),
+        region = r[[id]]$region()
       ))
 
       # Data for tile coloring
       data_colours <- shiny::reactive(curbcut::data_get_colours(
         vars = r[[id]]$vars(),
-        # NDS: Does this change to r[[id]]$region() ?
         region = r[[id]]$region(),
+        time = r[[id]]$time(),
         zoom_levels = current_zl()
       ))
 
-      # Warn user
-      curbcut::warnuser_server(
-        id = id,
-        r = r,
-        vars = r[[id]]$vars,
-        time = r[[id]]$time,
-        data = data
-      )
+      # # Warn user
+      # curbcut::warnuser_server(
+      #   id = id,
+      #   r = r,
+      #   vars = r[[id]]$vars,
+      #   time = r[[id]]$time,
+      #   data = data
+      # )
 
-      # Tutorial
-      curbcut::tutorial_server(
-        id = id,
-        r = r
-      )
+      # # Tutorial
+      # curbcut::tutorial_server(
+      #   id = id,
+      #   r = r
+      # )
 
       # Legend
       curbcut::legend_server(
@@ -239,19 +236,19 @@ create_ui_server_mods <- function(modules, pos = 1) {
         scale = r[[id]]$scale
       )
 
-      # Did-you-know panel
-      dyk_server(
-        id = id,
-        r = r,
-        vars = r[[id]]$vars,
-        #' NDS: This changes to r[[id]]$ scale, probably
-        df = r[[id]]$scale,
-        select_id = r[[id]]$select_id,
-        poi = r[[id]]$poi,
-        # NDS: This changes to r[[id]]$region
-        region = r[[id]]$region,
-        zoom_levels = current_zl
-      )
+      # # Did-you-know panel
+      # dyk_server(
+      #   id = id,
+      #   r = r,
+      #   vars = r[[id]]$vars,
+      #   # NDS: This changes to r[[id]]$ scale, probably
+      #   df = r[[id]]$scale,
+      #   select_id = r[[id]]$select_id,
+      #   poi = r[[id]]$poi,
+      #   # NDS: This changes to r[[id]]$region
+      #   region = r[[id]]$region,
+      #   zoom_levels = current_zl
+      # )
 
       # Update map in response to variable changes or zooming
       map_viewstate <- curbcut::map_js_server(
@@ -261,43 +258,43 @@ create_ui_server_mods <- function(modules, pos = 1) {
         select_id = r[[id]]$select_id,
         coords = r[[id]]$coords,
         zoom = r[[id]]$zoom,
-        #' NDS: data_colours is going to need to be updated to work with `time`
+        # NDS: data_colours is going to need to be updated to work with `time`
         data_colours = data_colours,
         stories = stories
       )
 
-      # Explore panel
-      curbcut::explore_server(
-        id = id,
-        r = r,
-        data = data,
-        region = r[[id]]$region,
-        vars = r[[id]]$vars,
-        scale = r[[id]]$scale,
-        select_id = r[[id]]$select_id,
-        time = r[[id]]$time
-      )
-
-      # Bookmarking
-      curbcut::bookmark_server(
-        id = id,
-        r = r,
-        select_id = r[[id]]$select_id,
-        map_viewstate = map_viewstate
-      )
-
-      # Change view
-      curbcut::panel_view_server(
-        id = id,
-        r = r,
-        # NDS: This changes to r[[id]]$region
-        region = r[[id]]$region,
-        vars = r[[id]]$vars,
-        data = data,
-        # NDS: Do we need to add `time` here as well?
-        zoom_levels = current_zl,
-        time = r[[id]]$time
-      )
+      # # Explore panel
+      # curbcut::explore_server(
+      #   id = id,
+      #   r = r,
+      #   data = data,
+      #   region = r[[id]]$region,
+      #   vars = r[[id]]$vars,
+      #   scale = r[[id]]$scale,
+      #   select_id = r[[id]]$select_id,
+      #   time = r[[id]]$time
+      # )
+      #
+      # # Bookmarking
+      # curbcut::bookmark_server(
+      #   id = id,
+      #   r = r,
+      #   select_id = r[[id]]$select_id,
+      #   map_viewstate = map_viewstate
+      # )
+      #
+      # # Change view
+      # curbcut::panel_view_server(
+      #   id = id,
+      #   r = r,
+      #   # NDS: This changes to r[[id]]$region
+      #   region = r[[id]]$region,
+      #   vars = r[[id]]$vars,
+      #   data = data,
+      #   # NDS: Do we need to add `time` here as well?
+      #   zoom_levels = current_zl,
+      #   time = r[[id]]$time
+      # )
     })
   }
 

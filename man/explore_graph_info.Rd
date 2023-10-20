@@ -39,7 +39,7 @@ selected region (if any). Usually \code{r[[id]]$select_id()}}
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The output of \code{\link{data_get}}.}
 
-\item{time}{<\verb{numeric vector}> The \code{time} at which data is displayed.
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{...}{Additional arguments passed to the specific method.}

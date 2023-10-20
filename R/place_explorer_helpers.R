@@ -26,7 +26,8 @@ place_explorer_vars <- function(scales_as_DA = c("building", "street")) {
 
   # Get the default region and the map zoom levels
   default_region <- modules$regions[modules$id == "place_explorer"][[1]][1]
-  map_zoom_levels <- get_from_globalenv(paste0("map_zoom_levels_", default_region))
+  # NDS
+  map_zoom_levels <- get_from_globalenv("mzl_CSD_CT_DA_building")
 
   # Take out the scales_as_DA from the map_zoom_levels
   map_zoom_levels <- map_zoom_levels[!names(map_zoom_levels) %in% scales_as_DA]

@@ -7,9 +7,11 @@
 data_get_colours_helper(
   vars,
   region,
+  time,
   zoom_levels,
   colours_table,
   scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
   ...
 )
 }
@@ -20,6 +22,9 @@ data_get_colours_helper(
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available
 in the \code{regions_dictionary}. Usually one of the output of \code{\link{zoom_get_levels}}.}
+
+\item{time}{<\code{numeric}> The \code{time} at which data is displayed. A subset of the list
+\code{time}. Only the numeric vector.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
