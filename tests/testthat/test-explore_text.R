@@ -9,6 +9,7 @@ test_explores_helper <- function(var_left, var_right, region, scale, time, selec
   )
   expect_equal(class(actual), "character")
   expect_equal(length(actual), 1)
+  # print(actual)
 }
 
 test_explores <- function(var_right, select_id, region, scale) {
@@ -59,7 +60,7 @@ test_that("q5 explore works without a selection", {
 })
 
 test_that("q5 explore works with selections", {
-  test_explores(var_right = " ", select_id = "2466023_19", region = "city", scale = "CSD")
+  test_explores(var_right = " ", select_id = "borough_2", region = "city", scale = "borough")
   test_explores(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
 })
 

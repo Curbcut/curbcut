@@ -25,7 +25,7 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   labs_xy <- legend_labels(vars, ...)
-  break_labs <- legend_breaks(vars, data, scale = scale, ...)
+  break_labs <- legend_breaks(vars, data = data, scale = scale, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
     ggplot2::theme(
@@ -247,7 +247,8 @@ legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
 #' @return A plot generated using ggplot2.
 #' @export
 legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
-                                 scales_as_DA = c("building", "street"), scale, ...) {
+                                 scales_as_DA = c("building", "street"), scale,
+                                 data, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
@@ -255,7 +256,7 @@ legend_render.q5_ind <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     font_family = font_family, scales_as_DA = scales_as_DA,
-    scale = scale, ...
+    scale = scale, data = data, ...
   )
 
   # Adapt breaks to add the `NA` bar

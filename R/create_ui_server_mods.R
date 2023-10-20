@@ -295,7 +295,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars,
         data = data,
         # NDS: Do we need to add `time` here as well?
-        zoom_levels = current_zl
+        zoom_levels = current_zl,
+        time = r[[id]]$time
       )
     })
   }

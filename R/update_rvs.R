@@ -13,14 +13,12 @@
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
-#' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually one of the output of \code{\link{zoom_get_levels}}.
 #'
 #' @return A character string representing the updated zoom level for the given region
-update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
+update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels) {
   # Get the zoom string that would fit in the zoom level
   new <- zoom_get_string(
-    zoom = zoom, region = region,
+    zoom = zoom,
     zoom_levels = zoom_levels
   )
 

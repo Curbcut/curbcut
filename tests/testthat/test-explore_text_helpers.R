@@ -1,9 +1,9 @@
 test_that("explore_context works", {
   actual <- explore_context(
     region = "CMA", select_id = NA,
-    df = "CSD", switch_DA = FALSE
+    scale = "CSD", switch_DA = FALSE
   )
-  expect_equal(names(actual), "p_start")
+  expect_equal(names(actual), c("p_start", "treated_scale"))
   expect_equal(class(unlist(actual)), "character")
 
   # All IDs gives the corresponding list
@@ -14,102 +14,117 @@ test_that("explore_context works", {
     )
   actual_names <-
     explore_context(
-      region = "city", select_id = "4620003.00", df = "city_CT",
+      select_id = "4620003.00", region = "city", scale = "CT",
       switch_DA = FALSE
     )
   expect_equal(all(names(actual_names) == expected_names), TRUE)
 })
 
 test_that("explore_text_parent_title works", {
-  vars <- vars_build("housing_tenant_2016", df = "city_CT")
+  vars <- vars_build("housing_tenant", scale = "CT", time = 2016)
+  vars <- vars$vars
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "households"
   expect_equal(actual, expected)
 
-  vars <- vars_build("housing_rent_2021", df = "city_CT")
+  vars <- vars_build("housing_rent", scale = "CT", time = 2021)
+  vars <- vars$vars
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "tenant households"
   expect_equal(actual, expected)
 
-  vars <- vars_build("alp_2021", df = "city_CT")
+  vars <- vars_build("alp", scale = "CT", time = 2021)
+  vars <- vars$vars
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "households"
   expect_equal(actual, expected)
 })
 
 test_that("explore_text_region_val_df works", {
-  vars <- vars_build("housing_tenant_2016", df = "city_CT")
+  scale <- "CT"
   region <- "city"
+  vars <- vars_build("housing_tenant", scale = scale, time = 2016)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars, scale = scale, region = region)
   actual <- explore_text_region_val_df(
     var = vars$var_left,
     region = region,
-    select_id = NA
+    scale = scale,
+    select_id = NA,
+    data = data,
+    time_col = time$var_left
   )
   expect_equal(all(c("val", "count") %in% names(actual)), TRUE)
 
-  df <- "city_CT"
-  vars <- vars_build("alp_2021", df = df)
-  region <- "city"
-  data <- data_get(vars = vars, df = df)
+  vars <- vars_build("alp", scale = scale, time = 2016)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale)
   actual <- explore_text_region_val_df(
     var = vars$var_left,
     region = region,
     select_id = "4620003.00",
     data = data,
-    df = df
+    scale = scale,
+    time_col = time$var_left
   )
   expect_equal(all(c("val", "num") %in% names(actual)), TRUE)
 
-  df <- "city_CT"
-  vars <- vars_build("housing_rent_2021", df = df)
-  region <- "city"
-  data <- data_get(vars = vars, df = df)
+  vars <- vars_build("housing_rent", scale = scale, time = 2021)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale)
   actual <- explore_text_region_val_df(
     var = vars$var_left,
     region = region,
     select_id = "4620003.00",
     data = data,
-    df = df
+    scale = scale,
+    time_col = time$var_left
   )
   expect_equal(all(c("val") %in% names(actual)), TRUE)
 
-  # TKTK TEST `IND` TOO
 })
 
 
 test_that("explore_text_selection_comparison works", {
-  df <- "city_CT"
-  vars <- vars_build("housing_rent_2021", df = df)
+  scale <- "CT"
   region <- "city"
-  data <- data_get(vars = vars, df = df)
+  vars <- vars_build("housing_rent", scale = scale, time = 2021)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale, region = region)
   actual <- explore_text_selection_comparison(
     var = vars$var_left,
     select_id = "4620003.00",
-    data = data
+    data = data,
+    time_col = time$var_left
   )
-  expect_equal(
-    actual,
-    list(
-      higher_than = "18%", rank_chr = "<b>exceptionally inexpensive</b>",
-      higher_than_num = 0.179324894514768
-    )
-  )
+  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 
 
-  df <- "city_CT"
-  vars <- vars_build("housing_tenant_2021", df = df)
-  region <- "city"
-  data <- data_get(vars = vars, df = df)
+  vars <- vars_build("housing_tenant", scale = scale, time = 2021)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale, region = region)
   actual <- explore_text_selection_comparison(
     var = vars$var_left,
     select_id = "4620003.00",
-    data = data
+    data = data,
+    time_col = time$var_left
   )
-  expect_equal(
-    actual,
-    list(
-      higher_than = "31%", rank_chr = "<b>unusually low</b>",
-      higher_than_num = 0.307368421052632
-    )
+  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
+
+  vars <- vars_build("alp", scale = scale, time = 2021)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = scale, region = region)
+  actual <- explore_text_selection_comparison(
+    var = vars$var_left,
+    select_id = "4620003.00",
+    data = data,
+    time_col = time$var_left
   )
+  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 })

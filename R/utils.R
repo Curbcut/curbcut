@@ -533,10 +533,9 @@ grab_row_from_bslike <- function(scale, select_id, cols = "*") {
   # search for a connection.
   if (is.null(dat)) {
     # NDS: this needs to work for buildings. single table in the DB?
-    scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
     cols <- paste0(cols, collapse = ", ")
-    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, df, select_id)
+    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, scale, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
   } else {
     out <- dat[dat$ID == select_id, ]
@@ -700,8 +699,65 @@ match_schema_to_col <- function(data, time, schema = attr(data, "schema")) {
 
 }
 
+#' Get the data path for Curbcut
+#'
+#' This function retrieves the data path for testing purposes. It looks for the
+#' environment variable `CURBCUT_DATA` and should return a path to a Curbcut
+#' data folder if it exists. If the environment variable is not set, which is
+#' what happened in production, it returns "data/" as a fallback.
+#'
+#' @return A character string representing the path where data is stored.
+#' @export
 get_data_path <- function() {
+  # Retrieve the value of the CURBCUT_DATA environment variable
   data_path <- Sys.getenv("CURBCUT_DATA")
+
+  # Check if the environment variable is empty
   if (data_path == "") return("data/")
+
+  # Return the data path
   return(data_path)
+}
+
+#' Get name_2 based on biven ID scale, scale, and top scale
+#'
+#' This function retrieves the name from a top scale table and attaches
+#' it to a scale table based on given ID scales. It uses efficient
+#' matching instead of the slower merge operation.
+#'
+#' @param ID_scale <`character vector`> A vector of IDs from the scale table
+#' to keep.
+#' @param scale <`character`> The name of the scale table in the global environment.
+#' @param top_scale <`character`> The name of the top scale table in the global
+#' environment (from which the column `name` will be used as the output).
+#'
+#' @return A character vector of names in the order of 'ID_scale'.
+#' @export
+fill_name_2 <- function(ID_scale, scale, top_scale) {
+
+  # Get the top scale table
+  ts <- get_from_globalenv(top_scale)[c("ID", "name")]
+
+  # Get the scale table and subset necessary scale
+  ts_id <- sprintf("%s_ID", top_scale)
+  sc <- get_from_globalenv(scale)[c("ID", ts_id)]
+  sc <- sc[sc$ID %in% ID_scale, ]
+
+  # Keep, in order, the ID to grab name_2 for
+  sc <- sc[match(ID_scale, sc$ID), ]
+  # If the scale spans over multiple top scales, grab the FIRST ID to show and
+  # assign a character vector rather than the list.
+  sc[[ts_id]][lengths(sc[[ts_id]]) > 1] <-
+    lapply(sc[[ts_id]][lengths(sc[[ts_id]]) > 1], `[[`, 1)
+  sc[[ts_id]] <- unlist(sc[[ts_id]])
+
+  # This will act like a left join, similar to all.x = TRUE in merge()
+  matching_indices <- match(sc[[ts_id]], ts$ID)
+
+  # Make sure that the resultant NA values (if any) are converted into appropriate values
+  # (fill in the length, like all.x = TRUE in merge() would do)
+  name <- ifelse(is.na(matching_indices), NA, ts$name[matching_indices])
+
+  # Return the name_2 to use as a character vector, in order of ID_scale
+  return(name)
 }

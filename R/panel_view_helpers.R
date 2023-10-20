@@ -2,27 +2,29 @@
 #'
 #' @param vars <`named list`> Object built using the \code{\link{vars_build}}
 #' function.
-#' @param data <`reactive data.frame`> Data frame containing all the scale and
+#' @param data <`data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
+#' @param scale <`character`>
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' levels. Usually one of the `mzl_x`, or the output of
 #' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
+#' @param scale <`numeric`>
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
-table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
+table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = NULL) {
+
   # Reformat data -----------------------------------------------------------
 
-  # Take out the `q3`, `q5` and `group`
+  # Grab only the correct column, and rename it.
   dat <- data
-  dat <- dat[!grepl("_q3$|_q5$|group$", names(dat))]
+  rcol <- match_schema_to_col(data = dat, time = time)
+  dat <- dat[c("ID", rcol)]
+  names(dat)[2] <- "var_left"
 
   # Add `variation` if it is multi-year
   vars_ <- lapply(vars, \(x) {
@@ -39,11 +41,11 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   names(dat)[grepl("var_right", names(dat))] <- vars_$var_right
 
   # Bind the `df` data to the real data
-  df_dat <- grab_df_from_bslike(df)
+  df_dat <- grab_df_from_bslike(scale)
   default_cols <- c("ID", "name", "name_2", "population", "households")
   default_cols <- names(df_dat)[names(df_dat) %in% default_cols]
   df_dat <- df_dat[default_cols]
-  dat <- cbind(df_dat, dat[names(dat) != "ID"])
+  dat <- merge(df_dat, dat, by = "ID")
 
   # Order data by population
   if ("population" %in% names(dat)) {
@@ -53,7 +55,8 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
 
   # About the data information ----------------------------------------------
 
-  text <- panel_view_prepare_text(vars = vars, df = df, dat = dat, lang = lang)
+  text <- panel_view_prepare_text(vars = vars, scale = scale, dat = dat, time = time,
+                                  lang = lang)
 
 
   # Update column names so it's more 'friendly' -----------------------------
@@ -63,12 +66,19 @@ table_view_prep_table <- function(vars, data, df, zoom_levels, lang = NULL) {
   # Switch name_2 column name depending on `zoom_levels`
   # Switch df to scale as it can cause a bug where the region is the same as the
   # scale. centraide_CT catches both the `centraide` and the `CT` scale.
-  scale <- gsub(".*_", "", df)
   which_zl <- which(is_scale_in(names(zoom_levels), scale, vectorized = TRUE))
   names(pretty_dat)[names(pretty_dat) == "name_2"] <-
     if (which_zl == 1) {
       "Scale"
     } else {
+      dat$name_2 <- fill_name_2(ID_scale = dat$ID,
+                                scale = scale,
+                                top_scale = names(zoom_levels)[1])
+      # Fill in name_2
+      pretty_dat$name_2 <- fill_name_2(ID_scale =
+                                         pretty_dat$ID,
+                                       scale = scale,
+                                       top_scale = names(zoom_levels)[1])
       zoom_get_name(names(zoom_levels)[1], lang = lang)
     }
 
@@ -332,8 +342,7 @@ panel_view_style_cols.default <- function(var, table, ...) {
 #'
 #' @param vars <`named list`> Object built using the \code{\link{vars_build}}
 #' function.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scale <`character`>
 #' @param dat <`data.frame`> The data frame containing the columns under analysis
 #' @param lang <`character`> The language to use for translating the texts.
 #' Defaults to NULL for no translation
@@ -341,17 +350,16 @@ panel_view_style_cols.default <- function(var, table, ...) {
 #'
 #' @return A string containing the panel view text.
 #' @export
-panel_view_prepare_text <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text <- function(vars, scale, dat, lang = NULL, ...) {
   UseMethod("panel_view_prepare_text", vars)
 }
 
 #' @rdname panel_view_prepare_text
 #' @export
-panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...) {
   # Title
-  time <- var_get_time(vars$var_left)
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
-  title <- sprintf("%s (%s)", title, time)
+  title <- sprintf("%s (%s)", title, time$var_left)
 
   colours <- colours_get()$bivar
   title_color <- colours$fill[colours$group == "3 - 1"]
@@ -364,12 +372,13 @@ panel_view_prepare_text.q5 <- function(vars, df, dat, lang = NULL, ...) {
 
   # Get the text for the single left variable
   out <- panel_view_prepare_text_helper(
-    df = df,
+    scale = scale,
     var = vars$var_left,
     dat = dat,
     title = title,
     explanation = explanation,
     title_color = title_color,
+    time_col = time$var_left,
     lang = lang
   )
 
@@ -574,8 +583,7 @@ panel_view_prepare_text.default <- function(vars, df, dat, lang = NULL, ...) {
 #' title is displayed with a custom color, usually depends on wether it is a left
 #' or right variable.
 #'
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scale <`character`>
 #' @param var <`character`> A character representing the variable name in the
 #' dataset (e.g. 'housing_tenant') with the right class (pct, dollar, ind, ...).
 #' @param dat <`data.frame`> The data frame containing the columns from which
@@ -590,8 +598,8 @@ panel_view_prepare_text.default <- function(vars, df, dat, lang = NULL, ...) {
 #' Defaults to NULL for no translation
 #'
 #' @return A character string containing the formatted HTML text with statistics.
-panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
-                                           title_color = "#73AE80", lang = NULL) {
+panel_view_prepare_text_helper <- function(scale, var, dat, title, explanation,
+                                           title_color = "#73AE80", time_col, lang = NULL) {
   # Title
   out_title <-
     if (!grepl("<ul>", explanation)) {
@@ -642,7 +650,6 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
   if (!is.null(source)) {
     source_bit <-
       if (source == "Canadian census") {
-        date <- var_get_time(var)
         s <- sprintf(
           cc_t(
             "The data comes from the %s Canadian census and has ",
@@ -653,12 +660,13 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
             "ensus</a> package.",
             lang = lang
           ),
-          date
+          time_col
         )
         # Info on how we created the variable
         census_variables <- get_from_globalenv("census_variables")
+        var_time <- sprintf("%s_%s", var, time_col)
         info <- lapply(
-          census_variables[census_variables$var_code == var, ],
+          census_variables[census_variables$var_code == var_time, ],
           unlist
         )
         par_exp <- var_get_parent_info(
@@ -706,7 +714,7 @@ panel_view_prepare_text_helper <- function(df, var, dat, title, explanation,
     error = function(e) NULL
   )
   if (!is.null(inter)) {
-    scale_inter <- inter$interpolated_from[inter$df == df]
+    scale_inter <- inter$interpolated_from[inter$scale == scale]
     if (scale_inter != "FALSE") {
       scales_dictionary <- get_from_globalenv("scales_dictionary")
       scale_inter_str <-

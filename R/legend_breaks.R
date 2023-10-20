@@ -57,15 +57,12 @@ legend_breaks.q5_ind <- function(vars, lang = NULL, ...) {
       var_get_info(var = if (is.list(vars)) vars$var_left else vars, what = "rank_name_short",
                    translate = FALSE, lang = NULL)[[1]],
       error = function(e) {
-        return(c("Very low", "Low", "Moderate", "High", "Very high"))
+        return(c("V. low", "Low", "Mod.", "High", "V. high"))
       })
   breaks <- breaks[!is.na(breaks)]
 
   # If the default, filter out some breaks to lighten the legend
-  if (identical(breaks, c(
-    "Very low", "Low", "Moderate",
-    "High", "Very high"
-  ))) {
+  if (identical(breaks, c("V. low", "Low", "Mod.", "High", "V. high"))) {
     breaks <- c(
       cc_t(lang = lang, "Low"),
       sapply(1:3, \(x) NULL),

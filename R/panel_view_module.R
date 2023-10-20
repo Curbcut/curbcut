@@ -31,7 +31,7 @@
 #'
 #' @return Panel view module
 #' @export
-panel_view_server <- function(id, r, region, vars, data, zoom_levels,
+panel_view_server <- function(id, r, region, vars, data, zoom_levels, time,
                               temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
   stopifnot(shiny::is.reactive(data))
@@ -167,7 +167,8 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
         data = data(),
         df = treated_scale(),
         zoom_levels = zoom_levels(),
-        lang = r$lang()
+        lang = r$lang(),
+        time = time()
       )
 
       # Return

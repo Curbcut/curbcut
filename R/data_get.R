@@ -519,6 +519,12 @@ filter_region <- function(data, scale, region) {
 data_get.default <- function(vars, scale, region = NULL,
                              scales_as_DA = c("building", "street"),
                              data_path = get_data_path(), ...) {
+
+  # Check if `vars` has been entered without being subset from `vars_build()`
+  if (all(c("vars", "time") %in% names(vars))) {
+    stop("`vars` is invalid. Subset `$vars` from the output of `vars_build()`.")
+  }
+
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 

@@ -60,7 +60,7 @@ explore_context <- function(region, select_id, scale, switch_DA, lang = NULL) {
   if (switch_DA) {
     # Grab the DA ID and the address from the SQL database
     bs <- grab_row_from_bslike(
-      df = df, select_id = select_id,
+      scale = scale, select_id = select_id,
       cols = c("name", "DA_ID")
     )
 
@@ -189,10 +189,12 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
   return(explore_text_select_val(
     var = var,
     region = region,
+    scale = scale,
     select_id = select_id,
     col = col,
     lang = lang,
     time_col = time_col,
+    data = data,
     ...
   ))
 }
@@ -234,7 +236,7 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
     }
   )
 
-  rcol <- sprintf("%s_%s", col, time)
+  rcol <- sprintf("%s_%s", col, time_col)
 
   # Get the parent value for the zone
   all_count <- parent_data[[rcol]][parent_data$ID == select_id]
@@ -328,23 +330,20 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- sprintf("%s_%s", col, time_col)
+  rcol <- match_schema_to_col(data, time = time_col)
+  brk_col <- sprintf("%s_q5", rcol)
 
   # Get the group in which falls the selection
-  rank <- data[[paste0(col, "_q5_", time_col)]][data$ID == select_id]
+  rank <- data[[brk_col]][data$ID == select_id]
 
   # Grab the rank name for the rank
-  brks <- attr(data, "breaks")
   rank_names <- var_get_info(var = var, what = "rank_name")[[1]]
-
   out$val <- rank_names[rank]
 
   # Lower letters
   out$val <- tolower(cc_t(out$val, lang = lang))
 
-  if (!is.na(select_id)) {
-    out$num <- data[[rcol]][data$ID == select_id]
-  }
+  out$num <- data[[rcol]][data$ID == select_id]
 
   # Return
   return(out)
