@@ -20,7 +20,7 @@ map_js_server(
   pickable = shiny::reactive(TRUE),
   fill_fun = shiny::reactive(cc.map::map_choropleth_fill_fun),
   fill_fun_args = shiny::reactive(list(df = data_colours(), get_col =
-    names(data_colours())[1], fallback = "#B3B3BB"))
+    names(data_colours())[1], fallback = "transparent"))
 )
 
 map_js_UI(id)

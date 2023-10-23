@@ -34,6 +34,8 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
 
+  print(region)
+
   # Get all the data
   data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
     simplify = FALSE,

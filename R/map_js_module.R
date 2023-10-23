@@ -48,7 +48,7 @@ map_js_server <- function(id, r, tile, coords, zoom,
                           fill_fun_args = shiny::reactive(list(
                             df = data_colours(),
                             get_col = names(data_colours())[1],
-                            fallback = "#B3B3BB"
+                            fallback = "transparent"
                           ))) {
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
