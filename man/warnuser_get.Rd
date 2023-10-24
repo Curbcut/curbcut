@@ -4,7 +4,7 @@
 \alias{warnuser_get}
 \title{Generate Warning Text for the Warn User Module}
 \usage{
-warnuser_get(vars, data, time, more_text, lang = NULL)
+warnuser_get(vars, data, time, more_text = NULL, lang = NULL)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
@@ -17,7 +17,7 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 appending a time to the variables picked.}
 
 \item{more_text}{<\code{character}> Optional additional text to be added to the
-warning message. Default is shiny::reactive(NULL).}
+warning message. Default is NULL.}
 
 \item{lang}{<\code{character}> The language to be used for the warning messages.
 Defaults to NULL for no translation}

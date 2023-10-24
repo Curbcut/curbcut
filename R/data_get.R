@@ -132,25 +132,7 @@ data_get <- function(vars, scale, region,
   UseMethod("data_get", vars)
 }
 
-#' Get data for a `q5` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function. The class of the vars object is
-#' used to determine how to grab de data and output it.
-#' @param scale <`character`> The scale of the data to be retrieved, e.g. `CSD`.
-#' The output of \code{\link{update_scale}}.
-#' @param region <`character`> The region from which to grab the vector of IDs with
-#' which to filter the retrieved data for a specific region. Defaults to NULL
-#' if no filtering is needed.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
-#' default, their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the
-#' directory containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the data, with an ID column, one column per
-#' year of data, and one `group` column per year of data.
+#' @describeIn data_get The method for q5.
 #' @export
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
@@ -206,22 +188,7 @@ data_get.q5 <- function(vars, scale, region = NULL,
 
 }
 
-#' Get data from the SQLite database for a `bivar` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the two variables fresh out of the sqlite db,
-#' binded in the same dataframe with an added `group` column for map colouring.
+#' @describeIn data_get The method for bivar.
 #' @export
 data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
                            data_path = get_data_path(), ...) {
@@ -253,23 +220,7 @@ data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
   return(data)
 }
 
-#' Get data from the SQLite database for a `delta` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of the same variable. `q5` is calculated on the spot with and doubled
-#' to the `group` column for map colouring.
+#' @describeIn data_get The method for delta.
 #' @export
 data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
                            data_path = get_data_path(), ...) {
@@ -301,14 +252,7 @@ data_get_delta_fun <- function(vars, df,
   UseMethod("data_get_delta_fun", vars)
 }
 
-#' @title Retrieve `delta` data for scalar variables
-#'
-#' @description This function retrieves data for scalar variables
-#' and performs additional operations for map coloring.
-#'
-#' @inheritParams data_get_delta_fun
-#'
-#' @seealso \code{\link{data_get.delta}}
+#' @describeIn data_get_delta_fun The method for scalar variables.
 data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), ...) {
   # Treat certain scales as DA
@@ -337,14 +281,7 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
   return(data)
 }
 
-#' @title Retrieve `delta` data for ordinal variables
-#'
-#' @description This function retrieves data for ordinal variables
-#' and performs additional operations for map coloring.
-#'
-#' @inheritParams data_get_delta_fun
-#'
-#' @seealso \code{\link{data_get.delta}}
+#' @describeIn data_get_delta_fun The method for ordinal variables.
 data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
                                        data_path = get_data_path(), ...) {
   # Treat certain scales as DA
@@ -375,23 +312,7 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
   return(data)
 }
 
-#' Get data from the SQLite database for a `delta_bivar` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of two variables. `q3`s are calculated on the spot along with the
-#' `group` column for the map colouring.
+#' @describeIn data_get The method for bivar.
 #' @export
 data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
                                  data_path = get_data_path(), ...) {
@@ -420,25 +341,7 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
   return(data)
 }
 
-#' Get data from the SQLite database for a `bivar_ldelta_rq3` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of one variable with the static one year value of another variable.
-#' `q3`for the percent change value is  calculated on the spot and used
-#' to regroup with the `q3` column of the second value to create the `group`
-#' column for map colouring.
+#' @describeIn data_get The method for bivar_ldelta_rq3.
 #' @export
 data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), ...) {
@@ -499,27 +402,7 @@ filter_region <- function(data, scale, region) {
   return(data)
 }
 
-#' Default data method
-#'
-#' This is the default data method, which simply returns the table taken out
-#' from the sql database. It extracts the first element of `vars` as the `var`
-#' argument for the  \code{\link{data_get_qs}} call. It directly outputs the
-#' output.
-#'
-#' @param vars <`named list`> A list object with an unknown class. For this `default`
-#' method, no need for vars to have a class. It will extract the first element of
-#' `vars` as the `var` argument for the  \code{\link{data_get_qs}} call.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to other functions.
-#'
-#' @return A data.frame containing the raw sql table for the first element of `vars`.
+#' @describeIn data_get The default method.
 #' @export
 data_get.default <- function(vars, scale, region = NULL,
                              scales_as_DA = c("building", "street"),

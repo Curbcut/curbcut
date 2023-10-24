@@ -209,15 +209,15 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
 #' parent data.
 #' @param select_id <`character`> The ID of the selected zone for which to
 #' retrieve the parent data.
-#' @param scale
+#' @param scale <`character`> The crrent scale, e.g. `"CT"`
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right` or
 #' `var_left_1` in delta.
-#' @param time
+#' @param time_col <`numeric`> Time at which to show the data.
 #'
 #' @return A vector containing the parent value for the zone.
 explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
-                                    time_col = NA) {
+                                    time_col) {
   # Get the parent string
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
@@ -267,7 +267,7 @@ explore_text_select_val <- function(var, ...) {
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`.
 #' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param scale <`character`>
+#' @param scale <`character`> The current scale, e.g. `"CT"`.
 #' @param time_col <`numeric`> Time at which to show the data.
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right` or
@@ -406,7 +406,7 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 #' matter.
 #' @param lang <`character`> Language the ranking character should be translated
 #' to. Defaults to NULL for no translation.
-#' @param time_col
+#' @param time_col <`numeric`> Time at which to show the data.
 #'
 #' @return A named list with two elements:
 #' \itemize{

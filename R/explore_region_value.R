@@ -7,10 +7,11 @@
 #'
 #' @param var <`character`> The code of the variable of interest, with its class
 #' to dispatch to the right method.
-#' @param data <`data.frame`>
-#' @param time <`numeric`>
-#' @param scale <`character`>
-#' @param region  <`character`>
+#' @param data <`data.frame`> The data frame containing the data.
+#' @param time <`numeric`> The time period of interest.
+#' @param scale <`character`> The scale of interest.
+#' @param region  <`character`> The region of interest.
+#' @param select_id <`character`>  The ID of the selected feature.
 #' @param ... Additional arguments to pass to specific method functions.
 #'
 #' @return Varies based on the method specified in \code{var}. Commonly
@@ -49,7 +50,7 @@ region_value_method <- function(var, data_vals, parent_vals, ...) {
   UseMethod("region_value_method", var)
 }
 
-#' @rdname region_value_method
+#' @describeIn region_value_method The method for percentage variables.
 #' @export
 region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
 
@@ -64,7 +65,7 @@ region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @rdname region_value_method
+#' @describeIn region_value_method The method for dollar variables.
 #' @export
 region_value_method.dollar <- function(var, data_vals, parent_vals, ...) {
 
@@ -77,7 +78,7 @@ region_value_method.dollar <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @rdname region_value_method
+#' @describeIn region_value_method The method for count variables.
 #' @export
 region_value_method.count <- function(var, data_vals, parent_vals, ...) {
 
@@ -90,7 +91,9 @@ region_value_method.count <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @rdname region_value_method
+#' @describeIn region_value_method The method for `ind` variables.
+#' @param data <`data.frame`> The data frame containing the data.
+#' @param time <`numeric`> The time period of interest.
 #' @export
 region_value_method.ind <- function(var, data_vals, parent_vals, data, time, ...) {
 
@@ -115,7 +118,7 @@ region_value_method.ind <- function(var, data_vals, parent_vals, data, time, ...
 
 }
 
-#' @rdname region_value_method
+#' @describeIn region_value_method The default method.
 #' @export
 region_value_method.default <- function(var, data_vals, parent_vals, data, time, ...) {
 
@@ -148,10 +151,10 @@ region_value_method.default <- function(var, data_vals, parent_vals, data, time,
 #' helper functions to identify the correct column and fetch parent data.
 #'
 #' @param var <`character`> The code of the variable of interest.
-#' @param data <`data.frame`>
-#' @param time <`numeric`>
-#' @param scale <`character`>
-#' @param region  <`character`>
+#' @param data <`data.frame`> The data frame containing the data.
+#' @param time <`numeric`> The time period of interest.
+#' @param scale <`character`> The scale of interest.
+#' @param region  <`character`> The region of interest.
 #' @param data_path <`character`> The path to the data directory, defaults to
 #' "data/".
 #'

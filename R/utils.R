@@ -709,7 +709,7 @@ match_schema_to_col <- function(data, time, schema = attr(data, "schema")) {
 #' @export
 get_data_path <- function() {
   # Are you in the `curbcut` repo developping?
-  cc_repo <- grepl("/curbcut$", getwd())
+  cc_repo <- grepl("(/curbcut$)|(/curbcut/tests/testthat$)|(curbcut.Rcheck/tests/testthat)", getwd())
 
   # If not, return data/ as default
   if (!cc_repo) return("data/")

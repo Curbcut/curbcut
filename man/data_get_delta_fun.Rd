@@ -2,9 +2,27 @@
 % Please edit documentation in R/data_get.R
 \name{data_get_delta_fun}
 \alias{data_get_delta_fun}
+\alias{data_get_delta_fun.scalar}
+\alias{data_get_delta_fun.ordinal}
 \title{Inner function to get data based on the type of \code{vars}}
 \usage{
 data_get_delta_fun(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get_delta_fun}{scalar}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get_delta_fun}{ordinal}(
   vars,
   df,
   scales_as_DA = c("building", "street"),
@@ -33,6 +51,13 @@ containing the QS files. Default is "data/".}
 This function dispatches the data retrieval based on the class
 of the \code{vars} object.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{data_get_delta_fun(scalar)}: The method for scalar variables.
+
+\item \code{data_get_delta_fun(ordinal)}: The method for ordinal variables.
+
+}}
 \seealso{
 \code{\link{data_get.delta}}
 }

@@ -2,12 +2,68 @@
 % Please edit documentation in R/data_get.R
 \name{data_get}
 \alias{data_get}
+\alias{data_get.q5}
+\alias{data_get.bivar}
+\alias{data_get.delta}
+\alias{data_get.delta_bivar}
+\alias{data_get.bivar_ldelta_rq3}
+\alias{data_get.default}
 \title{Get data}
 \usage{
 data_get(
   vars,
   scale,
   region,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{q5}(
+  vars,
+  scale,
+  region = NULL,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{bivar}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{delta}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{delta_bivar}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{bivar_ldelta_rq3}(
+  vars,
+  df,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+)
+
+\method{data_get}{default}(
+  vars,
+  scale,
+  region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...
@@ -46,3 +102,18 @@ vars should be a named list with a class, built using the
 \code{\link{vars_build}} function. Depending on the class of vars, different
 methods will be used to retrieve and process the data.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{data_get(q5)}: The method for q5.
+
+\item \code{data_get(bivar)}: The method for bivar.
+
+\item \code{data_get(delta)}: The method for delta.
+
+\item \code{data_get(delta_bivar)}: The method for bivar.
+
+\item \code{data_get(bivar_ldelta_rq3)}: The method for bivar_ldelta_rq3.
+
+\item \code{data_get(default)}: The default method.
+
+}}

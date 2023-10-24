@@ -52,7 +52,7 @@ values need to be generated. Usually one element of the output of
 
 \item{data}{<\code{data.frame}>The output of \code{\link{data_get}}.}
 
-\item{scale}{<\code{character}>}
+\item{scale}{<\code{character}> The current scale, e.g. \code{"CT"}.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or

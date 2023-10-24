@@ -34,7 +34,7 @@ Usually equivalent of \code{r$region()}.}
 \code{\link{update_scale}}.}
 
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link{vars_build}} function. The class of the vars object is
+\code{\link{vars_build}} function, \code{vars} subset.. The class of the vars object is
 used to determine which type of legend to draw.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
@@ -45,6 +45,10 @@ levels. Usually one of the \code{map_zoom_levels_x}, or the output of
 \code{\link{geography_server}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-scale).}
+
+\item{time}{<\verb{reactive named list}> Named list of the time for both left and
+right variables. The second output of \code{\link{vars_build}}. Usually
+should be \code{r[[id]]$time()}.}
 
 \item{temp_folder}{<\code{character}> The temporary folder of the app. By default
 will grab the \code{temp_folder} object as it's already supposed to have been assigned

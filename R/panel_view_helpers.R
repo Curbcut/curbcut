@@ -342,19 +342,21 @@ panel_view_style_cols.default <- function(var, table, ...) {
 #'
 #' @param vars <`named list`> Object built using the \code{\link{vars_build}}
 #' function.
-#' @param scale <`character`>
+#' @param scale <`character`> Current scale, e.g. `"DA"`.
 #' @param dat <`data.frame`> The data frame containing the columns under analysis
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @param lang <`character`> The language to use for translating the texts.
 #' Defaults to NULL for no translation
 #' @param ... Additional arguments to be passed to the underlying methods.
 #'
 #' @return A string containing the panel view text.
 #' @export
-panel_view_prepare_text <- function(vars, scale, dat, lang = NULL, ...) {
+panel_view_prepare_text <- function(vars, scale, dat, time, lang = NULL, ...) {
   UseMethod("panel_view_prepare_text", vars)
 }
 
-#' @rdname panel_view_prepare_text
+#' @describeIn panel_view_prepare_text The method for q5.
 #' @export
 panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...) {
   # Title
@@ -386,9 +388,9 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
   return(out)
 }
 
-#' @rdname panel_view_prepare_text
+#' @describeIn panel_view_prepare_text The method for delta.
 #' @export
-panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text.delta <- function(vars, df, dat, time, lang = NULL, ...) {
   # Titles
   time <- var_get_time(vars$var_left)
   vars_sep <- sapply(vars$var_left, var_get_info,
@@ -454,9 +456,9 @@ panel_view_prepare_text.delta <- function(vars, df, dat, lang = NULL, ...) {
   return(titles_texts)
 }
 
-#' @rdname panel_view_prepare_text
+#' @describeIn panel_view_prepare_text The method for bivar.
 #' @export
-panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text.bivar <- function(vars, df, dat, time, lang = NULL, ...) {
   # Title
   time <- var_get_time(unlist(vars))
   vars_sep <- sapply(vars, var_get_info,
@@ -497,9 +499,9 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, lang = NULL, ...) {
   return(titles_texts)
 }
 
-#' @rdname panel_view_prepare_text
+#' @describeIn panel_view_prepare_text The method for delta_bivar.
 #' @export
-panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text.delta_bivar <- function(vars, df, time, dat, lang = NULL, ...) {
   # Title
   time <- lapply(vars, var_get_time)
   vars_sep <- lapply(vars, var_get_info,
@@ -570,9 +572,9 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, dat, lang = NULL, ...)
   return(titles_texts)
 }
 
-#' @rdname panel_view_prepare_text
+#' @describeIn panel_view_prepare_text The default method.
 #' @export
-panel_view_prepare_text.default <- function(vars, df, dat, lang = NULL, ...) {
+panel_view_prepare_text.default <- function(vars, df, dat, time, lang = NULL, ...) {
   return(list(""))
 }
 

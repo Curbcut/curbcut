@@ -18,6 +18,8 @@ explore_graph_scale_ind(var, x_y, scale, lang = NULL, ...)
 
 \item{x_y}{<\code{character}> x or y axis?}
 
+\item{scale}{<\code{character}> Current scale, e.g. \code{"CSD"}.}
+
 \item{lang}{<\code{character} Which language should the label be translated to.
 Defaults to NULL for no translation.}
 

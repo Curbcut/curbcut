@@ -12,9 +12,9 @@ for full dataframe. The dataframe should be in the global environment, and if it
 there must be an established sqlite connection to it.}
 }
 \value{
-The full datraframe corresponding to the given \code{df}. If
-\code{select_id} is found in the \code{df} in the global environment, the corresponding
-table is returned. If \code{df} is not in the global
+The full datraframe corresponding to the given \code{scale}. If
+\code{select_id} is found in the \code{scale} in the global environment, the corresponding
+table is returned. If \code{scale} is not in the global
 environment, the function fetches the dataframe from the connected database.
 }
 \description{

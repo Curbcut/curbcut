@@ -21,7 +21,7 @@ test_that("explore_graph_scale works", {
   expect_true("ScaleContinuousPosition" %in% cl)
 
   data <- data_get(vars_build("housing_rent", scale = "DA", time = 2021,)$vars,
-                   scale = "DA", region = "CMA", data_path = .curbcut_montreal_data)
+                   scale = "DA", region = "CMA")
   cl <- explore_graph_scale(
     var = vars_b$housing_rent, x_y = "x",
     data_vals = data$var_left_2021, scale = "DA", region = "CMA"
@@ -30,7 +30,7 @@ test_that("explore_graph_scale works", {
   expect_true("ScaleContinuousPosition" %in% cl)
 
   data <- data_get(vars_build("alp", scale = "DA", time = 2021)$vars,
-                   scale = "DA", region = "CMA", data_path = .curbcut_montreal_data)
+                   scale = "DA", region = "CMA")
   cl <- explore_graph_scale(
     var = vars_b$alp, x_y = "x",
     data_vals = data$var_left_2021, scale = "DA", region = "CMA"

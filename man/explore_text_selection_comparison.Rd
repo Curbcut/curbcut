@@ -38,7 +38,7 @@ matter.}
 \item{lang}{<\code{character}> Language the ranking character should be translated
 to. Defaults to NULL for no translation.}
 
-\item{time_col}{}
+\item{time_col}{<\code{numeric}> Time at which to show the data.}
 }
 \value{
 A named list with two elements:

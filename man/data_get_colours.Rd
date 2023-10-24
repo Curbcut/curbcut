@@ -101,6 +101,9 @@ is last (so it makes sense on an auto-scale).}
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
+
 \item{...}{Additional arguments passed to methods.}
 }
 \value{
@@ -113,6 +116,21 @@ the \code{group} column in the data with the colors in the correct \code{colours
 data frame. The resulting data frame contains only the \code{ID} and \code{fill}
 columns, to use in an \code{cc.map::map_choropleth_fill_fun}-like scale function.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{data_get_colours(q5)}: The method for q5.
+
+\item \code{data_get_colours(bivar)}: The method for bivar.
+
+\item \code{data_get_colours(delta)}: The method for delta.
+
+\item \code{data_get_colours(delta_bivar)}: The method for delta_bivar.
+
+\item \code{data_get_colours(bivar_ldelta_rq3)}: The method for bivar_ldelta_rq3.
+
+\item \code{data_get_colours(default)}: The default method.
+
+}}
 \seealso{
 \code{\link{data_get_colours}}
 

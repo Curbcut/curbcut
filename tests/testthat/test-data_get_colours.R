@@ -8,7 +8,7 @@ test_that("data_get_colours.q5  works", {
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
     zoom_levels = mzl_CSD_CT_DA_building,
-    time = time, data_path = .curbcut_montreal_data
+    time = time
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)

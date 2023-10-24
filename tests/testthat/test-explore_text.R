@@ -2,7 +2,7 @@ test_explores_helper <- function(var_left, var_right, region, scale, time, selec
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
-  data <- data_get(vars, region = region, scale = scale, data_path = .curbcut_montreal_data)
+  data <- data_get(vars, region = region, scale = scale)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
     data = data, time = time

@@ -4,7 +4,7 @@ test_that("data_get.q5  works", {
   vars <- vars$vars
 
   # Getting data with the updated structure
-  output <- data_get(vars = vars, region = "CMA", scale = "CSD", data_path = .curbcut_montreal_data)
+  output <- data_get(vars = vars, region = "CMA", scale = "CSD")
 
   # Testing if output has more than 15 rows
   expect_equal(nrow(output) > 15, TRUE)

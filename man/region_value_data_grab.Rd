@@ -9,13 +9,13 @@ region_value_data_grab(var, data, time, scale, region)
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest.}
 
-\item{data}{<\code{data.frame}>}
+\item{data}{<\code{data.frame}> The data frame containing the data.}
 
-\item{time}{<\code{numeric}>}
+\item{time}{<\code{numeric}> The time period of interest.}
 
-\item{scale}{<\code{character}>}
+\item{scale}{<\code{character}> The scale of interest.}
 
-\item{region}{<\code{character}>}
+\item{region}{<\code{character}> The region of interest.}
 
 \item{data_path}{<\code{character}> The path to the data directory, defaults to
 "data/".}

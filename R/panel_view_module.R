@@ -15,7 +15,7 @@
 #' @param scale <`reactive character`> Current scale. The output of
 #' \code{\link{update_scale}}.
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function. The class of the vars object is
+#' \code{\link{vars_build}} function, `vars` subset.. The class of the vars object is
 #' used to determine which type of legend to draw.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
@@ -24,6 +24,9 @@
 #' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
+#' @param time <`reactive named list`> Named list of the time for both left and
+#' right variables. The second output of \code{\link{vars_build}}. Usually
+#' should be `r[[id]]$time()`.
 #' @param temp_folder <`character`> The temporary folder of the app. By default
 #' will grab the `temp_folder` object as it's already supposed to have been assigned
 #' in the `global.R` file

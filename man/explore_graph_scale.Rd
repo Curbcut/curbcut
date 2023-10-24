@@ -32,6 +32,8 @@ explore_graph_scale(var, x_y, ...)
 \item{data_vals}{A numeric vector containing data values, required only for the
 "dollar" method.}
 
+\item{scale}{<\code{character}> Current scale, e.g. \code{"CSD"}.}
+
 \item{lang}{<\code{character} Which language should the label be translated to.
 Defaults to NULL for no translation.}
 }

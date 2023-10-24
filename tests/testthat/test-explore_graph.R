@@ -2,7 +2,7 @@ test_explore_graph_helper <- function(var_left, var_right, scale, region, time, 
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
-  data <- data_get(vars, scale = scale, region = region, data_path = .curbcut_montreal_data)
+  data <- data_get(vars, scale = scale, region = region)
   actual <- explore_graph(vars,
     region = region, select_id = select_id, scale = scale,
     data = data, time = time

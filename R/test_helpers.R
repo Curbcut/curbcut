@@ -98,7 +98,7 @@ test_resources_creation <- function(additional_vars = c()) {
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
                             region = "CMA", scale = "CSD", time = 2021,
-                            select_id = NA, pos = 1, data_path = get0(".curbcut_montreal_data")) {
+                            select_id = NA, pos = 1, data_path = get_data_path()) {
   if (is.null(data_path)) {
     stop("Set a path from which to grab the data (data folder of a Curbcut repo).")
   }

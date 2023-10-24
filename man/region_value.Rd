@@ -10,13 +10,15 @@ region_value(var, data, time, scale, region, select_id, ...)
 \item{var}{<\code{character}> The code of the variable of interest, with its class
 to dispatch to the right method.}
 
-\item{data}{<\code{data.frame}>}
+\item{data}{<\code{data.frame}> The data frame containing the data.}
 
-\item{time}{<\code{numeric}>}
+\item{time}{<\code{numeric}> The time period of interest.}
 
-\item{scale}{<\code{character}>}
+\item{scale}{<\code{character}> The scale of interest.}
 
-\item{region}{<\code{character}>}
+\item{region}{<\code{character}> The region of interest.}
+
+\item{select_id}{<\code{character}>  The ID of the selected feature.}
 
 \item{...}{Additional arguments to pass to specific method functions.}
 }

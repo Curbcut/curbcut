@@ -12,7 +12,7 @@ test_assign_any(
   time = 2021,
   select_id = NA,
   pos = 1,
-  data_path = get0(".curbcut_montreal_data")
+  data_path = get_data_path()
 )
 }
 \arguments{

@@ -22,8 +22,6 @@
 #' Example: c(lat = -73.70, lon = 45.53)
 #' @return NULL, but objects are loaded into the specified environment and
 #' SQLite connections are established.
-#' @examples
-#' load_data("path/to/data", pos = 1, site_name = "Curbcut Montréal", ...)
 #' @export
 load_data <- function(data_folder = "data", pos = 1,
                       site_name, site_url, stories_page,

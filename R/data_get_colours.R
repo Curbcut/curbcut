@@ -24,6 +24,8 @@
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
@@ -91,6 +93,8 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
@@ -102,7 +106,7 @@ data_get_colours <- function(vars, region, time, zoom_levels,
   UseMethod("data_get_colours", vars)
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The method for q5.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.q5 <- function(vars, region, time, zoom_levels,
@@ -115,7 +119,7 @@ data_get_colours.q5 <- function(vars, region, time, zoom_levels,
   )
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The method for bivar.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar <- function(vars, region, time, zoom_levels,
@@ -128,7 +132,7 @@ data_get_colours.bivar <- function(vars, region, time, zoom_levels,
   )
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The method for delta.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta <- function(vars, region, time, zoom_levels,
@@ -141,7 +145,7 @@ data_get_colours.delta <- function(vars, region, time, zoom_levels,
   )
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The method for delta_bivar.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
@@ -154,7 +158,7 @@ data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
   )
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The method for bivar_ldelta_rq3.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
@@ -167,7 +171,7 @@ data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
   )
 }
 
-#' @rdname data_get_colours
+#' @describeIn data_get_colours The default method.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.default <- function(vars, region, time, zoom_levels,

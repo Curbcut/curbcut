@@ -32,6 +32,10 @@ for the region.}
 data values.}
 
 \item{...}{Additional arguments (e.g., data, time) used in specific methods.}
+
+\item{data}{<\code{data.frame}> The data frame containing the data.}
+
+\item{time}{<\code{numeric}> The time period of interest.}
 }
 \value{
 Returns a list with calculated values for the specific method.
@@ -42,3 +46,16 @@ A set of methods to compute regional values based on the type of
 variable provided. Supports weighted mean, sums, and specific
 indicators.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{region_value_method(pct)}: The method for percentage variables.
+
+\item \code{region_value_method(dollar)}: The method for dollar variables.
+
+\item \code{region_value_method(count)}: The method for count variables.
+
+\item \code{region_value_method(ind)}: The method for \code{ind} variables.
+
+\item \code{region_value_method(default)}: The default method.
+
+}}
