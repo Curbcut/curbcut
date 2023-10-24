@@ -4,10 +4,10 @@
 \alias{grab_df_from_bslike}
 \title{Grab full dataframe from a building-street-like dataframe (large!)}
 \usage{
-grab_df_from_bslike(df)
+grab_df_from_bslike(scale)
 }
 \arguments{
-\item{df}{<\code{character}>  A string, the name of the dataframe in which to look
+\item{scale}{<\code{character}>  A string, the name of the dataframe in which to look
 for full dataframe. The dataframe should be in the global environment, and if it isn't,
 there must be an established sqlite connection to it.}
 }

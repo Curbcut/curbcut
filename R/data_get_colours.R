@@ -9,12 +9,12 @@
 #' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
-#' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' in the `regions_dictionary`. Usually one of the output of \code{\link{geography_server}}.
 #' @param time <`numeric`> The `time` at which data is displayed. A subset of the list
 #' `time`. Only the numeric vector.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
 #' @param colours_table <`character`> Fromn which colour table should the colour
@@ -33,8 +33,6 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
                                     data_path = get_data_path(), ...) {
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
-
-  print(region)
 
   # Get all the data
   data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
@@ -82,12 +80,12 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' \code{\link{vars_build}} function.
 #' @param region <`character`> Region for which to get the `map_zoom_levels` and
 #' retrieve all the according colours of all the IDs. One of the regions available
-#' in the `regions_dictionary`. Usually one of the output of \code{\link{zoom_get_levels}}.
+#' in the `regions_dictionary`. Usually one of the output of \code{\link{geography_server}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that

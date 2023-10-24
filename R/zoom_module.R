@@ -22,18 +22,20 @@
 #' end of an auto-scale. If the maximum zoom possible is CT and we previously created
 #' such a tileset, we could have the suffix_zoom_levels `max_CT`, which would
 #' be appended at the end of the auto-scale tile name. Defaults to NA for none.
+#' @param region <`reactive character`> A string or character value representing the
+#' selected region. Usually `r[[id]]$region`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' \code{\link{geography_server}}, becoming `r[[id]]$zoom_levels` It needs to be
+#' `numeric` as the function will sort them to make sure the lower zoom level is
+#' first, and the highest is last (so it makes sense on an auto-scale).
 #' @param no_autozoom <`reactive logical`> Whether the output tile() reactive
 #' should include autozooms or not.
 #'
 #' @return A reactive object representing the current tile that should be
 #' displayed on the map.
 #' @export
-zoom_server <- function(id, r = r, zoom_string, zoom_levels,
+zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
                         suffix_zoom_levels = NA,
                         no_autozoom = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(zoom_string))
@@ -46,7 +48,8 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
       id = "zoom_auto",
       r = r,
       label = shiny::reactive("Auto-scale"),
-      event_reset = shiny::reactive(zoom_levels()$region)
+      # If any of `region` or `zoom_levels` change, reset the auto zoom
+      event_reset = shiny::reactive(paste0(region(), zoom_levels()))
     )
 
     # Disable the slider if in auto mode
@@ -59,7 +62,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
 
     # Update the slider if zoom_levels() changes
     choices <- shiny::reactive({
-      zoom_get_label(zoom_levels()$zoom_levels, lang = r$lang())
+      zoom_get_label(zoom_levels(), lang = r$lang())
     })
 
     # Update the slider when zoom changes, only on auto_zoom
@@ -78,42 +81,26 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
     )
 
     # Return the tile() reactive, indicating if the map should show an
-    # auto-scale or a scale (e.g. `CMA_auto_zoom` vs `CMA_DA`)
-
-    # NDS: This won't use map_zoom_levels. `modules` will hold paths of
-    # possible scales combinations (`borough_CT_DA_building`). On auto-zoom,
-    # if the top-scale of the user is borough, this is what will be the output
-    # of `tile` as it must inform the map tileset to show. If the user is
-    # not on autozoom, then tile will be the scale the user selected on the slider.
+    # auto-scale or a scale. Auto-scale are tiles like CMA_CT_DA_building (
+    # a collapsed version of the individual scales).
     tile <- shiny::reactive({
-      # # On auto-scale, return the auto_zoom
-      # if (zoom_auto() && !no_autozoom()) {
-      #   out <- paste(zoom_levels()$region, "auto_zoom", sep = "_")
-      #   if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
-      #   return(out)
-      # }
-      #
-      # scale <- zoom_get_code(zoom_slider(), lang = r$lang())
-      #
-      # # A change in region should switch the tile back to auto-scale to deal with
-      # # the fact that some scales are not available in some regions
-      # get_mzl <- paste0("map_zoom_levels_", zoom_levels()$region)
-      # mzl <- tryCatch(get_from_globalenv(get_mzl),
-      #   error = function(e) c(missing = "missing")
-      # )
-      # if (!scale %in% names(mzl)) {
-      #   scale <- if (!no_autozoom()) "auto_zoom" else names(mzl)[[1]]
-      # }
-      #
-      # return(paste(zoom_levels()$region, scale, sep = "_"))
-      # NDS temporary
-      return("CSD_CT_DA_building")
+
+      # On auto-scale, return the auto_zoom
+      if (zoom_auto() && !no_autozoom()) {
+        out <- paste0(names(zoom_levels()), collapse = "_")
+        return(out)
+      }
+
+
+      scale <- zoom_get_code(zoom_slider(), lang = r$lang())
+
+      return(scale)
     })
 
     # If there's only one zoom level, hide the slider and the auto-zoom
     shiny::observe({
       # Do nothing if there are more than one zoom level
-      if (length(zoom_levels()$zoom_levels) > 1) {
+      if (length(zoom_levels()) > 1) {
         return()
       }
 
@@ -123,7 +110,7 @@ zoom_server <- function(id, r = r, zoom_string, zoom_levels,
       shinyjs::hide("zoon_slider_div")
 
       # Replace the content of zoom_cbx_loc (zoom checkbox location)
-      zoom_name <- zoom_get_name(names(zoom_levels()$zoom_levels), r$lang())
+      zoom_name <- zoom_get_name(names(zoom_levels()), r$lang())
       shinyjs::html("zoom_cbx_loc", zoom_name)
     })
 

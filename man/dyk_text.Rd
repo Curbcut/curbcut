@@ -31,7 +31,7 @@ Usually equivalent of \code{r$region()}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}.}
+\code{\link{geography_server}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

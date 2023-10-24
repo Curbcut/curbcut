@@ -83,11 +83,13 @@ place_explorer_server <- function(id, r,
 
     # Now that we only get the first scale of every region, the following can
     # be simpler
-    zoom_levels <- shiny::reactive(zoom_get_levels(id = id, region = r$region()))
+
+    # NDS
+    zoom_levels <- shiny::reactive(mzl_CSD_CT_DA_building)
 
     # # Map zoom levels change depending on r$region()
     # zoom_levels_ <-
-    #   shiny::reactive(zoom_get_levels(id = id, region = r$region()))
+    #   shiny::reactive(geography_server(id = id, region = r$region()))
     # # Do not include scales as DA like buildings or streets
     # zoom_levels <- shiny::reactive({
     #   zoom_lvls <- zoom_levels_()$zoom_levels

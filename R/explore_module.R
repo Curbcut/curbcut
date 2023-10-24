@@ -24,7 +24,7 @@
 #' \code{\link{update_scale}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
-#' @param region <`reactive character`> A string or numeric value representing the
+#' @param region <`reactive character`> A string or character value representing the
 #' selected region.
 #' @param select_id <`reactive character`> The current selected ID, usually
 #' `r[[id]]$select_id()`.

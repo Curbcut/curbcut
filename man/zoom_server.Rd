@@ -9,6 +9,7 @@ zoom_server(
   id,
   r = r,
   zoom_string,
+  region,
   zoom_levels,
   suffix_zoom_levels = NA,
   no_autozoom = shiny::reactive(FALSE)
@@ -26,11 +27,14 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \item{zoom_string}{<\verb{reactive character}> A reactive object representing the
 current zoom level, e.g. \code{CSD}.}
 
+\item{region}{<\verb{reactive character}> A string or character value representing the
+selected region. Usually \code{r[[id]]$region}.}
+
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+\code{\link{geography_server}}, becoming \code{r[[id]]$zoom_levels} It needs to be
+\code{numeric} as the function will sort them to make sure the lower zoom level is
+first, and the highest is last (so it makes sense on an auto-scale).}
 
 \item{suffix_zoom_levels}{<\code{character}> Suffix that should be appended at the
 end of an auto-scale. If the maximum zoom possible is CT and we previously created

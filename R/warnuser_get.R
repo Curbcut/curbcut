@@ -10,17 +10,19 @@
 #' @param data <`data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param more_text <`character`> Optional additional text to be added to the
-#' warning message. Default is shiny::reactive(NULL).
+#' warning message. Default is NULL.
 #' @param lang <`character`> The language to be used for the warning messages.
 #' Defaults to NULL for no translation
 #'
 #' @return A string containing the warning message in HTML format.
-warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
+warnuser_get <- function(vars, data, time, more_text = NULL, lang = NULL) {
+
+  # Initiate the list
   out <- list()
 
   # Unique years
-  left_year <- var_get_time(vars$var_left) |> unique()
-  right_year <- var_get_time(vars$var_right) |> unique()
+  left_year <- time$var_left
+  right_year <- time$var_right
 
   # Vars title
   var_left_title <- var_get_title(

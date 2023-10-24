@@ -11,7 +11,7 @@ zoom_get_string(zoom, zoom_levels)
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+\code{\link{geography_server}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-scale).}
 }

@@ -41,7 +41,7 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 using the \code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
 
-\item{region}{<\verb{reactive character}> A string or numeric value representing the
+\item{region}{<\verb{reactive character}> A string or character value representing the
 selected region.}
 
 \item{scale}{<\verb{reactive character}> Current scale. The output of

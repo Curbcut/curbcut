@@ -71,17 +71,15 @@ r_init <- function(server_session,
       )
     } else {
       # Grab the first zoom level to be the default `df`
-      # NDS
-      first_mzl <- get_from_globalenv("mzl_CSD_CT_DA_building")[1]
-      scale <- names(first_mzl)
-      # Grab a variable part of the module for the var_left placeholder
-      modules <- get_from_globalenv("modules")
-      default_var <- modules$default_var[modules$id == i]
+      page <- modules[modules$id == i, ]
+      default_var <- page$default_var
+      avail_scale_combinations <- page$avail_scale_combinations[[1]]
       # If there are var_left in the `modules`
       if (!is.na(default_var)) {
-        variables <- get_from_globalenv("variables")
-        time <- modules$dates[modules$id == i][[1]]
-        region <- modules$regions[modules$id == i][[1]][1]
+        mzl <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
+        scale <- names(mzl)[1]
+        time <- page$dates[[1]]
+        region <- page$regions[[1]][1]
         if (!is.null(time)) {
           time <- max(time)
           default_var_yr <- sprintf("%s_%s", default_var, time)
@@ -96,6 +94,7 @@ r_init <- function(server_session,
           time = shiny::reactiveVal(time),
           select_id = shiny::reactiveVal(NA),
           region = shiny::reactiveVal(region),
+          zoom_levels = shiny::reactiveVal(mzl),
           scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),

@@ -25,7 +25,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
                           "dataframe.", id)))
     }
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
-    # NDS
     mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
     theme_lowercased <- gsub(" .*", "", tolower(page$theme))
     stories <- get_from_globalenv("stories")
@@ -77,16 +76,23 @@ create_ui_server_mods <- function(modules, pos = 1) {
   # Create the basic server function
   server <- function(id, r) {
     shiny::moduleServer(id, function(input, output, session) {
-      map_zoom <- get_from_globalenv("map_zoom")
-      default_region <- modules$regions[modules$id == id][[1]][1]
-      # NDS
-      mzp <- mzl_CSD_CT_DA_building
-      main_dropdown_title <- modules$main_dropdown_title[modules$id == id]
-      default_year <- modules$dates[modules$id == id][[1]]
+      page <- modules[modules$id == id, ]
+      regions <- page$regions[[1]]
+      if (is.null(regions)) {
+        stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
+                            "check the `regions` column in the `modules` ",
+                            "dataframe.", id)))
+      }
+      avail_scale_combinations <- page$avail_scale_combinations[[1]]
+      mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
+
+      main_dropdown_title <- page$main_dropdown_title
+      default_year <- page$dates[[1]]
       default_year <- if (is.null(default_year)) NULL else max(default_year)
-      vars_right <- modules$var_right[modules$id == id][[1]]
+      vars_right <- page$var_right[[1]]
       stories <- get_from_globalenv("stories")
 
+      map_zoom <- get_from_globalenv("map_zoom")
       map_loc <- get_from_globalenv("map_loc")
       tileset_prefix <- get_from_globalenv("tileset_prefix")
       map_token <- get_from_globalenv("map_token")
@@ -126,27 +132,20 @@ create_ui_server_mods <- function(modules, pos = 1) {
         ))
       }, ignoreInit = TRUE)
 
-      # Map zoom levels change depending on r$region()
-      zoom_levels <-
-        shiny::reactive(zoom_get_levels(
-          id = id,
-          region = r[[id]]$region()
-        ))
-
-      observe(print(zoom_levels()))
-
-      shiny::observe({
-        r[[id]]$region(zoom_levels()$region)
-      })
-
-      current_zl <- shiny::reactive(zoom_levels()$zoom_levels)
+      # Region and zoom levels change depending on the geography widget
+      zl <- geography_server(id = id,
+                             r = r,
+                             regions = regions,
+                             avail_scale_combinations = avail_scale_combinations)
+      update_region(id = id, r = r, new_region = shiny::reactive(zl()$region))
+      update_zoom_levels(id = id, r = r, new_zl = shiny::reactive(zl()$zoom_levels))
 
       # Zoom string reactive
       shiny::observe({
         rv_zoom_string({
           zoom_get_string(
             zoom = r[[id]]$zoom(),
-            zoom_levels = current_zl()
+            zoom_levels = r[[id]]$zoom_levels()
           )
         })
       })
@@ -159,11 +158,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
         id = id,
         r = r,
         zoom_string = rv_zoom_string,
-        zoom_levels = zoom_levels,
+        region = r[[id]]$region,
+        zoom_levels = r[[id]]$zoom_levels,
         suffix_zoom_levels = suffix_zoom_levels
       )
-
-      observe(print(tile()))
 
       # Get scale
       shiny::observeEvent(
@@ -225,17 +223,17 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars(),
         region = r[[id]]$region(),
         time = r[[id]]$time(),
-        zoom_levels = current_zl()
+        zoom_levels = r[[id]]$zoom_levels()
       ))
 
-      # # Warn user
-      # warnuser_server(
-      #   id = id,
-      #   r = r,
-      #   vars = r[[id]]$vars,
-      #   time = r[[id]]$time,
-      #   data = data
-      # )
+      # Warn user
+      warnuser_server(
+        id = id,
+        r = r,
+        vars = r[[id]]$vars,
+        time = r[[id]]$time,
+        data = data
+      )
 
       # Tutorial
       tutorial_server(
@@ -263,7 +261,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       #   poi = r[[id]]$poi,
       #   # NDS: This changes to r[[id]]$region
       #   region = r[[id]]$region,
-      #   zoom_levels = current_zl
+      #   zoom_levels = r[[id]]$zoom_levels
       # )
 
       # Update map in response to variable changes or zooming
@@ -298,19 +296,18 @@ create_ui_server_mods <- function(modules, pos = 1) {
       #   select_id = r[[id]]$select_id,
       #   map_viewstate = map_viewstate
       # )
-      #
-      # # Change view
-      # panel_view_server(
-      #   id = id,
-      #   r = r,
-      #   # NDS: This changes to r[[id]]$region
-      #   region = r[[id]]$region,
-      #   vars = r[[id]]$vars,
-      #   data = data,
-      #   # NDS: Do we need to add `time` here as well?
-      #   zoom_levels = current_zl,
-      #   time = r[[id]]$time
-      # )
+
+      # Change view
+      panel_view_server(
+        id = id,
+        r = r,
+        region = r[[id]]$region,
+        scale = r[[id]]$scale,
+        vars = r[[id]]$vars,
+        data = data,
+        zoom_levels = r[[id]]$zoom_levels,
+        time = r[[id]]$time
+      )
     })
   }
 

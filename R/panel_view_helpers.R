@@ -7,7 +7,7 @@
 #' @param scale <`character`>
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
 #' @param scale <`numeric`>

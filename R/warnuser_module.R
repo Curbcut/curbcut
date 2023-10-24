@@ -34,7 +34,8 @@ warnuser_server <- function(id, r, vars, time, data,
       lang = r$lang()
     ))
 
-    output$warnuser <- shiny::renderText(shiny::HTML(warn()))
+    output$warnuser <- shiny::renderText(
+      if (warn() == "") return(NULL) else shiny::HTML(warn()))
   })
 }
 

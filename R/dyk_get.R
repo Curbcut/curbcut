@@ -20,7 +20,7 @@
 #' Usually equivalent of `r$region()`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}.
+#' \code{\link{geography_server}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.

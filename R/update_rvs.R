@@ -10,7 +10,7 @@
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
+#' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).
 #'
@@ -330,27 +330,19 @@ update_scale <- function(tile, zoom_string) {
 #' @export
 update_vars <- function(id, r, var_left, var_right, widget_time) {
 
-  shiny::observe({
-    vr <- vars_build(
+  vr <- shiny::reactive({
+    vars_build(
       var_left = var_left(),
       var_right = var_right(),
       scale = r[[id]]$scale(),
       time = widget_time()
     )
-
-    if (identical(vr$vars, r[[id]]$vars())) {
-      return()
-    } else {
-      r[[id]]$vars(vr$vars)
-    }
-
-    if (identical(vr$time, r[[id]]$time())) {
-      return()
-    } else {
-      r[[id]]$time(vr$time)
-    }
-
   })
+
+  # Update vars and time only if they actually change
+  update_rv(id, r, rv_name = "vars", new_val = shiny::reactive(vr()$vars))
+  update_rv(id, r, rv_name = "time", new_val = shiny::reactive(vr()$time))
+
 }
 
 #' Update a reactive value object
@@ -366,24 +358,72 @@ update_vars <- function(id, r, var_left, var_right, widget_time) {
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param rv_name <`character`> A character string specifying the name of the
 #' reactive value to create and update.
-#' @param default_val <`vector`> A vector of length one. This parameter is used
-#' to initialize the rv.
 #' @param new_val <`reactive`> A reactive expression returning the new value to
 #' assign to the rv. If the new value is the same as the current one, the function
 #' does nothing.
+#' @param default_val <`vector`> A vector of length one. This parameter is used
+#' to initialize the rv. Defaults to NULL for variables already initialized.
 #'
 #' @return
 #' This function does not return a value. It updates the reactive value in place.
 #' The updated value can be accessed using the rv object and the rv_name parameter.
 #' If the new value is the same as the current one, the function does nothing and
 #' returns NULL.
-update_map_rv <- function(id, r, rv_name, default_val, new_val) {
-  r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+update_rv <- function(id, r, rv_name, new_val, default_val = NULL) {
+  if (!is.null(default_val)) {
+    r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+  }
 
-  shiny::observe({
-    if (identical(new_val(), shiny::isolate(r[[id]][[rv_name]]()))) {
+  shiny::observeEvent(new_val(), {
+    if (identical(new_val(), r[[id]][[rv_name]]())) {
       return(NULL)
     }
     r[[id]][[rv_name]](new_val())
   })
+}
+
+#' Update the page's `region` reactive value in the reactive list `r`
+#'
+#' This function observes changes in `new_region` and updates the `region`
+#' reactive value within the reactive list `r` identified by the given `id`.
+#' The update is triggered only if `new_region` is different from the current
+#' `region` value stored in `r[[id]]`.
+#'
+#' @param id <`character`> The ID of the element in the reactive list `r` where
+#' the `region` reactive value is stored.
+#' @param r <`reactive list`> A reactive list where the element identified by
+#' `id` contains a named list with a `region` reactive value. The output
+#' of \code{\link{r_init}}.
+#' @param new_region <`reactive`> A reactive expression that returns the new
+#' value for the `region`. The first output of the \code{\link{geography_server}}
+#' function.
+#'
+#' @return An observer that updates the `region` reactive value in `r[[id]]`
+#' whenever `new_region` changes.
+#' @export
+update_region <- function(id, r, new_region) {
+  update_rv(id, r, "region", new_val = new_region)
+}
+
+#' Update the page's `zoom_levels` reactive value in the reactive list `r`
+#'
+#' This function observes changes in `new_zl` and updates the `zoom_levels`
+#' reactive value within the reactive list `r` identified by the given `id`.
+#' The update is triggered only if `new_zl` is different from the current
+#' `zoom_levels` value stored in `r[[id]]`.
+#'
+#' @param id <`character`> The ID of the element in the reactive list `r` where
+#' the `region` reactive value is stored.
+#' @param r <`reactive list`> A reactive list where the element identified by
+#' `id` contains a named list with a `zoom_levels` reactive value. The output
+#' of \code{\link{r_init}}.
+#' @param new_zl <`reactive`> A reactive expression that returns the new
+#' value for the `zoom_levels`. The second output of the \code{\link{geography_server}}
+#' function.
+#'
+#' @return An observer that updates the `zoom_levels` reactive value in `r[[id]]`
+#' whenever `new_zl` changes.
+#' @export
+update_zoom_levels <- function(id, r, new_zl) {
+  update_rv(id, r, "zoom_levels", new_val = new_zl)
 }

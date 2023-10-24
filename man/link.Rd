@@ -45,7 +45,7 @@ autovars module with the new selected variable.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}.}
+\code{\link{geography_server}}.}
 
 \item{zoom}{<\code{numeric}> Zoom used to update the map viewstate. Defaults to
 using \code{\link{link_get_zoom}}, which will grab the values in the \code{zoom_levels}

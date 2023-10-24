@@ -550,24 +550,23 @@ grab_row_from_bslike <- function(scale, select_id, cols = "*") {
 #' the full dataframe from a connected database when the `df` is not found in the
 #' global environment.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' @param scale <`character`>  A string, the name of the dataframe in which to look
 #' for full dataframe. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #'
-#' @return The full datraframe corresponding to the given `df`. If
-#' `select_id` is found in the `df` in the global environment, the corresponding
-#' table is returned. If `df` is not in the global
+#' @return The full datraframe corresponding to the given `scale`. If
+#' `select_id` is found in the `scale` in the global environment, the corresponding
+#' table is returned. If `scale` is not in the global
 #' environment, the function fetches the dataframe from the connected database.
-grab_df_from_bslike <- function(df) {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_df_from_bslike <- function(scale) {
+  dat <- get0(scale, envir = .GlobalEnv)
   if (!is.null(dat)) {
     return(dat)
   }
 
   # If not in the global environment
-  scale <- gsub(".*_", "", df)
   db_df <- sprintf("%s_conn", scale)
-  call <- sprintf("SELECT * FROM %s", df)
+  call <- sprintf("SELECT * FROM %s", scale)
   out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
 
   return(out)

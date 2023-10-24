@@ -108,28 +108,28 @@ test_that("zoom_get_code returns correct scale codes with multiple scale names i
   expect_equal(result, expected_output)
 })
 
-test_that("zoom_get_levels returns error if missing id", {
-  expect_error(zoom_get_levels(id = "cc", region = "CMA"))
+test_that("geography_server returns error if missing id", {
+  expect_error(geography_server(id = "cc", region = "CMA"))
 })
 
-# test_that("zoom_get_levels returns the correct map_zoom_levels and region", {
-#   result <- zoom_get_levels(id = "alp", region = "city")
+# test_that("geography_server returns the correct map_zoom_levels and region", {
+#   result <- geography_server(id = "alp", region = "city")
 #   expect_equal(
 #     result,
 #     list(zoom_levels = c(CSD = 0, CT = 10.5, DA = 12.5, building = 15.5), region = "city")
 #   )
 # })
 #
-# test_that("zoom_get_levels returns the correct map_zoom_levels and region with a suffix", {
-#   result <- zoom_get_levels(id = "alp", region = "city", "max_CT")
+# test_that("geography_server returns the correct map_zoom_levels and region with a suffix", {
+#   result <- geography_server(id = "alp", region = "city", "max_CT")
 #   expect_equal(
 #     result,
 #     list(zoom_levels = c(CSD = 0, CT = 10.5), region = "city")
 #   )
 # })
 #
-# test_that("zoom_get_levels returns the correct map_zoom_levels and region when region is different from the one supplied", {
-#   result <- zoom_get_levels(id = "vacancyrate", region = "city")
+# test_that("geography_server returns the correct map_zoom_levels and region when region is different from the one supplied", {
+#   result <- geography_server(id = "vacancyrate", region = "city")
 #   expect_equal(
 #     result,
 #     list(zoom_levels = c(cmhczone = 0), region = "cmhc")

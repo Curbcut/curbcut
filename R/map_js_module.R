@@ -55,12 +55,6 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
   shiny::moduleServer(id, function(input, output, session) {
 
-    # print(paste0("tile: ", tile()))
-    # print(paste0("select_id: ", select_id()))
-    # print(paste0("coords: ", coords()))
-    # print(paste0("zoom: ", zoom()))
-    # print(data_colours())
-
     tileset_prefix <- get_from_globalenv("tileset_prefix")
 
     # Make complete sure the map is loaded: Check every x ms if the map is
