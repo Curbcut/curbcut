@@ -97,7 +97,7 @@ warnuser_get <- function(vars, data, time, more_text = NULL, lang = NULL) {
   # Make it an HTML paragraph -----------------------------------------------
 
   out <- lapply(out, \(x) {
-    sprintf("<p style='font-size:12px; font-style:italic;'>%s", x)
+    sprintf("<p class='sus-sidebar-widget-warning-text'>%s", x)
   })
   out <- paste0(out, collapse = "")
 

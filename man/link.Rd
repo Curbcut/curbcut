@@ -44,7 +44,7 @@ to update to. It will be \code{r[[id]]$var_left_force()}, which will re-draw the
 autovars module with the new selected variable.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
 
 \item{zoom}{<\code{numeric}> Zoom used to update the map viewstate. Defaults to

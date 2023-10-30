@@ -83,28 +83,28 @@ test_that("legend_labels.q5 works", {
 #     list(structure(list(x = "Locataire (Δ 2006 - 2016)", y = NULL), class = "labels"))
 #   )
 # })
-#
-# test_that("legend_labels.bivar works", {
-#   vars <- structure(
-#     list(
-#       var_left = "climate_drought_2015",
-#       var_right = "housing_tenant_2016"
-#     ),
-#     class = "bivar"
-#   )
-#   expect_equal(
-#     legend_labels(vars),
-#     list(
-#       ggplot2::labs(
-#         x = "Tenant (2016)",
-#         y = "Drought (2015)"
-#       ),
-#       x_short = "Tenant",
-#       y_short = "Drought"
-#     )
-#   )
-# })
-#
+
+test_that("legend_labels.bivar works", {
+  vars <- structure(
+    list(
+      var_left = "alp",
+      var_right = "housing_tenant"
+    ),
+    class = "bivar"
+  )
+  expect_equal(
+    legend_labels(vars),
+    list(
+      ggplot2::labs(
+        x = "Tenant",
+        y = "Active living"
+      ),
+      x_short = "Tenant",
+      y_short = "Active living"
+    )
+  )
+})
+
 # test_that("legend_labels.delta_bivar works", {
 #   vars <- structure(
 #     list(

@@ -218,16 +218,6 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
       translate = TRUE, lang = lang
     )
 
-  date_left <- var_get_time(var = vars$var_left)
-  date_right <- var_get_time(var = vars$var_right)
-
-  if (!is.na(date_left)) {
-    title_left <- paste0(title_left, " (", date_left, ")")
-  }
-  if (!is.na(date_right)) {
-    title_right <- paste0(title_right, " (", date_right, ")")
-  }
-
   title_left_short <- var_get_info(
     var = vars$var_left, what = "var_short",
     translate = TRUE, lang = lang

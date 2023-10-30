@@ -37,15 +37,18 @@ test_that("legend_breaks.q5_ind works", {
 #   expect_error(print(p), NA)
 # })
 
-# test_that("legend_render.bivar  works", {
-#   vars <- vars_build(
-#     var_left = "housing_tenant_2016",
-#     var_right = "alp_2016", df = "CMA_CSD"
-#   )
-#   p <- legend_render(vars, df = "CMA_CSD", font_family = NULL)
-#   expect_error(print(p), NA)
-# })
-#
+test_that("legend_render.bivar  works", {
+  region <- "CMA"
+  scale <- "DA"
+  vars <- vars_build(
+    var_left = "housing_tenant", "housing_rent", scale = scale, time = 2016
+  )$vars
+  data <- data_get(vars = vars, scale = scale, region = region)
+  p <- legend_render(vars = vars, scale = scale, data = data, font_family = NULL)
+  expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
+  expect_equal(p$labels$fill, "fill")
+})
+
 # test_that("legend_render.delta  works", {
 #   vars <- vars_build(
 #     var_left = c("housing_tenant_2006", "housing_tenant_2016"),

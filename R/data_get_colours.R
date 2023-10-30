@@ -13,10 +13,8 @@
 #' @param time <`numeric`> The `time` at which data is displayed. A subset of the list
 #' `time`. Only the numeric vector.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param colours_table <`character`> Fromn which colour table should the colour
 #' be matched to the `group` column of the retrieved data. For `q5` class would be
 #' `left_5`, for `bivar` class would be `bivar`, etc. One of the names of the
@@ -33,24 +31,7 @@
 data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_table,
                                     scales_as_DA = c("building", "street"),
                                     data_path = get_data_path(), ...) {
-  # Region and all possible `df`
-  dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
-
-  # Get all the data
-  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
-    simplify = FALSE,
-    USE.NAMES = TRUE
-  )
-  data <- Reduce(rbind, data_r)
-
-  # Get the right complete variable, using schema
-  schema <- attr(data_r[[1]], "schema")
-
-  # Grab the correct column from which to use colors on
-  var <- match_schema_to_col(data = data, schema = schema, time = time)
-  group <- sprintf("%s_q5", var)
-
-  # Deal with colours
+  # Grab colours
   colours <- colours_get()
   if (!colours_table %in% names(colours)) {
     stop(glue::glue_safe(
@@ -59,6 +40,28 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
     ))
   }
   colour_table <- colours[[colours_table]]
+
+  # Region and all possible `df`
+  dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
+  # Get all the data
+  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
+    simplify = FALSE,
+    USE.NAMES = TRUE
+  )
+  data <- Reduce(rbind, data_r)
+
+  # Is group already calculated?
+  group <- sprintf("group_%s", time$var_left)
+  if (!group %in% names(data)) {
+    # Get the complete data, using schema
+    schema <- attr(data_r[[1]], "schema")
+    # Grab the correct column from which to use colors on
+    var <- match_schema_to_col(data = data, schema = schema, time = time,
+                               col = "var_left")
+    group <- sprintf("%s_q5", var)
+  }
+
+  # Deal with colours
   mapping <- match(data[[group]], colour_table$group)
   data$fill <- colour_table$fill[mapping]
   data <- data[c("ID", "fill")]
@@ -86,7 +89,7 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}. It needs to be `numeric` as the function
 #' will sort them to make sure the lower zoom level is first, and the highest
 #' is last (so it makes sense on an auto-scale).

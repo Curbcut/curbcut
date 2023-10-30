@@ -53,6 +53,3 @@ connections to \code{.sqlite} databases present in the data folder. Finally, it
 sets default Mapbox configurations and assigns other necessary variables to
 the global environment.
 }
-\examples{
-load_data("path/to/data", pos = 1, site_name = "Curbcut Montréal", ...)
-}

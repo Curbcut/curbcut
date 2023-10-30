@@ -36,9 +36,8 @@ explore_graph.q5_ind <- function(vars, select_id, scale, data, time,
                                  scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "acidgrotesk-book", ...) {
   explore_graph_q5_ind(vars = vars, select_id = select_id, scale = scale,
-                       data = data, scales_as_DA = scales_as_DA,
-                       lang = lang, time = time,
-                       font_family = "acidgrotesk-book", ...
+                       data = data, time = time, scales_as_DA = scales_as_DA,
+                       lang = lang, font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -54,7 +53,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale
+    data = data, lang = lang, scale = scale, ...
   )
 
   # Color as function
@@ -76,7 +75,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
-  vals <- attr(data, "breaks")
+  vals <- attr(data, "breaks_var_left")
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
@@ -132,46 +131,65 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
   # Color as function
   clr_df <- shared_info$colours_dfs$bivar
 
+  # Remove outliers from data before getting the x-y labels
+  vr_col <- match_schema_to_col(
+    data = data,
+    col = "var_right",
+    time = time
+  )
+  vl_col <- match_schema_to_col(
+    data = data,
+    col = "var_left",
+    time = time
+  )
+  # Which are the column names containing data?
+  data_cols <- c(vr_col, vl_col)
+  data_no_out <- remove_outliers_df(data, cols = data_cols)
+
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_right,
     x_y = "x",
-    df = shared_info$treated_scale,
-    data_vals = data$var_right
+    scale = shared_info$treated_scale,
+    data_vals = data_no_out[[vr_col]]
   )
   y_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "y",
-    df = shared_info$treated_scale,
-    data_vals = data$var_left
+    scale = shared_info$treated_scale,
+    data_vals = data_no_out[[vl_col]]
   )
 
   # Get the stat smooth line opacity
-  opac_line <- abs(stats::cor(data$var_left, data$var_right, use = "complete.obs"))
+  opac_line <- abs(stats::cor(data_no_out[[vl_col]], data_no_out[[vr_col]], use = "complete.obs"))
 
   # Get the point size
-  point_size <- if (nrow(data) > 1000) {
+  point_size <- if (nrow(data_no_out) > 1000) {
     0.5
-  } else if (nrow(data) > 500) {
+  } else if (nrow(data_no_out) > 500) {
     1
   } else {
     2
   }
 
-  # Which are the column names containing data?
-  data_cols <- c("var_right", "var_left")
 
   # Draw plot
   plot <-
-    data |>
-    remove_outliers_df(cols = data_cols) |>
-    ggplot2::ggplot(ggplot2::aes(var_right, var_left))
+    data_no_out |>
+    ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(vr_col), !!ggplot2::sym(vl_col)))
+
+  # Grab group column
+  group_col <- match_schema_to_col(
+    data = data_no_out,
+    col = "group",
+    time = time
+  )
 
   plot <-
     plot +
     explore_graph_point_jitter(
       dat = plot$data, cols = data_cols,
-      ggplot2::aes(colour = group), size = point_size
+      ggplot2::aes(colour = !!ggplot2::sym(group_col)), size = point_size
     ) +
     ggplot2::stat_smooth(
       geom = "line", se = FALSE, method = "loess", span = 1,
@@ -187,7 +205,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data[data$ID == shared_info$select_id, ]
+    val <- data_no_out[data_no_out$ID == shared_info$select_id, ]
     if (!any(is.na(val))) {
       plot <-
         plot +
@@ -383,9 +401,9 @@ explore_graph.delta_bivar <- function(vars, select_id, scale, data, time,
 explore_graph.bivar_ind <- function(vars, select_id, scale, data, time,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
-  explore_graph_bivar_ind(vars, select_id, scale, data, scales_as_DA,
-    lang = lang,
-    font_family = "acidgrotesk-book", ...
+  explore_graph_bivar_ind(
+    vars = vars, select_id = select_id, scale = scale, data = data, time = time,
+    scales_as_DA = scales_as_DA, lang = lang,  font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -456,7 +474,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
-  vals <- attr(data, "breaks")
+  vals <- attr(data, "breaks_var_left")
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
@@ -601,7 +619,7 @@ explore_graph_bivar_ind.scalar <- function(vars, select_id, scale, data, time,
                                            lang = NULL,
                                            font_family = "acidgrotesk-book", ...) {
   explore_graph.bivar(
-    vars = vars, select_id = select_id, scale = scale, data = data,
+    vars = vars, select_id = select_id, scale = scale, data = data, time = time,
     scales_as_DA = scales_as_DA, lang = lang,
     font_family = "acidgrotesk-book", ...
   )

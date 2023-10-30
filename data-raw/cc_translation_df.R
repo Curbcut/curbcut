@@ -85,6 +85,32 @@ cc_translation_df <-
     en = "Themes",
     fr = "Th\u00e8mes"
   ) |>
+  # Geography widget --------------------------------------------------------
+
+  tibble::add_row(
+    en = "Geography",
+    fr = "G\u00e9ographie"
+  ) |>
+  tibble::add_row(
+    en = "Region",
+    fr = "R\u00e9gion"
+  ) |>
+  tibble::add_row(
+    en = "Main scale",
+    fr = "\u00C9chelle principale"
+  ) |>
+  tibble::add_row(
+    en = paste0("Changing the region to <b>%s</b> required changing the ",
+                "main scale to <b>%s</b>."),
+    fr = paste0("Le passage de la r\u00e9gion \u00E0 <b>%s</b> a n\u00e9cessit\u00e9 ",
+                "le passage de l'\u00e9chelle principale \u00E0 <b>%s</b>.")
+  ) |>
+  tibble::add_row(
+    en = paste0("Changing the main scale to <b>%s</b> required changing the ",
+                "region to <b>%s</b>."),
+    fr = paste0("Le passage de l'\u00e9chelle principale \u00E0 <b>%s</b> a ",
+                "n\u00e9cessit\u00e9 le passage de la r\u00e9gion \u00E0 <b>%s</b>.")
+  ) |>
   # Legend ------------------------------------------------------------------
 
   tibble::add_row(

@@ -30,7 +30,7 @@ data_get(
 
 \method{data_get}{bivar}(
   vars,
-  df,
+  scale,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...

@@ -43,11 +43,11 @@ load_data <- function(data_folder = "data", pos = 1,
   ))
 
   # Connect to the dbs
-  dbs <- list.files(data_folder, full.names = TRUE)
+  dbs <- list.files(data_folder, full.names = TRUE, recursive = FALSE)
   dbs <- subset(dbs, grepl(".sqlite$", dbs))
 
   lapply(dbs, \(x) {
-    connection_name <- paste0(stringr::str_extract(x, "(?<=data/).*?(?=\\.)"), "_conn")
+    connection_name <- paste0(s_extract("(?<=data/).*?(?=\\.)", x), "_conn")
     assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
   }) |> invisible()
 

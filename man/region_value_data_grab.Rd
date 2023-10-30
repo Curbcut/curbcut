@@ -4,7 +4,7 @@
 \alias{region_value_data_grab}
 \title{Retrieve data values and parent data for specific region and scale}
 \usage{
-region_value_data_grab(var, data, time, scale, region)
+region_value_data_grab(var, data, time, scale, region, col)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest.}
@@ -16,6 +16,10 @@ region_value_data_grab(var, data, time, scale, region)
 \item{scale}{<\code{character}> The scale of interest.}
 
 \item{region}{<\code{character}> The region of interest.}
+
+\item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
+value information. Defaults to \code{var_left}, but could also be \code{var_right} or
+\code{var_left_1} in delta.}
 
 \item{data_path}{<\code{character}> The path to the data directory, defaults to
 "data/".}

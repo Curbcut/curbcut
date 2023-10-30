@@ -22,7 +22,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
     if (is.null(regions)) {
       stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
                           "check the `regions` column in the `modules` ",
-                          "dataframe.", id)))
+                          "dataframe."), id))
     }
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
     mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -286,7 +286,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars,
         scale = r[[id]]$scale,
         select_id = r[[id]]$select_id,
-        time = r[[id]]$time
+        time = r[[id]]$time,
+        zoom_levels = r[[id]]$zoom_levels
       )
 
       # # Bookmarking

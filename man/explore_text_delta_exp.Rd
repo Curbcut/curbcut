@@ -11,7 +11,7 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
-  df,
+  scale,
   data,
   ...
 )
@@ -21,7 +21,7 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
-  df,
+  scale,
   data,
   lang,
   ...
@@ -32,7 +32,7 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
-  df,
+  scale,
   data,
   lang,
   ...
@@ -51,8 +51,7 @@ Usually equivalent of \code{r$region()}.}
 \item{left_right}{<\code{character}> Is it a left or right variable? Possible
 options are "left" or "right".}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\item{scale}{<\code{character}> The scale under study. The output of
 \code{\link{update_scale}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and

@@ -4,7 +4,7 @@
 \alias{explore_context}
 \title{Get region text info}
 \usage{
-explore_context(region, select_id, scale, switch_DA, lang = NULL)
+explore_context(region, select_id, scale, switch_DA, zoom_levels, lang = NULL)
 }
 \arguments{
 \item{region}{<\code{character}> String specifying the code of the region to
@@ -19,6 +19,10 @@ name of the selected polygon will appear.}
 
 \item{switch_DA}{<\code{logical}> Is the \code{df} part of the scales that should be
 switched as DAs instead.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
 for no translation.}

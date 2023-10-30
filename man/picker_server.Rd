@@ -10,6 +10,7 @@ picker_server(
   picker_id = "var",
   var_list,
   time = shiny::reactive(NULL),
+  selected = shiny::reactive(NULL),
   ...
 )
 }

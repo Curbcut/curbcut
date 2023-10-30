@@ -30,7 +30,7 @@ translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 Usually equivalent of \code{r$region()}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}

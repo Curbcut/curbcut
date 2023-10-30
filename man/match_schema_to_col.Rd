@@ -4,13 +4,22 @@
 \alias{match_schema_to_col}
 \title{Match schema list to right column in \code{data}}
 \usage{
-match_schema_to_col(data, time, schema = attr(data, "schema"))
+match_schema_to_col(
+  data,
+  time,
+  col = "var_left",
+  schema = attr(data, sprintf("schema_\%s", col))
+)
 }
 \arguments{
 \item{data}{<\code{data.frame}> A data frame containing the data. The output of
 output of \code{\link{get_data}}.}
 
-\item{time}{<\code{numeric}> The specific time value to match against.}
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+Can also be a simple numeric.}
+
+\item{col}{<\code{character}> Which column should be extracted? \code{var_left} or \code{var_right}.}
 
 \item{schema}{<\verb{named list}> A list containing the schema information, specifically the
 'time' attribute. Typically obtained, and defaulted, as an attribute to

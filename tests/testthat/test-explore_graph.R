@@ -21,7 +21,7 @@ test_explores <- function(var_right, select_id, scale, region) {
 
   # Dollar
   test_explore_graph_helper(
-    "housing_rent",
+    var_left = "housing_rent",
     var_right = var_right, scale = scale, region = region,
     time = 2021, select_id = select_id
   )
@@ -34,7 +34,7 @@ test_explores <- function(var_right, select_id, scale, region) {
 
   # Ind scalar
   test_explore_graph_helper(
-    "alp",
+    var_left = "alp",
     var_right = var_right, scale = scale, region = region,
     time = 2021, select_id = select_id
   )
@@ -83,18 +83,18 @@ test_that("q5 explore works with selections", {
 # })
 
 
-# # bivar -------------------------------------------------------------------
-#
-# test_that("q5 explore works without a selection", {
-#   test_explores(var_right = "alp_2021", select_id = NA, df = "city_CSD")
-#   test_explores(var_right = "climate_drought_2015", select_id = NA, df = "city_building")
-# })
-#
-# test_that("q5 explore works with selections", {
-#   test_explores(var_right = "housing_tenant_2021", select_id = "2466023_19", df = "city_CSD")
-#   test_explores(var_right = "housing_rent_2021", select_id = "b10000763", df = "city_building")
-# })
-#
+# bivar -------------------------------------------------------------------
+
+test_that("q5 explore works without a selection", {
+  test_explores(var_right = "alp", select_id = NA, scale = "CSD", region = "CMA")
+  # test_explores(var_right = "climate_drought", select_id = NA, scale = "building", region = "city")
+})
+
+test_that("q5 explore works with selections", {
+  test_explores(var_right = "housing_tenant", select_id = "2466023_19", scale = "CSD", region = "CMA")
+  test_explores(var_right = "housing_rent", select_id = "b10000763", scale = "building", region = "city")
+})
+
 # test_that("bivar_ind ordinal", {
 #   var_left <- "climate_drought_2022"
 #   df <- "grid_grid250"
@@ -108,8 +108,8 @@ test_that("q5 explore works with selections", {
 #   expect_true(is.data.frame(actual$data))
 #   expect_true(is.list(actual$labels))
 # })
-#
-#
+
+
 # # delta -------------------------------------------------------------------
 #
 # test_explores_delta <- function(var_right, select_id, df) {

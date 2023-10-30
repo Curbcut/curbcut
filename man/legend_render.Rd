@@ -2,6 +2,15 @@
 % Please edit documentation in R/legend_render.R
 \name{legend_render}
 \alias{legend_render}
+\alias{legend_render.q5}
+\alias{legend_render.q5_ind}
+\alias{legend_render.qual}
+\alias{legend_render.bivar}
+\alias{legend_render.delta}
+\alias{legend_render.q100}
+\alias{legend_render.delta_bivar}
+\alias{legend_render.bivar_ldelta_rq3}
+\alias{legend_render.default}
 \title{Generic legend render function for Curbcut legends}
 \usage{
 legend_render(
@@ -12,6 +21,78 @@ legend_render(
   data,
   ...
 )
+
+\method{legend_render}{q5}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  ...
+)
+
+\method{legend_render}{q5_ind}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  ...
+)
+
+\method{legend_render}{qual}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render}{bivar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{delta}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render}{q100}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render}{delta_bivar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  df,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{bivar_ldelta_rq3}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  df,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{default}(vars, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
@@ -40,3 +121,24 @@ It returns a ggplot object
 Curbcut map pages. The function invokes particular methods which depend on
 the class of the \code{vars} argument.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{legend_render(q5)}: q5 method
+
+\item \code{legend_render(q5_ind)}: q5_ind method
+
+\item \code{legend_render(qual)}: qual method
+
+\item \code{legend_render(bivar)}: bivar method
+
+\item \code{legend_render(delta)}: delta method
+
+\item \code{legend_render(q100)}: q100 method
+
+\item \code{legend_render(delta_bivar)}: delta_bivar method
+
+\item \code{legend_render(bivar_ldelta_rq3)}: bivar_ldelta_rq3 method
+
+\item \code{legend_render(default)}: default method
+
+}}

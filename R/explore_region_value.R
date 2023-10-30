@@ -12,14 +12,17 @@
 #' @param scale <`character`> The scale of interest.
 #' @param region  <`character`> The region of interest.
 #' @param select_id <`character`>  The ID of the selected feature.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments to pass to specific method functions.
 #'
 #' @return Varies based on the method specified in \code{var}. Commonly
 #' returns a list with elements like \code{val} and \code{count}.
 #' @export
-region_value <- function(var, data, time, scale, region, select_id, ...) {
+region_value <- function(var, data, time, scale, region, select_id, col, ...) {
   # Get the parent variable data
-  rv <- region_value_data_grab(var = var, data = data, time = time,
+  rv <- region_value_data_grab(var = var, data = data, time = time, col = col,
                                scale = scale, region = region)
 
   # Return the output of every method
@@ -157,12 +160,15 @@ region_value_method.default <- function(var, data_vals, parent_vals, data, time,
 #' @param region  <`character`> The region of interest.
 #' @param data_path <`character`> The path to the data directory, defaults to
 #' "data/".
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #'
 #' @return Returns a list containing two elements: \code{data_vals}, which
 #' holds the data values for the specified variable, and \code{parent_vals},
 #' which holds the parent data values.
 #' @export
-region_value_data_grab <- function(var, data, time, scale, region) {
+region_value_data_grab <- function(var, data, time, scale, region, col) {
 
   # Get the parent variable
   parent_string <- var_get_info(var, what = "parent_vec")
@@ -171,9 +177,9 @@ region_value_data_grab <- function(var, data, time, scale, region) {
   parent_data <- data_get(vars = parent_string, scale = scale, region = region)
 
   # Get the correct column name to draw data from
-  current_col <- match_schema_to_col(data = data, time = time)
+  current_col <- match_schema_to_col(data = data, time = time, col = col)
   data_vals <- data[[current_col]]
-  pv_col <- match_schema_to_col(data = parent_data, time = time)
+  pv_col <- match_schema_to_col(data = parent_data, time = time, col = col)
   parent_vals <- parent_data[[pv_col]]
 
   # Make sure it's all numeric

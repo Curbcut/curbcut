@@ -13,13 +13,13 @@ panel_view_prepare_text(vars, scale, dat, time, lang = NULL, ...)
 
 \method{panel_view_prepare_text}{q5}(vars, scale, dat, time, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{delta}(vars, df, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta}(vars, scale, dat, time, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{bivar}(vars, df, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{bivar}(vars, scale, dat, time, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{delta_bivar}(vars, df, time, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta_bivar}(vars, scale, time, dat, lang = NULL, ...)
 
-\method{panel_view_prepare_text}{default}(vars, df, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{default}(vars, scale, dat, time, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}

@@ -309,6 +309,21 @@
 	margin-top: var(--padding-v-md);
 }
 
+.sus-sidebar-widget-warning-text {
+	font-size: 1.2rem !important;
+	font-style: italic;
+	display: inline;
+}
+
+.sus-sidebar-widget-warning-text-button {
+	min-height: 12px !important;
+	max-height: 12px !important;
+	font-size: 1.2rem !important;
+	display: inline !important;
+	padding: 15px !important;
+	padding-top: 0px !important;
+}
+
 .scrollable-div {
 	overflow-y: auto;
 	overflow-x: hidden;

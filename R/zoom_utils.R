@@ -19,10 +19,8 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #'
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #'
 #' @return A character string representing the zoom level and region name,
 #' separated by an underscore
@@ -81,10 +79,8 @@ zoom_get_name <- function(scales, lang = NULL) {
 #' corresponding slider titles ("Borough/City" , "Census tract", "Dissemination area")
 #'
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' slider titles to. Defaults to `NULL`, which is no translation.
 #'

@@ -16,6 +16,7 @@ explore_text(
   time,
   data,
   scales_as_DA,
+  zoom_levels,
   lang,
   ...
 )
@@ -27,6 +28,7 @@ explore_text(
   scale,
   time,
   data,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -36,8 +38,10 @@ explore_text(
   vars,
   region,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -47,8 +51,9 @@ explore_text(
   vars,
   region,
   select_id,
-  df,
+  scale,
   data,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -58,8 +63,9 @@ explore_text(
   vars,
   region,
   select_id,
-  df,
+  scale,
   data,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -87,6 +93,10 @@ observations to be compared. The output of \code{\link{data_get}}.}
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
 default, their info will be the one of their DA.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}

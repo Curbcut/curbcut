@@ -31,7 +31,8 @@
 #' @seealso \code{\link{picker_UI}}
 #' @export
 picker_server <- function(id, r, picker_id = "var", var_list,
-                          time = shiny::reactive(NULL), # identifier = NULL,
+                          time = shiny::reactive(NULL), selected = shiny::reactive(NULL),
+                          # identifier = NULL,
                           ...) {
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(var_list))
@@ -57,7 +58,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     multi_year <- shiny::reactiveVal(FALSE)
     # Make sure we don't create unwanted reactivity that triggers the reset
     # of the dropdown.
-    shiny::observeEvent(time(), multi_year(length(time()) > 1))
+    shiny::observeEvent(time(), multi_year(length(time()[[1]]) > 1))
     disable <- shiny::reactive(picker_multi_year_disable(
       var_list = var_list(),
       disable = multi_year()
@@ -84,6 +85,16 @@ picker_server <- function(id, r, picker_id = "var", var_list,
         ...
       )
     })
+
+    # Update the selected variable if it changes
+    shiny::observeEvent(selected(), {
+
+      shinyWidgets::updatePickerInput(
+        session = session,
+        inputId = picker_id,
+        selected = selected()
+      )
+    }, ignoreNULL = TRUE)
 
     # # # If the dropdown is a compare, highlight differently the background
     # # # of the options that have a strong correlation

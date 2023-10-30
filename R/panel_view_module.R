@@ -20,10 +20,8 @@
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param time <`reactive named list`> Named list of the time for both left and
 #' right variables. The second output of \code{\link{vars_build}}. Usually
 #' should be `r[[id]]$time()`.

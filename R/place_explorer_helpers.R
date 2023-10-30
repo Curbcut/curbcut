@@ -615,7 +615,7 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
   ]
   # Get the place heading and glue it
   dat <- grab_row_from_bslike(
-    df = df, select_id = select_id,
+    scale = scale, select_id = select_id,
     cols = c("name", "name_2")
   )
   name <- dat$name

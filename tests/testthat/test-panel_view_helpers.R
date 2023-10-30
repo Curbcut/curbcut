@@ -81,72 +81,62 @@ test_that("table_view_prep_table works as expected (q5)", {
 
 })
 
-# test_that("table_view_prep_table works as expected (bivar)", {
-#   var_left <- "housing_tenant_2021"
-#   df <- "city_DA"
-#   var_right <- "climate_drought_2022"
-#   map_zoom_levels <- map_zoom_levels_city
-#   test_table_view_prep_table_helper(
-#     var_left = var_left,
-#     var_right = var_right,
-#     df = df,
-#     map_zoom_levels = map_zoom_levels
-#   )
-#
-#   var_left <- "access_foot_20_food_grocery_2023"
-#   df <- "city_DA"
-#   var_right <- "climate_drought_2022"
-#   map_zoom_levels <- map_zoom_levels_city
-#   test_table_view_prep_table_helper(
-#     var_left = var_left,
-#     var_right = var_right,
-#     df = df,
-#     map_zoom_levels = map_zoom_levels
-#   )
-#
-#   var_left <- "alp_2021"
-#   df <- "city_DA"
-#   var_right <- "climate_drought_2022"
-#   map_zoom_levels <- map_zoom_levels_city
-#   test_table_view_prep_table_helper(
-#     var_left = var_left,
-#     var_right = var_right,
-#     df = df,
-#     map_zoom_levels = map_zoom_levels
-#   )
-#
-#   var_left <- "alley_sqkm_2023"
-#   df <- "city_DA"
-#   var_right <- "climate_drought_2022"
-#   map_zoom_levels <- map_zoom_levels_city
-#   test_table_view_prep_table_helper(
-#     var_left = var_left,
-#     var_right = var_right,
-#     df = df,
-#     map_zoom_levels = map_zoom_levels
-#   )
-#
-#   var_left <- "alley_per1k_2023"
-#   df <- "city_DA"
-#   var_right <- "climate_drought_2022"
-#   map_zoom_levels <- map_zoom_levels_city
-#   test_table_view_prep_table_helper(
-#     var_left = var_left,
-#     var_right = var_right,
-#     df = df,
-#     map_zoom_levels = map_zoom_levels
-#   )
-#   #
-#   #   var_left <-  "vac_rate_bachelor_bed_2021"
-#   #   df <- "cmhc_cmhczone"
-#   #   var_right <- "housing_tenant_2021"
-#   #   map_zoom_levels <- map_zoom_levels_cmhc
-#   #   test_table_view_prep_table_helper(var_left = var_left,
-#   #                                     var_right = var_right,
-#   #                                     df = df,
-#   #                                     map_zoom_levels = map_zoom_levels)
-# })
-#
+test_that("table_view_prep_table works as expected (bivar)", {
+  test_table_view_prep_table_helper(
+    var_left = "housing_tenant",
+    var_right = "lst",
+    scale = "DA",
+    region = "city",
+    time = 2021,
+    map_zoom_levels = mzl_CSD_CT_DA_building
+  )
+
+  # test_table_view_prep_table_helper(
+  #   var_left = "access_foot_food_grocery_20_2023",
+  #   var_right = "lst",
+  #   scale = "DA",
+  #   region = "city",
+  #   time = 2021,
+  #   map_zoom_levels = mzl_CSD_CT_DA_building
+  # )
+
+  # test_table_view_prep_table_helper(
+  #   var_left = "alp",
+  #   var_right = "climate_drought",
+  #   scale = "DA",
+  #   region = "city",
+  #   time = 2021,
+  #   map_zoom_levels = mzl_CSD_CT_DA_building
+  # )
+
+  # test_table_view_prep_table_helper(
+  #   var_left = "alley_sqkm",
+  #   var_right = "housing_rent",
+  #   scale = "DA",
+  #   region = "city",
+  #   time = 2023,
+  #   map_zoom_levels = mzl_CSD_CT_DA_building
+  # )
+  #
+  # test_table_view_prep_table_helper(
+  #   var_left = "alley_per1k",
+  #   var_right = "climate_drought",
+  #   scale = "DA",
+  #   region = "city",
+  #   time = 2023,
+  #   map_zoom_levels = mzl_CSD_CT_DA_building
+  # )
+
+  test_table_view_prep_table_helper(
+    var_left = "vac_rate_bachelor_bed",
+    var_right = "inc_50",
+    scale = "cmhczone",
+    region = "CMA",
+    time = 2021,
+    map_zoom_levels = mzl_cmhczone
+  )
+})
+
 # test_that("table_view_prep_table works as expected (delta)", {
 #   var_left <- c("housing_tenant_2016", "housing_tenant_2021")
 #   df <- "city_DA"

@@ -64,7 +64,7 @@
 #' @return The explore Shiny UI and server module functions
 #' @export
 explore_server <- function(id, r, data, vars, region, scale, select_id, time,
-                           scales_as_DA = shiny::reactive(c("building", "street")),
+                           zoom_levels, scales_as_DA = shiny::reactive(c("building", "street")),
                            graph_fun = shiny::reactive(explore_graph),
                            graph_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), scale = scale(),
@@ -75,13 +75,15 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), scale = scale(),
                              time = time(), select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), lang = r$lang()
+                             zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
+                             lang = r$lang()
                            ))) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
   stopifnot(shiny::is.reactive(scale))
   stopifnot(shiny::is.reactive(time))
+  stopifnot(shiny::is.reactive(zoom_levels))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(scales_as_DA))
   stopifnot(shiny::is.reactive(graph_fun))

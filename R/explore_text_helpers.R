@@ -13,11 +13,14 @@
 #' \code{\link{update_scale}}.
 #' @param switch_DA <`logical`> Is the `df` part of the scales that should be
 #' switched as DAs instead.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
 #' for no translation.
 #'
 #' @return A list containing multiple texts used for the explore text panel.
-explore_context <- function(region, select_id, scale, switch_DA, lang = NULL) {
+explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, lang = NULL) {
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   region_df <- regions_dictionary[regions_dictionary$region == region, ]
@@ -51,7 +54,12 @@ explore_context <- function(region, select_id, scale, switch_DA, lang = NULL) {
       cols = c("name", "name_2")
     )
     name <- dat$name
-    name_2 <- cc_t(dat$name_2, lang = lang)
+    name_2 <- dat$name_2
+    if (is.na(name_2)) {
+      name_2 <- fill_name_2(ID_scale = select_id, scale = scale,
+                            top_scale = names(zoom_levels)[[1]])
+    }
+    name_2 <- cc_t(name_2, lang = lang)
     heading <- cc_t(scale_df$place_heading, lang = lang)
     treated_scale <- scale
   }
@@ -165,7 +173,12 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' `var_left_1` in delta.
 #' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
 #' for no translation.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
+#' @param data
 #' function: \itemize{
 #'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
 #'  \item{df <`character`>}{The combination of the region under study
@@ -176,10 +189,10 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
 explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
-                                       scale, data, lang = NULL, time_col, ...) {
+                                       scale, data, lang = NULL, time, ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
-    region_values <- region_value(var = var, data = data, time = time_col,
+    region_values <- region_value(var = var, data = data, time = time, col = col,
                                   scale = scale, region = region)
 
     # Return the values
@@ -193,7 +206,7 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time_col,
+    time = time,
     data = data,
     ...
   ))
@@ -254,6 +267,12 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
 #' @param var <`character`> The variable code of the variable for which the
 #' values need to be generated. Usually one element of the output of
 #' \code{\link{vars_build}}.
+#' @param select_id <`character`> The ID of the selected zone.
+#' @param data
+#' @param scale
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param col
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting values
@@ -262,20 +281,10 @@ explore_text_select_val <- function(var, ...) {
   UseMethod("explore_text_select_val", var)
 }
 
-#' @rdname explore_text_select_val
-#'
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param scale <`character`> The current scale, e.g. `"CT"`.
-#' @param time_col <`numeric`> Time at which to show the data.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#'
+#' @describeIn explore_text_select_val Method for pct
 #' @export
 explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_left",
-                                        time_col, ...) {
+                                        time, ...) {
   # Create empty vector
   out <- c()
 
@@ -284,7 +293,7 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- sprintf("%s_%s", col, time_col)
+  rcol <- match_schema_to_col(data = data, time = time, col = col)
 
   # Add the percentage value for the selection. Second column is always
   out$val <- data[[rcol]][data$ID == select_id]
@@ -292,7 +301,7 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
   # Get the parent data
   all_count <- explore_get_parent_data(
     var = var, select_id = select_id,
-    scale = scale, time_col = time_col
+    scale = scale, time_col = time[[col]]
   )
 
   # Multiply the percentage by the count of parent in the zone
@@ -305,23 +314,11 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
   return(out)
 }
 
-#' @rdname explore_text_select_val
-#'
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param time_col <`numeric`> Time at which to show the data.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
+#' @describeIn explore_text_select_val Method for `ind`
 #' @param lang <`character`> Active language. `"en"` or `"fr"`
-#'
 #' @export
 explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_left",
-                                        time_col, lang, ...) {
+                                        time, lang, ...) {
   # Create empty vector
   out <- c()
 
@@ -330,7 +327,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- match_schema_to_col(data, time = time_col)
+  rcol <- match_schema_to_col(data, time = time, col = col)
   brk_col <- sprintf("%s_q5", rcol)
 
   # Get the group in which falls the selection
@@ -349,22 +346,10 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
   return(out)
 }
 
-#' @rdname explore_text_select_val
-#'
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param data <`data.frame`>The output of \code{\link{data_get}}.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
-#' @param time_col <`numeric`> Time at which to show the data.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#'
+#' @describeIn explore_text_select_val Default method
 #' @export
 explore_text_select_val.default <- function(var, data, df, select_id, col = "var_left",
-                                            time_col, ...) {
+                                            time, ...) {
   # Create empty vector
   out <- c()
 
@@ -373,7 +358,7 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- sprintf("%s_%s", col, time_col)
+  rcol <- match_schema_to_col(data = data, time = time, col = col)
 
   # Add the value for the selection
   out$val <- data[[rcol]][data$ID == select_id]
@@ -479,22 +464,29 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
 #' text needs to be generated. Usually the output of \code{\link{vars_build}}.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations to be compared. The output of \code{\link{data_get}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
 #' @param ... Additional arguments to be passed.
 #'
 #' @return A list containing the correlation coefficient and a formatted string.
 #' @export
-explore_text_bivar_correlation_helper <- function(vars, data, lang = NULL, ...) {
+explore_text_bivar_correlation_helper <- function(vars, data, time, lang = NULL, ...) {
   UseMethod("explore_text_bivar_correlation_helper", vars)
 }
 
 #' @rdname explore_text_bivar_correlation_helper
 #' @export
-explore_text_bivar_correlation_helper.scalar <- function(vars, data,
+explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
                                                          lang = NULL, ...) {
+
+  # Match schema
+  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
+  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
+
   # Correlation
-  corr <- stats::cor(data$var_left, data$var_right, use = "complete.obs")
+  corr <- stats::cor(data[[vl_col]], data[[vr_col]], use = "complete.obs")
   corr_string <- sprintf(
     cc_t("Pearson's r: %s", lang = lang),
     round(corr, digits = 2)
@@ -508,11 +500,16 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data,
 
 #' @rdname explore_text_bivar_correlation_helper
 #' @export
-explore_text_bivar_correlation_helper.ordinal <- function(vars, data,
+explore_text_bivar_correlation_helper.ordinal <- function(vars, data, time,
                                                           lang = NULL, ...) {
+
+  # Match schema
+  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
+  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
+
   # Correlation
-  corr <- stats::cor(data$var_left, data$var_right,
-    use = "complete.obs", method = "spearman"
+  corr <- stats::cor(data[[vl_col]], data[[vr_col]], use = "complete.obs",
+                     method = "spearman"
   )
   corr_string <- sprintf(
     cc_t("Spearman's rho: %s", lang = lang),

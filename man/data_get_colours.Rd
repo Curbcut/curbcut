@@ -92,7 +92,7 @@ in the \code{regions_dictionary}. Usually one of the output of \code{\link{geogr
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-scale).}

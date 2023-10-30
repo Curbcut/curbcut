@@ -52,3 +52,4 @@ test_that("explore_graph_scale works", {
   # cl <- class(cl)
   # expect_true("ScaleDiscretePosition" %in% cl)
 })
+

@@ -87,24 +87,31 @@ test_that("legend_breaks.q100 works", {
 #   )
 # })
 
-# test_that("legend_breaks.bivar works", {
-#   vars <- vars_build(
-#     var_left = "climate_drought_2015",
-#     var_right = "housing_tenant_2016",
-#     df = "city_CSD"
-#   )
-#   expect_equal(
-#     legend_breaks(vars, df = "city_CSD"),
-#     list(
-#       x = c("25.91%", "60.37%", "69.61%", "73.35%"),
-#       y = c(
-#         "1.42",
-#         "3.13", "3.40", "3.81"
-#       )
-#     )
-#   )
-# })
-#
+test_that("legend_breaks.bivar works", {
+  vars <- vars_build(
+    var_left = "inc_50",
+    var_right = "lst",
+    scale = "CSD",
+    time = 2021)
+  time <- vars$time
+  vars <- vars$vars
+
+  data <- data_get(vars, scale = "CSD", region = "CMA")
+
+  brks <- legend_breaks(vars, data = data, scale = "city")
+
+  expect_true(brks$x[1] < brks$x[2])
+  expect_true(brks$y[1] < brks$y[2])
+  expect_equal(
+    length(brks$x),
+    length(brks$y)
+  )
+  expect_true(all(endsWith(brks$x, "C")))
+  expect_true(all(endsWith(brks$y, "%")))
+  expect_true(length(brks$x) == 4)
+  expect_true(length(brks$y) == 4)
+})
+
 # test_that("legend_breaks.delta_bivar works", {
 #   vars <- vars_build(
 #     var_left = c("housing_rent_2006", "housing_rent_2016"),

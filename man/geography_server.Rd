@@ -5,7 +5,7 @@
 \alias{geography_UI}
 \title{Geography module for CUrbcut}
 \usage{
-geography_server(id, r = r, regions, avail_scale_combinations)
+geography_server(id, r, regions, avail_scale_combinations)
 
 geography_UI(id, regions, avail_scale_combinations)
 }

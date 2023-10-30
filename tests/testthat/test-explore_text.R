@@ -5,7 +5,7 @@ test_explores_helper <- function(var_left, var_right, region, scale, time, selec
   data <- data_get(vars, region = region, scale = scale)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time
+    data = data, time = time, zoom_levels = mzl_CSD_CT_DA_building
   )
   expect_equal(class(actual), "character")
   expect_equal(length(actual), 1)
@@ -65,19 +65,20 @@ test_that("q5 explore works with selections", {
 })
 
 
-# # bivar -------------------------------------------------------------------
-#
-# test_that("q5 explore works without a selection", {
-#   test_explores(var_right = "alp", select_id = NA, region = "city", scale = "CSD")
-#   test_explores(var_right = "climate_drought", select_id = NA, region = "city", scale = "building")
-# })
-#
-# test_that("q5 explore works with selections", {
-#   test_explores(var_right = "housing_tenant", select_id = "2466023_19", region = "city", scale = "CSD")
-#   test_explores(var_right = "housing_rent", select_id = "b10000763", region = "city", scale = "building")
-# })
-#
-#
+# bivar -------------------------------------------------------------------
+
+test_that("q5 explore works without a selection", {
+  test_explores(var_right = "alp", select_id = NA, region = "city", scale = "CSD")
+  # test_explores(var_right = "climate_drought", select_id = NA, region = "city", scale = "building")
+})
+
+test_that("q5 explore works with selections", {
+  test_explores(var_right = "housing_tenant", select_id = "2466023_19", region = "city", scale = "CSD")
+  test_explores(var_right = "housing_rent", select_id = "b10000763", region = "city", scale = "building")
+  test_explores(var_right = "housing_rent", select_id = "24520109", region = "city", scale = "DA")
+})
+
+
 # # delta -------------------------------------------------------------------
 #
 # test_explores_delta <- function(var_right, select_id, df) {

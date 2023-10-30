@@ -27,10 +27,8 @@ in the \code{regions_dictionary}. Usually one of the output of \code{\link{geogr
 \code{time}. Only the numeric vector.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{geography_server}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{colours_table}{<\code{character}> Fromn which colour table should the colour
 be matched to the \code{group} column of the retrieved data. For \code{q5} class would be

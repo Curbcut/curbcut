@@ -152,3 +152,59 @@ find_breaks_q5 <- function(min_val, max_val) {
   new_min <- floor(min_val / (10 ^ break_digits)) * 10 ^ break_digits
   return(c(new_min + 0:5 * break_val))
 }
+
+#' Append new columns based on quantile breaks
+#'
+#' This function appends new columns to the input data based on quantile breaks
+#' for specific variables. The quantile breaks are calculated using the function
+#' `find_breaks_quintiles`. The function also preserves other attributes of the
+#' original data.
+#'
+#' @param data <`data.frame`> Data frame to append columns to.
+#' @param q3_q5 <`character`> Specifies whether to use three or five quantiles.
+#' Default is "q5".
+#' @param rename_col <`character`> The column name to rename. Default is
+#' "var_left". Can also be "var_right".
+#'
+#' @return <`data.frame`> Modified data frame with additional columns.
+data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left") {
+
+  # Keep track of previous attributes
+  prev_attr <- attributes(data)
+  prev_attr <- prev_attr[!names(prev_attr) %in% c("names", "row.names", "class",
+                                                  "quintiles", "breaks")]
+
+  # Rename attributes so it's clearly assigned on var_left or var_right
+  names(prev_attr) <- sprintf("%s_%s", names(prev_attr),rename_col)
+
+  # Calculate breaks
+  data_val <- data[-1]
+  # print(data_val)
+  data_vec <- data[[attr(data, "breaks_var")]]
+  data_vec <- data_vec[!is.na(data_vec)]
+
+  # Calculate break
+  breaks <- find_breaks_quintiles(data_vec, q3_q5)
+
+  # Rework breaks just for assembling (we want to include ALL observations)
+  assemble_breaks <- breaks
+  assemble_breaks[1] <- -Inf
+  assemble_breaks[length(assemble_breaks)] <- Inf
+
+  # Assemble output
+  out <- as.data.frame(lapply(data_val, .bincode, assemble_breaks, include.lowest = TRUE))
+  out <- setNames(out, sprintf("%s_%s", names(data_val), q3_q5))
+  data <- cbind(data, out) # bind the data
+  data <- tibble::as_tibble(data)
+  attr(data, sprintf("breaks_%s", rename_col)) <- breaks
+
+  # Keep the previous attributes
+  for (i in names(prev_attr)) {
+    attr(data, i) <- prev_attr[[i]]
+  }
+
+  # Rename fields
+  names(data) <- gsub(var, rename_col, names(data))
+
+  return(list(data = data, attr = prev_attr))
+}

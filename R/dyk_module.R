@@ -19,7 +19,7 @@
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.
 #' @param poi <`reactive`> (Optional) Point of interests. Default is NULL.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`

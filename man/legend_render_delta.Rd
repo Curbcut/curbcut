@@ -2,6 +2,8 @@
 % Please edit documentation in R/legend_render.R
 \name{legend_render_delta}
 \alias{legend_render_delta}
+\alias{legend_render_delta.scalar}
+\alias{legend_render_delta.ordinal}
 \title{Internal function for dispatching \code{legend_render_delta}.}
 \usage{
 legend_render_delta(
@@ -9,6 +11,23 @@ legend_render_delta(
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
   scale,
+  ...
+)
+
+\method{legend_render_delta}{scalar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render_delta}{ordinal}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  lang = NULL,
   ...
 )
 }
@@ -28,10 +47,23 @@ their colour will be the one of their DA.}
 \code{\link{update_scale}}.}
 
 \item{...}{Additional arguments passed to other functions.}
+
+\item{lang}{<\code{character}> Language in use. \code{en} or \code{fr}. Defaults to NULL.}
 }
 \value{
 A ggplot object that represents the \code{delta} legend.
+
+A ggplot object representing the \code{delta} legend for scalar data.
+
+A ggplot object representing the \code{delta} legend for ordinal data.
 }
 \description{
 Internal function for dispatching \code{legend_render_delta}.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{legend_render_delta(scalar)}: scalar method
+
+\item \code{legend_render_delta(ordinal)}: ordinal method
+
+}}

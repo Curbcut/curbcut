@@ -138,7 +138,7 @@ vars_build <- function(var_left, var_right = " ", scale, time,
                     class = out_class
   )
   time <- list(var_left = vl[["closest_year"]])
-  if (all(vr != " ")) time$var_Right <- vr[["closest_year"]]
+  if (all(vr != " ")) time$var_right <- vr[["closest_year"]]
 
   # Return
   return(list(vars = vars, time = time))

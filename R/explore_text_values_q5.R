@@ -50,7 +50,7 @@ explore_text_values_q5.pct <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time[[col]],
+    time = time
   )
 
   # NA message
@@ -97,7 +97,7 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message
@@ -141,7 +141,7 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message
@@ -191,7 +191,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
     df = df,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message
@@ -277,7 +277,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
     df = df,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message
@@ -346,7 +346,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message
@@ -405,7 +405,7 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, scale,
     select_id = select_id,
     col = col,
     lang = lang,
-    time_col = time[[col]]
+    time = time
   )
 
   # NA message

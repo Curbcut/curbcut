@@ -45,7 +45,7 @@ link_get_zoom <- function(zoom_levels, df) {
 #' to update to. It will be `r[[id]]$var_left_force()`, which will re-draw the
 #' autovars module with the new selected variable.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.
 #' @param zoom <`numeric`> Zoom used to update the map viewstate. Defaults to
 #' using \code{\link{link_get_zoom}}, which will grab the values in the `zoom_levels`

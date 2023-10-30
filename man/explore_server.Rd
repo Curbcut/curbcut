@@ -14,6 +14,7 @@ explore_server(
   scale,
   select_id,
   time,
+  zoom_levels,
   scales_as_DA = shiny::reactive(c("building", "street")),
   graph_fun = shiny::reactive(explore_graph),
   graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
@@ -21,8 +22,8 @@ explore_server(
     scales_as_DA(), lang = r$lang())),
   table_fun = shiny::reactive(explore_text),
   table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
-    time = time(), select_id = select_id(), region = region(), scales_as_DA =
-    scales_as_DA(), lang = r$lang()))
+    time = time(), select_id = select_id(), region = region(), zoom_levels =
+    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang()))
 )
 
 explore_UI(id)

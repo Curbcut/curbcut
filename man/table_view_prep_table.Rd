@@ -13,13 +13,11 @@ function.}
 \item{data}{<\code{data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
-\item{scale}{<\code{numeric}>}
+\item{scale}{<\code{character}>}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{mzl_x}, or the output of
-\code{\link{geography_server}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+\code{\link{geography_server}}.}
 
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}

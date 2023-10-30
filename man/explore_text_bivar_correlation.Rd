@@ -4,7 +4,7 @@
 \alias{explore_text_bivar_correlation}
 \title{Function for exploring bivariate correlation between two variables}
 \usage{
-explore_text_bivar_correlation(vars, data, lang = NULL)
+explore_text_bivar_correlation(vars, data, time, lang = NULL)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
@@ -12,6 +12,9 @@ text needs to be generated. Usually the output of \code{\link{vars_build}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations to be compared. The output of \code{\link{data_get}}.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}

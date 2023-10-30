@@ -40,7 +40,7 @@ selected region (if any). Usually \code{r[[id]]$select_id()}}
 Usually equivalent of \code{r$region()}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
+levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
 
 \item{poi}{<\code{reactive}> (Optional) Point of interests. Default is NULL.}

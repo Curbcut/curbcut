@@ -25,7 +25,7 @@
 #' @param region <`reactive character`> A string or character value representing the
 #' selected region. Usually `r[[id]]$region`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
+#' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}, becoming `r[[id]]$zoom_levels` It needs to be
 #' `numeric` as the function will sort them to make sure the lower zoom level is
 #' first, and the highest is last (so it makes sense on an auto-scale).

@@ -137,84 +137,84 @@ data_get <- function(vars, scale, region,
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
                         data_path = get_data_path(), ...) {
-  # print(vars)
-  # print(scale)
-  # print(region)
-  # print(data_path)
 
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Get data
-  data <- data_get_qs(vars$var_left, scale, data_path = data_path)
+  data <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
 
   # Filter to region
   data <- filter_region(data = data, scale = scale, region = region)
 
-  # Keep track of previous attributes
-  prev_attr <- attributes(data)
-  prev_attr <- prev_attr[!names(prev_attr) %in% c("names", "row.names", "class",
-                                                  "quintiles", "breaks")]
-
-  # Calculate breaks
-  data_val <- data[-1]
-  # print(data_val)
-  data_vec <- data[[attr(data, "breaks_var")]]
-  data_vec <- data_vec[!is.na(data_vec)]
-
-  if (attr(data, "quintiles")) {
-    breaks <- find_breaks_quintiles(data_vec, "q5")
-  } else {
-    breaks <- find_breaks_q5(min(data_vec), max(data_vec))
-  }
-
-  # Assemble output
-  out <- as.data.frame(lapply(data_val, .bincode, breaks, include.lowest = TRUE))
-  out <- setNames(out, sprintf("%s_q5", names(data_val)))
-  data <- cbind(data, out) # bind the data
-  data <- tibble::as_tibble(data)
-  attr(data, "breaks") <- breaks
-
-  # Keep the previous attributes
-  for (i in names(prev_attr)) {
-    attr(data, i) <- prev_attr[[i]]
-  }
-
-  # Rename fields
-  names(data) <- gsub(vars$var_left, "var_left", names(data))
+  # Append breaks
+  data <- data_append_breaks(var = vars$var_left,
+                             data = data,
+                             q3_q5 = "q5",
+                             rename_col = "var_left")
 
   # Return output
-  return(data)
+  return(data$data)
 
 }
 
 #' @describeIn data_get The method for bivar.
 #' @export
-data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get.bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
                            data_path = get_data_path(), ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df, data_path = data_path)
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  # Get var_left and var_right data
+  vl <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
+  vr <- data_get_qs(vars$var_right, scale = scale, data_path = data_path)
 
-  # Get var_right and rename
-  vr <- data_get_qs(vars$var_right, df, data_path = data_path)
-  names(vr) <- c("ID", "var_right", "var_right_q3", "var_right_q5")
+  # Append breaks
+  all_data <- mapply(
+    \(var, data, rename_col) {
+      data_append_breaks(
+        var = var, data = data, q3_q5 = "q3",
+        rename_col = rename_col
+      )
+    }, c(vars$var_left, vars$var_right),
+    list(vl, vr),
+    c("var_left", "var_right"),
+    SIMPLIFY = FALSE
+  )
 
-  # Error check before binding
-  if (!identical(data$ID, vr$ID)) {
-    stop(glue::glue_safe(
-      "The `ID` vector from the `{var_left}` table is not ",
-      "identical to the `ID` vector in the `{var_right}` table in ",
-      "the sqlite `{df}` connection. Tables can't be binded."
-    ))
+  # Grab all the time of the var_left (which are going to be the possible
+  # value if `time`, as time usually follows the left variable)
+  time_regex <- unique(all_data[[1]]$attr$schema_var_left$time)
+  possible_vl_times <- grep(time_regex, names(all_data[[1]]$data), value = TRUE)
+  possible_vl_times <- s_extract(time_regex, possible_vl_times)
+
+  # Keep left and right breaks
+  breaks_vl <- attr(all_data[[1]]$data, "breaks_var_left")
+  breaks_vr <- attr(all_data[[2]]$data, "breaks_var_right")
+
+  # Merge
+  data <- merge(all_data[[1]]$data, all_data[[2]]$data, by = "ID", all = TRUE)
+
+  # Re-add breaks
+  attr(data, "breaks_var_left") <- breaks_vl
+  attr(data, "breaks_var_right") <- breaks_vr
+
+  # Re-add the attributes
+  for (i in names(all_data[[1]]$attr)) {
+    attr(data, i) <- all_data[[1]]$attr[[i]]
   }
-  data <- cbind(data, vr[, -1])
+  for (i in names(all_data[[2]]$attr)) {
+    attr(data, i) <- all_data[[2]]$attr[[i]]
+  }
 
-  # Add the `group` for the map colouring
-  data$group <- paste(data$var_left_q3, data$var_right_q3, sep = " - ")
+  # Make the group columns, with the years (group_2016, group_2021, ...)
+  for (i in possible_vl_times) {
+    vr_year <- var_closest_year(vars$var_right, i)$closest_year
+    out <- paste(data[[sprintf("var_left_%s_q3", i)]],
+                 data[[sprintf("var_right_%s_q3", vr_year)]],
+                 sep = " - ")
+    data[[sprintf("group_%s", i)]] <- out
+  }
 
   # Return
   return(data)

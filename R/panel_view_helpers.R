@@ -7,10 +7,8 @@
 #' @param scale <`character`>
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
-#' @param scale <`numeric`>
+#' \code{\link{geography_server}}.
+#' @param scale <`character`>
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
@@ -22,9 +20,17 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 
   # Grab only the correct column, and rename it.
   dat <- data
-  rcol <- match_schema_to_col(data = dat, time = time)
-  dat <- dat[c("ID", rcol)]
-  names(dat)[2] <- "var_left"
+  # If var_right is in the data, subset it too
+  if (sum(grepl("var_right_", names(dat))) > 0) {
+    vl_col <- match_schema_to_col(data = dat, time = time)
+    vr_col <- match_schema_to_col(data = dat, time = time, col = "var_right")
+    dat <- dat[c("ID", vl_col, vr_col)]
+    names(dat)[c(2:3)] <- c("var_left", "var_right")
+  } else {
+    vl_col <- match_schema_to_col(data = dat, time = time)
+    dat <- dat[c("ID", vl_col)]
+    names(dat)[2] <- "var_left"
+  }
 
   # Add `variation` if it is multi-year
   vars_ <- lapply(vars, \(x) {
@@ -40,7 +46,7 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   names(dat)[grepl("var_left", names(dat))] <- vars_$var_left
   names(dat)[grepl("var_right", names(dat))] <- vars_$var_right
 
-  # Bind the `df` data to the real data
+  # Bind the `scale` data to the real data
   df_dat <- grab_df_from_bslike(scale)
   default_cols <- c("ID", "name", "name_2", "population", "households")
   default_cols <- names(df_dat)[names(df_dat) %in% default_cols]
@@ -106,7 +112,7 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   # Depending on the class of `vars`, update the other column names and
   # out as a datatable.
   pretty_dat <-
-    panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang, df = df)
+    panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang, scale = scale)
 
   # Add population and households to the title vars so they also are formatted
   pretty_dat$title_vars <- c(
@@ -390,7 +396,7 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
 
 #' @describeIn panel_view_prepare_text The method for delta.
 #' @export
-panel_view_prepare_text.delta <- function(vars, df, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, ...) {
   # Titles
   time <- var_get_time(vars$var_left)
   vars_sep <- sapply(vars$var_left, var_get_info,
@@ -442,7 +448,7 @@ panel_view_prepare_text.delta <- function(vars, df, dat, time, lang = NULL, ...)
   # Get the text for every columns
   titles_texts <- mapply(\(title, var, explanation) {
     panel_view_prepare_text_helper(
-      df = df,
+      scale = scale,
       var = var,
       dat = dat,
       title = title,
@@ -458,14 +464,15 @@ panel_view_prepare_text.delta <- function(vars, df, dat, time, lang = NULL, ...)
 
 #' @describeIn panel_view_prepare_text The method for bivar.
 #' @export
-panel_view_prepare_text.bivar <- function(vars, df, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, ...) {
   # Title
-  time <- var_get_time(unlist(vars))
   vars_sep <- sapply(vars, var_get_info,
     what = "var_short",
     translate = TRUE, lang = lang
   )
-  new_names <- sprintf("%s (%s)", vars_sep, time)
+  new_names <- sprintf("%s (%s)",
+                       vars_sep[c("var_left", "var_right")],
+                       unlist(time[c("var_left", "var_right")]))
 
   # Grab the column names
   var_codes <- c(vars$var_left, vars$var_right)
@@ -483,17 +490,18 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, time, lang = NULL, ...)
   )
 
   # Get the text for the single left variable
-  titles_texts <- mapply(\(title, var, explanation, title_color) {
+  titles_texts <- mapply(\(title, var, explanation, title_color, time_col) {
     panel_view_prepare_text_helper(
-      df = df,
+      scale = scale,
       var = var,
       dat = dat,
       title = title,
       explanation = explanation,
       title_color = title_color,
-      lang = lang
+      lang = lang,
+      time_col = time_col
     )
-  }, new_names, var_codes, explanations, title_colours)
+  }, new_names, var_codes, explanations, title_colours, time)
 
   # Return
   return(titles_texts)
@@ -501,7 +509,7 @@ panel_view_prepare_text.bivar <- function(vars, df, dat, time, lang = NULL, ...)
 
 #' @describeIn panel_view_prepare_text The method for delta_bivar.
 #' @export
-panel_view_prepare_text.delta_bivar <- function(vars, df, time, dat, lang = NULL, ...) {
+panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = NULL, ...) {
   # Title
   time <- lapply(vars, var_get_time)
   vars_sep <- lapply(vars, var_get_info,
@@ -558,7 +566,7 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, time, dat, lang = NULL
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color) {
     panel_view_prepare_text_helper(
-      df = df,
+      scale = scale,
       var = var,
       dat = dat,
       title = title,
@@ -574,7 +582,7 @@ panel_view_prepare_text.delta_bivar <- function(vars, df, time, dat, lang = NULL
 
 #' @describeIn panel_view_prepare_text The default method.
 #' @export
-panel_view_prepare_text.default <- function(vars, df, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.default <- function(vars, scale, dat, time, lang = NULL, ...) {
   return(list(""))
 }
 

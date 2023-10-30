@@ -41,10 +41,8 @@ used to determine which type of legend to draw.}
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{geography_server}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{time}{<\verb{reactive named list}> Named list of the time for both left and
 right variables. The second output of \code{\link{vars_build}}. Usually

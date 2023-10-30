@@ -15,6 +15,7 @@ test_that("explore_context works", {
   actual_names <-
     explore_context(
       select_id = "4620003.00", region = "city", scale = "CT",
+      zoom_levels = mzl_CSD_CT_DA_building,
       switch_DA = FALSE
     )
   expect_equal(all(names(actual_names) == expected_names), TRUE)
@@ -53,7 +54,7 @@ test_that("explore_text_region_val_df works", {
     scale = scale,
     select_id = NA,
     data = data,
-    time_col = time$var_left
+    time = time
   )
   expect_equal(all(c("val", "count") %in% names(actual)), TRUE)
 
@@ -67,7 +68,7 @@ test_that("explore_text_region_val_df works", {
     select_id = "4620003.00",
     data = data,
     scale = scale,
-    time_col = time$var_left
+    time = time
   )
   expect_equal(all(c("val", "num") %in% names(actual)), TRUE)
 
@@ -81,7 +82,7 @@ test_that("explore_text_region_val_df works", {
     select_id = "4620003.00",
     data = data,
     scale = scale,
-    time_col = time$var_left
+    time = time
   )
   expect_equal(all(c("val") %in% names(actual)), TRUE)
 
@@ -99,7 +100,7 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time_col = time$var_left
+    time = time
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 
@@ -112,7 +113,7 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time_col = time$var_left
+    time = time
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 
@@ -124,7 +125,8 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time_col = time$var_left
+    time = time
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 })
+

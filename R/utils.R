@@ -675,7 +675,10 @@ hex_to_rgb_or_rgba <- function(hex) {
 #'
 #' @param data <`data.frame`> A data frame containing the data. The output of
 #' output of \code{\link{get_data}}.
-#' @param time <`numeric`> The specific time value to match against.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' Can also be a simple numeric.
+#' @param col <`character`> Which column should be extracted? `var_left` or `var_right`.
 #' @param schema <`named list`> A list containing the schema information, specifically the
 #' 'time' attribute. Typically obtained, and defaulted, as an attribute to
 #' `data` (output of \code{\link{get_data}}).
@@ -683,15 +686,38 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' @return Returns the name of the variable that corresponds to the given
 #' schema as a character string.
 #' @export
-match_schema_to_col <- function(data, time, schema = attr(data, "schema")) {
+match_schema_to_col <- function(data, time, col = "var_left",
+                                schema = attr(data, sprintf("schema_%s", col))) {
+
+  # Default data_get method does not return schema_*
+  if (is.null(schema)) {
+    if (!is.null(attr(data, "schema"))) {
+      schema <- attr(data, "schema")
+    } else {
+      # If schema is not supplied (so it's not a `default` method), but we want
+      # another column, ex. `group`.
+      schema <- attr(data, "schema_var_left")["time"]
+    }
+  }
+
+  # If time is supplied as a list, subset. If not, use the numeric
+  time_col <-
+    if (is.list(time)) {
+      # If `col` can be subset from the `time` list, grab it. If not, defaults
+      # to taking var_left.
+      if (col %in% names(time)) time[[col]] else time$var_left
+    } else {
+      time
+    }
 
   # Get the possible variables that hold the schema
-  pv <- names(data)[grepl(schema$time, names(data))]
+  pv <- grep(schema$time, names(data), value = TRUE)
+  pv <- grep(col, pv, value = TRUE)
 
   # Which var out of those correspond to the right time
   # NDS: this now only works with time. Need to make sure if works dynamically
   # for whatever is fed in the schema.
-  var <- pv[s_extract(schema$time, pv) == time]
+  var <- pv[s_extract(schema$time, pv) == time_col]
 
   # Return the var as a character
   return(var)

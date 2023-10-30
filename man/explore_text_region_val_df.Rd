@@ -12,7 +12,7 @@ explore_text_region_val_df(
   scale,
   data,
   lang = NULL,
-  time_col,
+  time,
   ...
 )
 }
@@ -30,16 +30,23 @@ Usually equivalent of \code{r$region()}.}
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
 
-\item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
-for no translation.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
-\item{...}{Additional arguments for the \code{\link{explore_text_select_val}}
-function: \itemize{
+\item{data}{function: \itemize{
 \item{data <\code{data.frame}>}{The output of \code{\link{data_get}}.}
 \item{df <\code{character}>}{The combination of the region under study
 and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
 \code{\link{update_scale}}.}
 }}
+
+\item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
+for no translation.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{...}{Additional arguments for the \code{\link{explore_text_select_val}}}
 }
 \value{
 The resulting data frame after subsetting or list when there is a

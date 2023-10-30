@@ -9,10 +9,8 @@
 #' saved zoom level for a given region
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{geography_server}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #'
 #' @return A character string representing the updated zoom level for the given region
 update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels) {
@@ -426,4 +424,41 @@ update_region <- function(id, r, new_region) {
 #' @export
 update_zoom_levels <- function(id, r, new_zl) {
   update_rv(id, r, "zoom_levels", new_val = new_zl)
+}
+
+#' Track Previous Reactive Values
+#'
+#' This function tracks and stores previous and current values of a reactive
+#' expression. It returns an eventReactive object that holds the previous value.
+#'
+#' @param reactive_expr <`reactive expression`> The reactive expression to track.
+#'
+#' @return <`eventReactive`> An eventReactive object containing the previous value.
+#' @export
+track_previous_reactive <- function(reactive_expr) {
+
+  # Create reactiveValues to store current and previous values
+  value_tracker <- shiny::reactiveValues()
+
+  # Observe changes in reactive_expr and update value_tracker
+  shiny::observeEvent(reactive_expr(), {
+
+    # Do not update the values if they are the same
+    if (!is.null(value_tracker$current_value)) {
+      if (reactive_expr() == value_tracker$current_value) {
+        return(NULL)
+      }
+    }
+
+    value_tracker$prev_value <- value_tracker$current_value
+    value_tracker$current_value <- reactive_expr()
+  })
+
+  # Create eventReactive to keep track of previous values
+  previous_value_reactive <- shiny::eventReactive(reactive_expr(), {
+    value_tracker$prev_value
+  })
+
+  # Return the eventReactive containing previous value
+  return(previous_value_reactive)
 }
