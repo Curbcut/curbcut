@@ -53,7 +53,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale, ...
+    data = data, lang = lang, scale = scale
   )
 
   # Color as function
@@ -62,27 +62,32 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
 
   rcol <- sprintf("var_left_%s", time)
 
+  # Keep the data inside the breaks
+  vl_breaks <- attr(data, "breaks_var_left")
+  data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
+                                 select_id = select_id)
+
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data[[rcol]]
-  )
+    data_vals = data_inrange[[rcol]],
+    limit = if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else vl_breaks
+    )
 
   # Graph an appropriate number of bins
   rcol <- sprintf("var_left_%s", time$var_left)
-  var_left_num <- length(unique(data[[rcol]]))
+  var_left_num <- length(unique(data_inrange[[rcol]]))
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
-  vals <- attr(data, "breaks_var_left")
+  vals <- vl_breaks
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
   # Draw the plot
   plot <-
-    data[!is.na(data[[rcol]]), ] |>
-    remove_outliers_df(cols = rcol) |>
+    data_inrange |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
       bins = bin_number
@@ -99,7 +104,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data[[rcol]][data$ID == shared_info$select_id]
+    val <- data_inrange[[rcol]][data_inrange$ID == shared_info$select_id]
     if (!any(is.na(val))) {
       plot <-
         plot +
@@ -142,53 +147,67 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     col = "var_left",
     time = time
   )
-  # Which are the column names containing data?
-  data_cols <- c(vr_col, vl_col)
-  data_no_out <- remove_outliers_df(data, cols = data_cols)
+  vr_breaks <- attr(data, "breaks_var_right")
+  vl_breaks <- attr(data, "breaks_var_left")
+
+  # Remove out-of-bounds
+  data_in_range <- filter_inrange(data = data, col = vr_col, range = vr_breaks,
+                                  select_id = select_id)
+  data_in_range <- filter_inrange(data = data_in_range, col = vl_col, range = vl_breaks,
+                                  select_id = select_id)
+  # If there aren't enough observations, revert back to automatic breaks
+  if (nrow(data_in_range) < 10) {
+    vr_breaks <- NULL
+    vl_breaks <- NULL
+    data_in_range <- data
+  } else {
+    # Update the ranges if the value is outside the range!
+    if (attr(data_in_range, sprintf("updated_range_%s", vr_col))) vr_breals <- NULL
+    if (attr(data_in_range, sprintf("updated_range_%s", vl_col))) vl_breals <- NULL
+  }
+  # Remove NAs
+  data_in_range <- data_in_range[!is.na(data_in_range[[vr_col]]) & !is.na(data_in_range[[vl_col]]), ]
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_right,
     x_y = "x",
     scale = shared_info$treated_scale,
-    data_vals = data_no_out[[vr_col]]
+    data_vals = data_in_range[[vr_col]],
+    limit = vr_breaks
   )
   y_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "y",
     scale = shared_info$treated_scale,
-    data_vals = data_no_out[[vl_col]]
+    data_vals = data_in_range[[vl_col]],
+    limit = vl_breaks
   )
 
   # Get the stat smooth line opacity
-  opac_line <- abs(stats::cor(data_no_out[[vl_col]], data_no_out[[vr_col]], use = "complete.obs"))
+  opac_line <- abs(stats::cor(data_in_range[[vl_col]], data_in_range[[vr_col]], use = "complete.obs"))
 
   # Get the point size
-  point_size <- if (nrow(data_no_out) > 1000) {
+  point_size <- if (nrow(data_in_range) > 1000) {
     0.5
-  } else if (nrow(data_no_out) > 500) {
+  } else if (nrow(data_in_range) > 500) {
     1
   } else {
     2
   }
 
-
-  # Draw plot
-  plot <-
-    data_no_out |>
-    ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(vr_col), !!ggplot2::sym(vl_col)))
-
   # Grab group column
   group_col <- match_schema_to_col(
-    data = data_no_out,
+    data = data_in_range,
     col = "group",
     time = time
   )
 
   plot <-
-    plot +
+    data_in_range |>
+    ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(vr_col), !!ggplot2::sym(vl_col))) +
     explore_graph_point_jitter(
-      dat = plot$data, cols = data_cols,
+      dat = data_in_range, cols = c(vr_col, vl_col),
       ggplot2::aes(colour = !!ggplot2::sym(group_col)), size = point_size
     ) +
     ggplot2::stat_smooth(
@@ -205,7 +224,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data_no_out[data_no_out$ID == shared_info$select_id, ]
+    val <- data_in_range[data_in_range$ID == shared_info$select_id, ]
     if (!any(is.na(val))) {
       plot <-
         plot +
@@ -460,27 +479,33 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
   rcol <- sprintf("var_left_%s", time$var_left)
 
+  # Keep the data inside the breaks
+  vl_breaks <- attr(data, "breaks_var_left")
+  data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
+                                 select_id = select_id)
+
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data[[rcol]],
+    data_vals = data_inrange[[rcol]],
     scale = shared_info$treated_scale,
-    lang = lang
+    lang = lang,
+    limit = if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else vl_breaks
   )
 
   # Graph an appropriate number of bins
-  var_left_num <- length(unique(data[[rcol]]))
+  var_left_num <- length(unique(data_inrange[[rcol]]))
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
-  vals <- attr(data, "breaks_var_left")
+  vals <- vl_breaks
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
   # Draw the plot
   plot <-
-    data[!is.na(data[[rcol]]), ] |>
+    data_inrange[!is.na(data_inrange[[rcol]]), ] |>
     # remove_outliers_df(cols = c("var_left")) |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
@@ -498,7 +523,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data[[rcol]][data$ID == shared_info$select_id]
+    val <- data_inrange[[rcol]][data_inrange$ID == shared_info$select_id]
     if (!any(is.na(val))) {
       plot <-
         plot +
@@ -537,7 +562,8 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time,
     x_y = "x",
     data_vals = data[[rcol]],
     scale = shared_info$treated_scale,
-    lang = lang
+    lang = lang,
+    limit = attr(data, "breaks_var_left")
   )
 
   # Colors
@@ -651,12 +677,14 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time,
     x_y = "x",
     data_vals = data$var_left,
     df = shared_info$treated_scale,
-    lang = lang
+    lang = lang,
+    limit = attr(data, "breaks_var_left")
   )
   y_scale <- explore_graph_scale(
     var = vars$var_right,
     x_y = "y",
-    data_vals = data$var_right
+    data_vals = data$var_right,
+    limit = attr(data, "breaks_var_right")
   )
 
   # Update labels (wrong axis)

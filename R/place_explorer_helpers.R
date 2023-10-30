@@ -611,7 +611,7 @@ place_explorer_create_html <- function(tmpfile, region, df, select_id, lang) {
 
   # Add title
   scale <- scales_dictionary[
-    is_scale_in(scales_dictionary$scale, df = df, vectorized = TRUE),
+    is_scale_in(scales_dictionary$scale, scale = scale, vectorized = TRUE),
   ]
   # Get the place heading and glue it
   dat <- grab_row_from_bslike(

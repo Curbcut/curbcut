@@ -9,23 +9,34 @@
 \alias{explore_graph_scale.default}
 \title{Explore graph scale based on the variable type}
 \usage{
-explore_graph_scale(var, x_y, ...)
+explore_graph_scale(var, x_y, limits = NULL, ...)
 
-\method{explore_graph_scale}{pct}(var, x_y, ...)
+\method{explore_graph_scale}{pct}(var, x_y, limits = NULL, ...)
 
-\method{explore_graph_scale}{dollar}(var, x_y, data_vals, ...)
+\method{explore_graph_scale}{dollar}(var, x_y, limits = NULL, data_vals, ...)
 
-\method{explore_graph_scale}{degree}(var, x_y, ...)
+\method{explore_graph_scale}{degree}(var, x_y, limits = NULL, ...)
 
-\method{explore_graph_scale}{ind}(var, x_y, scale, data_vals, lang = NULL, ...)
+\method{explore_graph_scale}{ind}(
+  var,
+  x_y,
+  limits = NULL,
+  scale,
+  data_vals,
+  lang = NULL,
+  ...
+)
 
-\method{explore_graph_scale}{default}(var, x_y, ...)
+\method{explore_graph_scale}{default}(var, x_y, limits = NULL, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable with its type as a class, either "pct",
 "dollar" or "ind", or any other type for the default scale.}
 
 \item{x_y}{<\code{character}> x or y axis?}
+
+\item{limits}{<\code{numeric}> The x or y axis limits. Usually one of the breaks
+attributes coming from from \code{data}. Defaults to NULL for them to be automatic.}
 
 \item{...}{Additional arguments passed to specific methods.}
 

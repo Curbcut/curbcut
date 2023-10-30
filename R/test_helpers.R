@@ -38,14 +38,6 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
 
   # Assign necessary setup objects to the global environment
   test_setup(folder = data_path)
-
-  # Subset the variables table
-  variables <- qs::qread(sprintf("%svariables.qs", data_path))
-  possible_vars <- c(var_left, var_right)
-  parents <- variables$parent_vec[variables$var_code %in% possible_vars]
-  variables <- variables[variables$var_code %in% c(possible_vars, parents), ]
-  assign("variables", variables, envir = as.environment(pos))
-
   vars <- vars_build(var_left, var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars

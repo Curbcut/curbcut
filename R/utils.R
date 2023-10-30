@@ -792,3 +792,50 @@ fill_name_2 <- function(ID_scale, scale, top_scale) {
   # Return the name_2 to use as a character vector, in order of ID_scale
   return(name)
 }
+
+#' Filter Rows Based on a Column Value Range
+#'
+#' This function filters the rows of a table where a specified column's values
+#' fall within a given range.
+#'
+#' @param data <`dataframe`> The table to be filtered.
+#' @param col <`character`> The name of the column to filter on.
+#' @param range <`numeric vector`> A vector indicating the lower and upper
+#' range to filter the column by.
+#' @param select_id <`character`> Selection. Defaults to NA. If there is an ID
+#' specified, the range will be tweaked to make sure it keeps select_id in the
+#' range.
+#'
+#' @return <`data.table`> A data.table containing only rows where the specified
+#' column's values are within the given range. If a select_id is supplied, the
+#' range is tweak to make sure to include the selection. The new range is then
+#' output as an attribute (`range_{col}`)
+filter_inrange <- function(data, col, range, select_id = NA) {
+  lower <- range[1]
+  upper <- range[length(range)]
+
+  # If selection, tweak range to keep ID in range
+  if (!is.na(select_id)) {
+    # Get the ID value
+    id_val <- data[[col]][data$ID == select_id]
+
+    # If the ID value is not in the range, tweak the range
+    if (id_val < lower) lower <- id_val
+    if (id_val > upper) upper <- id_val + 0.01
+  }
+
+  # Which data is in range
+  out_ind <- data.table::inrange(data[[col]], lower, upper)
+
+  # Filter data
+  out <- data[out_ind, ]
+
+  # Remove missing values
+  out <- out[!is.na(out[[col]]), ]
+
+  # Add a range as attribute
+  attr(out, sprintf("updated_range_%s", col)) <-
+    !identical(range[c(1, length(range))], c(lower, upper))
+
+  return(out)
+}
