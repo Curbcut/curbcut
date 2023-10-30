@@ -65,7 +65,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   # Keep the data inside the breaks
   vl_breaks <- attr(data, "breaks_var_left")
   data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
-                                 select_id = select_id)
+                                 select_id = shared_info$select_id)
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
@@ -152,9 +152,9 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
 
   # Remove out-of-bounds
   data_in_range <- filter_inrange(data = data, col = vr_col, range = vr_breaks,
-                                  select_id = select_id)
+                                  select_id = shared_info$select_id)
   data_in_range <- filter_inrange(data = data_in_range, col = vl_col, range = vl_breaks,
-                                  select_id = select_id)
+                                  select_id = shared_info$select_id)
   # If there aren't enough observations, revert back to automatic breaks
   if (nrow(data_in_range) < 10) {
     vr_breaks <- NULL
@@ -482,7 +482,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
   # Keep the data inside the breaks
   vl_breaks <- attr(data, "breaks_var_left")
   data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
-                                 select_id = select_id)
+                                 select_id = shared_info$select_id)
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(

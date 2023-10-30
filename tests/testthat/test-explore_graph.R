@@ -64,7 +64,7 @@ test_that("q5 explore works without a selection", {
 })
 
 test_that("q5 explore works with selections", {
-  test_explores(var_right = " ", select_id = "2466023_19", scale = "CSD", region = "CMA")
+  test_explores(var_right = " ", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores(var_right = " ", select_id = "b10000763", scale = "building", region = "city")
 })
 

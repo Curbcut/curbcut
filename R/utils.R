@@ -814,24 +814,24 @@ filter_inrange <- function(data, col, range, select_id = NA) {
   lower <- range[1]
   upper <- range[length(range)]
 
+  # Remove missing values
+  dat <- data[!is.na(data[[col]]), ]
+
   # If selection, tweak range to keep ID in range
   if (!is.na(select_id)) {
     # Get the ID value
-    id_val <- data[[col]][data$ID == select_id]
+    id_val <- dat[[col]][dat$ID == select_id]
 
     # If the ID value is not in the range, tweak the range
     if (id_val < lower) lower <- id_val
-    if (id_val > upper) upper <- id_val + 0.01
+    if (id_val > upper) upper <- id_val
   }
 
   # Which data is in range
-  out_ind <- data.table::inrange(data[[col]], lower, upper)
+  out_ind <- data.table::inrange(dat[[col]], lower, upper)
 
   # Filter data
-  out <- data[out_ind, ]
-
-  # Remove missing values
-  out <- out[!is.na(out[[col]]), ]
+  out <- dat[out_ind, ]
 
   # Add a range as attribute
   attr(out, sprintf("updated_range_%s", col)) <-
