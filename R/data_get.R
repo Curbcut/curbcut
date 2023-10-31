@@ -65,9 +65,9 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
 #' This function takes two variables representing the same quantity measured two
 #' years apart and calculates the percentage change between the two values.
 #'
-#' @param var_two_years <`character vector`> A character vector of length 2,
-#' where each element is the name of a variable to compare,
-#' e.g. `c("housing_tenant_2006", "housing_tenant_2016")`
+#' @param var <`character vector`> A var_code. The variable to get data for.
+#' @param time_col <`character vector`> A character vector of length 2. The
+#' two years for which the delta should be calculated.
 #' @param df <`character`> A string specifying the name of the database to retrieve
 #' data from. Combination of the region and the scale, e.g. `CMA_DA`.
 #' @param data_path <`character`> A string representing the path to the directory
@@ -77,23 +77,22 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
 #' `ID` is the ID column from the original data, `var_1` and `var_2` are the
 #' values of the two variables being compared, and `var` is the percentage
 #' change between the two variables.
-data_get_delta <- function(var_two_years, df, data_path = get_data_path()) {
-
-  #' NDS: This should change to take `vars`, `time`, and `scale` arguments. Or,
-  #' in fact, maybe it doesn't exist any more, since we're always importing all
-  #' years of data for a variable, and the data_get.delta method simply
-  #' performs the additional calculations directly inside the method.
+data_get_delta <- function(var, time_col, scale, data_path = get_data_path()) {
 
   # Retrieve
-  data <- lapply(var_two_years, \(x) data_get_qs(x, df, data_path = data_path)[1:2])
-  names(data[[1]])[2] <- "var_1"
-  data[[1]]$var_2 <- data[[2]][[2]]
-  data <- data[[1]]
+  data <- data_get_qs(var, scale, data_path = data_path)
+
+  # Columns of the two years
+  cols <- match_schema_to_col(data = data, time = time_col, col = var)
+  data <- data[c("ID", cols)]
+
+  # Rename cols
+  names(data) <- gsub(var, "var_left", names(data))
 
   # Calculate the value
-  data$var <- (data$var_2 - data$var_1) / data$var_1
-  data$var <- replace(data$var, is.na(data$var), NA)
-  data$var <- replace(data$var, is.infinite(data$var), NA)
+  data$var_left <- (data[[3]] - data[[2]]) / data[[2]]
+  data$var_left <- replace(data$var_left, is.na(data$var_left), NA)
+  data$var_left <- replace(data$var_left, is.infinite(data$var_left), NA)
 
   # Return
   return(data)
@@ -221,11 +220,14 @@ data_get.bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
 }
 
 #' @describeIn data_get The method for delta.
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @export
-data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
-                           data_path = get_data_path(), ...) {
-  data_get_delta_fun(vars = vars, df = df, scales_as_DA = scales_as_DA,
-                     data_path = data_path, ...)
+data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                           data_path = get_data_path(), time, ...) {
+  data_get_delta_fun(vars = vars, scale = scale, region = region,
+                     scales_as_DA = scales_as_DA, data_path = data_path,
+                     time = time, ...)
 }
 
 #' @title Inner function to get data based on the type of `vars`
@@ -235,38 +237,40 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
+#' @param scale <`character`> The scale at which the user is on.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @param data_path <`character`> A string representing the path to the directory
 #' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @seealso \code{\link{data_get.delta}}
-data_get_delta_fun <- function(vars, df,
-                               scales_as_DA = c("building", "street"),
-                               data_path = get_data_path(), ...) {
+data_get_delta_fun <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                               data_path = get_data_path(), time, ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 
 #' @describeIn data_get_delta_fun The method for scalar variables.
-data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
-                                      data_path = get_data_path(), ...) {
+data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                      data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Retrieve
-  data <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
-    data_path = data_path
-  )
-  names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
+  # Get data
+  data <- data_get_delta(var = vars$var_left, time_col = time$var_left,
+                         scale = scale, data_path = data_path)
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # Grab the breaks in the data
-  breaks <- breaks_delta(vars = vars, df = df, character = FALSE, data = data)
+  breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
+
+  # Add the breaks attribute
+  attr(data, "breaks_var_left") <- breaks
 
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
@@ -282,14 +286,14 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
 }
 
 #' @describeIn data_get_delta_fun The method for ordinal variables.
-data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
-                                       data_path = get_data_path(), ...) {
+data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                       data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
+    var = vars$var_left, scale = scale,
     data_path = data_path
   )
   names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
@@ -297,7 +301,6 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
   # var_left_q5 will go off of bins change. 0 bin change vs 1 bin change vs multiple
   # bin changes.
   var_left_binchange <- data$var_left_2 - data$var_left_1
-
 
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
@@ -314,19 +317,19 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
 
 #' @describeIn data_get The method for bivar.
 #' @export
-data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get.delta_bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
                                  data_path = get_data_path(), ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data_vl <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
+    var = vars$var_left, scale = scale,
     data_path = data_path
   )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vr <- data_get_delta(
-    var_two_years = vars$var_right, df = df,
+    var = vars$var_right, scale = scale,
     data_path = data_path
   )[-1]
   names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
@@ -343,21 +346,21 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
 
 #' @describeIn data_get The method for bivar_ldelta_rq3.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
+data_get.bivar_ldelta_rq3 <- function(vars, scale, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve var_left and add a `q3 column`
   data_vl <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
+    var = vars$var_left, scale = scale,
     data_path = data_path
   )
   names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
   # Normal retrieval for var_right (single value)
-  data_vr <- data_get_qs(vars$var_right, df, data_path = data_path)[2:3]
+  data_vr <- data_get_qs(vars$var_right, scale, data_path = data_path)[2:3]
   names(data_vr) <- c("var_right", "var_right_q3")
 
   # Bind vl and vr

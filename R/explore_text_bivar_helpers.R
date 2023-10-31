@@ -1,0 +1,152 @@
+#' Function for exploring bivariate correlation between two variables
+#'
+#' This function calculates bivariate correlation between two variables and
+#' returns a list containing the correlation coefficient, a boolean indicating
+#' whether the correlation is positive or negative, a text string describing the
+#' strength and direction of the correlation, and a text string describing the
+#' relationship between the variables.
+#'
+#' @param vars <`character`> A list containing the variable names for which the
+#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations. The output of \code{\link{data_get}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#'
+#' @return A list containing the correlation coefficient, a boolean indicating
+#' whether the correlation is positive or negative, a text string describing
+#' the strength and direction of the correlation, and a text string describing
+#' the relationship between the variables.
+explore_text_bivar_correlation <- function(vars, data, time, lang = NULL) {
+  # Get correlation and method string
+  corr <- explore_text_bivar_correlation_helper(
+    vars = vars,
+    data = data,
+    time = time,
+    lang = lang
+  )
+
+  # Is the correlation positive
+  positive <- corr$corr > 0
+  positive_string <- if (positive) "positive" else "negative"
+  positive_string <- cc_t(positive_string, lang = lang)
+
+  # Correlation strings
+  absolute <- abs(corr$corr)
+  # Flag the correlation as NOT strong to start with.
+  strong <- FALSE
+  # Flag the correlation as inexistant to start with
+  no_correlation <- FALSE
+
+  if (absolute > 0.7) {
+    relation_text <- cc_t("almost always have", lang = lang)
+    strength <- cc_t("strong", lang = lang)
+    strong <- TRUE
+
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
+  } else if (absolute > 0.3) {
+    relation_text <- cc_t("tend to have", lang = lang)
+    strength <- cc_t("moderate", lang = lang)
+
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
+  } else if (absolute > 0.1) {
+    relation_text <- cc_t("often have _X_, although with many exceptions",
+                          lang = lang
+    )
+    strength <- cc_t("weak", lang = lang)
+
+    corr_strength <- sprintf(
+      cc_t("%s %s correlation", lang = lang), strength,
+      positive_string
+    )
+  } else {
+    relation_text <- cc_t("effectively no relationship", lang = lang)
+    strength <- cc_t("effectively no correlation", lang = lang)
+    no_correlation <- TRUE
+
+    corr_strength <- strength
+  }
+
+  return(list(
+    corr = corr$corr_string,
+    strong = strong,
+    positive = positive,
+    no_correlation = no_correlation,
+    relation_text = relation_text,
+    corr_strength = corr_strength
+  ))
+}
+
+#' Helper function for generating adjective to describe bivariate relationship
+#' between text variables
+#'
+#' This function generates a text string containing an adjective to describe the
+#' bivariate relationship between two variables based on whether the relationship
+#' is positive or negative.
+#'
+#' @param var <`character`> The variable code for which the text needs to be
+#' generated. `vars$var_left` or `vars$var_right`
+#' @param left <`logical>` Whether the `var` supplied is the var_left
+#' or the `var_right`. If `var_left`, TRUE.
+#' @param positive <`logical`> Whether the bivariate relationship is positive
+#' or negative. One of the output of
+#' \code{\link{explore_text_bivar_correlation}}.
+#' @param style <`logical`> Whether the output should have text styling (e.g.
+#' <b>).
+#' @param lang <`character`> A string indicating the language in which to
+#' translates the variable. Defaults to NULL.
+#' @param ... Additional arguments to be passed to methods.
+#'
+#' @return A text string containing an adjective to describe the bivariate
+#' relationship.
+#' @export
+explore_text_bivar_adjective <- function(var, left, positive, style = TRUE,
+                                         lang = NULL, ...) {
+  UseMethod("explore_text_bivar_adjective", var)
+}
+
+#' @rdname explore_text_bivar_adjective
+#' @export
+explore_text_bivar_adjective.dollar <- function(var, left, positive,
+                                                style = TRUE, lang = NULL, ...) {
+  string <- (\(x) {
+    if (left) {
+      return(cc_t("higher", lang = lang))
+    }
+    if (positive) {
+      return(cc_t("higher", lang = lang))
+    }
+    return(cc_t("lower", lang = lang))
+  })()
+
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
+}
+
+#' @rdname explore_text_bivar_adjective
+#' @export
+explore_text_bivar_adjective.default <- function(var, left, positive,
+                                                 style = TRUE, lang = NULL, ...) {
+  string <- (\(x) {
+    if (left) {
+      return(cc_t("a higher", lang = lang))
+    }
+    if (positive) {
+      return(cc_t("a higher", lang = lang))
+    }
+    return(cc_t("a lower", lang = lang))
+  })()
+
+  start <- ifelse(style, "<b>%s</b>", "%s")
+
+  return(sprintf(start, string))
+}

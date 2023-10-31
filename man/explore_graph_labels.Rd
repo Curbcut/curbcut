@@ -8,7 +8,7 @@
 \usage{
 explore_graph_labels(vars, lang = NULL, ...)
 
-\method{explore_graph_labels}{delta}(vars, lang = NULL, ...)
+\method{explore_graph_labels}{delta}(vars, time, lang = NULL, ...)
 
 \method{explore_graph_labels}{default}(vars, lang = NULL, ...)
 }

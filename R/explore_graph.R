@@ -267,28 +267,32 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale
+    data = data, lang = lang, scale = scale, time = time
   )
 
   # Color as function
   clr_df <- shared_info$colours_dfs$delta
 
   # Get the scales ggplot function
+  ycol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left")
+  xcol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left")
+
+
   x_scale <- explore_graph_scale(
-    var = structure(vars$var_left[1],
+    var = structure(vars$var_left,
       class = class(vars$var_left)
     ),
     x_y = "x",
     df = shared_info$treated_scale,
-    data_vals = data$var_left_1
+    data_vals = data[[xcol]]
   )
   y_scale <- explore_graph_scale(
-    var = structure(vars$var_left[2],
+    var = structure(vars$var_left,
       class = class(vars$var_left)
     ),
     df = shared_info$treated_scale,
     x_y = "y",
-    data_vals = data$var_left_2
+    data_vals = data[[ycol]]
   )
 
   # Get the point size
@@ -300,19 +304,19 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
     2
   }
 
-  # Which are the column names containing data?
-  data_cols <- c("var_left_1", "var_left_2")
+  # Filter out rows where xcol, ycol, or group have NA or non-finite values
+  filtered_data <- data[complete.cases(data[, c(xcol, ycol, 'group')]),]
+  filtered_data <- filtered_data[is.finite(rowSums(filtered_data[, c(xcol, ycol)])),]
 
   # Draw plot
   plot <-
-    data |>
-    remove_outliers_df(cols = data_cols) |>
-    ggplot2::ggplot(ggplot2::aes(var_left_1, var_left_2))
+    filtered_data |>
+    ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(xcol), !!ggplot2::sym(ycol)))
 
   plot <-
     plot +
     explore_graph_point_jitter(
-      dat = plot$data, cols = data_cols,
+      dat = plot$data, cols = c(xcol, ycol),
       ggplot2::aes(colour = group)
     ) +
     ggplot2::geom_smooth(
@@ -322,6 +326,8 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
+    ggplot2::coord_cartesian(xlim = range(attr(data, "breaks")),
+                             ylim = range(attr(data, "breaks"))) +
     x_scale +
     y_scale +
     shared_info$labs +
@@ -684,13 +690,13 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time,
     data_vals = data$var_left,
     df = shared_info$treated_scale,
     lang = lang,
-    limit = attr(data, "breaks_var_left")
+    limits = attr(data, "breaks_var_left")
   )
   y_scale <- explore_graph_scale(
     var = vars$var_right,
     x_y = "y",
     data_vals = data$var_right,
-    limit = attr(data, "breaks_var_right")
+    limits = attr(data, "breaks_var_right")
   )
 
   # Update labels (wrong axis)

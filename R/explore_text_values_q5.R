@@ -93,7 +93,6 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
     region = region,
     scale = scale,
     data = data,
-    df = df,
     select_id = select_id,
     col = col,
     lang = lang,
@@ -188,7 +187,6 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
     scale = scale,
     select_id = select_id,
     data = data,
-    df = df,
     col = col,
     lang = lang,
     time = time
@@ -274,7 +272,6 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
     select_id = select_id,
     scale = scale,
     data = data,
-    df = df,
     col = col,
     lang = lang,
     time = time
@@ -389,7 +386,7 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
                                          col = "var_left", lang = lang, time, ...) {
   explore_text_values_q5.sqkm(
     var = var, region = region, scale = scale, select_id = select_id,
-    data = data, df = df, col = col, lang = lang, time = time, ...
+    data = data, scale = scale, col = col, lang = lang, time = time, ...
   )
 }
 

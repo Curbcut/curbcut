@@ -38,7 +38,7 @@ explore_graph_info <- function(vars, font_family = "acidgrotesk-book", lang = NU
   )
 
   # Use the legend labels
-  labs <- explore_graph_labels(vars = vars, lang = lang)
+  labs <- explore_graph_labels(vars = vars, lang = lang, time = time)
 
   # Grab the colours
   colours_dfs <- colours_get()

@@ -4,28 +4,25 @@
 \alias{data_get_delta}
 \title{Calculate the percentage change between two variables over two years}
 \usage{
-data_get_delta(var_two_years, df, data_path = get_data_path())
+data_get_delta(var, time_col, scale, data_path = get_data_path())
 }
 \arguments{
-\item{var_two_years}{<\verb{character vector}> A character vector of length 2,
-where each element is the name of a variable to compare,
-e.g. \code{c("housing_tenant_2006", "housing_tenant_2016")}}
+\item{var}{<\verb{character vector}> A var_code. The variable to get data for.}
 
-\item{df}{<\code{character}> A string specifying the name of the database to retrieve
-data from. Combination of the region and the scale, e.g. \code{CMA_DA}.}
+\item{time_col}{<\verb{character vector}> A character vector of length 2. The
+two years for which the delta should be calculated.}
 
 \item{data_path}{<\code{character}> A string representing the path to the directory
 containing the QS files. Default is "data/".}
+
+\item{df}{<\code{character}> A string specifying the name of the database to retrieve
+data from. Combination of the region and the scale, e.g. \code{CMA_DA}.}
 }
 \value{
 A data frame with the following columns: ID, var_1, var_2, and var.
 \code{ID} is the ID column from the original data, \code{var_1} and \code{var_2} are the
 values of the two variables being compared, and \code{var} is the percentage
 change between the two variables.
-NDS: This should change to take \code{vars}, \code{time}, and \code{scale} arguments. Or,
-in fact, maybe it doesn't exist any more, since we're always importing all
-years of data for a variable, and the data_get.delta method simply
-performs the additional calculations directly inside the method.
 }
 \description{
 This function takes two variables representing the same quantity measured two

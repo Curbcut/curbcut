@@ -10,6 +10,7 @@ legend_render_delta(
   vars,
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
+  data,
   scale,
   ...
 )
@@ -18,6 +19,7 @@ legend_render_delta(
   vars,
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
+  data,
   scale,
   ...
 )

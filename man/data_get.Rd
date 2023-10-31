@@ -38,15 +38,17 @@ data_get(
 
 \method{data_get}{delta}(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 
 \method{data_get}{delta_bivar}(
   vars,
-  df,
+  scale,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...
@@ -54,7 +56,7 @@ data_get(
 
 \method{data_get}{bivar_ldelta_rq3}(
   vars,
-  df,
+  scale,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...
@@ -89,6 +91,9 @@ default, their colour will be the one of their DA.}
 directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 }
 \value{
 A dataframe containing the data according to the class of \code{vars},

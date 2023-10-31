@@ -215,7 +215,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
       data <- shiny::reactive(data_get(
         vars = r[[id]]$vars(),
         scale = r[[id]]$scale(),
-        region = r[[id]]$region()
+        region = r[[id]]$region(),
+        time = r[[id]]$time()
       ))
 
       # Data for tile coloring

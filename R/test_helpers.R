@@ -41,7 +41,8 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
   vars <- vars_build(var_left, var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
-  data <- data_get(vars = vars, scale = scale, region = region, data_path = data_path)
+  data <- data_get(vars = vars, scale = scale, region = region, time = time,
+                   data_path = data_path)
 
   assign("scale", scale, envir = as.environment(pos))
   assign("region", region, envir = as.environment(pos))

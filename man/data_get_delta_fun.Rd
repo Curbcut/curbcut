@@ -8,25 +8,31 @@
 \usage{
 data_get_delta_fun(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 
 \method{data_get_delta_fun}{scalar}(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 
 \method{data_get_delta_fun}{ordinal}(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 }
@@ -34,9 +40,7 @@ data_get_delta_fun(
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_scale}}.}
+\item{scale}{<\code{character}> The scale at which the user is on.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
@@ -44,6 +48,9 @@ their colour will be the one of their DA.}
 
 \item{data_path}{<\code{character}> A string representing the path to the directory
 containing the QS files. Default is "data/".}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 
 \item{...}{Additional arguments passed to methods.}
 }

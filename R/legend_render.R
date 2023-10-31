@@ -39,8 +39,7 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
   return(list(
     labs_xy = labs_xy, break_labs = break_labs,
     theme_default = theme_default,
-    colours_dfs = colours_dfs,
-    df = df
+    colours_dfs = colours_dfs
   ))
 }
 
@@ -349,8 +348,9 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @describeIn legend_render delta method
 #' @export
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
-                                scales_as_DA = c("building", "street"), scale, ...) {
-  legend_render_delta(vars = vars, font_family = font_family,
+                                scales_as_DA = c("building", "street"),
+                                data, scale, ...) {
+  legend_render_delta(vars = vars, data = data, font_family = font_family,
                       scales_as_DA = scales_as_DA, scale = scale, ...)
 }
 
@@ -371,14 +371,16 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
 legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
-                                scales_as_DA = c("building", "street"), scale, ...) {
+                                scales_as_DA = c("building", "street"),
+                                data, scale, ...) {
   UseMethod("legend_render_delta", vars)
 }
 
 #' @describeIn legend_render_delta scalar method
 #' @return A ggplot object representing the `delta` legend for scalar data.
 legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
-                                       scales_as_DA = c("building", "street"), scale, ...) {
+                                       scales_as_DA = c("building", "street"),
+                                       data, scale, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <-  NULL
@@ -387,13 +389,13 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
   leg_info <- legend_get_info(vars,
                               font_family = font_family,
                               scales_as_DA = scales_as_DA,
-                              scale = scale, ...)
+                              scale = scale, data = data, ...)
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$delta[1:5, 2:3]
 
   # Get breaks as numeric
-  brks <- breaks_delta(vars = vars, df = df, character = FALSE)
+  brks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
 
   # If all NA, don't bother draw a legend. Return NULL
   if (all(is.na(brks))) {

@@ -5,20 +5,19 @@
 #'
 #' @param vars <`named list`> A list object with a pre-determined class. The
 #' output of \code{\link{vars_build}}.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' @param scale <`character`> The scale at which the user is on. The output of
 #' \code{\link{update_scale}}.
-#' @param character <`Logical`>, if `TRUE`, the breaks are returned as characters.
+#' @param character <`logical`>, if `TRUE`, the breaks are returned as characters.
 #' @param data <`data.frame`> Optional, a data frame to use instead of recovering it
 #' from the file.
 #'
 #' @return A vector of break points. Numeric if `character = FALSE`, otherwise
 #' character.
 #' @export
-breaks_delta <- function(vars, df, character = FALSE, data = NULL) {
+breaks_delta <- function(vars, scale, character = FALSE, data = NULL) {
 
   if (is.null(data)) {
-    data <- data_get(vars = vars, df = df)
+    data <- data_get(vars = vars, scale = scale)
   }
 
   # Data as absolute

@@ -419,6 +419,8 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
   }
 
   rcol <- sprintf("%s_%s", col, time_col)
+  # In the case of `delta`, the value to look at will be the variation (no years)
+  if (length(rcol) == 2) rcol <- col
 
   # The value is higher than X of other observations
   higher_than <- data[[rcol]][data$ID == select_id] > data[[rcol]]
@@ -612,32 +614,31 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
   vl <- sprintf("var_left_%s", time$var_left)
   vr <- sprintf("var_right_%s", time$var_right)
 
-  # Check if var_left is NA
-  val <- data[[vl]][data$ID == select_id]
-  if (is.na(val)) {
+  out <- lapply(c(vl, vr), \(col) {
+    if (!col %in% names(data)) return(NULL)
+
+    val <- data[[col]][data$ID == select_id]
+
+    if (!is.na(val)) return (NULL)
+
+    var_left <- grepl("var_left", col)
+    var <- if (var_left) vars$var_left else vars$var_right
+
     exp <- var_get_info(
-      var = vars$var_left[[1]], what = "explanation",
+      var = var, what = "explanation",
       translate = TRUE, lang = lang
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
+                        lang = lang
     ), exp)
     out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
-    return(out)
-  }
 
-  if ("var_right" %in% names(data)) {
-    val <- data[[vr]][data$ID == select_id]
-    if (is.na(val)) {
-      exp <- var_get_info(
-        var = vars$var_right[[1]], what = "explanation",
-        translate = TRUE, lang = lang
-      )
-      out <- sprintf(cc_t("we currently don't have information regarding %s",
-        lang = lang
-      ), exp)
-      out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
-      return(out)
-    }
-  }
+    return(out)
+  })
+
+  out <- out[!sapply(out, is.null)]
+  out <- unique(out)
+  out <- unlist(out)
+
+  return(out)
 }

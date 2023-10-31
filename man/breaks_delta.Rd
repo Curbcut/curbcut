@@ -4,17 +4,16 @@
 \alias{breaks_delta}
 \title{Calculate Breaks for Delta Legends}
 \usage{
-breaks_delta(vars, df, character = FALSE, data = NULL)
+breaks_delta(vars, scale, character = FALSE, data = NULL)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
 output of \code{\link{vars_build}}.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\item{scale}{<\code{character}> The scale at which the user is on. The output of
 \code{\link{update_scale}}.}
 
-\item{character}{<\code{Logical}>, if \code{TRUE}, the breaks are returned as characters.}
+\item{character}{<\code{logical}>, if \code{TRUE}, the breaks are returned as characters.}
 
 \item{data}{<\code{data.frame}> Optional, a data frame to use instead of recovering it
 from the file.}

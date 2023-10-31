@@ -18,11 +18,11 @@ legend_breaks(vars, data, lang = NULL, ...)
 
 \method{legend_breaks}{q5_ind}(vars, data, lang = NULL, ...)
 
-\method{legend_breaks}{q100}(vars, df = NULL, lang = NULL, ...)
+\method{legend_breaks}{q100}(vars, scale = NULL, lang = NULL, ...)
 
-\method{legend_breaks}{qual}(vars, df, lang = NULL, ...)
+\method{legend_breaks}{qual}(vars, scale, lang = NULL, ...)
 
-\method{legend_breaks}{delta}(vars, df, ...)
+\method{legend_breaks}{delta}(vars, data, scale, ...)
 
 \method{legend_breaks}{bivar_ldelta_rq3}(vars, df, data, ...)
 

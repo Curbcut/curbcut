@@ -63,7 +63,7 @@ legend_breaks.q5_ind <- function(vars, data, lang = NULL, ...) {
 
 #' @describeIn legend_breaks q100 method
 #' @export
-legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
+legend_breaks.q100 <- function(vars, scale = NULL, lang = NULL, ...) {
   c(
     cc_t(lang = lang, "Low"),
     # sapply(1:9, \(x) NULL),
@@ -75,17 +75,17 @@ legend_breaks.q100 <- function(vars, df = NULL, lang = NULL, ...) {
 
 #' @describeIn legend_breaks qual method
 #' @export
-legend_breaks.qual <- function(vars, df, lang = NULL, ...) {
+legend_breaks.qual <- function(vars, scale, lang = NULL, ...) {
   var_get_breaks(
-    var = vars$var_left, df = df,
+    var = vars$var_left, scale = scale,
     break_col = "rank_name_short", q3_q5 = "q5",
     pretty = TRUE, compact = TRUE, lang = lang
   )
 }
 
 #' @describeIn legend_breaks delta method
-legend_breaks.delta <- function(vars, df, ...) {
-  breaks_delta(vars = vars, df = df, character = TRUE)
+legend_breaks.delta <- function(vars, data, scale, ...) {
+  breaks_delta(vars = vars$var_left, scale = scale, character = TRUE, data = data)
 }
 
 #' @describeIn legend_breaks bivar_ldelta_rq3 method

@@ -44,7 +44,8 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
   # Get all the data
-  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, region = region, data_path = data_path),
+  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, time = time, region = region,
+                                      data_path = data_path),
     simplify = FALSE,
     USE.NAMES = TRUE
   )
@@ -52,7 +53,9 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 
   # Is group already calculated?
   group <- sprintf("group_%s", time$var_left)
-  if (!group %in% names(data)) {
+  if ("group" %in% names(data)) {
+    group <- "group"
+  } else if (!group %in% names(data)) {
     # Get the complete data, using schema
     schema <- attr(data_r[[1]], "schema")
     # Grab the correct column from which to use colors on
