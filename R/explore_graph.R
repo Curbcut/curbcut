@@ -8,7 +8,7 @@
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param scale <`character`> Current scale. The output of
 #' \code{\link{update_scale}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
@@ -71,8 +71,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data_inrange[[rcol]],
-    limit = if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else vl_breaks
+    data_vals = data_inrange[[rcol]]
     )
 
   # Graph an appropriate number of bins
@@ -84,6 +83,9 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   vals <- vl_breaks
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
+
+  # Get the graph range
+  range <- if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else range(vl_breaks)
 
   # Draw the plot
   plot <-
@@ -98,6 +100,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
       palette = clr,
       breaks = vals
     ) +
+    ggplot2::coord_cartesian(xlim = range) +
     x_scale +
     shared_info$labs +
     shared_info$theme_default
@@ -173,15 +176,13 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     var = vars$var_right,
     x_y = "x",
     scale = shared_info$treated_scale,
-    data_vals = data_in_range[[vr_col]],
-    limit = vr_breaks
+    data_vals = data_in_range[[vr_col]]
   )
   y_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "y",
     scale = shared_info$treated_scale,
-    data_vals = data_in_range[[vl_col]],
-    limit = vl_breaks
+    data_vals = data_in_range[[vl_col]]
   )
 
   # Get the stat smooth line opacity
@@ -203,6 +204,10 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     time = time
   )
 
+  # Breaks range
+  if (!is.null(vr_breaks)) vr_breaks <- range(vr_breaks)
+  if (!is.null(vl_breaks)) vl_breaks <- range(vl_breaks)
+
   plot <-
     data_in_range |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(vr_col), !!ggplot2::sym(vl_col))) +
@@ -217,6 +222,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
+    ggplot2::coord_cartesian(xlim = vr_breaks, ylim = vl_breaks) +
     x_scale +
     y_scale +
     shared_info$labs +
@@ -436,7 +442,7 @@ explore_graph.bivar_ind <- function(vars, select_id, scale, data, time,
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_scale}}.
@@ -617,7 +623,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time,
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_scale}}.
@@ -638,7 +644,7 @@ explore_graph_bivar_ind <- function(vars, select_id, scale, data, time,
   UseMethod("explore_graph_bivar_ind", vars)
 }
 
-#' @rdname explore_graph_bivar_ind
+#' @describeIn  explore_graph_bivar_ind Scalar method
 #' @export
 explore_graph_bivar_ind.scalar <- function(vars, select_id, scale, data, time,
                                            scales_as_DA = c("building", "street"),
@@ -651,7 +657,7 @@ explore_graph_bivar_ind.scalar <- function(vars, select_id, scale, data, time,
   )
 }
 
-#' @rdname explore_graph_bivar_ind
+#' @describeIn explore_graph_bivar_ind Ordinal method
 #' @export
 explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time,
                                             scales_as_DA = c("building", "street"),
@@ -731,7 +737,7 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time,
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_scale}}.
@@ -752,7 +758,7 @@ explore_graph_delta_ind <- function(vars, select_id, scale, data, time,
   UseMethod("explore_graph_delta_ind", vars)
 }
 
-#' @rdname explore_graph_delta_ind
+#' @describeIn explore_graph_delta_ind Scalar method
 #' @export
 explore_graph_delta_ind.scalar <- function(vars, select_id, scale, data, time,
                                            scales_as_DA = c("building", "street"),
@@ -764,7 +770,7 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, scale, data, time,
   )
 }
 
-#' @rdname explore_graph_delta_ind
+#' @describeIn explore_graph_delta_ind Ordinal method
 #' @export
 explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data,
                                             scales_as_DA = c("building", "street"),

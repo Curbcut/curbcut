@@ -193,7 +193,7 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
 
   # Assemble output
   out <- as.data.frame(lapply(data_val, .bincode, assemble_breaks, include.lowest = TRUE))
-  out <- setNames(out, sprintf("%s_%s", names(data_val), q3_q5))
+  out <- stats::setNames(out, sprintf("%s_%s", names(data_val), q3_q5))
   data <- cbind(data, out) # bind the data
   data <- tibble::as_tibble(data)
   attr(data, sprintf("breaks_%s", rename_col)) <- breaks

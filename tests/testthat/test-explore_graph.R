@@ -18,6 +18,11 @@ test_explores <- function(var_right, select_id, scale, region) {
     var_right = var_right, scale = scale, region = region,
     time = 2021, select_id = select_id
   )
+  test_explore_graph_helper(
+    var_left = "housing_tenant",
+    var_right = var_right, scale = scale, region = region,
+    time = 1996, select_id = select_id
+  )
 
   # Dollar
   test_explore_graph_helper(
@@ -87,6 +92,8 @@ test_that("q5 explore works with selections", {
 
 test_that("q5 explore works without a selection", {
   test_explores(var_right = "alp", select_id = NA, scale = "CSD", region = "CMA")
+  test_explores(var_right = "inc_median_income", select_id = NA, scale = "CSD", region = "CMA")
+
   # test_explores(var_right = "climate_drought", select_id = NA, scale = "building", region = "city")
 })
 

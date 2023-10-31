@@ -88,7 +88,7 @@ selected region (if any). Usually \code{r[[id]]$select_id()}}
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The output of \code{\link{data_get}}.}
+observations. The output of \code{\link{data_get}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By

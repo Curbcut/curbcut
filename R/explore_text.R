@@ -12,7 +12,7 @@
 #' @param scale <`reactive character`> Current scale. The output of
 #' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By
 #' default, their info will be the one of their DA.
@@ -419,7 +419,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
 #' @param vars <`character`> A list containing the variable names for which the
 #' text needs to be generated. Usually the output of \code{\link{vars_build}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
@@ -706,7 +706,7 @@ explore_text.delta <- function(vars, region, select_id, scale, data,
 #' @param scale <`character`> The scale under study. The output of
 #' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The data frame must have columns named var_left
+#' observations. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
 #' @param ... Additional arguments passed to the dispatched method.
 #'

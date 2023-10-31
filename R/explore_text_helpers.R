@@ -268,11 +268,15 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
 #' values need to be generated. Usually one element of the output of
 #' \code{\link{vars_build}}.
 #' @param select_id <`character`> The ID of the selected zone.
-#' @param data
-#' @param scale
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations. The output of \code{\link{data_get}}.
+#' @param scale <`character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
-#' @param col
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting values
@@ -377,7 +381,7 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 #' @param var <`character`> A variable code specifying the variable of interest. This
 #' variable will be compared across observations.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The data frame must have columns named var_left
+#' observations. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
 #' @param select_id <`character`> The ID of the selected zone for which to
 #' retrieve the ranking.
@@ -463,7 +467,7 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
 #' @param vars <`character`> A list containing the variable names for which the
 #' text needs to be generated. Usually the output of \code{\link{vars_build}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
@@ -584,7 +588,7 @@ explore_text_color <- function(x, meaning) {
 #' @param context <`list`> list that should include 'p_start' which is used as
 #'   the start of the output sentence. The output of \code{\link{explore_context}}
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param select_id <`character`> the current selected ID, usually
 #' `r[[id]]$select_id()`. If there is a selection (select_id is not NA), the
 #' name of the selected polygon will appear.

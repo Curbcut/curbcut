@@ -17,7 +17,7 @@
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments passed to the specific method.

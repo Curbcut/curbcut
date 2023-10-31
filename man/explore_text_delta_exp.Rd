@@ -55,7 +55,7 @@ options are "left" or "right".}
 \code{\link{update_scale}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The data frame must have columns named var_left
+observations. The data frame must have columns named var_left
 and ID. The output of \code{\link{data_get}}.}
 
 \item{...}{Additional arguments passed to the dispatched method.}
