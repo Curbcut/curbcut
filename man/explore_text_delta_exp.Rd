@@ -11,6 +11,7 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
+  time,
   scale,
   data,
   ...
@@ -21,6 +22,7 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
+  time,
   scale,
   data,
   lang,
@@ -51,6 +53,9 @@ Usually equivalent of \code{r$region()}.}
 
 \item{left_right}{<\code{character}> Is it a left or right variable? Possible
 options are "left" or "right".}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{scale}{<\code{character}> The scale under study. The output of
 \code{\link{update_scale}}.}

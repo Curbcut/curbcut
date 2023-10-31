@@ -13,7 +13,7 @@ panel_view_rename_cols(vars, dat, lang = NULL, ...)
 
 \method{panel_view_rename_cols}{q5}(vars, dat, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{delta}(vars, dat, lang = NULL, ...)
+\method{panel_view_rename_cols}{delta}(vars, dat, lang = NULL, time, ...)
 
 \method{panel_view_rename_cols}{bivar}(vars, dat, lang = NULL, ...)
 
@@ -32,6 +32,8 @@ renamed.}
 Defaults to NULL for no translation}
 
 \item{...}{Additional arguments to be passed to the underlying methods.}
+
+\item{time}{<\verb{named list}>}
 }
 \value{
 A list with data frame with renamed columns and a list of column

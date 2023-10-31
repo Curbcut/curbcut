@@ -11,12 +11,13 @@ legend_server(
   vars,
   scale,
   data,
+  time,
   hide = shiny::reactive(FALSE),
   breaks = shiny::reactive(NULL),
   scales_as_DA = shiny::reactive(c("building", "street")),
   legend_fun = shiny::reactive(legend_render),
   legend_args = shiny::reactive(list(vars = vars(), lang = r$lang(), scale = scale(),
-    data = data(), breaks = breaks(), scales_as_DA = scales_as_DA())),
+    data = data(), breaks = breaks(), scales_as_DA = scales_as_DA(), time = time())),
   force_height = shiny::reactive(NULL)
 )
 
@@ -35,6 +36,9 @@ used to determine which type of legend to draw.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
+
+\item{time}{<\verb{reactive named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 
 \item{hide}{<\verb{reactive logical}> Should the legend be hidden? Defaults to
 \code{shiny::reactive(FALSE)}}

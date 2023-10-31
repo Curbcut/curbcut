@@ -19,6 +19,8 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 levels. Usually one of the \code{mzl_x}, or the output of
 \code{\link{geography_server}}.}
 
+\item{time}{<\verb{named list}>}
+
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}
 }

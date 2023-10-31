@@ -49,14 +49,15 @@ test_that("legend_render.bivar  works", {
   expect_equal(p$labels$fill, "fill")
 })
 
-# test_that("legend_render.delta  works", {
-#   vars <- vars_build(
-#     var_left = c("housing_tenant_2006", "housing_tenant_2016"),
-#     var_right = " ", df = "CMA_CSD"
-#   )
-#   p <- legend_render(vars, df = "city_CSD", font_family = NULL)
-#   expect_error(p, NA)
-# })
+test_that("legend_render.delta  works", {
+  vars <- vars_build("housing_tenant", scale = "DA", time = c(2001, 2021))
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars, time = time, scale = "DA", region = "city")
+
+  p <- legend_render(vars, scale = "DA", time = time, data = data, font_family = NULL)
+  expect_error(p, NA)
+})
 
 # test_that("legend_render.q100  works", {
 #   vars <- vars_build(

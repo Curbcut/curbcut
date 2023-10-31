@@ -8,7 +8,7 @@
 \usage{
 explore_graph_labels(vars, lang = NULL, ...)
 
-\method{explore_graph_labels}{delta}(vars, time, lang = NULL, ...)
+\method{explore_graph_labels}{delta}(vars, lang = NULL, time, ...)
 
 \method{explore_graph_labels}{default}(vars, lang = NULL, ...)
 }
@@ -20,6 +20,8 @@ output of \code{\link{vars_build}}.}
 translate variable titles to.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
+
+\item{time}{<\verb{named list}> A named list with the time variables.}
 }
 \value{
 It returns an output of \code{\link[ggplot2]{labs}}.

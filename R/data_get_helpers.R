@@ -178,12 +178,16 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
 
   # Calculate breaks
   data_val <- data[-1]
-  # print(data_val)
   data_vec <- data[[attr(data, "breaks_var")]]
   data_vec <- data_vec[!is.na(data_vec)]
 
   # Calculate break
-  breaks <- find_breaks_quintiles(data_vec, q3_q5)
+  quintiles <- attr(data, "quintiles")
+  breaks <- if (q3_q5 == "q3" | quintiles) {
+    find_breaks_quintiles(dist = data_vec, q3_q5 = q3_q5)
+  } else {
+    find_breaks_q5(min_val = min(data_vec), max_val = max(data_vec))
+  }
 
   # Rework breaks just for assembling (we want to include ALL observations)
   assemble_breaks <- breaks
@@ -207,3 +211,5 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
 
   return(list(data = data, attr = prev_attr))
 }
+
+

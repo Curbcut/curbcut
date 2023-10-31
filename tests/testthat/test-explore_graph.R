@@ -2,11 +2,34 @@ test_explore_graph_helper <- function(var_left, var_right, scale, region, time, 
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
-  data <- data_get(vars, scale = scale, region = region)
+  data <- data_get(vars, scale = scale, region = region, time = time)
   actual <- explore_graph(vars,
     region = region, select_id = select_id, scale = scale,
     data = data, time = time
   )
+
+  # If there is a selection, the selection is within range
+  if (!is.na(select_id)) {
+    # q5
+    if ("q5" %in% class(vars)) {
+      x_range <-
+        ggplot2::ggplot_build(actual)$layout$panel_scales_x[[1]]$range$range
+
+      # The value is in x_range
+      dat_col <- match_schema_to_col(data = data, time = time)
+      val <- data[[dat_col]][data$ID == select_id]
+
+      # The value is within range of the plot
+      if (length(val) > 0) {
+        expect_true(val >= x_range[1] & val <= x_range[2])
+      }
+
+    } else if ("bivar" %in% class(vars)) {
+
+    }
+
+  }
+
   expect_true(is.data.frame(actual$data))
   expect_true(is.list(actual$labels))
 }
@@ -98,7 +121,7 @@ test_that("q5 explore works without a selection", {
 })
 
 test_that("q5 explore works with selections", {
-  test_explores(var_right = "housing_tenant", select_id = "2466023_19", scale = "CSD", region = "CMA")
+  test_explores(var_right = "housing_tenant", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores(var_right = "housing_rent", select_id = "b10000763", scale = "building", region = "city")
 })
 
@@ -117,42 +140,43 @@ test_that("q5 explore works with selections", {
 # })
 
 
-# # delta -------------------------------------------------------------------
-#
-# test_explores_delta <- function(var_right, select_id, df) {
-#   # Pct
-#   test_explore_graph_helper(paste0("housing_tenant_", c(2016, 2021)),
-#     var_right = var_right,
-#     df = df, select_id = select_id
-#   )
-#
-#   # Dollar
-#   test_explore_graph_helper(paste0("housing_rent_", c(2016, 2021)),
-#     var_right = var_right,
-#     df = df, select_id = select_id
-#   )
-#
-#   # # Ind scalar
-#   # test_explore_graph_helper("access_foot_20_food_grocery_2023", var_right = var_right, df = "city_DA",
-#   # select_id = select_id)
-#
-#   # Ind scalar
-#   test_explore_graph_helper(paste0("alp_", c(2016, 2021)),
-#     var_right = var_right, df = df,
-#     select_id = select_id
-#   )
-# }
-#
-# test_that("q5 explore works without a selection", {
-#   test_explores_delta(var_right = " ", select_id = NA, df = "city_CSD")
-#   test_explores_delta(var_right = " ", select_id = NA, df = "city_building")
-# })
-#
-# test_that("q5 explore works with selections", {
-#   test_explores_delta(var_right = " ", select_id = "2466023_19", df = "city_CSD")
-#   test_explores_delta(var_right = " ", select_id = "b10000763", df = "city_building")
-# })
-#
+# delta -------------------------------------------------------------------
+
+test_explores_delta <- function(var_right, select_id, scale, region) {
+  # Pct
+  test_explore_graph_helper(
+    var_left = "housing_tenant", time = c(2016, 2021),
+    var_right = var_right,
+    scale = scale, region = region, select_id = select_id
+  )
+
+  # Dollar
+  test_explore_graph_helper("housing_rent", time = c(2016, 2021),
+    var_right = var_right,
+    scale = scale, region = region, select_id = select_id
+  )
+
+  # # Ind scalar
+  # test_explore_graph_helper("access_foot_20_food_grocery_2023", var_right = var_right, df = "city_DA",
+  # select_id = select_id)
+
+  # Ind scalar
+  test_explore_graph_helper(var_left = "alp", time = c(2016, 2021),
+    var_right = var_right, scale = scale, region = region,
+    select_id = select_id
+  )
+}
+
+test_that("delta explore works without a selection", {
+  test_explores_delta(var_right = " ", select_id = NA, scale = "CSD", region = "CMA")
+  test_explores_delta(var_right = " ", select_id = NA, scale = "building", region = "city")
+})
+
+test_that("delta explore works with selections", {
+  test_explores_delta(var_right = " ", select_id = "2466023", scale = "CSD", region = "CMA")
+  test_explores_delta(var_right = " ", select_id = "b10000763", scale = "building", region = "city")
+})
+
 # test_that("delta_ind ordinal", {
 #   var_left <- c("climate_drought_2015", "climate_drought_2022")
 #   df <- "grid_grid250"
@@ -166,8 +190,8 @@ test_that("q5 explore works with selections", {
 #   expect_true(is.data.frame(actual$data))
 #   expect_true(is.list(actual$labels))
 # })
-#
-#
+
+
 # # delta bivar -------------------------------------------------------------
 #
 # test_explores_delta <- function(var_right, select_id, df) {

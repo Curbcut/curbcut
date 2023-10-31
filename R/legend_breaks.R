@@ -84,6 +84,7 @@ legend_breaks.qual <- function(vars, scale, lang = NULL, ...) {
 }
 
 #' @describeIn legend_breaks delta method
+#' @export
 legend_breaks.delta <- function(vars, data, scale, ...) {
   breaks_delta(vars = vars$var_left, scale = scale, character = TRUE, data = data)
 }

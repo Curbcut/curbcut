@@ -82,12 +82,21 @@ data_get_delta <- function(var, time_col, scale, data_path = get_data_path()) {
   # Retrieve
   data <- data_get_qs(var, scale, data_path = data_path)
 
-  # Columns of the two years
+  # Calculate breaks for the right columns
   cols <- match_schema_to_col(data = data, time = time_col, col = var)
-  data <- data[c("ID", cols)]
+  keep_cols <- c("ID", cols, attr(data, "breaks_var")) # keep the breaks_var and use it to calculate breaks
+  data <- data[unique(keep_cols)]
 
-  # Rename cols
-  names(data) <- gsub(var, "var_left", names(data))
+  # Append breaks
+  data <- data_append_breaks(var = var,
+                             data = data,
+                             q3_q5 = "q5",
+                             rename_col = "var_left")
+  data <- data$data
+
+  # Keep columns of the two years
+  cols <- match_schema_to_col(data = data, time = time_col, col = "var_left")
+  data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
 
   # Calculate the value
   data$var_left <- (data[[3]] - data[[2]]) / data[[2]]

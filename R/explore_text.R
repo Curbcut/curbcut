@@ -413,7 +413,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
 
 #' @rdname explore_text
 #' @export
-explore_text.delta <- function(vars, region, select_id, scale, data,
+explore_text.delta <- function(vars, region, select_id, scale, data, time,
                                zoom_levels, scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
@@ -578,12 +578,14 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
   exp_vals_left <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    scale = context$treated_scale, left_right = "left", lang = lang
+    scale = context$treated_scale, left_right = "left",
+    lang = lang, time = time
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
-    scale = context$treated_scale, left_right = "right", lang = lang
+    scale = context$treated_scale, left_right = "right",
+    lang = lang, time = time
   )
 
   # If there is a selection, return a completely different text

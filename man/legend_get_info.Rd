@@ -10,6 +10,7 @@ legend_get_info(
   scales_as_DA,
   scale,
   data,
+  time,
   ...
 )
 }
@@ -29,6 +30,9 @@ their colour will be the one of their DA.}
 \code{\link{update_scale}}.}
 
 \item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 
 \item{...}{Additional arguments to be passed to \code{\link{legend_labels}}
 and \code{\link{legend_breaks}}, such as \code{lang}, \code{df}, ...}

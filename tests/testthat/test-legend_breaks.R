@@ -76,16 +76,30 @@ test_that("legend_breaks.q100 works", {
 #   )
 # })
 
-# test_that("legend_breaks.delta works", {
-#   vars <- vars_build(var_left = c(
-#     "housing_tenant_2006",
-#     "housing_tenant_2016"
-#   ), df = "CMA_CT")
-#   expect_equal(
-#     legend_breaks(vars, df = "CMA_CT"),
-#     c("-10%", "-2%", "+2%", "+10%")
-#   )
-# })
+test_that("legend_breaks.delta works", {
+  vars <- vars_build(var_left = c(
+    "housing_tenant"
+  ), scale = "CT", time = c(2006, 2016))
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars, scale = "CT", region = "CMA", time = time)
+
+  brks <- legend_breaks(vars, scale = "CT", data = data)
+  expect_true(all(endsWith(brks, "%")))
+  expect_true(grepl("^-", brks[1]))
+
+
+  vars <- vars_build(var_left = c(
+    "alp"
+  ), scale = "CT", time = c(2006, 2016))
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars, scale = "CT", region = "CMA", time = time)
+
+  brks <- legend_breaks(vars, scale = "CT", data = data)
+  expect_true(all(endsWith(brks, "%")))
+  expect_true(grepl("^-", brks[1]))
+})
 
 test_that("legend_breaks.bivar works", {
   vars <- vars_build(

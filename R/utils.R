@@ -717,7 +717,7 @@ match_schema_to_col <- function(data, time, col = "var_left",
   # Which var out of those correspond to the right time
   # NDS: this now only works with time. Need to make sure if works dynamically
   # for whatever is fed in the schema.
-  var <- pv[s_extract(schema$time, pv) == time_col]
+  var <- pv[s_extract(schema$time, pv) %in% time_col]
 
   # Return the var as a character
   return(var)

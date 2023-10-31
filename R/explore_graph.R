@@ -250,8 +250,9 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
 explore_graph.delta_ind <- function(vars, select_id, scale, data, time,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
-  explore_graph_delta_ind(vars, select_id, scale, data, scales_as_DA,
-    lang = lang, font_family = font_family, ...
+  explore_graph_delta_ind(vars = vars, select_id = select_id, scale = scale,
+                          data = data, time = time, scales_as_DA = scales_as_DA,
+                          lang = lang, font_family = font_family, ...
   )
 }
 
@@ -267,7 +268,7 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale, time = time
+    data = data, lang = lang, scale = scale, time = time, ...
   )
 
   # Color as function
@@ -326,8 +327,8 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
-    ggplot2::coord_cartesian(xlim = range(attr(data, "breaks")),
-                             ylim = range(attr(data, "breaks"))) +
+    # ggplot2::coord_cartesian(xlim = range(attr(data, "breaks_var_left")),
+    #                          ylim = range(attr(data, "breaks_var_left"))) +
     x_scale +
     y_scale +
     shared_info$labs +
@@ -771,7 +772,7 @@ explore_graph_delta_ind.scalar <- function(vars, select_id, scale, data, time,
                                            lang = NULL,
                                            font_family = "acidgrotesk-book", ...) {
   explore_graph.delta(
-    vars = vars, select_id = select_id, scale = scale, data = data,
+    vars = vars, select_id = select_id, scale = scale, data = data, time = time,
     scales_as_DA = scales_as_DA, lang = lang, font_family = font_family, ...
   )
 }

@@ -175,14 +175,13 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
 #'
 #' @return A list of label titles returned from \code{\link[ggplot2]{labs}}.
 #' @export
-legend_labels.delta <- function(vars, lang = NULL, short_threshold = 25, ...) {
+legend_labels.delta <- function(vars, lang = NULL, short_threshold = 25, time, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = short_threshold,
       translate = TRUE, lang = lang
     )
-  date_left <- var_get_time(var = vars$var_left)
-  date_left <- paste(date_left, collapse = " - ")
+  date_left <- paste(time$var_left, collapse = " - ")
   title_left <- paste0(title_left, " (\u0394 ", date_left, ")")
   return(list(ggplot2::labs(x = title_left, y = NULL)))
 }

@@ -12,6 +12,8 @@
 #' (if any). Usually `r[[id]]$select_id()`
 #' @param left_right <`character`> Is it a left or right variable? Possible
 #' options are "left" or "right".
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param scale <`character`> The scale under study. The output of
 #' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
@@ -27,7 +29,7 @@
 #' \code{region_vals}, containing the variable values formatted according
 #' to the class of `var`}
 explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
-                                   scale, data, ...) {
+                                   time, scale, data, ...) {
   UseMethod("explore_text_delta_exp", var)
 }
 
@@ -35,7 +37,13 @@ explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
 #' @param lang <`character`> Language for translation.
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
-                                       scale, data, lang, ...) {
+                                       time, scale, data, lang, ...) {
+
+  # Grab values for single years. Allow for `apply`
+  times <- sapply(time$var_left, \(x) list(var_left = x),
+                  simplify = FALSE, USE.NAMES = TRUE)
+  names(times) <- time$var_left
+
   # If there is no selection
   if (is.na(select_id)) {
     # Grab the parent variable
@@ -44,17 +52,15 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 
     # Grab the explanation
     exp_q5 <- var_get_info(
-      var = var[[1]], what = "exp_q5", translate = TRUE,
+      var = var, what = "exp_q5", translate = TRUE,
       lang = lang
     )
 
     # Sub the placeholder for the two last brackets
-    breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
-    breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
+    breaks <- var_get_info(var = var, what = "rank_name")[[1]]
+    two_last_ranks <- breaks[4:5]
     two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
     two_last_ranks <- tolower(two_last_ranks)
-    # If the two last brackets is recognized as the default, write a particular string
     exp <- {
       gsub("_X_", sprintf(
         cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
@@ -63,10 +69,21 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     }
 
     # Grab the region values
-    times <- var_get_time(var)
-    region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
-    region_vals <- region_vals[region_vals$region == region, ]
-    region_vals <- region_vals$val[region_vals$year %in% times]
+    region_vals <-
+      lapply(times, \(t) {
+        explore_text_region_val_df(
+          var = var,
+          region = region,
+          select_id = NA,
+          data = data,
+          scale = scale,
+          col = sprintf("var_%s", left_right),
+          lang = lang,
+          time = t
+        )
+      })
+    region_vals <- sapply(region_vals, `[[`, "val")
+    region_vals <- rev(region_vals)
     region_vals_strings <- convert_unit.pct(var,
                                             x = region_vals,
                                             decimal = 1
@@ -77,13 +94,13 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
       exp = sprintf(cc_t("the percentage of %s that %s", lang = lang), parent, exp),
       region_vals = region_vals,
       region_vals_strings = region_vals_strings,
-      times = times
+      times = unname(unlist(times))
     ))
   }
 
   # If there is a selection
   exp <- var_get_info(
-    var = var[[1]], what = "explanation", translate = TRUE,
+    var = var, what = "explanation", translate = TRUE,
     lang = lang
   )
   if (grepl("</ul>", exp)) {
@@ -94,23 +111,24 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     }
     exp <- cc_t(out, lang = lang)
   }
-  times <- var_get_time(var)
 
   # Grab both value strings
   rank_chr_before <- explore_text_selection_comparison(
-    var = var[1],
+    var = var,
     data = data,
     select_id = select_id,
-    col = "var_left_1",
-    lang = lang
+    col = "var_left",
+    lang = lang,
+    time_col = times[[1]]
   )$rank_chr
 
   rank_chr_after <- explore_text_selection_comparison(
-    var = var[2],
+    var = var,
     data = data,
     select_id = select_id,
-    col = "var_left_2",
-    lang = lang
+    col = "var_left",
+    lang = lang,
+    time_col = times[[2]]
   )$rank_chr
 
   # Did it remain in the same category, or it moved?
@@ -118,15 +136,19 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 
   # Grab the region values
   region_vals <-
-    lapply(var, \(x) explore_text_region_val_df(
-      var = structure(x, class = class(var)),
-      region = region,
-      select_id = select_id,
-      data = data,
-      scale = scale,
-      col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var)),
-      lang = lang
-    )$num) |> unlist()
+    lapply(times, \(t) {
+      explore_text_region_val_df(
+        var = var,
+        region = region,
+        select_id = select_id,
+        data = data,
+        scale = scale,
+        col = sprintf("var_%s", left_right),
+        lang = lang,
+        time = t
+      )
+    })
+  region_vals <- sapply(region_vals, `[[`, "num")
   # Newest value must be first, like for the no-selection values
   region_vals <- rev(region_vals)
 
@@ -136,7 +158,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     region_vals = region_vals,
     region_vals_strings = c(rank_chr_before, rank_chr_after),
     remained = remained,
-    times = times
+    times = unname(unlist(times))
   ))
 }
 

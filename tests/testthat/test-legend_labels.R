@@ -61,28 +61,26 @@ test_that("legend_labels.q5 works", {
 #     )
 #   )
 # })
-#
-# test_that("legend_labels.delta works", {
-#   vars <- structure(
-#     list(var_left = c(
-#       "housing_tenant_2006",
-#       "housing_tenant_2016"
-#     ), var_right = " "),
-#     class = "delta"
-#   )
-#   expect_equal(
-#     legend_labels(vars),
-#     list(ggplot2::labs(
-#       x = "Tenant-occupied (%) (\u0394 2006 - 2016)",
-#       y = NULL
-#     ))
-#   )
-#
-#   expect_equal(
-#     legend_labels(vars, lang = "fr"),
-#     list(structure(list(x = "Locataire (Δ 2006 - 2016)", y = NULL), class = "labels"))
-#   )
-# })
+
+test_that("legend_labels.delta works", {
+
+  vars <- vars_build("housing_tenant", scale = "DA", time = c(2001, 2021))
+  time <- vars$time
+  vars <- vars$vars
+
+  expect_equal(
+    legend_labels(vars, time = time),
+    list(ggplot2::labs(
+      x = "Tenant-occupied (%) (\u0394 2001 - 2021)",
+      y = NULL
+    ))
+  )
+
+  expect_equal(
+    legend_labels(vars, lang = "fr", time = time),
+    list(structure(list(x = "Locataire (\u0394 2001 - 2021)", y = NULL), class = "labels"))
+  )
+})
 
 test_that("legend_labels.bivar works", {
   vars <- structure(

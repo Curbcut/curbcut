@@ -9,6 +9,7 @@
 #' levels. Usually one of the `mzl_x`, or the output of
 #' \code{\link{geography_server}}.
 #' @param scale <`character`>
+#' @param time <`named list`>
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
@@ -20,31 +21,29 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 
   # Grab only the correct column, and rename it.
   dat <- data
+  # Prepare for merge, keep attributes
+  prev_attr <- attributes(dat)
+  prev_attr <- prev_attr[!names(prev_attr) %in% c("names", "row.names", "class",
+                                                  "quintiles", "breaks")]
+
   # If var_right is in the data, subset it too
   if (sum(grepl("var_right_", names(dat))) > 0) {
     vl_col <- match_schema_to_col(data = dat, time = time)
     vr_col <- match_schema_to_col(data = dat, time = time, col = "var_right")
     dat <- dat[c("ID", vl_col, vr_col)]
-    names(dat)[c(2:3)] <- c("var_left", "var_right")
+    # names(dat)[c(2:3)] <- c("var_left", "var_right")
   } else {
     vl_col <- match_schema_to_col(data = dat, time = time)
+    vl_col <- c(vl_col, "var_left") # Keep also `delta` if present
+    vl_col <- vl_col[which(vl_col %in% names(dat))]
     dat <- dat[c("ID", vl_col)]
-    names(dat)[2] <- "var_left"
   }
 
-  # Add `variation` if it is multi-year
-  vars_ <- lapply(vars, \(x) {
-    if (length(x) == 1) {
-      return(x)
-    }
-
-    var_code <- var_get_info(x[[1]], what = "var_code")
-    c(x, paste0(var_code, "_variation"))
-  })
-
   # Rename the var_left and var_right
-  names(dat)[grepl("var_left", names(dat))] <- vars_$var_left
-  names(dat)[grepl("var_right", names(dat))] <- vars_$var_right
+  names(dat) <- gsub("var_left", vars$var_left, names(dat))
+  names(dat)[vars$var_left == names(dat)] <- sprintf("%s_variation", vars$var_left)
+  names(dat) <- gsub("var_right", vars$var_right, names(dat))
+  names(dat)[vars$var_right == names(dat)] <- sprintf("%s_variation", vars$var_right)
 
   # Bind the `scale` data to the real data
   df_dat <- grab_df_from_bslike(scale)
@@ -52,6 +51,11 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   default_cols <- names(df_dat)[names(df_dat) %in% default_cols]
   df_dat <- df_dat[default_cols]
   dat <- merge(df_dat, dat, by = "ID")
+
+  # Keep the previous attributes
+  for (i in names(prev_attr)) {
+    attr(dat, i) <- prev_attr[[i]]
+  }
 
   # Order data by population
   if ("population" %in% names(dat)) {
@@ -112,7 +116,8 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   # Depending on the class of `vars`, update the other column names and
   # out as a datatable.
   pretty_dat <-
-    panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang, scale = scale)
+    panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang,
+                           scale = scale, time = time)
 
   # Add population and households to the title vars so they also are formatted
   pretty_dat$title_vars <- c(
@@ -166,18 +171,18 @@ panel_view_rename_cols.q5 <- function(vars, dat, lang = NULL, ...) {
 }
 
 #' @rdname panel_view_rename_cols
+#' @param time <`named list`>
 #' @export
-panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, ...) {
-  # Update column name
-  time <- var_get_time(vars$var_left)
-  vars_sep <- sapply(vars$var_left, var_get_info,
-    what = "var_short",
-    translate = TRUE, lang = lang
+panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, time, ...) {
+  # Titles
+  vars_sep <- var_get_info(var = vars$var_left,
+                           what = "var_short",
+                           translate = TRUE, lang = lang
   )
   new_names <-
     c(
-      sprintf("%s (%s)", vars_sep, time),
-      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x
+      sprintf("%s (%s)", vars_sep, time$var_left),
+      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x
     )
 
   var_code <- var_get_info(vars$var_left, what = "var_code")
@@ -378,10 +383,15 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
     translate = TRUE, lang = lang
   )
 
+  # Column name
+  col <- match_schema_to_col(data = dat, time = time, col = vars$var_left,
+                             schema = attr(dat, "schema_var_left"))
+  class(col) <- class(vars$var_left)
+
   # Get the text for the single left variable
   out <- panel_view_prepare_text_helper(
     scale = scale,
-    var = vars$var_left,
+    var = col,
     dat = dat,
     title = title,
     explanation = explanation,
@@ -398,15 +408,14 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
 #' @export
 panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, ...) {
   # Titles
-  time <- var_get_time(vars$var_left)
-  vars_sep <- sapply(vars$var_left, var_get_info,
+  vars_sep <- var_get_info(var = vars$var_left,
     what = "var_short",
     translate = TRUE, lang = lang
   )
   new_names <-
     c(
-      sprintf("%s (%s)", vars_sep, time),
-      legend_labels(vars, short_threshold = 5, lang = lang)[[1]]$x
+      sprintf("%s (%s)", vars_sep, time$var_left),
+      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x
     )
 
   var_code <- var_get_info(vars$var_left, what = "var_code")
@@ -431,7 +440,7 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, .
     )
     sprintf(
       cc_t("the change in %s between %s and %s", lang = lang),
-      explanation, time[1], time[2]
+      explanation, time$var_left[1], time$var_left[2]
     )
   })
 
@@ -446,7 +455,7 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, .
   title_vars <- list(title_vars_1, title_vars_2, variation)
 
   # Get the text for every columns
-  titles_texts <- mapply(\(title, var, explanation) {
+  titles_texts <- mapply(\(title, var, explanation, t) {
     panel_view_prepare_text_helper(
       scale = scale,
       var = var,
@@ -454,9 +463,10 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, .
       title = title,
       explanation = explanation,
       title_color = title_color,
-      lang = lang
+      lang = lang,
+      time_col = t
     )
-  }, new_names, title_vars, explanations)
+  }, new_names, title_vars, explanations, c(time$var_left, ""))
 
   # Return
   return(titles_texts)
@@ -475,7 +485,7 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
                        unlist(time[c("var_left", "var_right")]))
 
   # Grab the column names
-  var_codes <- c(vars$var_left, vars$var_right)
+  var_codes <- list(vars$var_left, vars$var_right)
 
   # Grab the two colours
   colours <- colours_get()$bivar
@@ -491,9 +501,15 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
 
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color, time_col) {
+
+    # Column name
+    col <- match_schema_to_col(data = dat, time = time, col = var,
+                               schema = attr(dat, "schema_var_left"))
+    class(col) <- class(var)
+
     panel_view_prepare_text_helper(
       scale = scale,
-      var = var,
+      var = col,
       dat = dat,
       title = title,
       explanation = explanation,
@@ -559,7 +575,7 @@ panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = N
     times <- var_codes[grepl(code, var_codes)][1:2] |> var_get_time()
     sprintf(
       cc_t("the change in %s between %s and %s", lang = lang),
-      exp, times[1], times[2]
+      exp, time[1], times[2]
     )
   })
 
@@ -674,7 +690,11 @@ panel_view_prepare_text_helper <- function(scale, var, dat, title, explanation,
         )
         # Info on how we created the variable
         census_variables <- get_from_globalenv("census_variables")
-        var_time <- sprintf("%s_%s", var, time_col)
+        if (grepl(sprintf("%s$", time_col), var)) {
+          var_time <- var
+        } else {
+          var_time <- sprintf("%s_%s", var, time_col)
+        }
         info <- lapply(
           census_variables[census_variables$var_code == var_time, ],
           unlist

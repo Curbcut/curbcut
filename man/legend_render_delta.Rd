@@ -12,6 +12,7 @@ legend_render_delta(
   scales_as_DA = c("building", "street"),
   data,
   scale,
+  time,
   ...
 )
 
@@ -21,6 +22,7 @@ legend_render_delta(
   scales_as_DA = c("building", "street"),
   data,
   scale,
+  time,
   ...
 )
 
@@ -30,6 +32,7 @@ legend_render_delta(
   scales_as_DA = c("building", "street"),
   scale,
   lang = NULL,
+  time,
   ...
 )
 }
@@ -47,6 +50,9 @@ their colour will be the one of their DA.}
 
 \item{scale}{<\code{character}> Scale under study. The output of
 \code{\link{update_scale}}.}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 
 \item{...}{Additional arguments passed to other functions.}
 

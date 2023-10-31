@@ -1,11 +1,11 @@
 test_explores_helper <- function(var_left, var_right, region, scale, time, select_id) {
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
-  time <- vars$time
+  time_ <- vars$time
   vars <- vars$vars
-  data <- data_get(vars, region = region, scale = scale)
+  data <- data_get(vars, region = region, scale = scale, time = time_)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time, zoom_levels = mzl_CSD_CT_DA_building
+    data = data, time = time_, zoom_levels = mzl_CSD_CT_DA_building
   )
   expect_equal(class(actual), "character")
   expect_equal(length(actual), 1)
@@ -79,43 +79,43 @@ test_that("q5 explore works with selections", {
 })
 
 
-# # delta -------------------------------------------------------------------
-#
-# test_explores_delta <- function(var_right, select_id, df) {
-#   # Pct
-#   test_explores_helper(paste0("housing_tenant_", c(2016, 2021)),
-#     var_right = var_right,
-#     df = df, select_id = select_id
-#   )
-#
-#   # Dollar
-#   test_explores_helper(paste0("housing_rent_", c(2016, 2021)),
-#     var_right = var_right,
-#     df = df, select_id = select_id
-#   )
-#
-#   # # Ind scalar
-#   # test_explores_helper("access_foot_20_food_grocery_2023", var_right = var_right, df = "city_DA",
-#   # select_id = select_id)
-#
-#   # Ind scalar
-#   test_explores_helper(paste0("alp_", c(2016, 2021)),
-#     var_right = var_right, df = df,
-#     select_id = select_id
-#   )
-# }
-#
-# test_that("q5 explore works without a selection", {
-#   test_explores_delta(var_right = " ", select_id = NA, df = "city_CSD")
-#   test_explores_delta(var_right = " ", select_id = NA, df = "city_building")
-# })
-#
-# test_that("q5 explore works with selections", {
-#   test_explores_delta(var_right = " ", select_id = "2466023_19", df = "city_CSD")
-#   test_explores_delta(var_right = " ", select_id = "b10000763", df = "city_building")
-# })
-#
-#
+# delta -------------------------------------------------------------------
+
+test_explores_delta <- function(var_right, select_id, scale, region) {
+  # Pct
+  test_explores_helper(var_left = "housing_tenant", time = c(2016, 2021),
+    var_right = var_right, scale = scale, region = region,
+    select_id = select_id
+  )
+
+  # Dollar
+  test_explores_helper(var_left = "housing_rent", time =  c(2016, 2021),
+    var_right = var_right, scale = scale, region = region,
+    select_id = select_id
+  )
+
+  # # Ind scalar
+  # test_explores_helper("access_foot_20_food_grocery_2023", var_right = var_right, df = "city_DA",
+  # select_id = select_id)
+
+  # Ind scalar
+  test_explores_helper(var_left = "alp", time =  c(2016, 2021),
+    var_right = var_right,  scale = scale, region = region,
+    select_id = select_id
+  )
+}
+
+test_that("q5 explore works without a selection", {
+  test_explores_delta(var_right = " ", select_id = NA, region = "CMA", scale = "CSD")
+  test_explores_delta(var_right = " ", select_id = NA, region = "city", scale = "building")
+})
+
+test_that("q5 explore works with selections", {
+  test_explores_delta(var_right = " ", select_id = "borough_5", region = "city", scale = "borough")
+  test_explores_delta(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
+})
+
+
 # # delta bivar -------------------------------------------------------------
 #
 # test_explores_delta <- function(var_right, select_id, df) {

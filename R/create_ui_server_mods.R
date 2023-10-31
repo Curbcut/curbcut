@@ -248,7 +248,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         vars = r[[id]]$vars,
         data = data,
-        scale = r[[id]]$scale
+        scale = r[[id]]$scale,
+        time = r[[id]]$time
       )
 
       # # Did-you-know panel

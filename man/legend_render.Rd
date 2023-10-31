@@ -64,6 +64,7 @@ legend_render(
   scales_as_DA = c("building", "street"),
   data,
   scale,
+  time,
   ...
 )
 
@@ -113,6 +114,9 @@ their colour will be the one of their DA.}
 \item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 }
 \value{
 It returns a ggplot object
