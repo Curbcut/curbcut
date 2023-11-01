@@ -300,11 +300,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               if (is.null(names(w))) {
                 names(w) <- w
               }
-              names(w) <- sapply(names(w), cc_t, lang = r$lang())
+              names(w) <- sapply(names(w), cc_t, lang = shiny::isolate(r$lang()))
               w
             }
           } else {
-            w <- cc_t(w, lang = r$lang())
+            w <- shiny::isolate(cc_t(w, lang = r$lang()))
           }
 
           # Default selection
@@ -322,7 +322,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               picker_id = "mnd",
               var_list = w,
               selected = default_selection,
-              label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
+              label = if (is.null(main_dropdown_title)) NULL else cc_t_span(main_dropdown_title)
             )
           ))
         }
@@ -340,9 +340,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       names(mnd_list) <- main_dropdown_title
       mnd_list
     }
+
     mnd <- picker_server(
       id = id, r = r, picker_id = "mnd",
-      var_list = shiny::reactive(mnd_list)
+      var_list = shiny::reactive(mnd_list),
+      # Use `time` from little `r` to inform if options of the dropdown should
+      # be greyed out.
+      time = r[[id]]$time
     )
 
     # Detect the variables that are under the main dropdown value. Only update them

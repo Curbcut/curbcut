@@ -69,12 +69,27 @@ picker_server <- function(id, r, picker_id = "var", var_list,
       sapply(disable(), ifelse, "color: rgba(119, 119, 119, 0.5);", "")
     })
 
+    # Record current value to keep it as current value when other things change
+    current_value <- shiny::reactive(input[[picker_id]])
+
     # Update dropdown menu if there are disabled choices
     shiny::observe({
+      current_val <- shiny::isolate(current_value())
+
+      # If the selected variable is to be disabled, reset the dropdown
+      disabled_options <- unlist(var_list_t())[disable()]
+      anything_disabled <- length(disabled_options) > 0
+      if (anything_disabled) {
+        if (current_val %in% disabled_options){
+          current_val <- NULL
+        }
+      }
+
       shinyWidgets::updatePickerInput(
         session = session,
         inputId = picker_id,
         choices = var_list_t(),
+        selected = current_val,
         choicesOpt = c(
           if (!is.null(hovers())) hovers(),
           list(

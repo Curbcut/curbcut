@@ -13,20 +13,18 @@
 #' their colour will be the one of their DA.
 #' @param scale <`character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
-#' @param time <`named list`> Object built using the \code{\link{vars_build}}
-#' function. It contains the time for both var_left and var_right variables.
 #' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @param ... Additional arguments to be passed to \code{\link{legend_labels}}
-#' and \code{\link{legend_breaks}}, such as `lang`, `df`, ...
+#' and \code{\link{legend_breaks}}, such as `lang`, `time`, ...
 #'
 #' @return A list with the legend labels and breaks computed by
 #' \code{legend_labels()} and \code{legend_breaks()}, and a default theme for
 #' the legend.
 legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA,
-                            scale, data, time, ...) {
+                            scale, data, ...) {
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  labs_xy <- legend_labels(vars, time = time, ...)
+  labs_xy <- legend_labels(vars, ...)
   break_labs <- legend_breaks(vars, data = data, scale = scale, ...)
   theme_default <- list(
     ggplot2::theme_minimal(),
@@ -39,7 +37,8 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
   colours_dfs <- colours_get()
 
   return(list(
-    labs_xy = labs_xy, break_labs = break_labs,
+    labs_xy = labs_xy,
+    break_labs = break_labs,
     theme_default = theme_default,
     colours_dfs = colours_dfs
   ))

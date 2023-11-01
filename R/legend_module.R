@@ -52,7 +52,7 @@ legend_server <- function(id, r, vars, scale, data, time, hide = shiny::reactive
                           legend_args = shiny::reactive(list(
                             vars = vars(), lang = r$lang(), scale = scale(),
                             data = data(), breaks = breaks(),
-                            scales_as_DA = scales_as_DA(), time = time()
+                            scales_as_DA = scales_as_DA()
                           )),
                           force_height = shiny::reactive(NULL)) {
   stopifnot(shiny::is.reactive(data))
@@ -64,9 +64,29 @@ legend_server <- function(id, r, vars, scale, data, time, hide = shiny::reactive
   stopifnot(shiny::is.reactive(legend_args))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # If `time` should have an impact on the legend, add it to the list of arguments.
+    # It's not directly an argument as we don't want the legend to be triggered by a
+    # change in `time` when it's not needed (q5, bivar, ...)
+    legend_arguments <- shiny::reactiveVal(legend_args())
+    # shiny::observeEvent(legend_args(), legend_arguments(legend_args()))
+    shiny::observeEvent({time()
+      legend_args()}, {
+
+        # Isolate the change to legend_arguments
+        shiny::isolate(legend_arguments(legend_args()))
+
+        # If in delta, add time
+        if (sum(grepl("delta", attr(vars(), "class"))) > 0) {
+          # Remove `time` before adding it
+          # args <- legend_arguments()[names(legend_arguments()) != "time"]
+          legend_arguments(c(legend_arguments(), list(time = time())))
+        }
+      })
+
     # Make legend
     legend <- shiny::reactive(
-      tryCatch(do.call(legend_fun(), legend_args()), error = function(e) {
+      tryCatch(do.call(legend_fun(), legend_arguments()), error = function(e) {
         # If does not work as intended, warn the error and return nothing
         print(e)
         return(NULL)

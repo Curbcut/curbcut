@@ -4,7 +4,7 @@
 \alias{warnuser_get}
 \title{Generate Warning Text for the Warn User Module}
 \usage{
-warnuser_get(vars, data, time, more_text = NULL, lang = NULL)
+warnuser_get(vars, data, time, widget_time, more_text = NULL, lang = NULL)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
@@ -15,6 +15,10 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
 \item{time}{<\verb{numeric named list}> Vector of time values to use for
 appending a time to the variables picked.}
+
+\item{widget_time}{<\verb{numeric vector}> Raw time values coming out from the
+time widget. It will be used to match with \code{time}, and if it doesn't fit,
+will informe the warning.}
 
 \item{more_text}{<\code{character}> Optional additional text to be added to the
 warning message. Default is NULL.}

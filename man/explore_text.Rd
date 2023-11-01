@@ -53,6 +53,7 @@ explore_text(
   select_id,
   scale,
   data,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,

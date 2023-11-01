@@ -17,7 +17,7 @@ legend_server(
   scales_as_DA = shiny::reactive(c("building", "street")),
   legend_fun = shiny::reactive(legend_render),
   legend_args = shiny::reactive(list(vars = vars(), lang = r$lang(), scale = scale(),
-    data = data(), breaks = breaks(), scales_as_DA = scales_as_DA(), time = time())),
+    data = data(), breaks = breaks(), scales_as_DA = scales_as_DA())),
   force_height = shiny::reactive(NULL)
 )
 

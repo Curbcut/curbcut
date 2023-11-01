@@ -233,6 +233,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         vars = r[[id]]$vars,
         time = r[[id]]$time,
+        widget_time = widget_time,
         data = data
       )
 

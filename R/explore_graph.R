@@ -84,8 +84,8 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
-  # Get the graph range
-  range <- if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else range(vl_breaks)
+  # # Get the graph range
+  # range <- if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else range(vl_breaks)
 
   # Draw the plot
   plot <-
@@ -100,7 +100,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
       palette = clr,
       breaks = vals
     ) +
-    ggplot2::coord_cartesian(xlim = range) +
+    # ggplot2::coord_cartesian(xlim = range) +
     x_scale +
     shared_info$labs +
     shared_info$theme_default
@@ -204,9 +204,9 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     time = time
   )
 
-  # Breaks range
-  if (!is.null(vr_breaks)) vr_breaks <- range(vr_breaks)
-  if (!is.null(vl_breaks)) vl_breaks <- range(vl_breaks)
+  # # Breaks range
+  # if (!is.null(vr_breaks)) vr_breaks <- range(vr_breaks)
+  # if (!is.null(vl_breaks)) vl_breaks <- range(vl_breaks)
 
   plot <-
     data_in_range |>
@@ -222,7 +222,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
-    ggplot2::coord_cartesian(xlim = vr_breaks, ylim = vl_breaks) +
+    # ggplot2::coord_cartesian(xlim = vr_breaks, ylim = vl_breaks) +
     x_scale +
     y_scale +
     shared_info$labs +
@@ -275,8 +275,8 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
   clr_df <- shared_info$colours_dfs$delta
 
   # Get the scales ggplot function
-  ycol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left")
-  xcol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left")
+  ycol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left")
+  xcol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left")
 
 
   x_scale <- explore_graph_scale(
