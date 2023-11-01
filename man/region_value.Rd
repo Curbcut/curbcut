@@ -21,8 +21,7 @@ to dispatch to the right method.}
 \item{select_id}{<\code{character}>  The ID of the selected feature.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
-value information. Defaults to \code{var_left}, but could also be \code{var_right} or
-\code{var_left_1} in delta.}
+value information. Defaults to \code{var_left}, but could also be \code{var_right}.}
 
 \item{...}{Additional arguments to pass to specific method functions.}
 }

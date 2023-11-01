@@ -65,6 +65,7 @@ legend_render(
   data,
   scale,
   time,
+  lang = NULL,
   ...
 )
 
@@ -80,7 +81,9 @@ legend_render(
   vars,
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
-  df,
+  data,
+  scale,
+  time,
   lang = NULL,
   ...
 )

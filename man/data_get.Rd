@@ -49,8 +49,10 @@ data_get(
 \method{data_get}{delta_bivar}(
   vars,
   scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 
@@ -68,6 +70,7 @@ data_get(
   region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  vr_vl,
   ...
 )
 }
@@ -94,6 +97,9 @@ directory containing the QS files. Default is "data/".}
 
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
+
+\item{vr_vl}{<\code{character}> Is the parent data coming from the var_left
+or var_right? How should it be renamed.}
 }
 \value{
 A dataframe containing the data according to the class of \code{vars},

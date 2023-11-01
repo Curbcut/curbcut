@@ -2,9 +2,30 @@
 % Please edit documentation in R/legend_labels.R
 \name{legend_labels}
 \alias{legend_labels}
+\alias{legend_labels.q5}
+\alias{legend_labels.q100}
+\alias{legend_labels.qual}
+\alias{legend_labels.bivar_ldelta_rq3}
+\alias{legend_labels.delta}
+\alias{legend_labels.bivar}
+\alias{legend_labels.delta_bivar}
 \title{Generic legend label function for Curbcut legends}
 \usage{
 legend_labels(vars, lang, ...)
+
+\method{legend_labels}{q5}(vars, lang = NULL, ...)
+
+\method{legend_labels}{q100}(vars, lang = NULL, ...)
+
+\method{legend_labels}{qual}(vars, lang = NULL, ...)
+
+\method{legend_labels}{bivar_ldelta_rq3}(vars, lang = NULL, ...)
+
+\method{legend_labels}{delta}(vars, lang = NULL, time, ...)
+
+\method{legend_labels}{bivar}(vars, lang = NULL, ...)
+
+\method{legend_labels}{delta_bivar}(vars, lang = NULL, time, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
@@ -23,3 +44,20 @@ It returns an output of \code{\link[ggplot2]{labs}}.
 \code{\link[ggplot2]{labs}} for the Curbcut legends. The function invokes
 particular methods which depend on the class of the \code{vars} argument.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{legend_labels(q5)}: q5 method
+
+\item \code{legend_labels(q100)}: q100 method
+
+\item \code{legend_labels(qual)}: qual method
+
+\item \code{legend_labels(bivar_ldelta_rq3)}: bivar_ldelta_rq3 method
+
+\item \code{legend_labels(delta)}: delta method
+
+\item \code{legend_labels(bivar)}: bivar method
+
+\item \code{legend_labels(delta_bivar)}: delta_bivar method
+
+}}

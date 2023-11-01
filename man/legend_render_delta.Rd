@@ -13,6 +13,7 @@ legend_render_delta(
   data,
   scale,
   time,
+  lang = NULL,
   ...
 )
 
@@ -23,6 +24,7 @@ legend_render_delta(
   data,
   scale,
   time,
+  lang = NULL,
   ...
 )
 
@@ -54,9 +56,9 @@ their colour will be the one of their DA.}
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
 
-\item{...}{Additional arguments passed to other functions.}
-
 \item{lang}{<\code{character}> Language in use. \code{en} or \code{fr}. Defaults to NULL.}
+
+\item{...}{Additional arguments passed to other functions.}
 }
 \value{
 A ggplot object that represents the \code{delta} legend.

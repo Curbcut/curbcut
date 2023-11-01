@@ -23,6 +23,11 @@ variable, e.g. \code{alp_2016} or \code{c("housing_tenant_2006", "housing_tenant
 compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
 variable is represented by (" ").}
 
+\item{scale}{<\code{character}> Scale under study. The output of
+\code{\link{update_scale}}.}
+
+\item{time}{<\verb{numeric vector}> The direct output of the \code{time} widget.}
+
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
@@ -34,9 +39,6 @@ the \code{df} is not in \code{all_choropleth}, it is returned as a class (instea
 
 \item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
 from the global environment using \code{\link{get_from_globalenv}}.}
-
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}.}
 }
 \value{
 A named list containing both \code{var_left} and \code{var_right} variables with
