@@ -13,8 +13,7 @@
 #' @param region  <`character`> The region of interest.
 #' @param select_id <`character`>  The ID of the selected feature.
 #' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
+#' value information. Defaults to `var_left`, but could also be `var_right`.
 #' @param ... Additional arguments to pass to specific method functions.
 #'
 #' @return Varies based on the method specified in \code{var}. Commonly
@@ -28,7 +27,7 @@ region_value <- function(var, data, time, scale, region, select_id, col, ...) {
   # Return the output of every method
   region_value_method(var = var, data_vals = rv$data_vals,
                       parent_vals = rv$parent_vals, data = data,
-                      time = time, ...)
+                      time = time, col = col, ...)
 }
 
 #' Methods to compute regional values
@@ -97,11 +96,13 @@ region_value_method.count <- function(var, data_vals, parent_vals, ...) {
 #' @describeIn region_value_method The method for `ind` variables.
 #' @param data <`data.frame`> The data frame containing the data.
 #' @param time <`numeric`> The time period of interest.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right`.
 #' @export
-region_value_method.ind <- function(var, data_vals, parent_vals, data, time, ...) {
+region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col, ...) {
 
   # Which column breaks do we want to use
-  col <- match_schema_to_col(data, time = time)
+  col <- match_schema_to_col(data, time = time, col = col)
   brk_col <- sprintf("%s_q5", col)
 
   # Get the breaks
@@ -174,7 +175,8 @@ region_value_data_grab <- function(var, data, time, scale, region, col) {
   parent_string <- var_get_info(var, what = "parent_vec")
 
   # Grab parent data
-  parent_data <- data_get(vars = parent_string, scale = scale, region = region)
+  parent_data <- data_get(vars = parent_string, scale = scale, region = region,
+                          vr_vl = col)
 
   # Get the correct column name to draw data from
   current_col <- match_schema_to_col(data = data, time = time, col = col)

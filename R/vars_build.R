@@ -6,8 +6,9 @@
 #' @param var_right <`reactive character`> Character string of the selected
 #' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
 #' variable is represented by (" ").
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
+#' @param time <`numeric vector`> The direct output of the `time` widget.
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.

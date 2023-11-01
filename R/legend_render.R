@@ -352,9 +352,9 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
-                                data, scale, time, ...) {
+                                data, scale, time, lang = NULL, ...) {
   legend_render_delta(vars = vars, data = data, time = time, font_family = font_family,
-                      scales_as_DA = scales_as_DA, scale = scale, ...)
+                      scales_as_DA = scales_as_DA, scale = scale, lang = NULL, ...)
 }
 
 #' Internal function for dispatching `legend_render_delta`.
@@ -377,7 +377,7 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
-                                data, scale, time, ...) {
+                                data, scale, time, lang = NULL, ...) {
   UseMethod("legend_render_delta", vars)
 }
 
@@ -385,7 +385,7 @@ legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
 #' @return A ggplot object representing the `delta` legend for scalar data.
 legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
                                        scales_as_DA = c("building", "street"),
-                                       data, scale, time, ...) {
+                                       data, scale, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <-  NULL
@@ -599,7 +599,7 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
                                       scales_as_DA = c("building", "street"),
-                                      df, lang = NULL, ...) {
+                                      data, scale, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
@@ -607,7 +607,8 @@ legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
   # Get all necessary information
   leg_info <- legend_get_info(vars,
     lang = lang, font_family = font_family,
-    scales_as_DA = scales_as_DA, scale = scale, ...
+    scales_as_DA = scales_as_DA, scale = scale,
+    data = data, ...
   )
 
   # Prepare the grid's labels location and the colours

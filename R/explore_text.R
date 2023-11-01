@@ -544,7 +544,7 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time,
 
 #' @rdname explore_text
 #' @export
-explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
+explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time,
                                      zoom_levels, scales_as_DA = c("building", "street"),
                                      lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
@@ -568,7 +568,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    lang = lang, time = time
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -623,6 +623,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
         "a just about average change", "an unusually large change",
         "an exceptionally large change"
       ),
+      time_col = time$var_left,
       lang = lang
     )
     # Get the information on how the selection compares
@@ -635,6 +636,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
         "a just about average change", "an unusually large change",
         "an exceptionally large change"
       ),
+      time_col = time$var_right,
       lang = lang
     )
 
@@ -684,7 +686,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data,
   scale_plur <- cc_t(scales_dictionary$plur[scale_vec], lang = lang)
 
   # Correlation
-  relation <- explore_text_bivar_correlation(vars, data, lang = lang)
+  relation <- explore_text_bivar_correlation(
+    vars = vars, data = data, time = time, lang = lang)
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {

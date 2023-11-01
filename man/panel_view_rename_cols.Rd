@@ -9,17 +9,17 @@
 \alias{panel_view_rename_cols.bivar_ldelta_rq3}
 \title{Rename pretty columns in data frame for panel view}
 \usage{
-panel_view_rename_cols(vars, dat, lang = NULL, ...)
+panel_view_rename_cols(vars, dat, time, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{q5}(vars, dat, lang = NULL, ...)
+\method{panel_view_rename_cols}{q5}(vars, dat, time, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{delta}(vars, dat, lang = NULL, time, ...)
+\method{panel_view_rename_cols}{delta}(vars, dat, time, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{bivar}(vars, dat, lang = NULL, ...)
+\method{panel_view_rename_cols}{bivar}(vars, dat, time, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{delta_bivar}(vars, dat, lang = NULL, ...)
+\method{panel_view_rename_cols}{delta_bivar}(vars, dat, time, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{bivar_ldelta_rq3}(vars, dat, lang = NULL, ...)
+\method{panel_view_rename_cols}{bivar_ldelta_rq3}(vars, dat, time, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
@@ -28,12 +28,12 @@ function.}
 \item{dat}{<\code{data.frame}> The data frame containing the columns to be
 renamed.}
 
+\item{time}{<\verb{named list}>}
+
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}
 
 \item{...}{Additional arguments to be passed to the underlying methods.}
-
-\item{time}{<\verb{named list}>}
 }
 \value{
 A list with data frame with renamed columns and a list of column

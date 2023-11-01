@@ -65,11 +65,13 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
 #' This function takes two variables representing the same quantity measured two
 #' years apart and calculates the percentage change between the two values.
 #'
-#' @param var <`character vector`> A var_code. The variable to get data for.
-#' @param time_col <`character vector`> A character vector of length 2. The
+#' @param vars <`character vector`> A var_code. The variable to get data for.
+#' @param time <`character vector`> A character vector of length 2. The
 #' two years for which the delta should be calculated.
-#' @param df <`character`> A string specifying the name of the database to retrieve
-#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
+#' @param scale <`character`> A string specifying the scale at which to retrieve
+#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
+#' @param vl_vr <`character`> Which of var_left or var_right is this delta supposed
+#' to be for. Defaults to var_left.
 #' @param data_path <`character`> A string representing the path to the directory
 #' containing the QS files. Default is "data/".
 #'
@@ -77,7 +79,12 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
 #' `ID` is the ID column from the original data, `var_1` and `var_2` are the
 #' values of the two variables being compared, and `var` is the percentage
 #' change between the two variables.
-data_get_delta <- function(var, time_col, scale, data_path = get_data_path()) {
+data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
+                           data_path = get_data_path()) {
+
+  # Grab the correct var/time
+  var <- vars[[vl_vr]]
+  time_col <- time[[vl_vr]]
 
   # Retrieve
   data <- data_get_qs(var, scale, data_path = data_path)
@@ -91,17 +98,17 @@ data_get_delta <- function(var, time_col, scale, data_path = get_data_path()) {
   data <- data_append_breaks(var = var,
                              data = data,
                              q3_q5 = "q5",
-                             rename_col = "var_left")
+                             rename_col = vl_vr)
   data <- data$data
 
   # Keep columns of the two years
-  cols <- match_schema_to_col(data = data, time = time_col, col = "var_left")
+  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr)
   data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
 
   # Calculate the value
-  data$var_left <- (data[[3]] - data[[2]]) / data[[2]]
-  data$var_left <- replace(data$var_left, is.na(data$var_left), NA)
-  data$var_left <- replace(data$var_left, is.infinite(data$var_left), NA)
+  data[[vl_vr]] <- (data[[3]] - data[[2]]) / data[[2]]
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.na(data[[vl_vr]]), NA)
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.infinite(data[[vl_vr]]), NA)
 
   # Return
   return(data)
@@ -265,11 +272,12 @@ data_get_delta_fun <- function(vars, scale, region, scales_as_DA = c("building",
 #' @describeIn data_get_delta_fun The method for scalar variables.
 data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), time, ...) {
+
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Get data
-  data <- data_get_delta(var = vars$var_left, time_col = time$var_left,
+  data <- data_get_delta(vars = vars, time = time,
                          scale = scale, data_path = data_path)
 
   # Filter to region
@@ -326,23 +334,36 @@ data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("bu
 
 #' @describeIn data_get The method for bivar.
 #' @export
-data_get.delta_bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
-                                 data_path = get_data_path(), ...) {
+data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                 data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
-  data_vl <- data_get_delta(
-    var = vars$var_left, scale = scale,
-    data_path = data_path
-  )
-  names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
-  data_vr <- data_get_delta(
-    var = vars$var_right, scale = scale,
-    data_path = data_path
-  )[-1]
-  names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
+  data_vl <- data_get_delta(vars = vars, time = time, vl_vr = "var_left",
+                            scale = scale, data_path = data_path)
+  data_vr <- data_get_delta(vars = vars, time = time, vl_vr = "var_right",
+                            scale = scale, data_path = data_path)[-1]
+
+  # Prepare for merge, keep attributes
+  prev_attr_vl <- attributes(data_vl)
+  prev_attr_vl <- prev_attr_vl[!names(prev_attr_vl) %in% c("names", "row.names", "class")]
+  prev_attr_vr <- attributes(data_vr)
+  prev_attr_vr <- prev_attr_vr[!names(prev_attr_vr) %in% c("names", "row.names", "class")]
+
+  # Merge
   data <- cbind(data_vl, data_vr)
+
+  # Keep the previous attributes
+  for (i in names(prev_attr_vl)) {
+    attr(data, i) <- prev_attr_vl[[i]]
+  }
+  for (i in names(prev_attr_vr)) {
+    attr(data, i) <- prev_attr_vr[[i]]
+  }
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # Add the `group` for the map colouring
   data$var_left_q3 <- ntile(data$var_left, 3)
@@ -415,10 +436,12 @@ filter_region <- function(data, scale, region) {
 }
 
 #' @describeIn data_get The default method.
+#' @param vr_vl <`character`> Is the parent data coming from the var_left
+#' or var_right? How should it be renamed.
 #' @export
 data_get.default <- function(vars, scale, region = NULL,
                              scales_as_DA = c("building", "street"),
-                             data_path = get_data_path(), ...) {
+                             data_path = get_data_path(), vr_vl, ...) {
 
   # Check if `vars` has been entered without being subset from `vars_build()`
   if (all(c("vars", "time") %in% names(vars))) {
@@ -440,7 +463,7 @@ data_get.default <- function(vars, scale, region = NULL,
   data <- filter_region(data = data, scale = scale, region = region)
 
   # To keep it constant, rename with var_left
-  names(data) <- gsub(var, "var_left", names(data))
+  names(data) <- gsub(var, vr_vl, names(data))
 
   # Return
   return(data)

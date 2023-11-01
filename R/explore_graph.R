@@ -362,7 +362,7 @@ explore_graph.delta_bivar <- function(vars, select_id, scale, data, time,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale
+    data = data, lang = lang, scale = scale, time = time, ...
   )
 
   # Color as function

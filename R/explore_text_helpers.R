@@ -237,7 +237,7 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
   # Grab the parent data, usually through data_get. If it fails, try to grab
   # the data from the global scale in the global environment (this is useful for
   # place explorer generation.)
-  parent_data <- tryCatch(data_get(parent_string, scale = scale),
+  parent_data <- tryCatch(data_get(parent_string, scale = scale, vr_vl = col),
     error = function(e) {
       data <- get_from_globalenv(scale)
       if (!parent_string %in% names(data)) {
@@ -491,6 +491,11 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
   vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
   vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
 
+  # If we're in delta_bivar, we shouldn't be grabbing the correlation with the
+  # time, but the correlation between the two deltas variables.
+  if (length(vl_col) == 2) vl_col <- "var_left"
+  if (length(vr_col) == 2) vr_col <- "var_right"
+
   # Correlation
   corr <- stats::cor(data[[vl_col]], data[[vr_col]], use = "complete.obs")
   corr_string <- sprintf(
@@ -512,6 +517,11 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data, time,
   # Match schema
   vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
   vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
+
+  # If we're in delta_bivar, we shouldn't be grabbing the correlation with the
+  # time, but the correlation between the two deltas variables.
+  if (length(vl_col) == 2) vl_col <- "var_left"
+  if (length(vr_col) == 2) vr_col <- "var_right"
 
   # Correlation
   corr <- stats::cor(data[[vl_col]], data[[vr_col]], use = "complete.obs",

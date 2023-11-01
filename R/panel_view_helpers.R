@@ -144,6 +144,7 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 #' function.
 #' @param dat <`data.frame`> The data frame containing the columns to be
 #' renamed.
+#' @param time <`named list`>
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #' @param ... Additional arguments to be passed to the underlying methods.
@@ -151,18 +152,20 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 #' @return A list with data frame with renamed columns and a list of column
 #' names that need styling.
 #' @export
-panel_view_rename_cols <- function(vars, dat, lang = NULL, ...) {
+panel_view_rename_cols <- function(vars, dat, time, lang = NULL, ...) {
   UseMethod("panel_view_rename_cols", vars)
 }
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.q5 <- function(vars, dat, lang = NULL, ...) {
-  # Update column name
-  time <- var_get_time(vars$var_left)
+panel_view_rename_cols.q5 <- function(vars, dat, time, lang = NULL, ...) {
+  # Construct column name
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
-  title <- sprintf("%s (%s)", title, time)
-  names(dat)[names(dat) == vars$var_left] <- title
+  title <- sprintf("%s (%s)", title, time$var_left)
+
+  # Rename column
+  col <- sprintf("%s_%s", vars$var_left, time$var_left)
+  names(dat)[names(dat) == col] <- title
 
   # Prepare the colum names for styling
   title_vars <- structure(title, class = class(vars$var_left))
@@ -173,7 +176,7 @@ panel_view_rename_cols.q5 <- function(vars, dat, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @param time <`named list`>
 #' @export
-panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, time, ...) {
+panel_view_rename_cols.delta <- function(vars, dat, time, lang = NULL, ...) {
   # Titles
   vars_sep <- var_get_info(var = vars$var_left,
                            what = "var_short",
@@ -200,16 +203,17 @@ panel_view_rename_cols.delta <- function(vars, dat, lang = NULL, time, ...) {
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.bivar <- function(vars, dat, lang = NULL, ...) {
-  # Update column name
-  time <- var_get_time(unlist(vars))
+panel_view_rename_cols.bivar <- function(vars, dat, time, lang = NULL, ...) {
+  # Construct column name
   vars_sep <- sapply(vars, var_get_info,
     what = "var_short",
     translate = TRUE, lang = lang
   )
   new_names <- sprintf("%s (%s)", vars_sep, time)
 
-  names(dat)[names(dat) %in% vars] <- new_names
+  # Rename column
+  col <- sprintf("%s_%s", vars, time)
+  names(dat)[names(dat) %in% col] <- new_names
 
   # Prepare the column names for styling
   title_vars <- structure(new_names[1], class = class(vars$var_left))
@@ -224,7 +228,7 @@ panel_view_rename_cols.bivar <- function(vars, dat, lang = NULL, ...) {
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
+panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...) {
   # Update column name
   time <- lapply(vars, var_get_time)
   vars_sep <- lapply(vars, var_get_info,
@@ -267,7 +271,7 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, lang = NULL, ...) {
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, lang = NULL, ...) {
+panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, time, lang = NULL, ...) {
   # Update column name
   time <- lapply(vars, var_get_time)
   vars_sep <- lapply(vars, var_get_info,

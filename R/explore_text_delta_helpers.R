@@ -40,9 +40,10 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
                                        time, scale, data, lang, ...) {
 
   # Grab values for single years. Allow for `apply`
-  times <- sapply(time$var_left, \(x) list(var_left = x),
+  var_lr <- sprintf("var_%s", left_right)
+  times <- sapply(time[[var_lr]], \(x) setNames(list(x), var_lr),
                   simplify = FALSE, USE.NAMES = TRUE)
-  names(times) <- time$var_left
+  names(times) <- time[[var_lr]]
 
   # If there is no selection
   if (is.na(select_id)) {
@@ -77,7 +78,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
           select_id = NA,
           data = data,
           scale = scale,
-          col = sprintf("var_%s", left_right),
+          col = var_lr,
           lang = lang,
           time = t
         )
@@ -117,7 +118,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     var = var,
     data = data,
     select_id = select_id,
-    col = "var_left",
+    col = var_lr,
     lang = lang,
     time_col = times[[1]]
   )$rank_chr
@@ -126,7 +127,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     var = var,
     data = data,
     select_id = select_id,
-    col = "var_left",
+    col = var_lr,
     lang = lang,
     time_col = times[[2]]
   )$rank_chr
@@ -143,7 +144,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
         select_id = select_id,
         data = data,
         scale = scale,
-        col = sprintf("var_%s", left_right),
+        col = var_lr,
         lang = lang,
         time = t
       )
@@ -179,9 +180,9 @@ explore_text_delta_exp.default <- function(var, region, select_id,
   }
 
   # Iterate over the two dates:
-  times <- sapply(time$var_left, \(x) list(var_left = x),
+  times <- sapply(time[[sprintf("var_%s", left_right)]], \(x) list(var_left = x),
                   simplify = FALSE, USE.NAMES = TRUE)
-  names(times) <- time$var_left
+  names(times) <- time[[sprintf("var_%s", left_right)]]
 
   # Grab the region values
   region_values <-
