@@ -34,6 +34,6 @@ explore_graph_labels.delta <- function(vars, lang = NULL, time, ...) {
 
 #' @rdname explore_graph_labels
 #' @export
-explore_graph_labels.default <- function(vars, lang = NULL, ...) {
-  legend_labels(vars = vars, lang = lang)[[1]]
+explore_graph_labels.default <- function(vars, lang = NULL, time, ...) {
+  legend_labels(vars = vars, lang = lang, time = time, ...)[[1]]
 }

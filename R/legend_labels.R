@@ -126,7 +126,7 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
 
 #' @describeIn legend_labels delta_bivar method
 #' @export
-legend_labels.delta_bivar <- function(vars, lang = NULL, ...) {
+legend_labels.delta_bivar <- function(vars, lang = NULL, time, ...) {
 
   title_left <-
     var_get_title(

@@ -68,16 +68,20 @@ test_that("legend_render.delta  works", {
 #   expect_error(print(p), NA)
 # })
 
-# test_that("legend_render.delta_bivar  works", {
-#   vars <- vars_build(
-#     var_left = c("housing_tenant_2006", "housing_tenant_2016"),
-#     var_right = c("alp_2006", "alp_2016"), df = "city_CSD"
-#   )
-#   data <- data_get(vars, df = "city_CSD")
-#   p <- legend_render(vars, df = "city_CSD", data = data, font_family = NULL)
-#   expect_error(p, NA)
-# })
-#
+test_that("legend_render.delta_bivar  works", {
+  vars <- vars_build("housing_tenant", var_right = "alp",
+                     scale = "DA", time = c(2001, 2021))
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars, time = time, scale = "DA", region = "city")
+
+  p <- legend_render(vars, scale = "DA", time = time,
+                     data = data, font_family = NULL)
+  expect_error(p, NA)
+  expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
+  expect_equal(p$labels$fill, "fill")
+})
+
 # test_that("legend_render.bivar_ldelta_rq3  works", {
 #   vars <- vars_build(
 #     var_left = c("housing_tenant_2006", "housing_tenant_2016"),

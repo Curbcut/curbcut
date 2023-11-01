@@ -608,7 +608,7 @@ legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
   leg_info <- legend_get_info(vars,
     lang = lang, font_family = font_family,
     scales_as_DA = scales_as_DA, scale = scale,
-    data = data, ...
+    data = data, time = time, ...
   )
 
   # Prepare the grid's labels location and the colours

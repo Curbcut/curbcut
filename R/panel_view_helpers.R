@@ -29,7 +29,11 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   # If var_right is in the data, subset it too
   if (sum(grepl("var_right_", names(dat))) > 0) {
     vl_col <- match_schema_to_col(data = dat, time = time)
+    vl_col <- c(vl_col, "var_left") # Keep also `delta` if present
+    vl_col <- vl_col[which(vl_col %in% names(dat))]
     vr_col <- match_schema_to_col(data = dat, time = time, col = "var_right")
+    vr_col <- c(vr_col, "var_right") # Keep also `delta` if present
+    vr_col <- vr_col[which(vl_col %in% names(dat))]
     dat <- dat[c("ID", vl_col, vr_col)]
     # names(dat)[c(2:3)] <- c("var_left", "var_right")
   } else {
@@ -230,38 +234,33 @@ panel_view_rename_cols.bivar <- function(vars, dat, time, lang = NULL, ...) {
 #' @export
 panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...) {
   # Update column name
-  time <- lapply(vars, var_get_time)
-  vars_sep <- lapply(vars, var_get_info,
-    what = "var_short",
-    translate = TRUE, lang = lang
+  vars_sep <- sapply(vars, var_get_info,
+                     what = "var_short",
+                     translate = TRUE, lang = lang
   )
-  new_names <- mapply(\(var, name, year) {
-    sprintf("%s (%s)", name, year)
-  }, vars, vars_sep, time, SIMPLIFY = FALSE)
-
-  var_labels <- legend_labels(vars, lang = lang)[[1]]
-  new_names[[2]] <- c(new_names[[2]], var_labels$x)
-  new_names[[1]] <- c(new_names[[1]], var_labels$y)
+  new_names <- mapply(\(v, t) {
+    c(sprintf("%s (%s)", v, t),
+      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x)
+  }, vars_sep, time, SIMPLIFY = FALSE) |> unlist()
 
   var_codes <- sapply(vars, var_get_info, what = "var_code")
   var_codes <- paste0(var_codes, collapse = "|")
-
   names(dat)[grepl(var_codes, names(dat))] <- unlist(new_names)
 
   # Prepare the colum names for styling
   title_vars1 <- lapply(
-    new_names$var_left[1:2],
+    new_names[1:2],
     \(x) structure(x, class = class(vars$var_left))
   )
-  variation1 <- structure(new_names$var_left[3], class = "pct")
-  title_vars1 <- c(title_vars1, list(variation1))
+  variation1 <- structure(new_names[3], class = "pct")
+  title_vars1 <- c(unname(title_vars1), list(variation1))
 
   title_vars2 <- lapply(
-    new_names$var_right[1:2],
+    new_names[4:5],
     \(x) structure(x, class = class(vars$var_right))
   )
-  variation2 <- structure(new_names$var_right[3], class = "pct")
-  title_vars2 <- c(title_vars2, list(variation2))
+  variation2 <- structure(new_names[6], class = "pct")
+  title_vars2 <- c(unname(title_vars2), list(variation2))
 
   title_vars <- c(title_vars1, title_vars2)
 
@@ -530,19 +529,15 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
 #' @describeIn panel_view_prepare_text The method for delta_bivar.
 #' @export
 panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = NULL, ...) {
-  # Title
-  time <- lapply(vars, var_get_time)
-  vars_sep <- lapply(vars, var_get_info,
-    what = "var_short",
-    translate = TRUE, lang = lang
+  # Titles
+  vars_sep <- sapply(vars, var_get_info,
+                     what = "var_short",
+                     translate = TRUE, lang = lang
   )
-  new_names <- mapply(\(var, name, year) {
-    sprintf("%s (%s)", name, year)
-  }, vars, vars_sep, time, SIMPLIFY = FALSE)
-
-  var_labels <- legend_labels(vars, lang = lang)[[1]]
-  new_names[[2]] <- c(new_names[[2]], var_labels$x)
-  new_names[[1]] <- c(new_names[[1]], var_labels$y)
+  new_names <- mapply(\(v, t) {
+    c(sprintf("%s (%s)", v, t),
+      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x)
+  }, vars_sep, time, SIMPLIFY = FALSE) |> unlist()
 
   # Grab the column names
   var_codes <- sapply(vars, var_get_info, what = "var_code")
@@ -576,15 +571,20 @@ panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = N
       what = "explanation",
       translate = TRUE, lang = lang
     )
-    times <- var_codes[grepl(code, var_codes)][1:2] |> var_get_time()
+
+    v <- gsub("_variation$", "", x)
+    t <- time[[which(v == vars)]]
+
     sprintf(
       cc_t("the change in %s between %s and %s", lang = lang),
-      exp, time[1], times[2]
+      exp, t[1], t[2]
     )
   })
 
-  # Get the text for the single left variable
-  titles_texts <- mapply(\(title, var, explanation, title_color) {
+
+
+  # Get the text for every columns
+  titles_texts <- mapply(\(title, var, explanation, title_color, t) {
     panel_view_prepare_text_helper(
       scale = scale,
       var = var,
@@ -592,9 +592,11 @@ panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = N
       title = title,
       explanation = explanation,
       title_color = title_color,
-      lang = lang
+      lang = lang,
+      time_col = t
     )
-  }, unlist(new_names), title_vars, explanations, title_colours)
+  }, new_names, title_vars, explanations, title_colours,
+  c(time$var_left, "", time$var_right, ""))
 
   # Return
   return(titles_texts)

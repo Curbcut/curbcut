@@ -126,27 +126,27 @@ test_that("legend_breaks.bivar works", {
   expect_true(length(brks$y) == 4)
 })
 
-# test_that("legend_breaks.delta_bivar works", {
-#   vars <- vars_build(
-#     var_left = c("housing_rent_2006", "housing_rent_2016"),
-#     var_right = c(
-#       "housing_tenant_2006",
-#       "housing_tenant_2016"
-#     ),
-#     df = "city_CSD"
-#   )
-#   data <- data_get(
-#     vars = vars,
-#     df = "city_CSD"
-#   )
-#   expect_equal(
-#     legend_breaks(vars, data = data),
-#     list(
-#       x = c("-8.27%", "-4.75%", "-1.42%", "4.11%"),
-#       y = c(
-#         "20.93%",
-#         "26.08%", "31.48%", "38.09%"
-#       )
-#     )
-#   )
-# })
+test_that("legend_breaks.delta_bivar works", {
+  vars <- vars_build(
+    var_left = "housing_tenant",
+    var_right = "edu_no_degree",
+    scale = "DA",
+    time = c(1996, 2021))
+  time <- vars$time
+  vars <- vars$vars
+
+  data <- data_get(vars, scale = "CSD", region = "CMA", time = time)
+
+  brks <- legend_breaks(vars, data = data, scale = "city")
+
+  expect_true(brks$x[1] < brks$x[2])
+  expect_true(brks$y[1] < brks$y[2])
+  expect_equal(
+    length(brks$x),
+    length(brks$y)
+  )
+  expect_true(all(endsWith(brks$x, "%")))
+  expect_true(all(endsWith(brks$y, "%")))
+  expect_true(length(brks$x) == 4)
+  expect_true(length(brks$y) == 4)
+})

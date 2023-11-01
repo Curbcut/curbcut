@@ -179,10 +179,11 @@ explore_text_delta_exp.default <- function(var, region, select_id,
     exp <- cc_t(out, lang = lang)
   }
 
-  # Iterate over the two dates:
-  times <- sapply(time[[sprintf("var_%s", left_right)]], \(x) list(var_left = x),
+  # Grab values for single years. Allow for `apply`
+  var_lr <- sprintf("var_%s", left_right)
+  times <- sapply(time[[var_lr]], \(x) setNames(list(x), var_lr),
                   simplify = FALSE, USE.NAMES = TRUE)
-  names(times) <- time[[sprintf("var_%s", left_right)]]
+  names(times) <- time[[var_lr]]
 
   # Grab the region values
   region_values <-
@@ -193,7 +194,7 @@ explore_text_delta_exp.default <- function(var, region, select_id,
         select_id = select_id,
         data = data,
         scale = scale,
-        col = sprintf("var_%s", left_right),
+        col = var_lr,
         lang = lang,
         time = t
       )
