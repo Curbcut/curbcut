@@ -621,8 +621,12 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
     return(NULL)
   }
 
+  # Construct the vl and vr columns. If in delta mode, we need to grab the
+  # delta columns instead of the time columns.
   vl <- sprintf("var_left_%s", time$var_left)
+  if (length(vl) == 2) vl <- "var_left"
   vr <- sprintf("var_right_%s", time$var_right)
+  if (length(vl) == 2) vl <- "var_right"
 
   out <- lapply(c(vl, vr), \(col) {
     if (!col %in% names(data)) return(NULL)

@@ -238,10 +238,10 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...
                      what = "var_short",
                      translate = TRUE, lang = lang
   )
-  new_names <- mapply(\(v, t) {
+  new_names <- mapply(\(v, t, x_y) {
     c(sprintf("%s (%s)", v, t),
-      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x)
-  }, vars_sep, time, SIMPLIFY = FALSE) |> unlist()
+      legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]][[x_y]])
+  }, vars_sep, time, c("y", "x"), SIMPLIFY = FALSE) |> unlist()
 
   var_codes <- sapply(vars, var_get_info, what = "var_code")
   var_codes <- paste0(var_codes, collapse = "|")
@@ -252,14 +252,14 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...
     new_names[1:2],
     \(x) structure(x, class = class(vars$var_left))
   )
-  variation1 <- structure(new_names[3], class = "pct")
+  variation1 <- structure(new_names[[3]], class = "pct")
   title_vars1 <- c(unname(title_vars1), list(variation1))
 
   title_vars2 <- lapply(
     new_names[4:5],
     \(x) structure(x, class = class(vars$var_right))
   )
-  variation2 <- structure(new_names[6], class = "pct")
+  variation2 <- structure(new_names[[6]], class = "pct")
   title_vars2 <- c(unname(title_vars2), list(variation2))
 
   title_vars <- c(title_vars1, title_vars2)

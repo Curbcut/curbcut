@@ -105,8 +105,15 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
   cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr)
   data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
 
-  # Calculate the value
-  data[[vl_vr]] <- (data[[3]] - data[[2]]) / data[[2]]
+  # Calculate the relative difference
+  result <- (data[[3]] - data[[2]]) / data[[2]]
+  # Identify positions where data[[3]] is equal to data[[2]] and neither are NAs
+  equal_non_na <- !is.na(data[[3]]) & !is.na(data[[2]]) & data[[3]] == data[[2]]
+  # Set result to 0 where conditions are met
+  result[equal_non_na] <- 0
+
+  # Replace NaNs and infinite values with NA
+  data[[vl_vr]] <- result
   data[[vl_vr]] <- replace(data[[vl_vr]], is.na(data[[vl_vr]]), NA)
   data[[vl_vr]] <- replace(data[[vl_vr]], is.infinite(data[[vl_vr]]), NA)
 

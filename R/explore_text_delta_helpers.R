@@ -327,7 +327,11 @@ explore_text_delta_change <- function(var, exp_vals, ...) {
 explore_text_delta_change.pct <- function(var, exp_vals, lang = NULL, ...) {
   # Calculate the absolute and variation changes
   abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2]) * 100
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  pct_change <- if (all(exp_vals$region_vals == 0)) {
+    0
+  } else {
+    (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  }
 
   # Get the percentage change as percentage points
   abs_change_string <- convert_unit(x = abs_change)
@@ -348,7 +352,11 @@ explore_text_delta_change.pct <- function(var, exp_vals, lang = NULL, ...) {
 explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
   # Calculate the absolute and variation changes
   abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  pct_change <- if (all(exp_vals$region_vals == 0)) {
+    0
+  } else {
+    (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  }
 
   # Get the absolute change as dollar
   abs_change_string <- convert_unit.dollar(x = abs_change)
@@ -376,7 +384,11 @@ explore_text_delta_change.ind <- function(var, exp_vals, lang, ...) {
 explore_text_delta_change.default <- function(var, exp_vals, ...) {
   # Calculate the absolute and variation changes
   abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  pct_change <- if (all(exp_vals$region_vals == 0)) {
+    0
+  } else {
+    (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
+  }
 
   # Get the percentage change as percentage points
   abs_change_string <- convert_unit(var, x = abs_change)

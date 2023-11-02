@@ -74,10 +74,10 @@ r_init <- function(server_session,
       page <- modules[modules$id == i, ]
       default_var <- page$default_var
       avail_scale_combinations <- page$avail_scale_combinations[[1]]
+      mzl <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
+      scale <- names(mzl)[1]
       # If there are var_left in the `modules`
       if (!is.na(default_var)) {
-        mzl <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
-        scale <- names(mzl)[1]
         time <- page$dates[[1]]
         region <- page$regions[[1]][1]
         if (!is.null(time)) {
@@ -104,7 +104,7 @@ r_init <- function(server_session,
       } else {
         r[[i]] <- shiny::reactiveValues(
           select_id = shiny::reactiveVal(NA),
-          df = shiny::reactiveVal(df),
+          scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),
           poi = shiny::reactiveVal(NULL),

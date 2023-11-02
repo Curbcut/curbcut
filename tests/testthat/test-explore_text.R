@@ -61,6 +61,7 @@ test_that("q5 explore works without a selection", {
 
 test_that("q5 explore works with selections", {
   test_explores(var_right = " ", select_id = "borough_2", region = "city", scale = "borough")
+  test_explores(var_right = " ", select_id = "2466092", region = "CMA", scale = "CSD")
   test_explores(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
 })
 
@@ -111,6 +112,7 @@ test_that("q5 explore works without a selection", {
 })
 
 test_that("q5 explore works with selections", {
+  test_explores_delta(var_right = " ", select_id = "2471095", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = " ", select_id = "borough_5", region = "city", scale = "borough")
   test_explores_delta(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
 })
@@ -125,6 +127,7 @@ test_that("delta explore works without a selection", {
 
 test_that("delta explore works with selections", {
   test_explores_delta(var_right = "lst", select_id = "2466023", scale = "CSD", region = "CMA")
+  test_explores_delta(var_right = "iden_imm", select_id = "2471095", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = "inc_limat", select_id = "b10000763", scale = "building", region = "city")
 })
 
