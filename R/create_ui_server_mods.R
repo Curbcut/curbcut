@@ -44,7 +44,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
             id = shiny::NS(id, id),
             var_list = dropdown_make(vars = " ", compare = TRUE)
           ),
-          shiny::hr(),
           geography_UI(shiny::NS(id, id), regions = regions,
                        avail_scale_combinations = avail_scale_combinations),
           shiny::hr(),

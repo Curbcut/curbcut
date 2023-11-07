@@ -178,6 +178,7 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
     shiny::div(
       class = "geography-panel",
       id = shiny::NS(id, "geo_div"),
+      shiny::hr(),
       shiny::div(
         class = "shiny-split-layout sidebar-section-title",
         shiny::div(

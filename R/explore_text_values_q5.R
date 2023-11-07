@@ -386,7 +386,7 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
                                          col = "var_left", lang = lang, time, ...) {
   explore_text_values_q5.sqkm(
     var = var, region = region, scale = scale, select_id = select_id,
-    data = data, scale = scale, col = col, lang = lang, time = time, ...
+    data = data, col = col, lang = lang, time = time, ...
   )
 }
 

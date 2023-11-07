@@ -57,7 +57,12 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
 
   # Read the data
-  qs::qread(path)
+  tryCatch(qs::qread(path), error = function(e) {
+    stop(glue::glue_safe(
+      "Could not read data from `{path}`. ",
+      "Please check that the file exists and is readable."
+    ))
+  })
 }
 
 #' Calculate the percentage change between two variables over two years
@@ -464,7 +469,11 @@ data_get.default <- function(vars, scale, region = NULL,
   if (var == "households") var <- "private_households"
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_qs(var = var, scale = scale, data_path = data_path)
+  data <- if (var == "area") {
+    get_from_globalenv(scale)[c("ID", "area")]
+  } else {
+    data_get_qs(var = var, scale = scale, data_path = data_path)
+  }
 
   # Filter by region
   data <- filter_region(data = data, scale = scale, region = region)

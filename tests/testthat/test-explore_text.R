@@ -5,7 +5,7 @@ test_explores_helper <- function(var_left, var_right, region, scale, time, selec
   data <- data_get(vars, region = region, scale = scale, time = time_)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time_, zoom_levels = mzl_CSD_CT_DA_building
+    data = data, time = time_, zoom_levels = mzl_borough_CT_DA_building
   )
   expect_equal(class(actual), "character")
   expect_equal(length(actual), 1)
@@ -31,23 +31,35 @@ test_explores <- function(var_right, select_id, region, scale) {
     select_id = select_id, time = 2021
   )
 
-  # # Ind ordinal
-  # test_explores_helper(var_left = "access_foot_food_grocery)20",
+  # Count
+  test_explores_helper(var_left = "crash_ped",
+                       var_right = var_right, region = region, scale = scale,
+                       select_id = select_id, time = 2021
+  )
+
+  # Ind ordinal
+  test_explores_helper(var_left = "climate_drought",
+                       var_right = var_right, region = region, scale = scale,
+                       select_id = select_id, time = 2021
+  )
+
+  # # Ind ordinal, multiple schemas
+  # test_explores_helper(var_left = "access_foot_food_grocery",
   #                      var_right = var_right,
   #                      region = region, scale = "DA", select_id = select_id, time = 2023
   # )
-  #
-  # # sqkm
-  # test_explores_helper(var_left = "alley_sqkm",
-  #   var_right = var_right, region = "city", scale = scale,
-  #   select_id = select_id, time = 2023
-  # )
-  #
-  # # per1k
-  # test_explores_helper(var_left = "alley_per1k",
-  #   var_right = var_right, region = "city", scale = scale,
-  #   select_id = select_id, time = 2023
-  # )
+
+  # sqkm
+  test_explores_helper(var_left = "alley_sqkm",
+    var_right = var_right, region = "city", scale = "CT",
+    select_id = if (is.na(select_id)) NA else "4620225.00", time = 2023
+  )
+
+  # per1k
+  test_explores_helper(var_left = "alley_per1k",
+    var_right = var_right, region = "city", scale = "DA",
+    select_id = if (is.na(select_id)) NA else "24662027", time = 2023
+  )
 }
 
 
@@ -103,6 +115,18 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   test_explores_helper(var_left = "alp", time =  c(2016, 2021),
     var_right = var_right,  scale = scale, region = region,
     select_id = select_id
+  )
+
+  # Count
+  test_explores_helper(var_left = "crash_ped",
+                       var_right = var_right, region = region, scale = scale,
+                       select_id = select_id, time = c(2015, 2020)
+  )
+
+  # Ind ordinal
+  test_explores_helper(var_left = "climate_drought",
+                       var_right = var_right, region = region, scale = scale,
+                       select_id = select_id, time = c(2015, 2022)
   )
 }
 

@@ -682,12 +682,15 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' @param schema <`named list`> A list containing the schema information, specifically the
 #' 'time' attribute. Typically obtained, and defaulted, as an attribute to
 #' `data` (output of \code{\link{get_data}}).
+#' @param closest_time <`logical`> Should the closest time be used if the exact
+#' time is not found? Default is `FALSE`.
 #'
 #' @return Returns the name of the variable that corresponds to the given
 #' schema as a character string.
 #' @export
 match_schema_to_col <- function(data, time, col = "var_left",
-                                schema = attr(data, sprintf("schema_%s", col))) {
+                                schema = attr(data, sprintf("schema_%s", col)),
+                                closest_time = FALSE) {
 
   # Default data_get method does not return schema_*
   if (is.null(schema)) {
@@ -714,10 +717,21 @@ match_schema_to_col <- function(data, time, col = "var_left",
   pv <- grep(schema$time, names(data), value = TRUE)
   pv <- grep(col, pv, value = TRUE)
 
+  # Extract available time
+  avail_time <- s_extract(schema$time, pv) |> as.numeric()
+
   # Which var out of those correspond to the right time
   # NDS: this now only works with time. Need to make sure if works dynamically
   # for whatever is fed in the schema.
-  var <- pv[s_extract(schema$time, pv) %in% time_col]
+  var <- pv[avail_time %in% time_col]
+
+  if (closest_time) {
+    if (length(var) == 0) {
+      # Get the closest years
+      closest_t <- which.min(abs(avail_time - time_col))
+      var <- pv[closest_t]
+    }
+  }
 
   # Return the var as a character
   return(var)

@@ -67,19 +67,6 @@ region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @describeIn region_value_method The method for dollar variables.
-#' @export
-region_value_method.dollar <- function(var, data_vals, parent_vals, ...) {
-
-  out <- list()
-
-  # Make the region values
-  out$val <- stats::weighted.mean(data_vals, parent_vals, na.rm = TRUE)
-
-  # Return
-  return(out)
-}
-
 #' @describeIn region_value_method The method for count variables.
 #' @export
 region_value_method.count <- function(var, data_vals, parent_vals, ...) {
@@ -122,24 +109,20 @@ region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col
 
 }
 
-#' @describeIn region_value_method The default method.
+#' @describeIn region_value_method The default method (works for dollar, sqkm, per1k, ...).
+#' Simple weighted mean.
 #' @export
-region_value_method.default <- function(var, data_vals, parent_vals, data, time, ...) {
+region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 
-  if (c("sqkm", "per1k", "ppo") %in% class(var)) {
-    stop("Missing method for this class (region_value_method).")
-  }
-# if ("sqkm" %in% type) {
-#   df <- sf:::`[.sf`(df_sf, v)
-#   df$area <- get_area(df)
-#   out$val <- stats::weighted.mean(as.numeric(df[[v]]), as.numeric(df[["area"]]), na.rm = TRUE)
-# }
-# if ("per1k" %in% type) {
-#   df <- df[c(v, "population")]
-#   out$val <- stats::weighted.mean(as.numeric(df[[v]]), as.numeric(df[["population"]]),
-#                                   na.rm = TRUE
-#   )
-# }
+  out <- list()
+
+  # Make the region values
+  out$val <- stats::weighted.mean(data_vals, parent_vals, na.rm = TRUE)
+
+  # Return
+  return(out)
+
+
 # if ("ppo" %in% type) {
 #   df <- df[c(v, "population")]
 #   objects <- df[["population"]] / df[[v]]
@@ -175,14 +158,22 @@ region_value_data_grab <- function(var, data, time, scale, region, col) {
   parent_string <- var_get_info(var, what = "parent_vec")
 
   # Grab parent data
-  parent_data <- data_get(vars = parent_string, scale = scale, region = region,
-                          vr_vl = col)
+  if ("count" %in% class(var)) {
+    parent_vals <- NULL
+  } else {
+    parent_data <- data_get(vars = parent_string, scale = scale, region = region, vr_vl = col)
+    # In the case where there is just one value, no time. Like `area`.
+    if (col %in% names(parent_data)) {
+      parent_vals <- parent_data[[col]]
+    } else {
+      pv_col <- match_schema_to_col(data = parent_data, time = time, col = col, closest_time = TRUE)
+      parent_vals <- parent_data[[pv_col]]
+    }
+  }
 
   # Get the correct column name to draw data from
   current_col <- match_schema_to_col(data = data, time = time, col = col)
   data_vals <- data[[current_col]]
-  pv_col <- match_schema_to_col(data = parent_data, time = time, col = col)
-  parent_vals <- parent_data[[pv_col]]
 
   # Make sure it's all numeric
   data_vals <- as.numeric(data_vals)
