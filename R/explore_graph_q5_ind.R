@@ -1,0 +1,183 @@
+#' Explore Graph Function for `INDEX` type
+#'
+#' This function creates a ggplot for the explore panel of Curbcut, based on the
+#' input parameters, for the index type variables.
+#'
+#' @param vars <`named list`> A list object of variable codes with classes. The
+#' output of \code{\link{vars_build}}.
+#' @param select_id <`character`> A string indicating the ID of the currently
+#' selected region (if any). Usually `r[[id]]$select_id()`
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations. The output of \code{\link{data_get}}.
+#' @param df <`character`> The combination of the region under study and the
+#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' \code{\link{update_scale}}.
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their graph will be the one of their DA.
+#' @param lang <`character`> A character string indicating the language to
+#' translate variable titles to.
+#' @param font_family <`character`> A string specifying the font family for the
+#' plot, default is "acidgrotesk-book".
+#' @param ... Additional arguments passed to the specific method.
+#'
+#' @return A ggplot2 object representing the plot.
+#' @export
+explore_graph_q5_ind <- function(vars, select_id, scale, data, time,
+                                 scales_as_DA = c("building", "street"), lang = NULL,
+                                 font_family = "acidgrotesk-book", ...) {
+  UseMethod("explore_graph_q5_ind", vars)
+}
+
+#' @rdname explore_graph_q5_ind
+#' @export
+explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
+                                        scales_as_DA = c("building", "street"),
+                                        lang = NULL,
+                                        font_family = "acidgrotesk-book", ...) {
+  # Appease R CMD check
+  var_left <- x <- NULL
+
+  # Grab the shared info between the graphs
+  shared_info <- explore_graph_info(
+    vars = vars, font_family = font_family,
+    scales_as_DA = scales_as_DA, select_id = select_id,
+    data = data, lang = lang, scale = scale
+  )
+
+  # Color as function
+  clr_df <- shared_info$colours_dfs$left_5
+  clr <- \(x) clr_df$fill[2:6]
+
+  rcol <- sprintf("var_left_%s", time$var_left)
+
+  # Keep the data inside the breaks
+  vl_breaks <- attr(data, "breaks_var_left")
+  data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
+                                 select_id = shared_info$select_id)
+
+  # Get the scales ggplot function
+  x_scale <- explore_graph_scale(
+    var = vars$var_left,
+    x_y = "x",
+    data_vals = data_inrange[[rcol]],
+    scale = shared_info$treated_scale,
+    lang = lang,
+    limit = if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else vl_breaks
+  )
+
+  # Graph an appropriate number of bins
+  var_left_num <- length(unique(data_inrange[[rcol]]))
+  bin_number <- min(15, ceiling(0.8 * var_left_num))
+
+  # Get the breaks
+  vals <- vl_breaks
+  vals[1] <- -Inf
+  vals[length(vals)] <- Inf
+
+  # Draw the plot
+  plot <-
+    data_inrange[!is.na(data_inrange[[rcol]]), ] |>
+    # remove_outliers_df(cols = c("var_left")) |>
+    ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
+    ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
+                            bins = bin_number
+    ) +
+    ggplot2::binned_scale(
+      aesthetics = "fill",
+      scale_name = "stepsn",
+      palette = clr,
+      breaks = vals
+    ) +
+    x_scale +
+    shared_info$labs +
+    shared_info$theme_default
+
+  # Add selection
+  if (!is.na(shared_info$select_id)) {
+    val <- data_inrange[[rcol]][data_inrange$ID == shared_info$select_id]
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_vline(
+          xintercept = val,
+          colour = "black", linewidth = 1.5
+        )
+    }
+  }
+
+  # Return
+  return(plot)
+}
+
+#' @rdname explore_graph_q5_ind
+#' @export
+explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time,
+                                         scales_as_DA = c("building", "street"),
+                                         lang = NULL,
+                                         font_family = "acidgrotesk-book", ...) {
+  # Appease R CMD check
+  var_left <- occ <- NULL
+
+  # Grab the shared info between the graphs
+  shared_info <- explore_graph_info(
+    vars = vars, font_family = font_family,
+    scales_as_DA = scales_as_DA, select_id = select_id,
+    data = data, lang = lang, scale = scale
+  )
+
+  # Color as function
+  clr_df <- shared_info$colours_dfs$left_5
+  clr <- clr_df$fill[1:6]
+
+  rcol <- sprintf("var_left_%s", time$var_left)
+
+  # Keep the data inside the breaks
+  vl_breaks <- attr(data, "breaks_var_left")
+
+  # Get the scales ggplot function
+  x_scale <- explore_graph_scale(
+    var = vars$var_left,
+    x_y = "x",
+    data_vals = data_inrange[[rcol]],
+    scale = shared_info$treated_scale,
+    lang = lang,
+    breaks = 0:5
+  )
+
+  # Construct the data to make sure all breaks are represented
+  dat <- data[!is.na(data[[rcol]]), ]
+  dat[[rcol]] <- factor(dat[[rcol]], levels = 0:5)
+  dat <- table(dat[[rcol]])
+  dat <- data.frame(
+    var_left = names(dat),
+    occ = as.numeric(dat)
+  )
+  dat$occ <- dat$occ / sum(dat$occ)
+
+  # Draw the plot
+  plot <-
+    dat |>
+    ggplot2::ggplot(ggplot2::aes(x = var_left, y = occ)) +
+    ggplot2::geom_bar(ggplot2::aes(fill = var_left), stat = "identity", width = 1) +
+    ggplot2::scale_fill_manual(breaks = 0:5, values = clr, na.translate = FALSE) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    x_scale +
+    shared_info$labs +
+    shared_info$theme_default
+
+  # Add selection
+  if (!is.na(shared_info$select_id)) {
+    val <- data[[rcol]][data$ID == shared_info$select_id]
+    if (!any(is.na(val))) {
+      plot <-
+        plot +
+        ggplot2::geom_vline(
+          xintercept = val + 1,
+          colour = "black", linewidth = 1.5
+        )
+    }
+  }
+
+  return(plot)
+}

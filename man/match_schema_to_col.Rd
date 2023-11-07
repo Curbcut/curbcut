@@ -8,7 +8,8 @@ match_schema_to_col(
   data,
   time,
   col = "var_left",
-  schema = attr(data, sprintf("schema_\%s", col))
+  schema = attr(data, sprintf("schema_\%s", col)),
+  closest_time = FALSE
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ Can also be a simple numeric.}
 \item{schema}{<\verb{named list}> A list containing the schema information, specifically the
 'time' attribute. Typically obtained, and defaulted, as an attribute to
 \code{data} (output of \code{\link{get_data}}).}
+
+\item{closest_time}{<\code{logical}> Should the closest time be used if the exact
+time is not found? Default is \code{FALSE}.}
 }
 \value{
 Returns the name of the variable that corresponds to the given

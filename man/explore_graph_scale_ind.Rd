@@ -10,7 +10,15 @@ explore_graph_scale_ind(var, x_y, scale, limits, lang = NULL, ...)
 
 \method{explore_graph_scale_ind}{scalar}(var, x_y, scale, limits, lang = NULL, data_vals, ...)
 
-\method{explore_graph_scale_ind}{ordinal}(var, x_y, scale, limits, lang = NULL, data, ...)
+\method{explore_graph_scale_ind}{ordinal}(
+  var,
+  x_y,
+  scale,
+  limits = NULL,
+  lang = NULL,
+  breaks,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable with its type as a class, either "scale",

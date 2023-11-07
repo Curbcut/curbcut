@@ -116,7 +116,8 @@ explore_graph_scale_ind <- function(var, x_y, scale, limits, lang = NULL, ...) {
 
 #' @describeIn explore_graph_scale_ind scalar method for index values
 #' @export
-explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL, data_vals, ...) {
+explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
+                                           data_vals, ...) {
   # Grab the min and max breaks and switch them to numeric. TKTK NOT ON `IND`
   # outliers <- find_outliers(data_vals)
   # if (length(outliers) > 0) data_vals <- data_vals[-outliers]
@@ -143,8 +144,8 @@ explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
 
 #' @describeIn explore_graph_scale_ind ordinal method for index values
 #' @export
-explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits, lang = NULL, data, ...) {
-  breaks <- attr(data, "breaks")
+explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits = NULL,
+                                            lang = NULL, breaks, ...) {
   labels <- c(NA_character_, legend_breaks.q5_ind(var, scale = scale, lang = lang))
   names(labels) <- as.character(breaks)
 
@@ -152,7 +153,6 @@ explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits, lang = NULL
   range <- if (is.null(limits)) NULL else range(limits)
   list(do.call(eval(parse(text = scale)), list(
     labels = labels,
-    breaks = breaks,
-    limits = range
+    breaks = breaks
   )))
 }

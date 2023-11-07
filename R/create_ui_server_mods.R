@@ -292,13 +292,13 @@ create_ui_server_mods <- function(modules, pos = 1) {
         zoom_levels = r[[id]]$zoom_levels
       )
 
-      # # Bookmarking
-      # bookmark_server(
-      #   id = id,
-      #   r = r,
-      #   select_id = r[[id]]$select_id,
-      #   map_viewstate = map_viewstate
-      # )
+      # Bookmarking
+      bookmark_server(
+        id = id,
+        r = r,
+        select_id = r[[id]]$select_id,
+        map_viewstate = map_viewstate
+      )
 
       # Change view
       panel_view_server(

@@ -59,8 +59,10 @@ data_get(
 \method{data_get}{bivar_ldelta_rq3}(
   vars,
   scale,
+  region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  time,
   ...
 )
 

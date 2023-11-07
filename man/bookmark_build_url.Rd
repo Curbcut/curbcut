@@ -4,14 +4,11 @@
 \alias{bookmark_build_url}
 \title{Build a bookmarkable URL}
 \usage{
-bookmark_build_url(id, region, lang = NULL, widgets, map_viewstate, select_id)
+bookmark_build_url(id, lang = NULL, widgets, map_viewstate, select_id)
 }
 \arguments{
 \item{id}{<\code{character}> A string or numeric value representing the ID of the
 selected page.}
-
-\item{region}{<\code{character}> A string or numeric value representing the
-selected region.}
 
 \item{lang}{<\verb{¸character}> An optional string value representing the selected
 language. Default is NULL.}
@@ -31,7 +28,7 @@ A character string representing the bookmarkable URL.
 \description{
 This function builds a URL that can be used to bookmark the state of any
 module of Curbcut. The URL includes information about the selected region, ID,
-language, widgets, map viewstate, elected ID, and \code{df}. If the page is in the
+language, widgets, map viewstate, elected ID, ... If the page is in the
 module's table, it makes the value a numeric. If the region is in the regions
 dictionary, it makes the region a numeric as well. It also makes the value
 of pickers numeric if they are present in the \code{variables} table, all to shorten

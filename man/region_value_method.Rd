@@ -3,7 +3,6 @@
 \name{region_value_method}
 \alias{region_value_method}
 \alias{region_value_method.pct}
-\alias{region_value_method.dollar}
 \alias{region_value_method.count}
 \alias{region_value_method.ind}
 \alias{region_value_method.default}
@@ -13,13 +12,11 @@ region_value_method(var, data_vals, parent_vals, ...)
 
 \method{region_value_method}{pct}(var, data_vals, parent_vals, ...)
 
-\method{region_value_method}{dollar}(var, data_vals, parent_vals, ...)
-
 \method{region_value_method}{count}(var, data_vals, parent_vals, ...)
 
 \method{region_value_method}{ind}(var, data_vals, parent_vals, data, time, col, ...)
 
-\method{region_value_method}{default}(var, data_vals, parent_vals, data, time, ...)
+\method{region_value_method}{default}(var, data_vals, parent_vals, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest, with its class
@@ -53,12 +50,11 @@ indicators.
 \itemize{
 \item \code{region_value_method(pct)}: The method for percentage variables.
 
-\item \code{region_value_method(dollar)}: The method for dollar variables.
-
 \item \code{region_value_method(count)}: The method for count variables.
 
 \item \code{region_value_method(ind)}: The method for \code{ind} variables.
 
-\item \code{region_value_method(default)}: The default method.
+\item \code{region_value_method(default)}: The default method (works for dollar, sqkm, per1k, ...).
+Simple weighted mean.
 
 }}

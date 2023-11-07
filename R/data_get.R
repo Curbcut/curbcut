@@ -317,19 +317,26 @@ data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("bui
 #' @describeIn data_get_delta_fun The method for ordinal variables.
 data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                        data_path = get_data_path(), time, ...) {
+
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Retrieve
-  data <- data_get_delta(
-    var = vars$var_left, scale = scale,
-    data_path = data_path
-  )
-  names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
+  # Get data
+  data <- data_get_delta(vars = vars, time = time,
+                         scale = scale, data_path = data_path)
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
+
+  # Grab the breaks in the data
+  breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
+
+  # Add the breaks attribute
+  attr(data, "breaks_var_left") <- breaks
 
   # var_left_q5 will go off of bins change. 0 bin change vs 1 bin change vs multiple
   # bin changes.
-  var_left_binchange <- data$var_left_2 - data$var_left_1
+  var_left_binchange <- data[[3]] - data[[2]]
 
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
@@ -388,28 +395,37 @@ data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building
 
 #' @describeIn data_get The method for bivar_ldelta_rq3.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, scale, scales_as_DA = c("building", "street"),
-                                      data_path = get_data_path(), ...) {
-  # Treat certain scales as DA
-  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                      data_path = get_data_path(), time, ...) {
 
-  # Retrieve var_left and add a `q3 column`
-  data_vl <- data_get_delta(
-    var = vars$var_left, scale = scale,
-    data_path = data_path
-  )
-  names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
+  vars <- vars_build("crash_ped", "alp", scale = scale, time = c(2015, 2017))
+  time <- vars$time
+  vars <- vars$vars
+
+  # Reconstruct vars for delta
+  vl_vars <- vars_build(var_left = vars$var_left, scale = scale, time = time$var_left)
+  vl_time <- vl_vars$time
+  vl_vars <- vl_vars$vars
+  data_vl <- data_get(vl_vars, scale = scale, time = vl_time, region = region,
+                      scales_as_DA = scales_as_DA)
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
-  # Normal retrieval for var_right (single value)
-  data_vr <- data_get_qs(vars$var_right, scale, data_path = data_path)[2:3]
-  names(data_vr) <- c("var_right", "var_right_q3")
+  # Reconstruct vars for q3
+  vr_vars <- vars_build(var_left = vars$var_right, scale = scale, time = time$var_right)
+  vr_time <- vr_vars$time
+  vr_vars <- vr_vars$vars
+  data_vr <- data_get(vr_vars, scale = scale, time = vr_time, region = region,
+                      scales_as_DA = scales_as_DA)
+  cv <- match_schema_to_col(data_vr, time = vr_time)
+  data_vr <- data_vr[cv]
+  names(data_vr) <- gsub("var_left", "var_right", names(data_vr))
+  data_vr$var_right_q3 <- ntile(data_vr[[1]], 3)
 
   # Bind vl and vr
   data <- cbind(data_vl, data_vr)
 
   # Create the `group` column for map colouring
-  data$group <- paste(data$var_left_q3, "-", data$var_right_q3)
+  data$group <- sprintf("%s - %s", data$var_left_q3, data$var_right_q3)
 
   # Return
   return(data)

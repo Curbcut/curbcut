@@ -55,7 +55,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
     url <- shiny::reactive({
       bookmark_build_url(
         id = id,
-        region = r$region(),
         lang = r$lang(),
         widgets = widgets(),
         map_viewstate = map_viewstate(),
@@ -72,7 +71,7 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #'
 #' This function builds a URL that can be used to bookmark the state of any
 #' module of Curbcut. The URL includes information about the selected region, ID,
-#' language, widgets, map viewstate, elected ID, and `df`. If the page is in the
+#' language, widgets, map viewstate, elected ID, ... If the page is in the
 #' module's table, it makes the value a numeric. If the region is in the regions
 #' dictionary, it makes the region a numeric as well. It also makes the value
 #' of pickers numeric if they are present in the `variables` table, all to shorten
@@ -80,8 +79,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #'
 #' @param id <`character`> A string or numeric value representing the ID of the
 #' selected page.
-#' @param region <`character`> A string or numeric value representing the
-#' selected region.
 #' @param lang <`¸character`> An optional string value representing the selected
 #' language. Default is NULL.
 #' @param widgets A named list representing the values of the Curbcut widgets present
@@ -92,16 +89,11 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #' the ID of the selected item.
 #'
 #' @return A character string representing the bookmarkable URL.
-bookmark_build_url <- function(id, region, lang = NULL, widgets, map_viewstate,
+bookmark_build_url <- function(id, lang = NULL, widgets, map_viewstate,
                                select_id) {
-  # Make the region a numeric too
-  regions_dictionary <- get_from_globalenv("regions_dictionary")
-  if (region %in% regions_dictionary$region) {
-    region <- which(regions_dictionary$region == region)
-  }
 
   # First string
-  url <- sprintf("/?tb=%s&reg=%s", id, region)
+  url <- sprintf("/?tb=%s", id)
 
   # If language
   if (!is.null(lang)) url <- sprintf("%s&lng=%s", url, lang)

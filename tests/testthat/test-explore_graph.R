@@ -67,19 +67,26 @@ test_explores <- function(var_right, select_id, scale, region) {
     time = 2021, select_id = select_id
   )
 
-  # # sqkm
+  # # Ind ordinal
   # test_explore_graph_helper(
-  #   "alley_sqkm",
-  #   var_right = var_right, scale = scale, region = "city",
-  #   time = 2023, select_id = select_id
+  #   var_left = "climate_drought",
+  #   var_right = var_right, scale = "grid250", region = "island",
+  #   time = 2022, select_id = if (is.na(select_id)) NA else "grid250_1784"
   # )
-  #
-  # # per1k
-  # test_explore_graph_helper(
-  #   "alley_per1k",
-  #   var_right = var_right, scale = scale, region = "city",
-  #   time = 2023, select_id = select_id
-  # )
+
+  # sqkm
+  test_explore_graph_helper(
+    "alley_sqkm",
+    var_right = var_right, scale = scale, region = "city",
+    time = 2023, select_id = select_id
+  )
+
+  # per1k
+  test_explore_graph_helper(
+    "alley_per1k",
+    var_right = var_right, scale = scale, region = "city",
+    time = 2023, select_id = select_id
+  )
 }
 
 
@@ -95,20 +102,6 @@ test_that("q5 explore works with selections", {
   test_explores(var_right = " ", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores(var_right = " ", select_id = "b10000763", scale = "building", region = "city")
 })
-
-# test_that("q5_ind ordinal", {
-#   var_left <- "climate_drought_2022"
-#   df <- "grid_grid250"
-#   var_right <- " "
-#   vars <- vars_build(var_left, var_right = var_right, df = df)
-#   data <- data_get(vars, df = df)
-#   actual <- explore_graph(vars,
-#     region = "grid", select_id = NA, df = df,
-#     data = data
-#   )
-#   expect_true(is.data.frame(actual$data))
-#   expect_true(is.list(actual$labels))
-# })
 
 
 # bivar -------------------------------------------------------------------
@@ -164,6 +157,13 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   test_explore_graph_helper(var_left = "alp", time = c(2016, 2021),
     var_right = var_right, scale = scale, region = region,
     select_id = select_id
+  )
+
+  # Ind ordinal
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = var_right, scale = "grid250", region = "island",
+    time = c(2015, 2022), select_id = if (is.na(select_id)) NA else "grid250_1784"
   )
 }
 
