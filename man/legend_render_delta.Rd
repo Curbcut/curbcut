@@ -33,6 +33,7 @@ legend_render_delta(
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
   scale,
+  data,
   lang = NULL,
   time,
   ...

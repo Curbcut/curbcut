@@ -33,25 +33,27 @@ vars_build <- function(var_left, var_right = " ", scale, time,
 
   # Use var_closest_year() to add the `time` to var_left and var_right
   vl <- var_closest_year(var_left, time)
+  if (!is.list(vl)) vl <- list(var = vl)
   vr <- var_closest_year(var_right, time)
+  if (!is.list(vr)) vr <- list(var = vr)
 
   # Switch scales to DA if necessary
   scale <- treat_to_DA(scales_as_DA, scale)
 
   # Add var left and right measurement variable as classes
   var_left_m <- var_get_info(var_left, "var_measurement",
-    variables = variables
+                             variables = variables
   )[[1]]
   # var_left_m <- var_left_m$measurement[var_left_m$df == df]
   var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
-  class(vl$var) <- c(var_left_m, class(var_left))
+  class(vl$var) <- c(if (!is.na(var_left_m)) var_left_m, class(var_left))
 
   if (var_right != " ") {
     var_right_m <- var_get_info(var_right, "var_measurement",
-      variables = variables
+                                variables = variables
     )[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
-    class(vr$var) <- c(var_right_m, class(var_right))
+    class(vr$var) <- c(if (!is.na(var_right_m)) var_right_m, class(var_right))
   } else {
     var_right_m <- " "
   }

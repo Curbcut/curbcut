@@ -53,31 +53,28 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
   # Keep the data inside the breaks
   vl_breaks <- attr(data, "breaks_var_left")
-  data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
-                                 select_id = shared_info$select_id)
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data_inrange[[rcol]],
+    data_vals = data[[rcol]],
     scale = shared_info$treated_scale,
-    lang = lang,
-    limit = if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else vl_breaks
+    lang = lang
   )
 
   # Graph an appropriate number of bins
-  var_left_num <- length(unique(data_inrange[[rcol]]))
+  var_left_num <- length(unique(data[[rcol]]))
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
   # Get the breaks
-  vals <- vl_breaks
+  vals <- attr(data, "breaks_var_left")
   vals[1] <- -Inf
   vals[length(vals)] <- Inf
 
   # Draw the plot
   plot <-
-    data_inrange[!is.na(data_inrange[[rcol]]), ] |>
+    data[!is.na(data[[rcol]]), rcol] |>
     # remove_outliers_df(cols = c("var_left")) |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),

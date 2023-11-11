@@ -72,7 +72,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
     var = vars$var_left,
     x_y = "x",
     data_vals = data_inrange[[rcol]]
-    )
+  )
 
   # Graph an appropriate number of bins
   rcol <- sprintf("var_left_%s", time$var_left)

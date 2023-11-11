@@ -173,6 +173,8 @@ region_value_data_grab <- function(var, data, time, scale, region, col) {
 
   # Get the correct column name to draw data from
   current_col <- match_schema_to_col(data = data, time = time, col = col)
+  # Make sure not to grab q5
+  # current_col <- current_col[!grepl("_q5$", current_col)]
   data_vals <- data[[current_col]]
 
   # Make sure it's all numeric

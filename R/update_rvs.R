@@ -367,6 +367,7 @@ update_vars <- function(id, r, var_left, var_right, widget_time) {
 #' The updated value can be accessed using the rv object and the rv_name parameter.
 #' If the new value is the same as the current one, the function does nothing and
 #' returns NULL.
+#' @export
 update_rv <- function(id, r, rv_name, new_val, default_val = NULL) {
   if (!is.null(default_val)) {
     r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)

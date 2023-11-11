@@ -33,34 +33,33 @@ test_that("legend_labels.q5 works", {
 #   )
 # })
 
-# test_that("legend_labels.bivar_ldelta_rq3 works", {
-#   vars <- structure(
-#     list(
-#       var_left = c(
-#         "housing_tenant_2006",
-#         "housing_tenant_2016"
-#       ),
-#       var_right = "climate_drought_2015"
-#     ),
-#     class = "bivar_ldelta_rq3"
-#   )
-#   expect_equal(
-#     legend_labels(vars),
-#     list(
-#       ggplot2::labs(
-#         x = "Drought (2015)",
-#         y = "Tenant (\u0394 2006 - 2016)"
-#       ),
-#       x_short = "Drought", y_short = "Tenant"
-#     )
-#   )
-#   expect_equal(
-#     legend_labels(vars, lang = "fr"),
-#     list(structure(list(x = "Sécheresse (2015)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
-#       x_short = structure("Sécheresse", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
-#     )
-#   )
-# })
+test_that("legend_labels.bivar_ldelta_rq3 works", {
+  vars <- vars_build(
+    var_left = "housing_tenant",
+    var_right = "climate_drought",
+    scale = "CSD",
+    time = c(2006, 2016)
+  )
+  time <- vars$time
+  vars <- vars$vars
+
+  expect_equal(
+    legend_labels(vars, time = time),
+    list(
+      ggplot2::labs(
+        x = "Drought (2015)",
+        y = "Tenant (\u0394 2006 - 2016)"
+      ),
+      x_short = "Drought", y_short = "Tenant"
+    )
+  )
+  expect_equal(
+    legend_labels(vars, time = time, lang = "fr"),
+    list(structure(list(x = "Sécheresse (2015)", y = "Locataire (Δ 2006 - 2016)"), class = "labels"),
+      x_short = structure("Sécheresse", class = c("glue", "character")), y_short = structure("Locataire", class = c("glue", "character"))
+    )
+  )
+})
 
 test_that("legend_labels.delta works", {
 

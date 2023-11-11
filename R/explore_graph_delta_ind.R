@@ -131,7 +131,7 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time,
         plot +
         ggplot2::geom_tile(
           data = val,
-          color = "white", fill = "transparent", size = 1.5
+          color = "white", fill = "transparent", linewidth = 1.5
         )
     }
   }

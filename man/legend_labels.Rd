@@ -19,7 +19,7 @@ legend_labels(vars, lang, ...)
 
 \method{legend_labels}{qual}(vars, lang = NULL, ...)
 
-\method{legend_labels}{bivar_ldelta_rq3}(vars, lang = NULL, ...)
+\method{legend_labels}{bivar_ldelta_rq3}(vars, lang = NULL, time, ...)
 
 \method{legend_labels}{delta}(vars, lang = NULL, time, ...)
 
@@ -35,6 +35,9 @@ output of \code{\link{vars_build}}.}
 translate variable titles to.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 }
 \value{
 It returns an output of \code{\link[ggplot2]{labs}}.

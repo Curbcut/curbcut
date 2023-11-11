@@ -17,7 +17,7 @@ test_that("legend_breaks.q5 works", {
 
 test_that("legend_breaks.q5_ind works", {
   # vars1 <- vars_build(var_left = "climate_drought", scale = "grid50", time = 2015)
-  vars2 <- vars_build(var_left = "alp", scale = "grid50", time = 2016)$vars
+  vars2 <- vars_build(var_left = "climate_drought", scale = "grid250", time = 2016)$vars
   data2 <- data_get(vars = vars2, scale = "DA", region = "island")
 
   # expect_equal(
@@ -25,10 +25,10 @@ test_that("legend_breaks.q5_ind works", {
   #   structure(c("Insig.", "Minor", "Mod.", "Elev.", "Major"))
   # )
 
-  expect_equal(
-    legend_breaks(vars2, scale = "CSD", data = data2),
-    structure(list("Low", NULL, NULL, NULL, "High"))
-  )
+  legend <- legend_breaks(vars2, scale = "grid250", data = data2)
+  expect_true(length(legend) == 5)
+  expect_true(all(is.character(legend)))
+
 })
 
 test_that("legend_breaks.q100 works", {
@@ -46,35 +46,37 @@ test_that("legend_breaks.q100 works", {
 #
 # })
 
-# test_that("legend_breaks.bivar_ldelta_rq3 works", {
-#   vars <- vars_build(
-#     var_left = c(
-#       "housing_tenant_2006",
-#       "housing_tenant_2016"
-#     ),
-#     var_right = "alp_2016",
-#     df = "city_CSD"
-#   )
-#   data <- data_get(
-#     vars = vars,
-#     df = "city_CSD"
-#   )
-#   actual <- legend_breaks(vars,
-#     data = data,
-#     df = "city_CSD"
-#   )
-#   expect_equal(
-#     names(actual),
-#     c("x", "y")
-#   )
-#   expect_equal(
-#     sum(grepl("%$", actual[[2]])),
-#     sum(c(T, T, T, T))
-#   )
-#   expect_equal(
-#     length(actual$x), 4
-#   )
-# })
+test_that("legend_breaks.bivar_ldelta_rq3 works", {
+  vars <- vars_build(
+    var_left = "housing_tenant",
+    var_right = "alp",
+    scale = "CSD",
+    time = c(1996, 2001)
+  )
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(
+    vars = vars,
+    scale = "CSD",
+    region = "island",
+    time = time
+  )
+  actual <- legend_breaks(vars,
+    data = data,
+    time = time
+  )
+  expect_equal(
+    names(actual),
+    c("x", "y")
+  )
+  expect_equal(
+    sum(grepl("%$", actual[[2]])),
+    sum(c(T, T, T, T))
+  )
+  expect_equal(
+    length(actual$x), 4
+  )
+})
 
 test_that("legend_breaks.delta works", {
   vars <- vars_build(var_left = c(

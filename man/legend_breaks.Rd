@@ -12,21 +12,21 @@
 \alias{legend_breaks.delta_bivar}
 \title{Generic legend breaks function for Curbcut legends}
 \usage{
-legend_breaks(vars, data, lang = NULL, ...)
+legend_breaks(vars, ...)
 
-\method{legend_breaks}{q5}(vars, data, lang = NULL, ...)
+\method{legend_breaks}{q5}(vars, data, ...)
 
 \method{legend_breaks}{q5_ind}(vars, data, lang = NULL, ...)
 
-\method{legend_breaks}{q100}(vars, scale = NULL, lang = NULL, ...)
+\method{legend_breaks}{q100}(vars, lang = NULL, ...)
 
-\method{legend_breaks}{qual}(vars, scale, lang = NULL, ...)
+\method{legend_breaks}{qual}(vars, lang = NULL, ...)
 
-\method{legend_breaks}{delta}(vars, data, scale, ...)
+\method{legend_breaks}{delta}(vars, data, ...)
 
-\method{legend_breaks}{bivar_ldelta_rq3}(vars, df, data, ...)
+\method{legend_breaks}{bivar_ldelta_rq3}(vars, data, time, ...)
 
-\method{legend_breaks}{bivar}(vars, data, lang = NULL, ...)
+\method{legend_breaks}{bivar}(vars, data, ...)
 
 \method{legend_breaks}{delta_bivar}(vars, data, ...)
 }
@@ -34,12 +34,12 @@ legend_breaks(vars, data, lang = NULL, ...)
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
 output of \code{\link{vars_build}}.}
 
+\item{...}{Other arguments to be passed to the methods}
+
 \item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 breaks to. Defaults to \code{NULL}, which is no translation.}
-
-\item{...}{Other arguments to be passed to the methods}
 }
 \value{
 It returns an output of \code{\link[ggplot2]{labs}}.

@@ -158,8 +158,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         zoom_string = rv_zoom_string,
         region = r[[id]]$region,
-        zoom_levels = r[[id]]$zoom_levels,
-        suffix_zoom_levels = suffix_zoom_levels
+        zoom_levels = r[[id]]$zoom_levels
       )
 
       # Get scale

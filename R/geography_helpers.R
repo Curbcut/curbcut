@@ -10,7 +10,8 @@ calculate_map_zoom_level <- function(top_scale, avail_scale_combinations) {
   return_got_mzl <- \(x) get_from_globalenv(sprintf("mzl_%s", x))
 
   # Filter only the map zoom levels (mzl) that have the top scale
-  contains <- grep(sprintf("(_%s_)|(^%s_)|(_%s$)", top_scale, top_scale, top_scale),
+  contains <- grep(sprintf("(_%s_)|(^%s_)|(_%s$)|(^%s$)", top_scale, top_scale,
+                           top_scale, top_scale),
                    avail_scale_combinations, value = TRUE)
 
   # If there's only one choice, return it

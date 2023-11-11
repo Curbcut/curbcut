@@ -14,7 +14,7 @@
 #' @return A vector of break points. Numeric if `character = FALSE`, otherwise
 #' character.
 #' @export
-breaks_delta <- function(vars, scale, character = FALSE, data = NULL) {
+breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
 
   if (is.null(data)) {
     data <- data_get(vars = vars, scale = scale)

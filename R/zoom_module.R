@@ -18,10 +18,6 @@
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param zoom_string <`reactive character`> A reactive object representing the
 #' current zoom level, e.g. `CSD`.
-#' @param suffix_zoom_levels <`character`> Suffix that should be appended at the
-#' end of an auto-scale. If the maximum zoom possible is CT and we previously created
-#' such a tileset, we could have the suffix_zoom_levels `max_CT`, which would
-#' be appended at the end of the auto-scale tile name. Defaults to NA for none.
 #' @param region <`reactive character`> A string or character value representing the
 #' selected region. Usually `r[[id]]$region`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
@@ -36,7 +32,6 @@
 #' displayed on the map.
 #' @export
 zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
-                        suffix_zoom_levels = NA,
                         no_autozoom = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(zoom_string))
   stopifnot(shiny::is.reactive(zoom_levels))
@@ -99,19 +94,18 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
 
     # If there's only one zoom level, hide the slider and the auto-zoom
     shiny::observe({
-      # Do nothing if there are more than one zoom level
-      if (length(zoom_levels()) > 1) {
-        return()
-      }
+      multiple_levels <- length(zoom_levels()) > 1
 
       # Add one namespace as these are inside other module servers
-      shinyjs::hide(shiny::NS(id, "zoom_auto"))
+      shinyjs::toggle("zoom_cbx_loc", condition = multiple_levels)
       # Follow the rest of the slidertext addition ID for the zoom slider
-      shinyjs::hide("zoon_slider_div")
+      shinyjs::toggle("zoon_slider_div", condition = multiple_levels)
 
       # Replace the content of zoom_cbx_loc (zoom checkbox location)
       zoom_name <- zoom_get_name(names(zoom_levels()), r$lang())
-      shinyjs::html("zoom_cbx_loc", zoom_name)
+
+      if (!multiple_levels) shinyjs::html("zoom_scale_chr", zoom_name)
+      if (multiple_levels) shinyjs::html("zoom_scale_chr", character())
     })
 
     # Return the tile
@@ -138,13 +132,15 @@ zoom_UI <- function(id, zoom_levels) {
           cc_t_span("Scale")
         ),
         shiny::div(
-          id = shiny::NS(id, "zoom_cbx_loc"),
+          id = shiny::NS(id, "zoom_right_lab"),
           style = "width: 64%; margin:0px !important; text-align: right;",
-          checkbox_UI(
-            id = shiny::NS(id, "zoom_auto"),
-            label = cc_t("Auto-scale"),
-            value = TRUE
-          )
+          shiny::div(id = shiny::NS(id, "zoom_cbx_loc"),
+                     checkbox_UI(
+                       id = shiny::NS(id, "zoom_auto"),
+                       label = cc_t("Auto-scale"),
+                       value = TRUE
+                     )),
+          shiny::div(id = shiny::NS(id, "zoom_scale_chr"))
         )
       ),
       shiny::div(

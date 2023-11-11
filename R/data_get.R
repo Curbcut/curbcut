@@ -187,7 +187,8 @@ data_get.q5 <- function(vars, scale, region = NULL,
 
 #' @describeIn data_get The method for bivar.
 #' @export
-data_get.bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
+data_get.bivar <- function(vars, scale, region,
+                           scales_as_DA = c("building", "street"),
                            data_path = get_data_path(), ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
@@ -221,6 +222,9 @@ data_get.bivar <- function(vars, scale, scales_as_DA = c("building", "street"),
 
   # Merge
   data <- merge(all_data[[1]]$data, all_data[[2]]$data, by = "ID", all = TRUE)
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # Re-add breaks
   attr(data, "breaks_var_left") <- breaks_vl
@@ -398,10 +402,6 @@ data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building
 data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), time, ...) {
 
-  vars <- vars_build("crash_ped", "alp", scale = scale, time = c(2015, 2017))
-  time <- vars$time
-  vars <- vars$vars
-
   # Reconstruct vars for delta
   vl_vars <- vars_build(var_left = vars$var_left, scale = scale, time = time$var_left)
   vl_time <- vl_vars$time
@@ -421,8 +421,23 @@ data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("bui
   names(data_vr) <- gsub("var_left", "var_right", names(data_vr))
   data_vr$var_right_q3 <- ntile(data_vr[[1]], 3)
 
+  # Prepare for merge, keep attributes
+  prev_attr_vl <- attributes(data_vl)
+  prev_attr_vl <- prev_attr_vl[!names(prev_attr_vl) %in% c("names", "row.names", "class")]
+  prev_attr_vr <- attributes(data_vr)
+  prev_attr_vr <- prev_attr_vr[!names(prev_attr_vr) %in% c("names", "row.names", "class")]
+  names(prev_attr_vr) <- gsub("var_left", "var_right", names(prev_attr_vr))
+
   # Bind vl and vr
   data <- cbind(data_vl, data_vr)
+
+  # Keep the previous attributes
+  for (i in names(prev_attr_vl)) {
+    attr(data, i) <- prev_attr_vl[[i]]
+  }
+  for (i in names(prev_attr_vr)) {
+    attr(data, i) <- prev_attr_vr[[i]]
+  }
 
   # Create the `group` column for map colouring
   data$group <- sprintf("%s - %s", data$var_left_q3, data$var_right_q3)

@@ -25,7 +25,7 @@ test_that("table_view_prep_table works as expected (q5)", {
     scale = "DA",
     region = "city",
     time = 2021,
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # var_left <- "access_foot_food_grocery_20"
@@ -33,7 +33,7 @@ test_that("table_view_prep_table works as expected (q5)", {
   # region <- "city"
   # time <- 2023
   # var_right <- " "
-  # map_zoom_levels <- mzl_tablequartier_CT_DA_building
+  # map_zoom_levels <- mzl_borough_CT_DA_building
   # test_table_view_prep_table_helper(
   #   var_left = var_left,
   #   var_right = var_right,
@@ -49,7 +49,7 @@ test_that("table_view_prep_table works as expected (q5)", {
     scale = "DA",
     region = "city",
     time = 2021,
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # test_table_view_prep_table_helper(
@@ -58,7 +58,7 @@ test_that("table_view_prep_table works as expected (q5)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
   #
   # test_table_view_prep_table_helper(
@@ -67,7 +67,7 @@ test_that("table_view_prep_table works as expected (q5)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
 
   test_table_view_prep_table_helper(
@@ -144,7 +144,7 @@ test_that("table_view_prep_table works as expected (delta)", {
     scale = "DA",
     region = "city",
     time = c(2001, 2021),
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # var_left <- "access_foot_food_grocery_20"
@@ -152,7 +152,7 @@ test_that("table_view_prep_table works as expected (delta)", {
   # region <- "city"
   # time <- 2023
   # var_right <- " "
-  # map_zoom_levels <- mzl_tablequartier_CT_DA_building
+  # map_zoom_levels <- mzl_borough_CT_DA_building
   # test_table_view_prep_table_helper(
   #   var_left = var_left,
   #   var_right = var_right,
@@ -168,7 +168,7 @@ test_that("table_view_prep_table works as expected (delta)", {
     scale = "DA",
     region = "city",
     time = c(2001, 2021),
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # test_table_view_prep_table_helper(
@@ -177,7 +177,7 @@ test_that("table_view_prep_table works as expected (delta)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
   #
   # test_table_view_prep_table_helper(
@@ -186,7 +186,7 @@ test_that("table_view_prep_table works as expected (delta)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
 
   test_table_view_prep_table_helper(
@@ -207,7 +207,7 @@ test_that("table_view_prep_table works as expected (delta_bivar)", {
     scale = "DA",
     region = "city",
     time = c(2001, 2021),
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # var_left <- "access_foot_food_grocery_20"
@@ -215,7 +215,7 @@ test_that("table_view_prep_table works as expected (delta_bivar)", {
   # region <- "city"
   # time <- 2023
   # var_right <- " "
-  # map_zoom_levels <- mzl_tablequartier_CT_DA_building
+  # map_zoom_levels <- mzl_borough_CT_DA_building
   # test_table_view_prep_table_helper(
   #   var_left = var_left,
   #   var_right = var_right,
@@ -231,7 +231,7 @@ test_that("table_view_prep_table works as expected (delta_bivar)", {
     scale = "DA",
     region = "city",
     time = c(2001, 2021),
-    map_zoom_levels = mzl_tablequartier_CT_DA_building
+    map_zoom_levels = mzl_borough_CT_DA_building
   )
 
   # test_table_view_prep_table_helper(
@@ -240,7 +240,7 @@ test_that("table_view_prep_table works as expected (delta_bivar)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
   #
   # test_table_view_prep_table_helper(
@@ -249,7 +249,7 @@ test_that("table_view_prep_table works as expected (delta_bivar)", {
   #   scale = "DA",
   #   region = "city",
   #   time = 2023,
-  #   map_zoom_levels = mzl_tablequartier_CT_DA_building
+  #   map_zoom_levels = mzl_borough_CT_DA_building
   # )
 
   test_table_view_prep_table_helper(

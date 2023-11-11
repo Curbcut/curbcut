@@ -29,11 +29,11 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     top_scales <- unique(top_scales)
     scales_dictionary <- get_from_globalenv("scales_dictionary")
     names(top_scales) <- sapply(top_scales, function(x) {
-      scales_dictionary$plur[scales_dictionary$scale == x] |>
-        s_sentence()
+      scales_dictionary$plur[scales_dictionary$scale == x]
     }, simplify = TRUE, USE.NAMES = FALSE)
     top_scales_list <- shiny::reactive({
       names(top_scales) <- sapply(names(top_scales), cc_t, lang = r$lang())
+      names(top_scales) <- s_sentence(names(top_scales))
       return(list("Main scale" = top_scales))
     })
 

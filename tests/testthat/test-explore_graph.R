@@ -5,7 +5,7 @@ test_explore_graph_helper <- function(var_left, var_right, scale, region, time, 
   data <- data_get(vars, scale = scale, region = region, time = time)
   actual <- explore_graph(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time
+    data = data, time = time, lang = "fr"
   )
 
   # If there is a selection, the selection is within range
@@ -67,24 +67,24 @@ test_explores <- function(var_right, select_id, scale, region) {
     time = 2021, select_id = select_id
   )
 
-  # # Ind ordinal
-  # test_explore_graph_helper(
-  #   var_left = "climate_drought",
-  #   var_right = var_right, scale = "grid250", region = "island",
-  #   time = 2022, select_id = if (is.na(select_id)) NA else "grid250_1784"
-  # )
+  # Ind ordinal
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = " ", scale = "grid250", region = "island",
+    time = 2022, select_id = if (is.na(select_id)) NA else "grid250_1784"
+  )
 
   # sqkm
   test_explore_graph_helper(
-    "alley_sqkm",
-    var_right = var_right, scale = scale, region = "city",
+    var_left = "alley_sqkm",
+    var_right = var_right, scale = "CT", region = "city",
     time = 2023, select_id = select_id
   )
 
   # per1k
   test_explore_graph_helper(
-    "alley_per1k",
-    var_right = var_right, scale = scale, region = "city",
+    var_left = "alley_per1k",
+    var_right = var_right, scale = "CT", region = "city",
     time = 2023, select_id = select_id
   )
 }
@@ -109,8 +109,7 @@ test_that("q5 explore works with selections", {
 test_that("q5 explore works without a selection", {
   test_explores(var_right = "alp", select_id = NA, scale = "CSD", region = "CMA")
   test_explores(var_right = "inc_median_income", select_id = NA, scale = "CSD", region = "CMA")
-
-  # test_explores(var_right = "climate_drought", select_id = NA, scale = "building", region = "city")
+  test_explores(var_right = "climate_drought", select_id = NA, scale = "building", region = "city")
 })
 
 test_that("q5 explore works with selections", {
@@ -162,8 +161,14 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   # Ind ordinal
   test_explore_graph_helper(
     var_left = "climate_drought",
-    var_right = var_right, scale = "grid250", region = "island",
+    var_right = " ", scale = "grid250", region = "island",
     time = c(2015, 2022), select_id = if (is.na(select_id)) NA else "grid250_1784"
+  )
+
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = var_right, scale = scale, region = region,
+    time = c(2015, 2022), select_id = select_id
   )
 }
 
@@ -203,6 +208,13 @@ test_that("delta explore works with selections", {
   test_explores_delta(var_right = "lst", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = "inc_limat", select_id = "b10000763", scale = "building", region = "city")
 })
+
+
+# bivar_ldelta_rq3 --------------------------------------------------------
+
+# test_explore_graph_helper(var_left = "crash_ped", var_right = "housing_tenant",
+#                           scale = "DA", region = "city", time = c(2014, 2017),
+#                           select_id = NA)
 
 
 

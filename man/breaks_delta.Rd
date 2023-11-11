@@ -4,7 +4,7 @@
 \alias{breaks_delta}
 \title{Calculate Breaks for Delta Legends}
 \usage{
-breaks_delta(vars, scale, character = FALSE, data = NULL)
+breaks_delta(vars, scale = NULL, character = FALSE, data = NULL)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The

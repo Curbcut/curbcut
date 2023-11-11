@@ -50,15 +50,16 @@ legend_labels.qual <- function(vars, lang = NULL, ...) {
 }
 
 #' @describeIn legend_labels bivar_ldelta_rq3 method
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @export
-legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
+legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, time, ...) {
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 12,
       translate = TRUE, lang = lang
     )
-  date_left <- var_get_time(var = vars$var_left)
-  date_left <- paste(date_left, collapse = " - ")
+  date_left <- paste(time$var_left, collapse = " - ")
   title_left <- paste0(title_left, " (\u0394 ", date_left, ")")
 
   title_right <-
@@ -66,8 +67,7 @@ legend_labels.bivar_ldelta_rq3 <- function(vars, lang = NULL, ...) {
       var = vars$var_right, short_treshold = 16,
       translate = TRUE, lang = lang
     )
-  date_right <- var_get_time(var = vars$var_right)
-  title_right <- paste0(title_right, " (", date_right, ")")
+  title_right <- paste0(title_right, " (", time$var_right, ")")
 
   title_left_short <- var_get_info(
     var = vars$var_left, what = "var_short",

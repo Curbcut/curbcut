@@ -52,7 +52,7 @@ test_that("explore_graph_scale works", {
   v <- cldr$vars
   data <- data_get(vars = v, scale = "grid250")
   cl <- explore_graph_scale(var = v$var_left, x_y = "x", scale = "grid250",
-                            data_vals = data$var_left_2022)[[1]]
+                            data_vals = data$var_left_2022, breaks = 0:5)[[1]]
   cl <- class(cl)
   expect_true("ScaleDiscretePosition" %in% cl)
 })
