@@ -11,13 +11,14 @@
 #' \code{\link{update_scale}}. Default is NULL.
 #' @param lang <`character`> A character string specifying the language to
 #' translate the content. Defaults to NULL for no translation.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' @param scale <`reactive character`> Current scale. The output of
 #' \code{\link{update_scale}}.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
+#' @param time <`reactive numeric vector`> Vector of time values. One of the
+#' outpuit of the \code{\link{vars_build}} function.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.
@@ -28,7 +29,7 @@
 #' @return An HTML list of DYK content with the "links" attribute containing the
 #' necessary arguments for the link function (except r, which is added subsequently).
 #' @export
-dyk_get <- function(id, vars, df, select_id, poi, region, zoom_levels,
+dyk_get <- function(id, vars, scale, select_id, poi, region, zoom_levels, time,
                     scales_as_DA = scales_as_DA, lang = NULL) {
   # Start with a NULL output
   dyk_out <- NULL
@@ -42,7 +43,9 @@ dyk_get <- function(id, vars, df, select_id, poi, region, zoom_levels,
       vars = vars,
       df = df,
       select_id = select_id,
+      scale = scale,
       region = region,
+      time = time,
       zoom_levels = zoom_levels,
       scales_as_DA = scales_as_DA,
       lang = lang

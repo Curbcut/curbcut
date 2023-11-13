@@ -251,19 +251,18 @@ create_ui_server_mods <- function(modules, pos = 1) {
         time = r[[id]]$time
       )
 
-      # # Did-you-know panel
-      # dyk_server(
-      #   id = id,
-      #   r = r,
-      #   vars = r[[id]]$vars,
-      #   # NDS: This changes to r[[id]]$ scale, probably
-      #   df = r[[id]]$scale,
-      #   select_id = r[[id]]$select_id,
-      #   poi = r[[id]]$poi,
-      #   # NDS: This changes to r[[id]]$region
-      #   region = r[[id]]$region,
-      #   zoom_levels = r[[id]]$zoom_levels
-      # )
+      # Did-you-know panel
+      dyk_server(
+        id = id,
+        r = r,
+        vars = r[[id]]$vars,
+        scale = r[[id]]$scale,
+        region = r[[id]]$region,
+        select_id = r[[id]]$select_id,
+        time = r[[id]]$time,
+        poi = r[[id]]$poi,
+        zoom_levels = r[[id]]$zoom_levels
+      )
 
       # Update map in response to variable changes or zooming
       map_viewstate <- map_js_server(

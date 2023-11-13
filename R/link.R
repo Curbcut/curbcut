@@ -4,14 +4,17 @@
 #' frame. If the zoom level is 0, it defaults to 9.
 #'
 #' @param zoom_levels <`named vector`> A named vector of potential zoom levels.
-#' @param df <`character`> df used for scale matching.
+#' @param scale <`character`> scale used for scale matching.
 #'
 #' @return Returns the appropriate zoom level.
-link_get_zoom <- function(zoom_levels, df) {
-  if (is.null(df)) {
+link_get_zoom <- function(zoom_levels, scale) {
+  if (is.null(scale)) {
     return(NULL)
   }
-  zoom <- zoom_levels[is_scale_in(names(zoom_levels), df, vectorized = TRUE)]
+  if (is.null(zoom_levels)) {
+    return(NULL)
+  }
+  zoom <- zoom_levels[is_scale_in(names(zoom_levels), scale, vectorized = TRUE)]
   zoom <- unname(zoom)
 
   if (zoom == 0) {
@@ -34,8 +37,7 @@ link_get_zoom <- function(zoom_levels, df) {
 #' opened page.
 #' @param region <`character`> Character string specifying the name of the region.
 #' Defaults to `r$region()`.
-#' @param df <`character`> Combination of region and scale to update the zoom
-#' of the newly opened page's map.
+#' @param scale <`character`> Scale to update the zoom of the newly opened page's map.
 #' @param date <`numeric vector`> Change the date on the page. It will be changing
 #' the dates widgets from the autovars module, with html id as `alp-alp-alp-ccslider_slb`.
 #' @param var_left <`character`> Character string of the compare variable
@@ -52,10 +54,9 @@ link_get_zoom <- function(zoom_levels, df) {
 #' argument.
 #'
 #' @export
-link <- function(r, page, region = r$region(), select_id = NA, df = NULL,
+link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
                  date = NULL, var_left = NULL, var_right = NULL,
-                 zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
-                 zoom = link_get_zoom(zoom_levels, df)) {
+                 zoom_levels = NULL, zoom = link_get_zoom(zoom_levels, scale)) {
   # Detect if we're in a reactive context
   if (is.null(shiny::getDefaultReactiveDomain())) {
     stop("The function needs to be used in a reactive context")
@@ -68,15 +69,15 @@ link <- function(r, page, region = r$region(), select_id = NA, df = NULL,
 
   # After half a second and the tab is opened, update the widgets
   shinyjs::delay(500, {
-    # Recreate the `df`
-    if (!is.null(df)) {
+    # Recreate the `scale`
+    if (!is.null(scale)) {
       shinyWidgets::updateSliderTextInput(
         session = r$server_session(),
         inputId = ns_doubled(
           page_id = page,
           element = "zoom_slider-ccslidertext_slt"
         ),
-        selected = zoom_get_name(df, lang = r$lang())
+        selected = zoom_get_name(scale, lang = r$lang())
       )
     }
 
@@ -115,10 +116,10 @@ link <- function(r, page, region = r$region(), select_id = NA, df = NULL,
   })
 
   if (!is.na(select_id)) {
-    if (!is.null(df)) {
+    if (!is.null(scale)) {
       if (!is.null(zoom)) r[[page]]$zoom(zoom)
 
-      df_data <- get_from_globalenv(df)
+      df_data <- get_from_globalenv(scale)
       # Skip the zoom update if the 'centroid' is not in the df
       if (!"centroid" %in% names(df_data)) {
         return(NULL)

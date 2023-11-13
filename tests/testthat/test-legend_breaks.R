@@ -32,7 +32,7 @@ test_that("legend_breaks.q5_ind works", {
 })
 
 test_that("legend_breaks.q100 works", {
-  vars <- vars_build(var_left = "housing_tenant", scale = "raster", time = 2021)$vars
+  vars <- vars_build(var_left = "c_priority", scale = "raster", time = 2021)$vars
   expect_equal(
     legend_breaks(vars, scale = "raster"),
     list(

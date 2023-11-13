@@ -92,7 +92,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
   # Add selection
   if (!is.na(shared_info$select_id)) {
-    val <- data_inrange[[rcol]][data_inrange$ID == shared_info$select_id]
+    val <- data[[rcol]][data$ID == shared_info$select_id]
     if (!any(is.na(val))) {
       plot <-
         plot +

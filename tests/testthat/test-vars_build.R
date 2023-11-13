@@ -75,7 +75,8 @@ test_that("vars_build works", {
 
   expect_equal(
     vars_build(
-      var_left = "housing_tenant", var_right = " ",
+      var_left = "c_priority",
+      var_right = " ",
       scale = "unknown_scale",
       time = 2016
     )$vars |> class(),

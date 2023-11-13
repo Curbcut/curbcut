@@ -112,8 +112,7 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
 #' Usually equivalent to `r$region()`.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
+#' @param scale <`character`> The scale under study. Output of
 #' \code{\link{update_scale}}.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
@@ -122,6 +121,8 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.
+#' @param time <`numeric vector`> Vector of time values. One of the
+#' outpuit of the \code{\link{vars_build}} function.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -129,14 +130,14 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
 #'
 #' @return The resulting text.
 #' @export
-dyk_text <- function(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...) {
+dyk_text <- function(vars, scale, select_id, lang, region, zoom_levels, time, scales_as_DA, ...) {
   UseMethod("dyk_text", vars)
 }
 
 #' @rdname dyk_text
 #' @export
 #'
-dyk_text.default <- function(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...) {
+dyk_text.default <- function(vars, scale, select_id, lang, region, zoom_levels, time, scales_as_DA, ...) {
 
   return(NULL)
 
@@ -145,36 +146,34 @@ dyk_text.default <- function(vars, df, select_id, lang, region, zoom_levels, sca
 #' @rdname dyk_text
 #' @export
 #'
-dyk_text.q5 <- function(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...) {
+dyk_text.q5 <- function(vars, scale, select_id, lang, region, zoom_levels, time, scales_as_DA, ...) {
 
   # Grab `dyk`
   dyk <- get_from_globalenv("dyk")
 
-  # Parse vars and df
+  # Parse vars and scale
   var_left <- vars$var_left
-  var <- var_remove_time(var_left)
-  date <- var_get_time(var_left)
+  date <- time$var_left
 
   # Switch the scales_as_DA to df = *_DA if scale is eg. building or street
-  df <- curbcut::treat_to_DA(scales_as_DA, df)
-
-  # If there's a selection, scale should match it, otherwise default to CSD
-  # select_id can sometimes be at the wrong scale (click and zoom in does not de-select,
-  # for it the user zooms back).
-  scale <- sub(".*_", "", df)
+  treated_scale <- curbcut::treat_to_DA(scales_as_DA, scale)
 
   # Subset dyk
-  dyk_df <- dyk[dyk$region == region & dyk$var_left == var, ]
+  dyk_df <- dyk[dyk$region == region & dyk$var_left == var_left, ]
 
   # Get the best DYK from each category
-  dyk_high <- dyk_df[dyk_df$dyk_type %in% c("highest", "lowest") &
-                       dyk_df$scale == scale & dyk_df$date == date, ]
+  dyk_high <- dyk_df[dyk_df$dyk_type %in% c("highest", "lowest"), ]
+  dyk_high <- dyk_high[dyk_high$scale == scale, ]
+  dyk_high <- dyk_high[unlist(dyk_high$date) == date, ]
+
   if (nrow(dyk_high) > 0) dyk_high <- dyk_high[round(stats::runif(1, 1, 2)),]
 
-  dyk_change <- dyk_df[dyk_df$dyk_type == "change",]
+  dyk_change <- dyk_df[dyk_df$dyk_type == "change", ]
 
-  dyk_compare <- dyk_df[dyk_df$dyk_type == "compare" & dyk_df$scale == scale &
-                          dyk_df$date == date,]
+  dyk_compare <- dyk_df[dyk_df$dyk_type == "compare", ]
+  dyk_compare <- dyk_compare[dyk_compare$scale == scale, ]
+  dyk_compare <- dyk_compare[dyk_compare$date == date, ]
+
   if (nrow(dyk_compare) > 0) dyk_compare <- dyk_compare[
     sample(length(dyk_compare$dyk_weight), 1, prob = dyk_compare$dyk_weight ^ 2),]
 
@@ -188,7 +187,7 @@ dyk_text.q5 <- function(vars, df, select_id, lang, region, zoom_levels, scales_a
 
   out <- if (out$dyk_type %in% c("highest", "lowest")) {
     dyk_link(id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
-             df = sprintf("%s_%s", out$region, out$scale), select_id = out$select_ID,
+             scale = out$scale, region = out$region, select_id = out$select_ID,
              # Feed zoom_levels to the link. The zoom will be adjusted using exactly
              # the ones specified (sometimes, map_zoom_levels_* may undergo transformation
              # in some pages. Better to have the current zoom_levels follow)..

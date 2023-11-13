@@ -6,18 +6,47 @@
 \alias{dyk_text.q5}
 \title{Generate DYK text for the given variables and region}
 \usage{
-dyk_text(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...)
+dyk_text(
+  vars,
+  scale,
+  select_id,
+  lang,
+  region,
+  zoom_levels,
+  time,
+  scales_as_DA,
+  ...
+)
 
-\method{dyk_text}{default}(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...)
+\method{dyk_text}{default}(
+  vars,
+  scale,
+  select_id,
+  lang,
+  region,
+  zoom_levels,
+  time,
+  scales_as_DA,
+  ...
+)
 
-\method{dyk_text}{q5}(vars, df, select_id, lang, region, zoom_levels, scales_as_DA, ...)
+\method{dyk_text}{q5}(
+  vars,
+  scale,
+  select_id,
+  lang,
+  region,
+  zoom_levels,
+  time,
+  scales_as_DA,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
 text needs to be generated. Usually the output of \code{\link{vars_build}}.}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\item{scale}{<\code{character}> The scale under study. Output of
 \code{\link{update_scale}}.}
 
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
@@ -32,6 +61,9 @@ Usually equivalent of \code{r$region()}.}
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
+
+\item{time}{<\verb{numeric vector}> Vector of time values. One of the
+outpuit of the \code{\link{vars_build}} function.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

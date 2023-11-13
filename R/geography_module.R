@@ -174,7 +174,7 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
   }, simplify = TRUE, USE.NAMES = FALSE)
   top_scales_list <- list("Main scale" = top_scales)
 
-  shiny::tagList(
+  out <- shiny::tagList(
     shiny::div(
       class = "geography-panel",
       id = shiny::NS(id, "geo_div"),
@@ -209,4 +209,11 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
       )
     )
   )
+
+  # If there's only one option, do not show the module
+  if (length(top_scales) == 1 & length(regions) == 1) {
+    return(shinyjs::hidden(out))
+  } else {
+    return(out)
+  }
 }

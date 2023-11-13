@@ -9,12 +9,12 @@ link(
   page,
   region = r$region(),
   select_id = NA,
-  df = NULL,
+  scale = NULL,
   date = NULL,
   var_left = NULL,
   var_right = NULL,
-  zoom_levels = get_from_globalenv(paste("map_zoom_levels", region, sep = "_")),
-  zoom = link_get_zoom(zoom_levels, df)
+  zoom_levels = NULL,
+  zoom = link_get_zoom(zoom_levels, scale)
 )
 }
 \arguments{
@@ -29,8 +29,7 @@ Defaults to \code{r$region()}.}
 \item{select_id}{<\code{character}> ID of the item to be selected within the newly
 opened page.}
 
-\item{df}{<\code{character}> Combination of region and scale to update the zoom
-of the newly opened page's map.}
+\item{scale}{<\code{character}> Scale to update the zoom of the newly opened page's map.}
 
 \item{date}{<\verb{numeric vector}> Change the date on the page. It will be changing
 the dates widgets from the autovars module, with html id as \code{alp-alp-alp-ccslider_slb}.}

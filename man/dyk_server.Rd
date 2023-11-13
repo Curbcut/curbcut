@@ -9,10 +9,11 @@ dyk_server(
   id,
   r,
   vars,
-  df,
+  scale,
   select_id,
   region,
   zoom_levels,
+  time,
   poi = shiny::reactive(NULL),
   scales_as_DA = shiny::reactive(c("building", "street"))
 )
@@ -29,8 +30,7 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
+\item{scale}{<\verb{reactive character}> The scale under study. The output of
 \code{\link{update_scale}}.}
 
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
@@ -42,6 +42,9 @@ Usually equivalent of \code{r$region()}.}
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
+
+\item{time}{<\verb{reactive numeric vector}> Vector of time values. One of the
+outpuit of the \code{\link{vars_build}} function.}
 
 \item{poi}{<\code{reactive}> (Optional) Point of interests. Default is NULL.}
 

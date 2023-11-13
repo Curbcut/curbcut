@@ -71,7 +71,7 @@ test_that("data_get_colours.delta_bivar works", {
 
 test_that("data_get_colours.bivar_ldelta_rq3 works", {
   vars <- vars_build(
-    var_left = "crash_ped",
+    var_left = "crash_count_ped",
     var_right = "alp",
     scale = "CT",
     time = c(2015, 2017)

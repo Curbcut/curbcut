@@ -200,7 +200,9 @@ test_that("fill_name_2 returns correct name_2 ordered", {
 
   real <- sapply(ID_scale, \(ID) {
     csd <- DA$CSD_ID[DA$ID == ID]
-    CSD$name[CSD$ID == csd]
+    out <- CSD$name[CSD$ID == csd]
+    if (length(out) == 0) return(NA)
+    out
   }, USE.NAMES = FALSE)
 
   expect_equal(output, real)
