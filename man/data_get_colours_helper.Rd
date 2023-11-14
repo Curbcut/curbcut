@@ -10,6 +10,7 @@ data_get_colours_helper(
   time,
   zoom_levels,
   colours_table,
+  schemas,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
   ...

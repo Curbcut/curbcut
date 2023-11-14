@@ -8,7 +8,8 @@ match_schema_to_col(
   data,
   time,
   col = "var_left",
-  schema = attr(data, sprintf("schema_\%s", col)),
+  data_schema = attr(data, sprintf("schema_\%s", col)),
+  schemas = NULL,
   closest_time = FALSE
 )
 }
@@ -22,9 +23,12 @@ Can also be a simple numeric.}
 
 \item{col}{<\code{character}> Which column should be extracted? \code{var_left} or \code{var_right}.}
 
-\item{schema}{<\verb{named list}> A list containing the schema information, specifically the
+\item{data_schema}{<\verb{named list}> A list containing the schema information, specifically the
 'time' attribute. Typically obtained, and defaulted, as an attribute to
 \code{data} (output of \code{\link{get_data}}).}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{closest_time}{<\code{logical}> Should the closest time be used if the exact
 time is not found? Default is \code{FALSE}.}

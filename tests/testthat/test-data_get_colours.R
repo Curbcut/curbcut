@@ -15,6 +15,24 @@ test_that("data_get_colours.q5  works", {
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
+test_that("data_get_colours.q5  works", {
+  vars <- vars_build(var_left = "access_foot_food_grocery", scale = "CSD",
+                     time = 2023)
+  time <- vars$time
+  vars <- vars$vars
+  schemas <- list(transportationtime = 20)
+
+
+  data_colours <- data_get_colours(
+    vars = vars, region = "CMA",
+    zoom_levels = mzl_CSD_CT_DA_building,
+    time = time, schemas = schemas
+  )
+  expect_true(nrow(data_colours) > 1000)
+  expect_equal(unique(nchar(data_colours$fill)), 7)
+  expect_equal(names(data_colours), c("ID_color", "fill"))
+})
+
 test_that("data_get_colours.bivar works", {
   vars <- vars_build(
     var_left = "housing_tenant",

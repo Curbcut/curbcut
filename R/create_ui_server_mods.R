@@ -222,7 +222,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars(),
         region = r[[id]]$region(),
         time = r[[id]]$time(),
-        zoom_levels = r[[id]]$zoom_levels()
+        zoom_levels = r[[id]]$zoom_levels(),
+        schemas = r[[id]]$schemas()
       ))
 
       # Warn user

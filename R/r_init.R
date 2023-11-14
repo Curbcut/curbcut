@@ -87,11 +87,13 @@ r_init <- function(server_session,
         vars <- vars_build(default_var, scale = scale, time = time)
         time <- vars$time
         vars <- vars$vars
+        schemas <- page$additional_schemas[[1]]
 
         r[[i]] <- shiny::reactiveValues(
           vars = shiny::reactiveVal(vars),
           var_left_force = shiny::reactiveVal(default_var),
           time = shiny::reactiveVal(time),
+          schemas = shiny::reactiveVal(schemas),
           select_id = shiny::reactiveVal(NA),
           region = shiny::reactiveVal(region),
           zoom_levels = shiny::reactiveVal(mzl),

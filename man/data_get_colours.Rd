@@ -16,6 +16,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -26,6 +27,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -36,6 +38,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -46,6 +49,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -56,6 +60,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -66,6 +71,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )
@@ -76,6 +82,7 @@ data_get_colours(
   time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
   data_path = get_data_path(),
   ...
 )

@@ -110,7 +110,7 @@ autovars_common_widgets <- function(id) {
   # Fish for other widgets only when `tb` is a list
   if (is.list(tb)) {
     groups <- variables$group_diff[variables$var_code %in% var_list]
-    wdg_names <- names(unlist(groups)) |> unique()
+    wdg_names <- lapply(groups, names) |> unlist() |> unique()
 
     widgets <- sapply(wdg_names, \(x) {
       # All entries that need this widget
@@ -200,8 +200,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
               return(unlist(same_feat_val) == f_lvl)
             }
             # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
-
-            unlist(same_feat_val) == common_vals[cv]
+            common_vals[cv] %in% unlist(same_feat_val)
           })
 
           # If ALL the values are the same
@@ -211,7 +210,6 @@ autovars_widgets <- function(id, group_name, common_vals) {
         # Filter in only the observations sharing the values of the common values
         groups <- groups[share_common_values_index]
       }
-      groups <- unlist(groups)
 
       # Return no additional widgets if groups has a length of zero
       if (length(groups) == 0) {
@@ -219,7 +217,8 @@ autovars_widgets <- function(id, group_name, common_vals) {
       }
 
       # Filter out groups that are already part of the common widgets
-      groups <- groups[!names(groups) %in% names(common_vals)]
+      groups <- lapply(groups, \(gr) gr[!names(gr) %in% names(common_vals)])
+      groups <- unlist(groups)
 
       widgets <- sapply(unique(names(groups)), \(n) {
         options <- unique(unname(groups[names(groups) == n]))
@@ -288,7 +287,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
     sapply(groups, \(x) {
       v <- x[[i]]
       if (!is.null(attr(v, "levels"))) v <- attr(v, "levels")[[v]]
-      return(v == val)
+      return(val %in% v)
     })
   }, picker_vals, seq_along(picker_vals))
   if (length(ordered_val_fit) == 0) {
@@ -298,7 +297,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(sum_fits) == 0) {
     return(previous_var)
   }
-  out <- var_codes[which(sum_fits == max(sum_fits))]
+  out <- var_codes[which.max(sum_fits)]
 
   # Return()
   return(out)

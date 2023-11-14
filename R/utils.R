@@ -679,9 +679,11 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' Can also be a simple numeric.
 #' @param col <`character`> Which column should be extracted? `var_left` or `var_right`.
-#' @param schema <`named list`> A list containing the schema information, specifically the
+#' @param data_schema <`named list`> A list containing the schema information, specifically the
 #' 'time' attribute. Typically obtained, and defaulted, as an attribute to
 #' `data` (output of \code{\link{get_data}}).
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param closest_time <`logical`> Should the closest time be used if the exact
 #' time is not found? Default is `FALSE`.
 #'
@@ -689,17 +691,17 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' schema as a character string.
 #' @export
 match_schema_to_col <- function(data, time, col = "var_left",
-                                schema = attr(data, sprintf("schema_%s", col)),
-                                closest_time = FALSE) {
+                                data_schema = attr(data, sprintf("schema_%s", col)),
+                                schemas = NULL, closest_time = FALSE) {
 
   # Default data_get method does not return schema_*
-  if (is.null(schema)) {
+  if (is.null(data_schema)) {
     if (!is.null(attr(data, "schema"))) {
-      schema <- attr(data, "schema")
+      data_schema <- attr(data, "schema")
     } else {
       # If schema is not supplied (so it's not a `default` method), but we want
       # another column, ex. `group`.
-      schema <- attr(data, "schema_var_left")["time"]
+      data_schema <- attr(data, "schema_var_left")["time"]
     }
   }
 
@@ -714,16 +716,24 @@ match_schema_to_col <- function(data, time, col = "var_left",
     }
 
   # Get the possible variables that hold the schema
-  pv <- grep(schema$time, names(data), value = TRUE)
+  pv <- grep(data_schema$time, names(data), value = TRUE)
   pv <- grep(col, pv, value = TRUE)
 
   # Extract available time
-  avail_time <- s_extract(schema$time, pv) |> as.numeric()
+  avail_time <- s_extract(data_schema$time, pv) |> as.numeric()
 
   # Which var out of those correspond to the right time
-  # NDS: this now only works with time. Need to make sure if works dynamically
-  # for whatever is fed in the schema.
   var <- pv[avail_time %in% time_col]
+
+  for (i in names(schemas)) {
+    regex <- data_schema[[i]]
+
+    # Extract possibilities
+    avail <- s_extract(regex, var)
+
+    # Which var out of those correspond to the current schema value
+    var <- var[which(avail %in% schemas[[i]])]
+  }
 
   if (closest_time) {
     if (length(var) == 0) {

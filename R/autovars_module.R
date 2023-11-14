@@ -34,9 +34,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Some widgets must be placed in the advanced controls
     page <- page_get(id)
     adv <- unlist(page$add_advanced_controls)
+    schemas <- names(page$additional_schemas[[1]])
 
     default_var <- autovars_placeholder_var(id = id)
     out_var <- shiny::reactiveVal(default_var)
+
+    # Make a reactiveVal to keep IDs of schema widgets
+    schema_reactive <- shiny::reactiveVal(NULL)
 
     advanced_div_selector <- html_ns("indicators_label-advanced_controls_div")
 
@@ -130,17 +134,35 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                 # Keep the order!
                 l <- which(names(raw_wdgs) == n)
 
+                maybe_schema <- tolower(n)
+                maybe_schema <- gsub(" ", "", maybe_schema)
+
+                ## ADD HERE, FLAG THE ID OF WHAT WILL BE SCHEMA???????
+
                 if ("slider_text" %in% class(w)) {
                   selected <- w[[default_selection[[n]]]]
+                  w_id <- sprintf("st%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccpicker_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
 
                   slider_text_UI(
                     id = widget_ns(id),
-                    slider_text_id = sprintf("st%s", l),
+                    slider_text_id = w_id,
                     choices = w,
                     selected = selected,
                     label = cc_t(n, force_span = TRUE)
                   )
                 } else if ("slider" %in% class(w)) {
+                  w_id <- sprintf("s%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccslider_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
+
                   vals <- unlist(w)
                   vals <- as.numeric(vals)
                   min_ <- min(vals)
@@ -148,9 +170,18 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                   step_ <- unique(diff(vals))[1]
                   selected <- default_selection[[n]]
 
+                  if (length(selected) > 1) {
+                    # Special case for accss
+                    if (all(vals == which(1:60 %% 5 == 0))) {
+                      selected <- 20
+                    } else {
+                      selected <- vals[{(length(vals)) / 2} |> floor()]
+                    }
+                  }
+
                   slider_UI(
                     id = widget_ns(id),
-                    slider_id = sprintf("s%s", l),
+                    slider_id = w_id,
                     step = step_,
                     min = min_,
                     max = max_,
@@ -158,13 +189,20 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                     label = cc_t(n, force_span = TRUE)
                   )
                 } else {
+                  w_id <- sprintf("p%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccslidertext_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
+
                   names(w) <- w
                   names(w) <- sapply(names(w), cc_t, lang = r$lang())
                   selected <- default_selection[[n]]
 
                   picker_UI(
                     id = widget_ns(id),
-                    picker_id = sprintf("p%s", l),
+                    picker_id = w_id,
                     var_list = w,
                     label = cc_t(n, force_span = TRUE),
                     selected = selected
@@ -416,6 +454,17 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                   names(w) <- w
                   names(w) <- sapply(names(w), cc_t, lang = r$lang())
                   selected <- default_selection[[n]]
+                  w_id <- sprintf("p%s", l)
+
+                  # Flag if it's part of schema
+                  maybe_schema <- tolower(n)
+                  maybe_schema <- gsub(" ", "", maybe_schema)
+
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccpicker_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
 
                   picker_UI(
                     id = widget_ns(id),
@@ -453,7 +502,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         val <- input[[shiny::NS(id, slider_id)]]
         if (!is.null(val)) picker_vals[[i]] <- val
       }
-      for (i in seq_along(common_widgets()$widgets)) {
+      for (i in seq_len(length_all)) {
         slider_text_id <- sprintf("ccslidertext_st%s", i)
         val <- input[[shiny::NS(id, slider_text_id)]]
         if (!is.null(val)) picker_vals[[i]] <- val
@@ -469,6 +518,24 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         previous_var = out_var()
       )
       out_var(z[[1]])
+    })
+
+    # Update the schemas!
+    shiny::observe({
+      if (is.null(schemas)) return(NULL)
+      if (is.null(schema_reactive())) return(NULL)
+
+      final_schemas <- NULL
+      for (i in names(schema_reactive())) {
+        input_name <- schema_reactive()[[i]]
+        input_val <- input[[shiny::NS(id, input_name)]]
+        if (is.null(input_val)) next
+        final_schemas <- c(final_schemas,
+                           stats::setNames(input_val, i))
+      }
+
+      update_rv(id = id, r = r, rv_name = "schemas",
+                new_val = shiny::reactive(final_schemas))
     })
 
     return(shiny::reactive(list(var = out_var(), time = time())))

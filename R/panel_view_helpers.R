@@ -388,7 +388,7 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
 
   # Column name
   col <- match_schema_to_col(data = dat, time = time, col = vars$var_left,
-                             schema = attr(dat, "schema_var_left"))
+                             data_schema = attr(dat, "schema_var_left"))
   class(col) <- class(vars$var_left)
 
   # Get the text for the single left variable
@@ -507,7 +507,7 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
 
     # Column name
     col <- match_schema_to_col(data = dat, time = time, col = var,
-                               schema = attr(dat, "schema_var_left"))
+                               data_schema = attr(dat, "schema_var_left"))
     class(col) <- class(var)
 
     panel_view_prepare_text_helper(

@@ -29,6 +29,7 @@
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
 data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_table,
+                                    schemas,
                                     scales_as_DA = c("building", "street"),
                                     data_path = get_data_path(), ...) {
   # Grab colours
@@ -56,11 +57,9 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   if ("group" %in% names(data)) {
     group <- "group"
   } else if (!group %in% names(data)) {
-    # Get the complete data, using schema
-    schema <- attr(data_r[[1]], "schema")
     # Grab the correct column from which to use colors on
-    var <- match_schema_to_col(data = data, schema = schema, time = time,
-                               col = "var_left")
+    var <- match_schema_to_col(data = data, time = time, col = "var_left",
+                               schemas = schemas)
     group <- sprintf("%s_q5", var)
   }
 
@@ -108,7 +107,7 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' @export
 data_get_colours <- function(vars, region, time, zoom_levels,
                              scales_as_DA = c("building", "street"),
-                             data_path = get_data_path(), ...) {
+                             schemas, data_path = get_data_path(), ...) {
   UseMethod("data_get_colours", vars)
 }
 
@@ -117,9 +116,9 @@ data_get_colours <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.q5 <- function(vars, region, time, zoom_levels,
                                 scales_as_DA = c("building", "street"),
-                                data_path = get_data_path(), ...) {
+                                schemas, data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time,
+    vars = vars, region = region, time = time, schemas = schemas,
     zoom_levels = zoom_levels, colours_table = "left_5",
     scales_as_DA = scales_as_DA, data_path = data_path
   )
@@ -130,9 +129,9 @@ data_get_colours.q5 <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar <- function(vars, region, time, zoom_levels,
                                    scales_as_DA = c("building", "street"),
-                                   data_path = get_data_path(), ...) {
+                                   schemas, data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time,
+    vars = vars, region = region, time = time, schemas = schemas,
     zoom_levels = zoom_levels, colours_table = "bivar",
     scales_as_DA = scales_as_DA, data_path = data_path
   )
@@ -143,9 +142,9 @@ data_get_colours.bivar <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta <- function(vars, region, time, zoom_levels,
                                    scales_as_DA = c("building", "street"),
-                                   data_path = get_data_path(), ...) {
+                                   schemas, data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time,
+    vars = vars, region = region, time = time, schemas = schemas,
     zoom_levels = zoom_levels, colours_table = "delta",
     scales_as_DA = scales_as_DA, data_path = data_path
   )
@@ -156,9 +155,9 @@ data_get_colours.delta <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
                                          scales_as_DA = c("building", "street"),
-                                         data_path = get_data_path(), ...) {
+                                         schemas, data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time,
+    vars = vars, region = region, time = time, schemas = schemas,
     zoom_levels = zoom_levels, colours_table = "bivar",
     scales_as_DA = scales_as_DA, data_path = data_path
   )
@@ -169,9 +168,9 @@ data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
                                               scales_as_DA = c("building", "street"),
-                                              data_path = get_data_path(), ...) {
+                                              schemas, data_path = get_data_path(), ...) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time,
+    vars = vars, region = region, time = time, schemas = schemas,
     zoom_levels = zoom_levels, colours_table = "bivar",
     scales_as_DA = scales_as_DA, data_path = data_path
   )
@@ -182,7 +181,7 @@ data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
 #' @seealso \code{\link{data_get_colours}}
 data_get_colours.default <- function(vars, region, time, zoom_levels,
                                      scales_as_DA = c("building", "street"),
-                                     data_path = get_data_path(), ...) {
+                                     schemas, data_path = get_data_path(), ...) {
   data <- data.frame(ID = "NA")
   data$fill <- "#B3B3BB"
   return(data)
