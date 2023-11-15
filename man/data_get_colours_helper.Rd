@@ -36,6 +36,9 @@ be matched to the \code{group} column of the retrieved data. For \code{q5} class
 \code{left_5}, for \code{bivar} class would be \code{bivar}, etc. One of the names of the
 \code{colours_dfs} list present in the global environment.}
 
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}

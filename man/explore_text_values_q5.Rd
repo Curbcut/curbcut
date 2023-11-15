@@ -23,6 +23,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -35,6 +36,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -47,6 +49,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -59,6 +62,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -71,6 +75,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -83,6 +88,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -95,6 +101,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang = lang,
   time,
+  schemas = NULL,
   ...
 )
 
@@ -107,6 +114,7 @@ explore_text_values_q5(var, region, ...)
   col = "var_left",
   lang,
   time,
+  schemas = NULL,
   ...
 )
 }
@@ -136,6 +144,9 @@ translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 }
 \value{
 The resulting text.

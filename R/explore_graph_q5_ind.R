@@ -7,6 +7,10 @@
 #' output of \code{\link{vars_build}}.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The output of \code{\link{data_get}}.
 #' @param df <`character`> The combination of the region under study and the
@@ -23,7 +27,7 @@
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
-explore_graph_q5_ind <- function(vars, select_id, scale, data, time,
+explore_graph_q5_ind <- function(vars, select_id, scale, data, time, schemas,
                                  scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph_q5_ind", vars)
@@ -31,7 +35,7 @@ explore_graph_q5_ind <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph_q5_ind
 #' @export
-explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
+explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time, schemas,
                                         scales_as_DA = c("building", "street"),
                                         lang = NULL,
                                         font_family = "acidgrotesk-book", ...) {
@@ -109,7 +113,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph_q5_ind
 #' @export
-explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time,
+explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time, schemas,
                                          scales_as_DA = c("building", "street"),
                                          lang = NULL,
                                          font_family = "acidgrotesk-book", ...) {

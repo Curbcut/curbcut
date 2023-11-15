@@ -16,6 +16,7 @@ explore_text_select_val(var, ...)
   scale,
   col = "var_left",
   time,
+  schemas = NULL,
   ...
 )
 
@@ -27,10 +28,20 @@ explore_text_select_val(var, ...)
   col = "var_left",
   time,
   lang,
+  schemas = NULL,
   ...
 )
 
-\method{explore_text_select_val}{default}(var, data, df, select_id, col = "var_left", time, ...)
+\method{explore_text_select_val}{default}(
+  var,
+  data,
+  df,
+  select_id,
+  col = "var_left",
+  time,
+  schemas = NULL,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code of the variable for which the
@@ -53,6 +64,9 @@ value information. Defaults to \code{var_left}, but could also be \code{var_righ
 
 \item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{lang}{<\code{character}> Active language. \code{"en"} or \code{"fr"}}
 }

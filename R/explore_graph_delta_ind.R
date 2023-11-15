@@ -10,6 +10,10 @@
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The output of \code{\link{data_get}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param df <`character`> The combination of the region under study and the
 #' scale at which the user is on, e.g. `CMA_CSD`. The output of
 #' \code{\link{update_scale}}.
@@ -24,7 +28,7 @@
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
-explore_graph_delta_ind <- function(vars, select_id, scale, data, time,
+explore_graph_delta_ind <- function(vars, select_id, scale, data, time, schemas,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph_delta_ind", vars)
@@ -32,19 +36,20 @@ explore_graph_delta_ind <- function(vars, select_id, scale, data, time,
 
 #' @describeIn explore_graph_delta_ind Scalar method
 #' @export
-explore_graph_delta_ind.scalar <- function(vars, select_id, scale, data, time,
+explore_graph_delta_ind.scalar <- function(vars, select_id, scale, data, time, schemas,
                                            scales_as_DA = c("building", "street"),
                                            lang = NULL,
                                            font_family = "acidgrotesk-book", ...) {
   explore_graph.delta(
     vars = vars, select_id = select_id, scale = scale, data = data, time = time,
+    schemas = schemas,
     scales_as_DA = scales_as_DA, lang = lang, font_family = font_family, ...
   )
 }
 
 #' @describeIn explore_graph_delta_ind Ordinal method
 #' @export
-explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time,
+explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time, schemas,
                                             scales_as_DA = c("building", "street"),
                                             lang = NULL,
                                             font_family = "acidgrotesk-book", ...) {
@@ -64,8 +69,8 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time,
   clr_df$fill[4] <- clr_df$fill[5]
 
   # Get the scales ggplot function
-  ycol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left")
-  xcol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left")
+  ycol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left", schemas = schemas)
+  xcol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left", schemas = schemas)
 
 
   x_scale <- explore_graph_scale(

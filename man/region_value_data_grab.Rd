@@ -4,7 +4,7 @@
 \alias{region_value_data_grab}
 \title{Retrieve data values and parent data for specific region and scale}
 \usage{
-region_value_data_grab(var, data, time, scale, region, col)
+region_value_data_grab(var, data, time, scale, region, col, schemas = NULL)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest.}
@@ -20,6 +20,9 @@ region_value_data_grab(var, data, time, scale, region, col)
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{data_path}{<\code{character}> The path to the data directory, defaults to
 "data/".}

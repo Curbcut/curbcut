@@ -53,13 +53,16 @@ var_remove_time <- function(var) {
 #' variable's info? Defaults to TRUE
 #' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
 #' from the global environment using \code{\link{get_from_globalenv}}.
-#'
+#' @param schemas_col <`named list`> One subset of the current schema information.
+#' The additional widget values that have an impact on which data column to pick.
+#' Usually `r[[id]]$schema()`, with `var_left` or`var_right` subset.
 #' @return The requested information about the variable, with optional translation
 #' using the \code{\link{cc_t}} function.
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL, check_year = TRUE,
-                         variables = get_from_globalenv("variables")) {
+                         variables = get_from_globalenv("variables"),
+                         schemas_col = NULL) {
   if (!what %in% names(variables)) {
     stop(glue::glue_safe("`{what}` is not a column of the `variables` table."))
   }
@@ -92,6 +95,16 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 
   out <- variables[[what]][subset_vector]
   if (translate) out <- cc_t(out, lang = lang)
+
+  # If schema isn't NULL, see if it needs to be switched in explanations
+  if (!is.null(schemas_col)) {
+    if (grepl("explanation|explanation_nodet|exp_q5", what)) {
+      for (i in names(schemas_col)) {
+        scm <- sprintf("__%s__", i)
+        out <- gsub(scm, schemas_col[[i]], out)
+      }
+    }
+  }
 
   return(out)
 }
@@ -190,11 +203,11 @@ var_row_index <- function(var) {
 #' translation using the \code{\link{cc_t}} function.
 #' @export
 var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
-                                lang = NULL, check_year = TRUE) {
+                                lang = NULL, check_year = TRUE, ...) {
   parent <- var_get_info(var, what = "parent_vec")
   parent_info <- var_get_info(parent,
     what = what, translate = translate,
-    lang = lang, check_year = check_year
+    lang = lang, check_year = check_year, ...
   )
 
   return(parent_info)

@@ -39,6 +39,12 @@ test_that("explore_text_parent_title works", {
   actual <- explore_text_parent_title(var = vars$var_left)
   expected <- "households"
   expect_equal(actual, expected)
+
+  vars <- vars_build("access_foot_food_grocery", scale = "CT", time = 2023)
+  vars <- vars$vars
+  actual <- explore_text_parent_title(var = vars$var_left)
+  expected <- "individuals"
+  expect_equal(actual, expected)
 })
 
 test_that("explore_text_region_val_df works", {
@@ -86,6 +92,21 @@ test_that("explore_text_region_val_df works", {
   )
   expect_equal(all(c("val") %in% names(actual)), TRUE)
 
+  vars <- vars_build("access_foot_food_grocery", scale = "CT", time = 2023)
+  time <- vars$time
+  vars <- vars$vars
+  data <- data_get(vars = vars, scale = "CT")
+  actual <- explore_text_region_val_df(
+    var = vars$var_left,
+    region = region,
+    select_id = "4620003.00",
+    data = data,
+    scale = scale,
+    time = time,
+    schemas = list(var_left = setNames(20, "transportationtime"))
+  )
+  expect_equal(all(c("val") %in% names(actual)), TRUE)
+
 })
 
 
@@ -100,7 +121,8 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time = time
+    time = time,
+    schemas = NULL
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 
@@ -113,7 +135,8 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time = time
+    time = time,
+    schemas = NULL
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 
@@ -125,7 +148,8 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
-    time = time
+    time = time,
+    schemas = NULL
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 })

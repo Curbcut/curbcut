@@ -288,7 +288,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         scale = r[[id]]$scale,
         select_id = r[[id]]$select_id,
         time = r[[id]]$time,
-        zoom_levels = r[[id]]$zoom_levels
+        zoom_levels = r[[id]]$zoom_levels,
+        schemas = r[[id]]$schemas
       )
 
       # Bookmarking
@@ -308,7 +309,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars,
         data = data,
         zoom_levels = r[[id]]$zoom_levels,
-        time = r[[id]]$time
+        time = r[[id]]$time,
+        schemas = r[[id]]$schemas
       )
     })
   }

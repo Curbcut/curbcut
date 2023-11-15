@@ -31,6 +31,8 @@
 #' @param time <`reactive numeric vector`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' Usually r[[id]]$time.
+#' @param schemas <`reactive named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -64,19 +66,20 @@
 #' @return The explore Shiny UI and server module functions
 #' @export
 explore_server <- function(id, r, data, vars, region, scale, select_id, time,
-                           zoom_levels, scales_as_DA = shiny::reactive(c("building", "street")),
+                           schemas, zoom_levels,
+                           scales_as_DA = shiny::reactive(c("building", "street")),
                            graph_fun = shiny::reactive(explore_graph),
                            graph_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), scale = scale(),
                              time = time(), select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), lang = r$lang()
+                             scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas()
                            )),
                            table_fun = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
                              r = r, data = data(), vars = vars(), scale = scale(),
                              time = time(), select_id = select_id(), region = region(),
                              zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
-                             lang = r$lang()
+                             lang = r$lang(), schemas = schemas()
                            ))) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))

@@ -533,6 +533,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         final_schemas <- c(final_schemas,
                            stats::setNames(input_val, i))
       }
+      final_schemas <- list(var_left = final_schemas)
 
       update_rv(id = id, r = r, rv_name = "schemas",
                 new_val = shiny::reactive(final_schemas))

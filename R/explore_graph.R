@@ -13,6 +13,8 @@
 #' \code{\link{update_scale}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their graph will be the one of their DA.
@@ -24,7 +26,7 @@
 #'
 #' @return A ggplot2 object representing the plot.
 #' @export
-explore_graph <- function(vars, select_id, scale, data, time,
+explore_graph <- function(vars, select_id, scale, data, time, schemas,
                           scales_as_DA = c("building", "street"), lang = NULL,
                           font_family = "acidgrotesk-book", ...) {
   UseMethod("explore_graph", vars)
@@ -32,7 +34,7 @@ explore_graph <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.q5_ind <- function(vars, select_id, scale, data, time,
+explore_graph.q5_ind <- function(vars, select_id, scale, data, time, schemas,
                                  scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "acidgrotesk-book", ...) {
   explore_graph_q5_ind(vars = vars, select_id = select_id, scale = scale,
@@ -43,7 +45,7 @@ explore_graph.q5_ind <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.q5 <- function(vars, select_id, scale, data, time,
+explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
                              scales_as_DA = c("building", "street"), lang = NULL,
                              font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
@@ -60,7 +62,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   clr_df <- shared_info$colours_dfs$left_5
   clr <- \(x) clr_df$fill[2:6]
 
-  rcol <- sprintf("var_left_%s", time)
+  rcol <- match_schema_to_col(data = data, time = time, schemas = schemas)
 
   # Keep the data inside the breaks
   vl_breaks <- attr(data, "breaks_var_left")
@@ -75,7 +77,6 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
   )
 
   # Graph an appropriate number of bins
-  rcol <- sprintf("var_left_%s", time$var_left)
   var_left_num <- length(unique(data_inrange[[rcol]]))
   bin_number <- min(15, ceiling(0.8 * var_left_num))
 
@@ -124,7 +125,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.bivar <- function(vars, select_id, scale, data, time,
+explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
                                 scales_as_DA = c("building", "street"), lang = NULL,
                                 font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
@@ -143,12 +144,14 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
   vr_col <- match_schema_to_col(
     data = data,
     col = "var_right",
-    time = time
+    time = time,
+    schemas = schemas
   )
   vl_col <- match_schema_to_col(
     data = data,
     col = "var_left",
-    time = time
+    time = time,
+    schemas = schemas
   )
   vr_breaks <- attr(data, "breaks_var_right")
   vl_breaks <- attr(data, "breaks_var_left")
@@ -201,7 +204,8 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
   group_col <- match_schema_to_col(
     data = data_in_range,
     col = "group",
-    time = time
+    time = time,
+    schemas = NULL
   )
 
   # # Breaks range
@@ -247,18 +251,19 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta_ind <- function(vars, select_id, scale, data, time,
+explore_graph.delta_ind <- function(vars, select_id, scale, data, time, schemas,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
   explore_graph_delta_ind(vars = vars, select_id = select_id, scale = scale,
-                          data = data, time = time, scales_as_DA = scales_as_DA,
-                          lang = lang, font_family = font_family, ...
+                          data = data, time = time, schemas = schemas,
+                          scales_as_DA = scales_as_DA, lang = lang,
+                          font_family = font_family, ...
   )
 }
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta <- function(vars, select_id, scale, data, time,
+explore_graph.delta <- function(vars, select_id, scale, data, time, schemas,
                                 scales_as_DA = c("building", "street"), lang = NULL,
                                 font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
@@ -275,8 +280,8 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
   clr_df <- shared_info$colours_dfs$delta
 
   # Get the scales ggplot function
-  ycol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left")
-  xcol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left")
+  ycol <- match_schema_to_col(data = data, time = time$var_left[2], col = "var_left", schemas = schemas)
+  xcol <- match_schema_to_col(data = data, time = time$var_left[1], col = "var_left", schemas = schemas)
 
 
   x_scale <- explore_graph_scale(
@@ -352,7 +357,7 @@ explore_graph.delta <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.delta_bivar <- function(vars, select_id, scale, data, time,
+explore_graph.delta_bivar <- function(vars, select_id, scale, data, time, schemas,
                                       scales_as_DA = c("building", "street"), lang = NULL,
                                       font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
@@ -430,11 +435,11 @@ explore_graph.delta_bivar <- function(vars, select_id, scale, data, time,
 
 #' @rdname explore_graph
 #' @export
-explore_graph.bivar_ind <- function(vars, select_id, scale, data, time,
+explore_graph.bivar_ind <- function(vars, select_id, scale, data, time, schemas,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
   explore_graph_bivar_ind(
-    vars = vars, select_id = select_id, scale = scale, data = data, time = time,
+    vars = vars, select_id = select_id, scale = scale, data = data, time = time, schemas = schemas,
     scales_as_DA = scales_as_DA, lang = lang,  font_family = "acidgrotesk-book", ...
   )
 }

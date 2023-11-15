@@ -1,11 +1,12 @@
-test_explore_graph_helper <- function(var_left, var_right, scale, region, time, select_id) {
+test_explore_graph_helper <- function(var_left, var_right, scale, region, time,
+                                      select_id, schemas = NULL) {
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, scale = scale, region = region, time = time)
   actual <- explore_graph(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time, lang = "fr"
+    data = data, time = time, lang = "fr", schemas = schemas
   )
 
   # If there is a selection, the selection is within range
@@ -16,7 +17,7 @@ test_explore_graph_helper <- function(var_left, var_right, scale, region, time, 
         ggplot2::ggplot_build(actual)$layout$panel_scales_x[[1]]$range$range
 
       # The value is in x_range
-      dat_col <- match_schema_to_col(data = data, time = time)
+      dat_col <- match_schema_to_col(data = data, time = time, schemas = schemas)
       val <- data[[dat_col]][data$ID == select_id]
 
       # The value is within range of the plot
@@ -54,11 +55,13 @@ test_explores <- function(var_right, select_id, scale, region) {
     time = 2021, select_id = select_id
   )
 
-  # # Ind scalar
-  # test_explore_graph_helper("access_foot_food_grocery_20",
-  #   var_right = var_right, scale = "DA", region = "city",
-  #   select_id = select_id
-  # )
+  # Ind scalar
+  test_explore_graph_helper(
+    var_left = "access_foot_food_grocery",
+    var_right = var_right, scale = "DA", region = "city",
+    select_id = select_id, schemas = list(var_left = setNames(20, "transportationtime")),
+    time = 2023
+  )
 
   # Ind scalar
   test_explore_graph_helper(

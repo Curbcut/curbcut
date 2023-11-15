@@ -15,6 +15,7 @@ explore_text(
   scale,
   time,
   data,
+  schemas,
   scales_as_DA,
   zoom_levels,
   lang,
@@ -28,6 +29,7 @@ explore_text(
   scale,
   time,
   data,
+  schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
@@ -41,6 +43,7 @@ explore_text(
   scale,
   data,
   time,
+  schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
@@ -54,6 +57,7 @@ explore_text(
   scale,
   data,
   time,
+  schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
@@ -67,6 +71,7 @@ explore_text(
   scale,
   data,
   time,
+  schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
@@ -91,6 +96,9 @@ A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$t
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations. The output of \code{\link{data_get}}.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By

@@ -103,7 +103,7 @@ legend_breaks.bivar_ldelta_rq3 <- function(vars, data, time, ...) {
     compact = TRUE,
   )
 
-  rcol <- match_schema_to_col(data = data, time = time, col = "var_right")
+  rcol <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = NULL)
   break_labs_x <- convert_unit(
     var = vars$var_right,
     x = c(

@@ -95,7 +95,7 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
   data <- data_get_qs(var, scale, data_path = data_path)
 
   # Calculate breaks for the right columns
-  cols <- match_schema_to_col(data = data, time = time_col, col = var)
+  cols <- match_schema_to_col(data = data, time = time_col, col = var, schemas = NULL)
   keep_cols <- c("ID", cols, attr(data, "breaks_var")) # keep the breaks_var and use it to calculate breaks
   data <- data[unique(keep_cols)]
 
@@ -107,7 +107,7 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
   data <- data$data
 
   # Keep columns of the two years
-  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr)
+  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr, schemas = NULL)
   data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
 
   # Calculate the relative difference
@@ -416,7 +416,7 @@ data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("bui
   vr_vars <- vr_vars$vars
   data_vr <- data_get(vr_vars, scale = scale, time = vr_time, region = region,
                       scales_as_DA = scales_as_DA)
-  cv <- match_schema_to_col(data_vr, time = vr_time)
+  cv <- match_schema_to_col(data_vr, time = vr_time, schemas = NULL)
   data_vr <- data_vr[cv]
   names(data_vr) <- gsub("var_left", "var_right", names(data_vr))
   data_vr$var_right_q3 <- ntile(data_vr[[1]], 3)

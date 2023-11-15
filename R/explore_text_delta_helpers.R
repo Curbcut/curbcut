@@ -19,6 +19,8 @@
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The data frame must have columns named var_left
 #' and ID. The output of \code{\link{data_get}}.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param ... Additional arguments passed to the dispatched method.
 #'
 #' @return A list with the following elements:
@@ -29,7 +31,7 @@
 #' \code{region_vals}, containing the variable values formatted according
 #' to the class of `var`}
 explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
-                                   time, scale, data, ...) {
+                                   time, scale, data, schemas, ...) {
   UseMethod("explore_text_delta_exp", var)
 }
 
@@ -37,7 +39,7 @@ explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
 #' @param lang <`character`> Language for translation.
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
-                                       time, scale, data, lang, ...) {
+                                       time, scale, data, lang, schemas, ...) {
 
   # Grab values for single years. Allow for `apply`
   var_lr <- sprintf("var_%s", left_right)
@@ -54,7 +56,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     # Grab the explanation
     exp_q5 <- var_get_info(
       var = var, what = "exp_q5", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[var_lr]]
     )
 
     # Sub the placeholder for the two last brackets
@@ -102,7 +104,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
   # If there is a selection
   exp <- var_get_info(
     var = var, what = "explanation", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[var_lr]]
   )
   if (grepl("</ul>", exp)) {
     out <- if (left_right == "left") {
@@ -120,7 +122,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     select_id = select_id,
     col = var_lr,
     lang = lang,
-    time_col = times[[1]]
+    time_col = times[[1]],
+    schemas = schemas
   )$rank_chr
 
   rank_chr_after <- explore_text_selection_comparison(
@@ -129,7 +132,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     select_id = select_id,
     col = var_lr,
     lang = lang,
-    time_col = times[[2]]
+    time_col = times[[2]],
+    schemas = schemas
   )$rank_chr
 
   # Did it remain in the same category, or it moved?
@@ -167,9 +171,11 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 #' @export
 explore_text_delta_exp.default <- function(var, region, select_id,
                                            left_right = "left", scale, data,
-                                           time, lang, ...) {
+                                           time, lang, schemas, ...) {
+  var_lr <- sprintf("var_%s", left_right)
   # Grab the explanation
-  exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang)
+  exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang,
+                      schemas_col = schemas[[var_lr]])
   if (grepl("</ul>", exp)) {
     out <- if (left_right == "left") {
       "the first value"
@@ -180,7 +186,6 @@ explore_text_delta_exp.default <- function(var, region, select_id,
   }
 
   # Grab values for single years. Allow for `apply`
-  var_lr <- sprintf("var_%s", left_right)
   times <- sapply(time[[var_lr]], \(x) setNames(list(x), var_lr),
                   simplify = FALSE, USE.NAMES = TRUE)
   names(times) <- time[[var_lr]]

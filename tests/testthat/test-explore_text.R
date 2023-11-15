@@ -1,12 +1,15 @@
-test_explores_helper <- function(var_left, var_right, region, scale, time, select_id) {
+test_explores_helper <- function(var_left, var_right, region, scale, time, select_id, schemas = NULL) {
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time_ <- vars$time
   vars <- vars$vars
   data <- data_get(vars, region = region, scale = scale, time = time_)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time_, zoom_levels = mzl_borough_CT_DA_building
+    data = data, time = time_, zoom_levels = mzl_borough_CT_DA_building,
+    schemas = schemas
   )
+
+  expect_false(grepl("__", actual)) # missing schemas? __ detected in the output
   expect_equal(class(actual), "character")
   expect_equal(length(actual), 1)
   # print(actual)
@@ -43,11 +46,12 @@ test_explores <- function(var_right, select_id, region, scale) {
                        select_id = select_id, time = 2021
   )
 
-  # # Ind ordinal, multiple schemas
-  # test_explores_helper(var_left = "access_foot_food_grocery",
-  #                      var_right = var_right,
-  #                      region = region, scale = "DA", select_id = select_id, time = 2023
-  # )
+  # Ind ordinal, multiple schemas
+  test_explores_helper(var_left = "access_foot_food_grocery",
+                       var_right = var_right,
+                       region = region, scale = "DA", select_id = select_id,
+                       time = 2023, schemas = list(var_left = setNames(20, "transportationtime"))
+  )
 
   # sqkm
   test_explores_helper(var_left = "alley_sqkm",

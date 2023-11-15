@@ -472,6 +472,44 @@ remove_outliers_df <- function(df, cols) {
   return(out)
 }
 
+#' Calculate Weighted Mean
+#'
+#' This function computes the weighted mean of a numeric vector, with the option
+#' to remove NA values on both x and w. The calculation is based on weights provided.
+#'
+#' @param x <`numeric vector`> A numeric vector for which the weighted mean is
+#' to be computed.
+#' @param w <`numeric vector`> A numeric vector of weights, where each weight
+#' corresponds to the elements in `x`. The length of `w` should match the
+#' ength of `x`.
+#' @param ... Additional arguments passed to `stats::weighted.mean`.
+#' @param na.rm <`logical`> A logical value indicating whether NA values in `x`
+#' and `w` should be stripped before the computation proceeds. Defaults to
+#' `FALSE`.
+#'
+#' @return A numeric value representing the weighted mean of the elements in `x`.
+#'
+#' @examples
+#' x <- c(1, 2, 3, 4, NA)
+#' w <- c(1, 2, 3, 4, 5)
+#' weighted_mean(x, w) # NA due to NA in `x`
+#' weighted_mean(x, w, na.rm = TRUE) # weighted mean excluding NA
+#'
+#' @export
+weighted_mean = function(x, w, ..., na.rm = FALSE){
+  # Check if the lengths of x and w are equal
+  if (length(x) != length(w)) {
+    stop("Lengths of 'x' and 'w' must be equal.")
+  }
+
+  if (na.rm) {
+    keep = !is.na(x) & !is.na(w)
+    w = w[keep]
+    x = x[keep]
+  }
+  stats::weighted.mean(x, w, ..., na.rm = na.rm)
+}
+
 #' Grab DA_ID from a building-street-like dataframe (large!)
 #'
 #' This function fetches the DA_ID matching with the selected ID from a given
@@ -684,6 +722,7 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' `data` (output of \code{\link{get_data}}).
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' Can be NULL if there are none (ex. taking a parent variable, no schemas).
 #' @param closest_time <`logical`> Should the closest time be used if the exact
 #' time is not found? Default is `FALSE`.
 #'
@@ -692,7 +731,7 @@ hex_to_rgb_or_rgba <- function(hex) {
 #' @export
 match_schema_to_col <- function(data, time, col = "var_left",
                                 data_schema = attr(data, sprintf("schema_%s", col)),
-                                schemas = NULL, closest_time = FALSE) {
+                                schemas, closest_time = FALSE) {
 
   # Default data_get method does not return schema_*
   if (is.null(data_schema)) {
@@ -725,14 +764,16 @@ match_schema_to_col <- function(data, time, col = "var_left",
   # Which var out of those correspond to the right time
   var <- pv[avail_time %in% time_col]
 
-  for (i in names(schemas)) {
+  # Subset from schemas the col schema
+  sch <- schemas[[col]]
+  for (i in names(sch)) {
     regex <- data_schema[[i]]
 
     # Extract possibilities
     avail <- s_extract(regex, var)
 
     # Which var out of those correspond to the current schema value
-    var <- var[which(avail %in% schemas[[i]])]
+    var <- var[which(avail %in% sch[[i]])]
   }
 
   if (closest_time) {

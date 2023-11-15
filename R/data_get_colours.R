@@ -12,6 +12,8 @@
 #' in the `regions_dictionary`. Usually one of the output of \code{\link{geography_server}}.
 #' @param time <`numeric`> The `time` at which data is displayed. A subset of the list
 #' `time`. Only the numeric vector.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.

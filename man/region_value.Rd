@@ -4,7 +4,17 @@
 \alias{region_value}
 \title{Compute region values based on different methods}
 \usage{
-region_value(var, data, time, scale, region, select_id, col, ...)
+region_value(
+  var,
+  data,
+  time,
+  scale,
+  region,
+  select_id,
+  col,
+  schemas = NULL,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest, with its class
@@ -22,6 +32,9 @@ to dispatch to the right method.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right}.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{...}{Additional arguments to pass to specific method functions.}
 }

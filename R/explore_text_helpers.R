@@ -178,22 +178,18 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' @param ... Additional arguments for the \code{\link{explore_text_select_val}}
 #' @param scale <`reactive character`> Current scale. The output of
 #' \code{\link{update_scale}}.
-#' @param data
-#' function: \itemize{
-#'  \item{data <`data.frame`>}{The output of \code{\link{data_get}}.}
-#'  \item{df <`character`>}{The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.}
-#' }
+#' @param data <`data.frame`> The output of \code{\link{data_get}}.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #'
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
 explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
-                                       scale, data, lang = NULL, time, ...) {
+                                       scale, data, lang = NULL, time, schemas = NULL, ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- region_value(var = var, data = data, time = time, col = col,
-                                  scale = scale, region = region)
+                                  scale = scale, region = region, schemas = schemas)
 
     # Return the values
     return(region_values)
@@ -208,6 +204,7 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
     lang = lang,
     time = time,
     data = data,
+    schemas = schemas,
     ...
   ))
 }
@@ -277,6 +274,8 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right` or
 #' `var_left_1` in delta.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting values
@@ -288,7 +287,7 @@ explore_text_select_val <- function(var, ...) {
 #' @describeIn explore_text_select_val Method for pct
 #' @export
 explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_left",
-                                        time, ...) {
+                                        time, schemas = NULL, ...) {
   # Create empty vector
   out <- c()
 
@@ -297,7 +296,7 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- match_schema_to_col(data = data, time = time, col = col)
+  rcol <- match_schema_to_col(data = data, time = time, col = col, schemas = schemas)
 
   # Add the percentage value for the selection. Second column is always
   out$val <- data[[rcol]][data$ID == select_id]
@@ -322,7 +321,7 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
 #' @param lang <`character`> Active language. `"en"` or `"fr"`
 #' @export
 explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_left",
-                                        time, lang, ...) {
+                                        time, lang, schemas = NULL, ...) {
   # Create empty vector
   out <- c()
 
@@ -331,7 +330,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- match_schema_to_col(data, time = time, col = col)
+  rcol <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
   brk_col <- sprintf("%s_q5", rcol)
 
   # Get the group in which falls the selection
@@ -353,7 +352,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 #' @describeIn explore_text_select_val Default method
 #' @export
 explore_text_select_val.default <- function(var, data, df, select_id, col = "var_left",
-                                            time, ...) {
+                                            time, schemas = NULL, ...) {
   # Create empty vector
   out <- c()
 
@@ -362,7 +361,7 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- match_schema_to_col(data = data, time = time, col = col)
+  rcol <- match_schema_to_col(data = data, time = time, col = col, schemas = schemas)
 
   # Add the value for the selection
   out$val <- data[[rcol]][data$ID == select_id]
@@ -396,6 +395,8 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 #' @param lang <`character`> Language the ranking character should be translated
 #' to. Defaults to NULL for no translation.
 #' @param time_col <`numeric`> Time at which to show the data.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -412,13 +413,13 @@ explore_text_select_val.default <- function(var, data, df, select_id, col = "var
 explore_text_selection_comparison <- function(var = NULL, data, select_id,
                                               col = "var_left",
                                               ranks_override = NULL,
-                                              lang = NULL, time_col) {
+                                              lang = NULL, time_col, schemas = NULL) {
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- sprintf("%s_%s", col, time_col)
+  rcol <- match_schema_to_col(data = data, time = time_col, col = col, schemas = schemas)
   # In the case of `delta`, the value to look at will be the variation (no years)
   if (length(rcol) == 2) rcol <- col
 
@@ -474,22 +475,26 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param ... Additional arguments to be passed.
 #'
 #' @return A list containing the correlation coefficient and a formatted string.
 #' @export
-explore_text_bivar_correlation_helper <- function(vars, data, time, lang = NULL, ...) {
+explore_text_bivar_correlation_helper <- function(vars, data, time, lang = NULL,
+                                                  schemas = NULL, ...) {
   UseMethod("explore_text_bivar_correlation_helper", vars)
 }
 
 #' @rdname explore_text_bivar_correlation_helper
 #' @export
 explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
-                                                         lang = NULL, ...) {
+                                                         lang = NULL,
+                                                         schemas = NULL, ...) {
 
   # Match schema
-  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
-  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
+  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left", schemas = schemas)
+  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = schemas)
 
   # If we're in delta_bivar, we shouldn't be grabbing the correlation with the
   # time, but the correlation between the two deltas variables.
@@ -512,11 +517,12 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
 #' @rdname explore_text_bivar_correlation_helper
 #' @export
 explore_text_bivar_correlation_helper.ordinal <- function(vars, data, time,
-                                                          lang = NULL, ...) {
+                                                          lang = NULL,
+                                                          schemas = NULL, ...) {
 
   # Match schema
-  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left")
-  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right")
+  vl_col <- match_schema_to_col(data = data, time = time, col = "var_left", schemas = schemas)
+  vr_col <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = schemas)
 
   # If we're in delta_bivar, we shouldn't be grabbing the correlation with the
   # time, but the correlation between the two deltas variables.
@@ -610,12 +616,14 @@ explore_text_color <- function(x, meaning) {
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #'
 #' @return If there is NAs in the selection, returns a string that starts with
 #' 'p_start' from the 'context' object and includes a message indicating that
 #' the information for 'var_left' or 'var_right' is not available. Returns NULL
 #' otherwise.
-explore_text_check_na <- function(context, data, select_id, vars, time, lang = NULL) {
+explore_text_check_na <- function(context, data, select_id, vars, time, lang = NULL, schemas = NULL) {
   # If there are no selection, returns NULL
   if (is.na(select_id)) {
     return(NULL)
@@ -623,9 +631,9 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
 
   # Construct the vl and vr columns. If in delta mode, we need to grab the
   # delta columns instead of the time columns.
-  vl <- sprintf("var_left_%s", time$var_left)
+  vl <- match_schema_to_col(data = data, time = time, col = "var_left", schemas = schemas)
   if (length(vl) == 2) vl <- "var_left"
-  vr <- sprintf("var_right_%s", time$var_right)
+  vr <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = schemas)
   if (length(vl) == 2) vl <- "var_right"
 
   out <- lapply(c(vl, vr), \(col) {

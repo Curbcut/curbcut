@@ -14,16 +14,17 @@ explore_server(
   scale,
   select_id,
   time,
+  schemas,
   zoom_levels,
   scales_as_DA = shiny::reactive(c("building", "street")),
   graph_fun = shiny::reactive(explore_graph),
   graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
     time = time(), select_id = select_id(), region = region(), scales_as_DA =
-    scales_as_DA(), lang = r$lang())),
+    scales_as_DA(), lang = r$lang(), schemas = schemas())),
   table_fun = shiny::reactive(explore_text),
   table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
     time = time(), select_id = select_id(), region = region(), zoom_levels =
-    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang()))
+    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas()))
 )
 
 explore_UI(id)
@@ -54,6 +55,9 @@ selected region.}
 \item{time}{<\verb{reactive numeric vector}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 Usually r[\link{id}]$time.}
+
+\item{schemas}{<\verb{reactive named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

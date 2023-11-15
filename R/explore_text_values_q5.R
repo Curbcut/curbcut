@@ -20,6 +20,8 @@
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param ... Additional arguments passed to the function..
 #'
 #' @return The resulting text.
@@ -31,14 +33,14 @@ explore_text_values_q5 <- function(var, region, ...) {
 #' @describeIn explore_text_values_q5 The method for percentage values.
 #' @export
 explore_text_values_q5.pct <- function(var, region, data, scale, select_id,
-                                       col = "var_left", lang, time, ...) {
+                                       col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
   # Grab the q5 explanation
   exp <- var_get_info(
     var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[col]]
   )
 
   # Grab the region values
@@ -50,12 +52,14 @@ explore_text_values_q5.pct <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE, lang = lang)
+    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
+                        lang = lang, schemas_col = schemas[[col]])
     out <- sprintf(cc_t("we currently don't have information regarding %s", lang = lang), exp)
     return(list(
       text = out,
@@ -80,12 +84,13 @@ explore_text_values_q5.pct <- function(var, region, data, scale, select_id,
 #' @describeIn explore_text_values_q5 The method for count values.
 #' @export
 explore_text_values_q5.count <- function(var, region, data, scale, select_id,
-                                         col = "var_left", lang, time, ...) {
+                                         col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
   # Grab the q5 explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang)
+  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang,
+                      schemas_col = schemas[[col]])
 
   # Grab the region values
   region_values <- explore_text_region_val_df(
@@ -96,14 +101,15 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -130,7 +136,7 @@ explore_text_values_q5.count <- function(var, region, data, scale, select_id,
 #' @describeIn explore_text_values_q5 The method for dollar values.
 #' @export
 explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
-                                          col = "var_left", lang, time, ...) {
+                                          col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -140,14 +146,15 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
     select_id = select_id,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -161,7 +168,8 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
   dollar_string <- convert_unit.dollar(x = region_values$val, compact = FALSE)
 
   # Grab the explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang)
+  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang,
+                      schemas_col = schemas[[col]])
 
   # Build the return
   out <- sprintf("%s %s", exp, dollar_string)
@@ -176,7 +184,7 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
 #' @describeIn explore_text_values_q5 The method for `ind` values.
 #' @export
 explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
-                                       col = "var_left", lang, time, ...) {
+                                       col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var, lang = lang)
 
@@ -189,14 +197,15 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
     data = data,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -216,7 +225,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
     # Grab the explanation
     exp_q5 <- var_get_info(
       var = var, what = "exp_q5", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
 
     # Sub the placeholder for the two last brackets
@@ -245,7 +254,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
   # If there is a selection
   exp <- var_get_info(
     var = var, what = "explanation", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[col]]
   )
 
   # Build the return
@@ -261,7 +270,7 @@ explore_text_values_q5.ind <- function(var, region, select_id, data, scale,
 #' @describeIn explore_text_values_q5 The method for average values.
 #' @export
 explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
-                                       col = "var_left", lang, time, ...) {
+                                       col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the parent variable
   parent_string <- explore_text_parent_title(var)
 
@@ -274,14 +283,15 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
     data = data,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -300,7 +310,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
     # Grab the explanation
     exp_q5 <- var_get_info(
       var = var, what = "exp_q5", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
 
     # If the two last brackets is recognized as the default, write a particular string
@@ -316,7 +326,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
   # If there is a selection
   exp_q5 <- var_get_info(
     var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[col]]
   )
 
   # Build the return
@@ -333,7 +343,7 @@ explore_text_values_q5.avg <- function(var, region, select_id, data, scale,
 #' @describeIn explore_text_values_q5 The method for square kilometers values.
 #' @export
 explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
-                                        col = "var_left", lang, time, ...) {
+                                        col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -343,14 +353,15 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
     select_id = select_id,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -367,7 +378,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
   # Grab the explanation
   exp_q5 <- var_get_info(
     var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[col]]
   )
 
   # If the two last brackets is recognized as the default, write a particular string
@@ -383,7 +394,7 @@ explore_text_values_q5.sqkm <- function(var, region, select_id, data, scale,
 #' @describeIn explore_text_values_q5 The method for per1k values.
 #' @export
 explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
-                                         col = "var_left", lang = lang, time, ...) {
+                                         col = "var_left", lang = lang, time, schemas = NULL, ...) {
   explore_text_values_q5.sqkm(
     var = var, region = region, scale = scale, select_id = select_id,
     data = data, col = col, lang = lang, time = time, ...
@@ -393,7 +404,7 @@ explore_text_values_q5.per1k <- function(var, region, select_id, data, scale,
 #' @describeIn explore_text_values_q5 The method for people per object values.
 #' @export
 explore_text_values_q5.ppo <- function(var, region, select_id, data, scale,
-                                       col = "var_left", lang, time, ...) {
+                                       col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -402,14 +413,15 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, scale,
     select_id = select_id,
     col = col,
     lang = lang,
-    time = time
+    time = time,
+    schemas = schemas
   )
 
   # NA message
   if (is.na(region_values$val)) {
     exp <- var_get_info(
       var = var, what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
                         lang = lang
@@ -426,7 +438,7 @@ explore_text_values_q5.ppo <- function(var, region, select_id, data, scale,
   # Grab the explanation
   exp_q5 <- var_get_info(
     var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas[[col]]
   )
 
   # If the two last brackets is recognized as the default, write a particular string

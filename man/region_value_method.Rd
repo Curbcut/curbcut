@@ -14,7 +14,16 @@ region_value_method(var, data_vals, parent_vals, ...)
 
 \method{region_value_method}{count}(var, data_vals, parent_vals, ...)
 
-\method{region_value_method}{ind}(var, data_vals, parent_vals, data, time, col, ...)
+\method{region_value_method}{ind}(
+  var,
+  data_vals,
+  parent_vals,
+  data,
+  time,
+  col,
+  schemas = schemas,
+  ...
+)
 
 \method{region_value_method}{default}(var, data_vals, parent_vals, ...)
 }
@@ -36,6 +45,9 @@ data values.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right}.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 }
 \value{
 Returns a list with calculated values for the specific method.

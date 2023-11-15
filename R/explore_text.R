@@ -13,6 +13,8 @@
 #' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The output of \code{\link{data_get}}.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By
 #' default, their info will be the one of their DA.
@@ -27,7 +29,7 @@
 #'
 #' @return The resulting text.
 #' @export
-explore_text <- function(vars, region, select_id, scale, time, data, scales_as_DA,
+explore_text <- function(vars, region, select_id, scale, time, data, schemas, scales_as_DA,
                          zoom_levels, lang, ...) {
   UseMethod("explore_text", vars)
 }
@@ -37,7 +39,7 @@ explore_text <- function(vars, region, select_id, scale, time, data, scales_as_D
 
 #' @rdname explore_text
 #' @export
-explore_text.q5 <- function(vars, region, select_id, scale, time, data,
+explore_text.q5 <- function(vars, region, select_id, scale, time, data, schemas,
                             zoom_levels, scales_as_DA = c("building", "street"),
                             lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
@@ -72,7 +74,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale, lang = lang,
-    time = time
+    time = time, schemas = schemas
   )
 
   # Put it all together
@@ -90,7 +92,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
       select_id = select_id, lang = lang,
-      time_col = time$var_left
+      time_col = time$var_left, schemas = schemas
     )
 
     # Make the first sentence of the paragraph
@@ -102,7 +104,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
     # Grab the explanation and capitalize the first letter
     exp <- var_get_info(vars$var_left,
       what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas$var_left
     ) |>
       s_sentence()
 
@@ -136,7 +138,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
 
 #' @rdname explore_text
 #' @export
-explore_text.bivar <- function(vars, region, select_id, scale, data, time,
+explore_text.bivar <- function(vars, region, select_id, scale, data, time, schemas,
                                zoom_levels, scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Append date function helper
@@ -204,7 +206,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
       var = vars$var_left, region = region,
       select_id = select_id, data = data, time = time,
       scale = context$treated_scale, lang = lang,
-      col = "var_left"
+      col = "var_left", schemas = schemas
     )
 
     # Grab the value string
@@ -212,7 +214,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
       scale = context$treated_scale,time = time,
-      col = "var_right", lang = lang
+      col = "var_right", lang = lang, schemas = schemas
     )
 
     # Add the coloring
@@ -253,11 +255,13 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
         select_id = select_id,
         col = col,
         lang = lang,
-        time_col = time[[col]]
+        time_col = time[[col]],
+        schemas = schemas
       )
 
       # Grab the explanation
-      exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang)
+      exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang,
+                          schemas_col = schemas[[col]])
       # If there are bullet points, change the explanation to something more generic
       if (grepl("</ul>", exp)) {
         out <- if (col == "var_left") {
@@ -319,20 +323,20 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
 
   # Correlation
   relation <- explore_text_bivar_correlation(
-    vars = vars, data = data, time = time, lang = lang)
+    vars = vars, data = data, time = time, lang = lang, schemas = schemas)
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {
     # Explanations
     left_exp <- var_get_info(vars$var_left,
       what = "explanation",
-      translate = TRUE, lang = lang
+      translate = TRUE, lang = lang, schemas_col = schemas$var_left
     ) |>
       explore_text_color(meaning = "left")
 
     right_exp <- var_get_info(vars$var_right,
       what = "explanation",
-      translate = TRUE, lang = lang
+      translate = TRUE, lang = lang, schemas_col = schemas$var_right
     ) |>
       explore_text_color(meaning = "right")
 
@@ -361,12 +365,12 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
   # Explanations
   left_exp <- var_get_info(vars$var_left,
     what = "explanation_nodet",
-    translate = TRUE, lang = lang
+    translate = TRUE, lang = lang, schemas_col = schemas$var_left
   ) |>
     explore_text_color(meaning = "left")
   right_exp <- var_get_info(vars$var_right,
     what = "explanation_nodet",
-    translate = TRUE, lang = lang
+    translate = TRUE, lang = lang, schemas_col = schemas$var_right
   ) |>
     explore_text_color(meaning = "right")
 
@@ -413,7 +417,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time,
 
 #' @rdname explore_text
 #' @export
-explore_text.delta <- function(vars, region, select_id, scale, data, time,
+explore_text.delta <- function(vars, region, select_id, scale, data, time, schemas,
                                zoom_levels, scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
@@ -449,7 +453,7 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time,
     select_id = select_id, data = data,
     scale = context$treated_scale,
     left_right = "left", lang = lang,
-    time = time
+    time = time, schemas = schemas
   )
 
   # Get the necessary information for the second paragraph
@@ -485,7 +489,7 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time,
   }
   exp_nodet <- var_get_info(vars$var_left,
     what = "explanation_nodet", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas$var_left
   )
   # If the explanation is a bullet point, switch to something more generic
   if (grepl("</ul>", exp_nodet)) {
@@ -502,7 +506,8 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time,
       "exceptionally large"
     ),
     lang = lang,
-    time_col = time$var_left
+    time_col = time$var_left,
+    schemas = schemas
   )
 
   # If `ind` and data remained the same, we add 'slight' decrease/increase
@@ -544,7 +549,7 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time,
 
 #' @rdname explore_text
 #' @export
-explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time,
+explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time, schemas,
                                      zoom_levels, scales_as_DA = c("building", "street"),
                                      lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
@@ -579,13 +584,13 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time,
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale, left_right = "left",
-    lang = lang, time = time
+    lang = lang, time = time, schemas = schemas
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale, left_right = "right",
-    lang = lang, time = time
+    lang = lang, time = time, schemas = schemas
   )
 
   # If there is a selection, return a completely different text
@@ -624,7 +629,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time,
         "an exceptionally large change"
       ),
       time_col = time$var_left,
-      lang = lang
+      lang = lang,
+      schemas = schemas
     )
     # Get the information on how the selection compares
     relat_right <- explore_text_selection_comparison(
@@ -637,7 +643,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time,
         "an exceptionally large change"
       ),
       time_col = time$var_right,
-      lang = lang
+      lang = lang,
+      schemas = schemas
     )
 
     # Is the rank similar or different

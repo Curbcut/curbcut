@@ -2,7 +2,7 @@ lefts <- c(
   "housing_tenant",
   "housing_rent",
   "alp",
-  # "access_foot_food_grocery_20",
+  "access_foot_food_grocery",
   "alley_sqkm",
   "alley_per1k",
   "climate_drought"
@@ -39,9 +39,9 @@ test_that("explore_graph_scale works", {
   expect_true("ScaleContinuousPosition" %in% cl)
 
 
-  # cl <- explore_graph_scale(var = vars_b$access_foot_food_grocery, x_y = "x")[[1]]
-  # cl <- class(cl)
-  # expect_true("ScaleContinuousPosition" %in% cl)
+  cl <- explore_graph_scale(var = vars_b$access_foot_food_grocery, x_y = "x")[[1]]
+  cl <- class(cl)
+  expect_true("ScaleContinuousPosition" %in% cl)
 
   cl <- explore_graph_scale(var = vars_b$alley_sqkm_2023, x_y = "x")[[1]]
   cl <- class(cl)

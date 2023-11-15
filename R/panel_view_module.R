@@ -25,6 +25,8 @@
 #' @param time <`reactive named list`> Named list of the time for both left and
 #' right variables. The second output of \code{\link{vars_build}}. Usually
 #' should be `r[[id]]$time()`.
+#' @param schemas <`reactive named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param temp_folder <`character`> The temporary folder of the app. By default
 #' will grab the `temp_folder` object as it's already supposed to have been assigned
 #' in the `global.R` file
@@ -35,6 +37,7 @@
 #' @return Panel view module
 #' @export
 panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, time,
+                              schemas,
                               temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
   stopifnot(shiny::is.reactive(data))
@@ -171,7 +174,8 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
         scale = treated_scale(),
         zoom_levels = zoom_levels(),
         lang = r$lang(),
-        time = time()
+        time = time(),
+        schemas = schemas()
       )
 
       # Return

@@ -8,7 +8,7 @@ test_that("data_get_colours.q5  works", {
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
     zoom_levels = mzl_CSD_CT_DA_building,
-    time = time
+    time = time, schemas = NULL
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
@@ -20,7 +20,7 @@ test_that("data_get_colours.q5  works", {
                      time = 2023)
   time <- vars$time
   vars <- vars$vars
-  schemas <- list(transportationtime = 20)
+  schemas <- list(var_left = setNames(20, "transportationtime"))
 
 
   data_colours <- data_get_colours(

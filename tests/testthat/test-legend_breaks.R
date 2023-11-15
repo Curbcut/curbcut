@@ -63,7 +63,8 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
   )
   actual <- legend_breaks(vars,
     data = data,
-    time = time
+    time = time,
+    schemas =
   )
   expect_equal(
     names(actual),

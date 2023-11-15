@@ -14,18 +14,21 @@
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #'
 #' @return A list containing the correlation coefficient, a boolean indicating
 #' whether the correlation is positive or negative, a text string describing
 #' the strength and direction of the correlation, and a text string describing
 #' the relationship between the variables.
-explore_text_bivar_correlation <- function(vars, data, time, lang = NULL) {
+explore_text_bivar_correlation <- function(vars, data, time, lang = NULL, schemas = NULL) {
   # Get correlation and method string
   corr <- explore_text_bivar_correlation_helper(
     vars = vars,
     data = data,
     time = time,
-    lang = lang
+    lang = lang,
+    schemas = schemas
   )
 
   # Is the correlation positive

@@ -8,14 +8,17 @@
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_x`, or the output of
 #' \code{\link{geography_server}}.
-#' @param scale <`character`>
-#' @param time <`named list`>
+#' @param scale <`character`> Current scale. Usually `r[[id]]$scale()`.
+#' @param time <`named list`> Named list of time, length 2 (var_left and var_right).
+#' Usually `r[[id]]$time()`
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
 #' @return Returns a list of two table. There is 'pretty table' ready to be
 #' shown to the user, and another table that is for download.
-table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = NULL) {
+table_view_prep_table <- function(vars, data, scale, zoom_levels, time, schemas = NULL, lang = NULL) {
 
   # Reformat data -----------------------------------------------------------
 
@@ -28,16 +31,16 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 
   # If var_right is in the data, subset it too
   if (sum(grepl("var_right_", names(dat))) > 0) {
-    vl_col <- match_schema_to_col(data = dat, time = time)
+    vl_col <- match_schema_to_col(data = dat, time = time, schemas = schemas)
     vl_col <- c(vl_col, "var_left") # Keep also `delta` if present
     vl_col <- vl_col[which(vl_col %in% names(dat))]
-    vr_col <- match_schema_to_col(data = dat, time = time, col = "var_right")
+    vr_col <- match_schema_to_col(data = dat, time = time, col = "var_right", schemas = schemas)
     vr_col <- c(vr_col, "var_right") # Keep also `delta` if present
     vr_col <- vr_col[which(vl_col %in% names(dat))]
     dat <- dat[c("ID", vl_col, vr_col)]
     # names(dat)[c(2:3)] <- c("var_left", "var_right")
   } else {
-    vl_col <- match_schema_to_col(data = dat, time = time)
+    vl_col <- match_schema_to_col(data = dat, time = time, schemas = schemas)
     vl_col <- c(vl_col, "var_left") # Keep also `delta` if present
     vl_col <- vl_col[which(vl_col %in% names(dat))]
     dat <- dat[c("ID", vl_col)]
@@ -70,7 +73,7 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
   # About the data information ----------------------------------------------
 
   text <- panel_view_prepare_text(vars = vars, scale = scale, dat = dat, time = time,
-                                  lang = lang)
+                                  schemas = schemas, lang = lang)
 
 
   # Update column names so it's more 'friendly' -----------------------------
@@ -119,9 +122,13 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 
   # Depending on the class of `vars`, update the other column names and
   # out as a datatable.
+  # Keep the previous attributes
+  for (i in names(prev_attr)) {
+    attr(pretty_dat, i) <- prev_attr[[i]]
+  }
   pretty_dat <-
     panel_view_rename_cols(vars = vars, dat = pretty_dat, lang = lang,
-                           scale = scale, time = time)
+                           scale = scale, time = time, schemas = schemas)
 
   # Add population and households to the title vars so they also are formatted
   pretty_dat$title_vars <- c(
@@ -148,7 +155,8 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 #' function.
 #' @param dat <`data.frame`> The data frame containing the columns to be
 #' renamed.
-#' @param time <`named list`>
+#' @param time <`named list`> Named list of time, length 2 (var_left and var_right).
+#' Usually `r[[id]]$time()`
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #' @param ... Additional arguments to be passed to the underlying methods.
@@ -156,19 +164,20 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, lang = N
 #' @return A list with data frame with renamed columns and a list of column
 #' names that need styling.
 #' @export
-panel_view_rename_cols <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   UseMethod("panel_view_rename_cols", vars)
 }
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.q5 <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols.q5 <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   # Construct column name
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
   title <- sprintf("%s (%s)", title, time$var_left)
 
   # Rename column
-  col <- sprintf("%s_%s", vars$var_left, time$var_left)
+  col <- match_schema_to_col(data = dat, time = time, col = vars$var_left,
+                             data_schema = attr(dat, "schema_var_left"), schemas = schemas)
   names(dat)[names(dat) == col] <- title
 
   # Prepare the colum names for styling
@@ -180,7 +189,7 @@ panel_view_rename_cols.q5 <- function(vars, dat, time, lang = NULL, ...) {
 #' @rdname panel_view_rename_cols
 #' @param time <`named list`>
 #' @export
-panel_view_rename_cols.delta <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols.delta <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   # Titles
   vars_sep <- var_get_info(var = vars$var_left,
                            what = "var_short",
@@ -207,7 +216,7 @@ panel_view_rename_cols.delta <- function(vars, dat, time, lang = NULL, ...) {
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.bivar <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols.bivar <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   # Construct column name
   vars_sep <- sapply(vars, var_get_info,
     what = "var_short",
@@ -216,7 +225,17 @@ panel_view_rename_cols.bivar <- function(vars, dat, time, lang = NULL, ...) {
   new_names <- sprintf("%s (%s)", vars_sep, time)
 
   # Rename column
-  col <- sprintf("%s_%s", vars, time)
+  col <- lapply(c("var_left", "var_right"), \(l_r) {
+    # Update schemas
+    if (!is.null(schemas)) {
+      names(schemas) <- gsub(l_r, vars[[l_r]], names(schemas))
+    }
+    names(time) <- gsub(l_r, vars[[l_r]], names(time))
+    match_schema_to_col(data = dat, time = time, col = vars[[l_r]],
+                        data_schema = attr(dat, sprintf("schema_%s", l_r)),
+                        schemas = schemas)
+  })
+
   names(dat)[names(dat) %in% col] <- new_names
 
   # Prepare the column names for styling
@@ -232,7 +251,7 @@ panel_view_rename_cols.bivar <- function(vars, dat, time, lang = NULL, ...) {
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols.delta_bivar <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   # Update column name
   vars_sep <- sapply(vars, var_get_info,
                      what = "var_short",
@@ -270,7 +289,7 @@ panel_view_rename_cols.delta_bivar <- function(vars, dat, time, lang = NULL, ...
 
 #' @rdname panel_view_rename_cols
 #' @export
-panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, time, lang = NULL, ...) {
+panel_view_rename_cols.bivar_ldelta_rq3 <- function(vars, dat, time, schemas = NULL, lang = NULL, ...) {
   # Update column name
   time <- lapply(vars, var_get_time)
   vars_sep <- lapply(vars, var_get_info,
@@ -360,19 +379,23 @@ panel_view_style_cols.default <- function(var, table, ...) {
 #' @param dat <`data.frame`> The data frame containing the columns under analysis
 #' @param time <`named list`> Object built using the \code{\link{vars_build}}
 #' function. It contains the time for both var_left and var_right variables.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param lang <`character`> The language to use for translating the texts.
 #' Defaults to NULL for no translation
 #' @param ... Additional arguments to be passed to the underlying methods.
 #'
 #' @return A string containing the panel view text.
 #' @export
-panel_view_prepare_text <- function(vars, scale, dat, time, lang = NULL, ...) {
+panel_view_prepare_text <- function(vars, scale, dat, time, schemas = NULL,
+                                    lang = NULL, ...) {
   UseMethod("panel_view_prepare_text", vars)
 }
 
 #' @describeIn panel_view_prepare_text The method for q5.
 #' @export
-panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.q5 <- function(vars, scale, dat, time, schemas = NULL,
+                                       lang = NULL, ...) {
   # Title
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
   title <- sprintf("%s (%s)", title, time$var_left)
@@ -380,16 +403,22 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
   colours <- colours_get()$bivar
   title_color <- colours$fill[colours$group == "3 - 1"]
 
-  # Grab the necesary values for the text
-  explanation <- var_get_info(vars$var_left,
-    what = "explanation",
-    translate = TRUE, lang = lang
-  )
+  # Update schemas
+  if (!is.null(schemas)) {
+    names(schemas) <- gsub("var_left", vars$var_left, names(schemas))
+  }
 
   # Column name
   col <- match_schema_to_col(data = dat, time = time, col = vars$var_left,
-                             data_schema = attr(dat, "schema_var_left"))
+                             schemas = schemas)
   class(col) <- class(vars$var_left)
+
+  # Grab the necesary values for the text
+  explanation <- var_get_info(vars$var_left,
+                              what = "explanation",
+                              translate = TRUE, lang = lang,
+                              schemas_col = schemas[[vars$var_left]]
+  )
 
   # Get the text for the single left variable
   out <- panel_view_prepare_text_helper(
@@ -400,6 +429,7 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
     explanation = explanation,
     title_color = title_color,
     time_col = time$var_left,
+    schemas_col = schemas[[vars$var_left]],
     lang = lang
   )
 
@@ -409,11 +439,12 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, lang = NULL, ...)
 
 #' @describeIn panel_view_prepare_text The method for delta.
 #' @export
-panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.delta <- function(vars, scale, dat, time, schemas = NULL,
+                                          lang = NULL, ...) {
   # Titles
   vars_sep <- var_get_info(var = vars$var_left,
     what = "var_short",
-    translate = TRUE, lang = lang
+    translate = TRUE, lang = lang, schemas = NULL
   )
   new_names <-
     c(
@@ -477,7 +508,8 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, lang = NULL, .
 
 #' @describeIn panel_view_prepare_text The method for bivar.
 #' @export
-panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.bivar <- function(vars, scale, dat, time, schemas = NULL,
+                                          lang = NULL, ...) {
   # Title
   vars_sep <- sapply(vars, var_get_info,
     what = "var_short",
@@ -497,17 +529,26 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
   title_colours <- c(left_color, right_color)
 
   # Grab the necesary values for the text
-  explanations <- lapply(var_codes, var_get_info,
-    what = "explanation",
-    translate = TRUE, lang = lang
-  )
+  explanations <- lapply(c("var_left", "var_right"), \(x) {
+    var_get_info(vars[[x]],
+                 what = "explanation",
+                 translate = TRUE, lang = lang,
+                 schemas_col = schemas[[x]])
+  })
 
   # Get the text for the single left variable
-  titles_texts <- mapply(\(title, var, explanation, title_color, time_col) {
+  titles_texts <- mapply(\(title, var, explanation, title_color, time_col, l_r) {
+
+    # Update schemas
+    if (!is.null(schemas)) {
+      names(schemas) <- gsub(l_r, vars[[l_r]], names(schemas))
+    }
+    names(time) <- gsub(l_r, vars[[l_r]], names(time))
 
     # Column name
     col <- match_schema_to_col(data = dat, time = time, col = var,
-                               data_schema = attr(dat, "schema_var_left"))
+                               data_schema = attr(dat, sprintf("schema_%s", l_r)),
+                               schemas = schemas)
     class(col) <- class(var)
 
     panel_view_prepare_text_helper(
@@ -518,9 +559,10 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
       explanation = explanation,
       title_color = title_color,
       lang = lang,
-      time_col = time_col
+      time_col = time_col,
+      schemas_col = schemas[[vars[[l_r]]]]
     )
-  }, new_names, var_codes, explanations, title_colours, time)
+  }, new_names, var_codes, explanations, title_colours, time, c("var_left", "var_right"))
 
   # Return
   return(titles_texts)
@@ -528,7 +570,8 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, lang = NULL, .
 
 #' @describeIn panel_view_prepare_text The method for delta_bivar.
 #' @export
-panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = NULL, ...) {
+panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, schemas = NULL,
+                                                lang = NULL, ...) {
   # Titles
   vars_sep <- sapply(vars, var_get_info,
                      what = "var_short",
@@ -604,7 +647,8 @@ panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, lang = N
 
 #' @describeIn panel_view_prepare_text The default method.
 #' @export
-panel_view_prepare_text.default <- function(vars, scale, dat, time, lang = NULL, ...) {
+panel_view_prepare_text.default <- function(vars, scale, dat, time, schemas = NULL,
+                                            lang = NULL, ...) {
   return(list(""))
 }
 
@@ -626,12 +670,16 @@ panel_view_prepare_text.default <- function(vars, scale, dat, time, lang = NULL,
 #' the variable. A piece of the `variables` table.
 #' @param title_color <`character`> The color code for the title. Default is
 #' #73AE80' for the left variable's green.
+#' @param schemas_col <`named list`> One subset of the current schema information.
+#' The additional widget values that have an impact on which data column to pick.
+#' Usually `r[[id]]$schema()`, with `var_left` or`var_right` subset.
 #' @param lang <`character`> The language to use for translating variable names.
 #' Defaults to NULL for no translation
 #'
 #' @return A character string containing the formatted HTML text with statistics.
 panel_view_prepare_text_helper <- function(scale, var, dat, title, explanation,
-                                           title_color = "#73AE80", time_col, lang = NULL) {
+                                           title_color = "#73AE80", time_col,
+                                           schemas_col = NULL, lang = NULL) {
   # Title
   out_title <-
     if (!grepl("<ul>", explanation)) {
@@ -707,7 +755,7 @@ panel_view_prepare_text_helper <- function(scale, var, dat, title, explanation,
         )
         par_exp <- var_get_parent_info(
           var = var, what = "explanation",
-          translate = TRUE, lang = lang
+          translate = TRUE, lang = lang, schemas_col = schemas_col
         )
         source_vec <- paste0("<b>", info$vec, "</b> (", info$vec_label, ")",
           collapse = ", "
