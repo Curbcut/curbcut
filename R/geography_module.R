@@ -37,11 +37,19 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
       return(list("Main scale" = top_scales))
     })
 
+    # If there's a default region, chane the ger to use it.
+    shiny::observeEvent(r$region(), {
+      if (!r$region() %in% regions) return(NULL)
+
+      update_ger_val(NULL)
+      update_ger_val(r$region())
+    }#, once = TRUE
+    )
+
     # Grab the value of the dropdowns
     reg_out <- picker_server(id = "ger", r = r,
                              var_list = regions_list,
                              selected = update_ger_val)
-
 
     tp_out <- picker_server(id = "get", r = r,
                             var_list = top_scales_list,
@@ -51,7 +59,6 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     # if the user wants to undo a geography change.
     previous_reg <- track_previous_reactive(reactive_expr = reg_out)
     previous_tp <- track_previous_reactive(reactive_expr = tp_out)
-
 
     # When the region changes, update the top scale (if necessary)
     update_get_val <- shiny::reactiveVal(NULL)
