@@ -24,6 +24,7 @@
 #' @param time <`reactive numeric vector`> Vector of time values to use for
 #' appending a time to the variables picked. The returned vector will be the
 #' same length as this argument.
+#' @param selected <`reactive character`> The value for which to update the picker.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}
 #'
 #' @return A reactive expression that returns the selected variable with `time`

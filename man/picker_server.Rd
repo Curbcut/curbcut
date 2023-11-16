@@ -33,6 +33,8 @@ made using \code{\link{dropdown_make}}.}
 appending a time to the variables picked. The returned vector will be the
 same length as this argument.}
 
+\item{selected}{<\verb{reactive character}> The value for which to update the picker.}
+
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}}
 }
 \value{

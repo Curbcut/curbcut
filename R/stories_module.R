@@ -161,7 +161,7 @@ stories_server <- function(id, r) {
                               picker_id = "var",
                               r = r,
                               var_list = themes,
-                              selected = unlist(themes()))
+                              selected = shiny::reactive(unlist(themes())))
 
     shiny::observeEvent(themes_c(), {
       in_theme <-
