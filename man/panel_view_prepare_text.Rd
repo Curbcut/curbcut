@@ -52,8 +52,8 @@ panel_view_prepare_text(
 \method{panel_view_prepare_text}{delta_bivar}(
   vars,
   scale,
-  time,
   dat,
+  time,
   schemas = NULL,
   lang = NULL,
   ...

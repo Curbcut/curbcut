@@ -552,7 +552,7 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, schemas = NULL
 
 #' @describeIn panel_view_prepare_text The method for delta_bivar.
 #' @export
-panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, schemas = NULL,
+panel_view_prepare_text.delta_bivar <- function(vars, scale, dat, time, schemas = NULL,
                                                 lang = NULL, ...) {
   # Titles
   vars_sep <- sapply(vars, var_get_info,

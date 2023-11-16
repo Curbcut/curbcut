@@ -759,10 +759,19 @@ match_schema_to_col <- function(data, time, col = "var_left",
   pv <- grep(col, pv, value = TRUE)
 
   # Extract available time
-  avail_time <- s_extract(data_schema$time, pv) |> as.numeric()
+  avail_time <- s_extract(data_schema$time, pv) |> unique()
+  avail_time <- gsub("_", "", avail_time) |> as.numeric()
 
   # Which var out of those correspond to the right time
   var <- pv[avail_time %in% time_col]
+
+  if (closest_time) {
+    if (length(var) == 0) {
+      # Get the closest years
+      closest_t <- which.min(abs(avail_time - time_col))
+      var <- pv[closest_t]
+    }
+  }
 
   # Subset from schemas the col schema
   sch <- schemas[[col]]
@@ -771,18 +780,11 @@ match_schema_to_col <- function(data, time, col = "var_left",
     regex <- data_schema[[i]]
 
     # Extract possibilities
-    avail <- s_extract(regex, var)
+    avail <- s_extract(regex, var) |> unique()
+    avail <- gsub("_", "", avail)
 
     # Which var out of those correspond to the current schema value
     var <- var[which(avail %in% sch[[i]])]
-  }
-
-  if (closest_time) {
-    if (length(var) == 0) {
-      # Get the closest years
-      closest_t <- which.min(abs(avail_time - time_col))
-      var <- pv[closest_t]
-    }
   }
 
   # Return the var as a character

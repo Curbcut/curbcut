@@ -67,12 +67,13 @@ legend_get_info <- function(vars, font_family = "acidgrotesk-book", scales_as_DA
 #' @return It returns a ggplot object
 #' @export
 legend_render <- function(vars, font_family = "acidgrotesk-book",
-                          scales_as_DA = c("building", "street"), scale, data,
+                          scales_as_DA = c("building", "street"), scale,
                           ...) {
   UseMethod("legend_render", vars)
 }
 
 #' @describeIn legend_render q5 method
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @export
 legend_render.q5 <- function(vars, font_family = "acidgrotesk-book",
                              scales_as_DA = c("building", "street"), scale,
@@ -352,7 +353,7 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
-                                data, scale, time, lang = NULL, ...) {
+                                scale, data, time, lang = NULL, ...) {
   legend_render_delta(vars = vars, data = data, time = time, font_family = font_family,
                       scales_as_DA = scales_as_DA, scale = scale, lang = lang, ...)
 }
@@ -377,7 +378,7 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
-                                data, scale, time, lang = NULL, ...) {
+                                scale, data, time, lang = NULL, ...) {
   UseMethod("legend_render_delta", vars)
 }
 
@@ -385,7 +386,7 @@ legend_render_delta <- function(vars, font_family = "acidgrotesk-book",
 #' @return A ggplot object representing the `delta` legend for scalar data.
 legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
                                        scales_as_DA = c("building", "street"),
-                                       data, scale, time, lang = NULL, ...) {
+                                       scale, data, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- xmin <- xmax <-  NULL
@@ -601,7 +602,7 @@ legend_render.q100 <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
                                       scales_as_DA = c("building", "street"),
-                                      data, scale, time, lang = NULL, ...) {
+                                      scale, data, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
@@ -647,7 +648,7 @@ legend_render.delta_bivar <- function(vars, font_family = "acidgrotesk-book",
 #' @export
 legend_render.bivar_ldelta_rq3 <- function(vars, font_family = "acidgrotesk-book",
                                            scales_as_DA = c("building", "street"),
-                                           data, scale, time, lang = NULL, ...) {
+                                           scale, data, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   x <- y <- fill <- label <- label_colour <- NULL
