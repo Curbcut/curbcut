@@ -4,7 +4,7 @@ test_that("is_scale_in works", {
     TRUE
   )
   expect_equal(
-    is_scale_in(c("CSD", "CT", "DA"), "grid50"),
+    is_scale_in(c("CSD", "CT", "DA"), "grd50"),
     FALSE
   )
 })

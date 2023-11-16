@@ -17,7 +17,7 @@ test_that("legend_breaks.q5 works", {
 
 test_that("legend_breaks.q5_ind works", {
   # vars1 <- vars_build(var_left = "climate_drought", scale = "grid50", time = 2015)
-  vars2 <- vars_build(var_left = "climate_drought", scale = "grid250", time = 2016)$vars
+  vars2 <- vars_build(var_left = "climate_drought", scale = "grd250", time = 2016)$vars
   data2 <- data_get(vars = vars2, scale = "DA", region = "island")
 
   # expect_equal(
@@ -25,7 +25,7 @@ test_that("legend_breaks.q5_ind works", {
   #   structure(c("Insig.", "Minor", "Mod.", "Elev.", "Major"))
   # )
 
-  legend <- legend_breaks(vars2, scale = "grid250", data = data2)
+  legend <- legend_breaks(vars2, scale = "grd250", data = data2)
   expect_true(length(legend) == 5)
   expect_true(all(is.character(legend)))
 

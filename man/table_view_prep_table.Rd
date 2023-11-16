@@ -4,7 +4,15 @@
 \alias{table_view_prep_table}
 \title{Prepare table to be shown to user}
 \usage{
-table_view_prep_table(vars, data, scale, zoom_levels, time, lang = NULL)
+table_view_prep_table(
+  vars,
+  data,
+  scale,
+  zoom_levels,
+  time,
+  schemas = NULL,
+  lang = NULL
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
@@ -13,13 +21,17 @@ function.}
 \item{data}{<\code{data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
-\item{scale}{<\code{character}>}
+\item{scale}{<\code{character}> Current scale. Usually \code{r[[id]]$scale()}.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \code{mzl_x}, or the output of
 \code{\link{geography_server}}.}
 
-\item{time}{<\verb{named list}>}
+\item{time}{<\verb{named list}> Named list of time, length 2 (var_left and var_right).
+Usually \code{r[[id]]$time()}}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}

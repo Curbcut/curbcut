@@ -72,12 +72,12 @@ test_that("legend_render.delta_ind  works", {
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
   expect_equal(p$labels$fill, "fill")
 
-  vars <- vars_build("climate_drought", scale = "grid250", time = c(2015, 2022))
+  vars <- vars_build("climate_drought", scale = "grd250", time = c(2015, 2022))
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = "DA", region = "city")
 
-  p <- legend_render(vars, scale = "grid250", time = time, data = data,
+  p <- legend_render(vars, scale = "grd250", time = time, data = data,
                      font_family = NULL, lang = "fr")
   expect_error(p, NA)
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")

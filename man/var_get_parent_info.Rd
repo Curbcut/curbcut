@@ -10,7 +10,8 @@ var_get_parent_info(
   what = "explanation",
   translate = FALSE,
   lang = NULL,
-  check_year = TRUE
+  check_year = TRUE,
+  ...
 )
 }
 \arguments{

@@ -34,6 +34,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  schemas,
   ...
 )
 
@@ -97,6 +98,9 @@ default, their colour will be the one of their DA.}
 directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}

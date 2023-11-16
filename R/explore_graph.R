@@ -201,12 +201,10 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
   }
 
   # Grab group column
-  group_col <- match_schema_to_col(
-    data = data_in_range,
-    col = "group",
-    time = time,
-    schemas = NULL
-  )
+  group_col <- match_schema_to_z_col(data = data_in_range, time = time,
+                                     col = "group", vl_vr = "var_left",
+                                     schemas = schemas)
+
 
   # # Breaks range
   # if (!is.null(vr_breaks)) vr_breaks <- range(vr_breaks)

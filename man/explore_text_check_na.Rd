@@ -4,7 +4,15 @@
 \alias{explore_text_check_na}
 \title{Checks if data is NA for a given selection}
 \usage{
-explore_text_check_na(context, data, select_id, vars, time, lang = NULL)
+explore_text_check_na(
+  context,
+  data,
+  select_id,
+  vars,
+  time,
+  lang = NULL,
+  schemas = NULL
+)
 }
 \arguments{
 \item{context}{<\code{list}> list that should include 'p_start' which is used as
@@ -25,6 +33,9 @@ A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$t
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 }
 \value{
 If there is NAs in the selection, returns a string that starts with

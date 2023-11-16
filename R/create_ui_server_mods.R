@@ -214,7 +214,8 @@ create_ui_server_mods <- function(modules, pos = 1) {
         vars = r[[id]]$vars(),
         scale = r[[id]]$scale(),
         region = r[[id]]$region(),
-        time = r[[id]]$time()
+        time = r[[id]]$time(),
+        schemas = r[[id]]$schemas()
       ))
 
       # Data for tile coloring

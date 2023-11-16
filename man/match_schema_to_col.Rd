@@ -9,7 +9,7 @@ match_schema_to_col(
   time,
   col = "var_left",
   data_schema = attr(data, sprintf("schema_\%s", col)),
-  schemas = NULL,
+  schemas,
   closest_time = FALSE
 )
 }
@@ -28,7 +28,8 @@ Can also be a simple numeric.}
 \code{data} (output of \code{\link{get_data}}).}
 
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
-values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.
+Can be NULL if there are none (ex. taking a parent variable, no schemas).}
 
 \item{closest_time}{<\code{logical}> Should the closest time be used if the exact
 time is not found? Default is \code{FALSE}.}

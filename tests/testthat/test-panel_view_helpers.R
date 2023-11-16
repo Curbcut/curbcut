@@ -180,10 +180,10 @@ test_that("table_view_prep_table works as expected (delta)", {
   test_table_view_prep_table_helper(
     var_left = "climate_drought",
     var_right = " ",
-    scale = "grid250",
+    scale = "grd250",
     region = "island",
     time = c(2015, 2022),
-    map_zoom_levels = mzl_grid250_grid100_grid50_grid25
+    map_zoom_levels = mzl_grd250_grd100_grd50_grd25
   )
 
   test_table_view_prep_table_helper(

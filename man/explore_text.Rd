@@ -16,9 +16,9 @@ explore_text(
   time,
   data,
   schemas,
-  scales_as_DA,
   zoom_levels,
-  lang,
+  scales_as_DA = c("building", "street"),
+  lang = NULL,
   ...
 )
 
@@ -41,8 +41,8 @@ explore_text(
   region,
   select_id,
   scale,
-  data,
   time,
+  data,
   schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
@@ -55,8 +55,8 @@ explore_text(
   region,
   select_id,
   scale,
-  data,
   time,
+  data,
   schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
@@ -69,8 +69,8 @@ explore_text(
   region,
   select_id,
   scale,
-  data,
   time,
+  data,
   schemas,
   zoom_levels,
   scales_as_DA = c("building", "street"),
@@ -100,13 +100,13 @@ observations. The output of \code{\link{data_get}}.}
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
-\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
-that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
-default, their info will be the one of their DA.}
-
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
 levels. Usually one of the \verb{mzl_*}, or the output of
 \code{\link{geography_server}}.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
+default, their info will be the one of their DA.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}

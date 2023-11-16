@@ -129,9 +129,9 @@ ntile <- function(x, n) {
     smaller_size <- as.integer(floor(size))
     larger_threshold <- larger_size * n_larger
     bins <- ifelse(x <= larger_threshold,
-      (x + (larger_size - 1L)) / larger_size,
-      (x + (-larger_threshold + smaller_size - 1L)) /
-        smaller_size + n_larger
+                   (x + (larger_size - 1L)) / larger_size,
+                   (x + (-larger_threshold + smaller_size - 1L)) /
+                     smaller_size + n_larger
     )
     as.integer(floor(bins))
   }
@@ -766,6 +766,7 @@ match_schema_to_col <- function(data, time, col = "var_left",
 
   # Subset from schemas the col schema
   sch <- schemas[[col]]
+
   for (i in names(sch)) {
     regex <- data_schema[[i]]
 
@@ -787,6 +788,42 @@ match_schema_to_col <- function(data, time, col = "var_left",
   # Return the var as a character
   return(var)
 
+}
+
+#' Match schema list to a specific column (`col`) in `data` based on `vl_vr` parameter
+#'
+#' This function extends the functionality of `match_schema_to_col` by adding support
+#' for dynamic selection of schema based on the `vl_vr` parameter. It identifies the
+#' column in a `data` frame that matches a given schema, considering whether to use
+#' the `var_left` or `var_right` schema. This is useful in scenarios where the column
+#' itself to select is not `var_left` nor `var_right`, but for example `group`.
+#'
+#' @param data <`data.frame`> A data frame containing the data.
+#' @param time <`numeric named list`> A named list specifying the time at which
+#' data is displayed. The names should correspond to `var_left` and `var_right`
+#' @param col <`character`> The specific column to be extracted, e.g. `group`.
+#' @param vl_vr <`character`> Determines which schema to use: 'var_left' or 'var_right'.
+#' @param data_schema <`named list`> The schema information for the data, typically
+#' an attribute of the data frame. Defaults to taking the attributes of data (of vl_vr).
+#' @param schemas <`named list`> Current schema information, which can impact the
+#' choice of data column. If `NULL`, no additional schemas are considered.
+#'
+#' @return The name of the variable corresponding to the given schema and `vl_vr`
+#' selection as a character string.
+#' @export
+match_schema_to_z_col <- function(data, time, col, vl_vr,
+                                  data_schema = attr(data, sprintf("schema_%s", vl_vr)),
+                                  schemas) {
+  if (!is.null(schemas)) {
+    group_schema <- schemas
+    names(group_schema) <- gsub(vl_vr, col, names(group_schema))
+  } else {
+    group_schema <- NULL
+  }
+
+  match_schema_to_col(data = data, time = time[[vl_vr]], col = col,
+                      data_schema = data_schema,
+                      schemas = group_schema)
 }
 
 #' Get the data path for Curbcut

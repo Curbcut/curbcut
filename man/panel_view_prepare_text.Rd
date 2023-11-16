@@ -9,17 +9,65 @@
 \alias{panel_view_prepare_text.default}
 \title{Prepare the panel view text for the given variables.}
 \usage{
-panel_view_prepare_text(vars, scale, dat, time, lang = NULL, ...)
+panel_view_prepare_text(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{q5}(vars, scale, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{q5}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{delta}(vars, scale, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{bivar}(vars, scale, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{bivar}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{delta_bivar}(vars, scale, time, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta_bivar}(
+  vars,
+  scale,
+  time,
+  dat,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{default}(vars, scale, dat, time, lang = NULL, ...)
+\method{panel_view_prepare_text}{default}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
@@ -31,6 +79,9 @@ function.}
 
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{lang}{<\code{character}> The language to use for translating the texts.
 Defaults to NULL for no translation}

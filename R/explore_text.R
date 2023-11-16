@@ -29,8 +29,10 @@
 #'
 #' @return The resulting text.
 #' @export
-explore_text <- function(vars, region, select_id, scale, time, data, schemas, scales_as_DA,
-                         zoom_levels, lang, ...) {
+explore_text <- function(vars, region, select_id, scale, time, data,
+                         schemas, zoom_levels,
+                         scales_as_DA = c("building", "street"),
+                         lang = NULL, ...) {
   UseMethod("explore_text", vars)
 }
 
@@ -39,8 +41,9 @@ explore_text <- function(vars, region, select_id, scale, time, data, schemas, sc
 
 #' @rdname explore_text
 #' @export
-explore_text.q5 <- function(vars, region, select_id, scale, time, data, schemas,
-                            zoom_levels, scales_as_DA = c("building", "street"),
+explore_text.q5 <- function(vars, region, select_id, scale, time, data,
+                            schemas, zoom_levels,
+                            scales_as_DA = c("building", "street"),
                             lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
@@ -138,8 +141,9 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data, schemas,
 
 #' @rdname explore_text
 #' @export
-explore_text.bivar <- function(vars, region, select_id, scale, data, time, schemas,
-                               zoom_levels, scales_as_DA = c("building", "street"),
+explore_text.bivar <- function(vars, region, select_id, scale, time, data,
+                               schemas, zoom_levels,
+                               scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Append date function helper
   append_date <- \(out) {
@@ -417,8 +421,9 @@ explore_text.bivar <- function(vars, region, select_id, scale, data, time, schem
 
 #' @rdname explore_text
 #' @export
-explore_text.delta <- function(vars, region, select_id, scale, data, time, schemas,
-                               zoom_levels, scales_as_DA = c("building", "street"),
+explore_text.delta <- function(vars, region, select_id, scale, time, data,
+                               schemas, zoom_levels,
+                               scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
@@ -549,8 +554,9 @@ explore_text.delta <- function(vars, region, select_id, scale, data, time, schem
 
 #' @rdname explore_text
 #' @export
-explore_text.delta_bivar <- function(vars, region, select_id, scale, data, time, schemas,
-                                     zoom_levels, scales_as_DA = c("building", "street"),
+explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
+                                     schemas, zoom_levels,
+                                     scales_as_DA = c("building", "street"),
                                      lang = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
@@ -820,7 +826,7 @@ explore_text_delta_bivar_adjective <- function(var, left, positive, lang = NULL,
 
 #' @rdname explore_text_delta_bivar_adjective
 #' @export
-explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang,
+explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang = NULL,
                                                        ...) {
   string <- (\(x) {
     if (left) {

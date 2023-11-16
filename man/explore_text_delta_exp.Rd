@@ -14,6 +14,7 @@ explore_text_delta_exp(
   time,
   scale,
   data,
+  schemas,
   ...
 )
 
@@ -26,6 +27,7 @@ explore_text_delta_exp(
   scale,
   data,
   lang,
+  schemas,
   ...
 )
 
@@ -38,6 +40,7 @@ explore_text_delta_exp(
   data,
   time,
   lang,
+  schemas,
   ...
 )
 }
@@ -63,6 +66,9 @@ A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$t
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations. The data frame must have columns named var_left
 and ID. The output of \code{\link{data_get}}.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{...}{Additional arguments passed to the dispatched method.}
 

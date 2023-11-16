@@ -47,11 +47,11 @@ test_that("explore_graph_scale works", {
   cl <- class(cl)
   expect_true("ScaleContinuousPosition" %in% cl)
 
-  cldr <- vars_build("climate_drought", scale = "grid250", time = 2022)
+  cldr <- vars_build("climate_drought", scale = "grd250", time = 2022)
   time <- cldr$time
   v <- cldr$vars
-  data <- data_get(vars = v, scale = "grid250")
-  cl <- explore_graph_scale(var = v$var_left, x_y = "x", scale = "grid250",
+  data <- data_get(vars = v, scale = "grd250")
+  cl <- explore_graph_scale(var = v$var_left, x_y = "x", scale = "grd250",
                             data_vals = data$var_left_2022, breaks = 0:5)[[1]]
   cl <- class(cl)
   expect_true("ScaleDiscretePosition" %in% cl)

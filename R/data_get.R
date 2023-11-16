@@ -186,10 +186,12 @@ data_get.q5 <- function(vars, scale, region = NULL,
 }
 
 #' @describeIn data_get The method for bivar.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @export
 data_get.bivar <- function(vars, scale, region,
                            scales_as_DA = c("building", "street"),
-                           data_path = get_data_path(), ...) {
+                           data_path = get_data_path(), schemas, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -215,6 +217,21 @@ data_get.bivar <- function(vars, scale, region,
   time_regex <- unique(all_data[[1]]$attr$schema_var_left$time)
   possible_vl_times <- grep(time_regex, names(all_data[[1]]$data), value = TRUE)
   possible_vl_times <- s_extract(time_regex, possible_vl_times)
+  possible_vl_times <- unique(possible_vl_times)
+  possible_vl_times <- gsub("_", "", possible_vl_times)
+
+  # Possible other vl_schemas
+  other_vl_schemas <- all_data[[1]]$attr$schema_var_left
+  other_vl_schemas <- other_vl_schemas[names(other_vl_schemas) != "time"]
+  if (length(other_vl_schemas) > 0) {
+    # possible_other_schemas <- NULL
+    # for (i in names(other_vl_schemas)) {
+      sch_rege <- "_\\d{1,2}_"#other_vl_schemas[[i]]
+      possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
+      possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
+      possible_other_schemas <- gsub("_", "", possible_other_schemas)
+    # }
+  }
 
   # Keep left and right breaks
   breaks_vl <- attr(all_data[[1]]$data, "breaks_var_left")
@@ -239,12 +256,25 @@ data_get.bivar <- function(vars, scale, region,
   }
 
   # Make the group columns, with the years (group_2016, group_2021, ...)
-  for (i in possible_vl_times) {
-    vr_year <- var_closest_year(vars$var_right, i)$closest_year
-    out <- paste(data[[sprintf("var_left_%s_q3", i)]],
-                 data[[sprintf("var_right_%s_q3", vr_year)]],
-                 sep = " - ")
-    data[[sprintf("group_%s", i)]] <- out
+  # If there are possible_other_schemas:
+  if (length(other_vl_schemas) > 0) {
+    for (i in possible_vl_times) {
+      for (s in possible_other_schemas) {
+        vr_year <- var_closest_year(vars$var_right, i)$closest_year
+        out <- paste(data[[sprintf("var_left_%s_%s_q3", s, i)]],
+                     data[[sprintf("var_right_%s_q3", vr_year)]],
+                     sep = " - ")
+        data[[sprintf("group_%s_%s", s, i)]] <- out
+      }
+    }
+  } else {
+    for (i in possible_vl_times) {
+        vr_year <- var_closest_year(vars$var_right, i)$closest_year
+        out <- paste(data[[sprintf("var_left_%s_q3", i)]],
+                     data[[sprintf("var_right_%s_q3", vr_year)]],
+                     sep = " - ")
+        data[[sprintf("group_%s", i)]] <- out
+    }
   }
 
   # Return

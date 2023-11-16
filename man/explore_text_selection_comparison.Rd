@@ -11,7 +11,8 @@ explore_text_selection_comparison(
   col = "var_left",
   ranks_override = NULL,
   lang = NULL,
-  time_col
+  time_col,
+  schemas = NULL
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ matter.}
 to. Defaults to NULL for no translation.}
 
 \item{time_col}{<\code{numeric}> Time at which to show the data.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 }
 \value{
 A named list with two elements:

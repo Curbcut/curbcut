@@ -22,7 +22,6 @@ test_that("data_get_colours.q5  works", {
   vars <- vars$vars
   schemas <- list(var_left = setNames(20, "transportationtime"))
 
-
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
     zoom_levels = mzl_CSD_CT_DA_building,
@@ -44,7 +43,24 @@ test_that("data_get_colours.bivar works", {
   vars <- vars$vars
   data_colours <- data_get_colours(
     vars = vars, region = "CMA", time = time,
-    zoom_levels = mzl_CSD_CT
+    zoom_levels = mzl_CSD_CT, schemas = NULL
+  )
+  expect_true(nrow(data_colours) > 1000)
+  expect_equal(unique(nchar(data_colours$fill)), 7)
+  expect_equal(names(data_colours), c("ID_color", "fill"))
+
+
+  vars <- vars_build(
+    var_left = "access_foot_food_grocery",
+    var_right = "alp",
+    scale = "CSD",
+    time = 2023
+  )
+  time <- vars$time
+  vars <- vars$vars
+  data_colours <- data_get_colours(
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = list(var_left = setNames(20, "transportationtime"))
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
@@ -62,7 +78,7 @@ test_that("data_get_colours.delta works", {
   vars <- vars$vars
   data_colours <- data_get_colours(
     vars = vars, region = "CMA", time = time,
-    zoom_levels = mzl_CSD_CT
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
@@ -80,7 +96,7 @@ test_that("data_get_colours.delta_bivar works", {
   vars <- vars$vars
   data_colours <- data_get_colours(
     vars = vars, region = "CMA", time = time,
-    zoom_levels = mzl_CSD_CT
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
@@ -98,9 +114,10 @@ test_that("data_get_colours.bivar_ldelta_rq3 works", {
   vars <- vars$vars
   data_colours <- data_get_colours(
     vars = vars, region = "CMA", time = time,
-    zoom_levels = mzl_CSD_CT
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
+

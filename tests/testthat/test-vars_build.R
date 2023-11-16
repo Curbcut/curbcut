@@ -108,7 +108,7 @@ test_that("vars_build works", {
   expect_equal(
     vars_build(
       var_left = "climate_drought", var_right = " ",
-      scale = "grid50", time = "2015"
+      scale = "grd50", time = "2015"
     )$vars,
     structure(list(var_left = structure("climate_drought", class = c(
       "ind",

@@ -36,7 +36,7 @@ test_that("zoom_get_name returns the expected output for a single input", {
 })
 
 test_that("zoom_get_name returns the expected output for multiple inputs", {
-  input <- c("CT", "DA", "grid250")
+  input <- c("CT", "DA", "grd250")
   expected_output <- c("Census tract", "Dissemination area", "250m")
   output <- zoom_get_name(input)
   expect_equal(output, expected_output)

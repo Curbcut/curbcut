@@ -8,7 +8,7 @@ relationship between text variables}
 \usage{
 explore_text_delta_bivar_adjective(var, left, positive, lang = NULL, ...)
 
-\method{explore_text_delta_bivar_adjective}{default}(var, left, positive, lang, ...)
+\method{explore_text_delta_bivar_adjective}{default}(var, left, positive, lang = NULL, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code for which the text needs to be

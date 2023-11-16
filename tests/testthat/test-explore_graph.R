@@ -73,8 +73,8 @@ test_explores <- function(var_right, select_id, scale, region) {
   # Ind ordinal
   test_explore_graph_helper(
     var_left = "climate_drought",
-    var_right = " ", scale = "grid250", region = "island",
-    time = 2022, select_id = if (is.na(select_id)) NA else "grid250_1784"
+    var_right = " ", scale = "grd250", region = "island",
+    time = 2022, select_id = if (is.na(select_id)) NA else "grd250_1784"
   )
 
   # sqkm
@@ -164,8 +164,8 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   # Ind ordinal
   test_explore_graph_helper(
     var_left = "climate_drought",
-    var_right = " ", scale = "grid250", region = "island",
-    time = c(2015, 2022), select_id = if (is.na(select_id)) NA else "grid250_1784"
+    var_right = " ", scale = "grd250", region = "island",
+    time = c(2015, 2022), select_id = if (is.na(select_id)) NA else "grd250_1784"
   )
 
   test_explore_graph_helper(

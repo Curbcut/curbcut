@@ -31,7 +31,7 @@
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
 data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_table,
-                                    schemas,
+                                    schemas = NULL,
                                     scales_as_DA = c("building", "street"),
                                     data_path = get_data_path(), ...) {
   # Grab colours
@@ -55,14 +55,21 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   data <- Reduce(rbind, data_r)
 
   # Is group already calculated?
-  group <- sprintf("group_%s", time$var_left)
+  group <- match_schema_to_z_col(data = data, time = time, col = "group", vl_vr = "var_left",
+                                 schemas = schemas)
+
   if ("group" %in% names(data)) {
     group <- "group"
-  } else if (!group %in% names(data)) {
-    # Grab the correct column from which to use colors on
-    var <- match_schema_to_col(data = data, time = time, col = "var_left",
-                               schemas = schemas)
-    group <- sprintf("%s_q5", var)
+  } else if (length(group) == 0 || !group %in% names(data)) {
+
+    group <- sprintf("group_%s", time$var_left)
+
+    if (!group %in% names(data)) {
+      # Grab the correct column from which to use colors on
+      var <- match_schema_to_col(data = data, time = time, col = "var_left",
+                                 schemas = schemas)
+      group <- sprintf("%s_q5", var)
+    }
   }
 
   # Deal with colours
@@ -72,7 +79,7 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   names(data)[1] <- c("ID_color")
 
   # Switch NA to the right "NA" colour
-  data$fill[is.na(data$fill)] <- colour_table$fill[colour_table$group == "NA"]
+  data$fill[is.na(data$fill)] <- colour_table$fill[grepl("^NA", colour_table$group)][[1]]
 
   # Return
   return(data)

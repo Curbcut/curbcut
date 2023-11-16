@@ -533,6 +533,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         final_schemas <- c(final_schemas,
                            stats::setNames(input_val, i))
       }
+      if (is.null(final_schemas)) return(NULL)
       final_schemas <- list(var_left = final_schemas)
 
       update_rv(id = id, r = r, rv_name = "schemas",

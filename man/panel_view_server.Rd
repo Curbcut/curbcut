@@ -14,6 +14,7 @@ panel_view_server(
   data,
   zoom_levels,
   time,
+  schemas,
   temp_folder = get_from_globalenv("temp_folder"),
   scales_as_DA = shiny::reactive(c("building", "street"))
 )
@@ -47,6 +48,9 @@ levels. Usually one of the \verb{mzl_*}, or the output of
 \item{time}{<\verb{reactive named list}> Named list of the time for both left and
 right variables. The second output of \code{\link{vars_build}}. Usually
 should be \code{r[[id]]$time()}.}
+
+\item{schemas}{<\verb{reactive named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{temp_folder}{<\code{character}> The temporary folder of the app. By default
 will grab the \code{temp_folder} object as it's already supposed to have been assigned

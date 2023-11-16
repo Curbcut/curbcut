@@ -226,14 +226,8 @@ panel_view_rename_cols.bivar <- function(vars, dat, time, schemas = NULL, lang =
 
   # Rename column
   col <- lapply(c("var_left", "var_right"), \(l_r) {
-    # Update schemas
-    if (!is.null(schemas)) {
-      names(schemas) <- gsub(l_r, vars[[l_r]], names(schemas))
-    }
-    names(time) <- gsub(l_r, vars[[l_r]], names(time))
-    match_schema_to_col(data = dat, time = time, col = vars[[l_r]],
-                        data_schema = attr(dat, sprintf("schema_%s", l_r)),
-                        schemas = schemas)
+    match_schema_to_z_col(data = dat, time = time, col = vars[[l_r]], vl_vr = l_r,
+                          schemas = schemas)
   })
 
   names(dat)[names(dat) %in% col] <- new_names
@@ -403,21 +397,16 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, schemas = NULL,
   colours <- colours_get()$bivar
   title_color <- colours$fill[colours$group == "3 - 1"]
 
-  # Update schemas
-  if (!is.null(schemas)) {
-    names(schemas) <- gsub("var_left", vars$var_left, names(schemas))
-  }
-
   # Column name
-  col <- match_schema_to_col(data = dat, time = time, col = vars$var_left,
-                             schemas = schemas)
+  col <- match_schema_to_z_col(data = dat, time = time, col = vars$var_left,
+                               vl_vr = "var_left", schemas = schemas)
   class(col) <- class(vars$var_left)
 
   # Grab the necesary values for the text
   explanation <- var_get_info(vars$var_left,
                               what = "explanation",
                               translate = TRUE, lang = lang,
-                              schemas_col = schemas[[vars$var_left]]
+                              schemas_col = schemas$var_left
   )
 
   # Get the text for the single left variable
@@ -429,7 +418,7 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, schemas = NULL,
     explanation = explanation,
     title_color = title_color,
     time_col = time$var_left,
-    schemas_col = schemas[[vars$var_left]],
+    schemas_col = schemas$var_left,
     lang = lang
   )
 
@@ -539,16 +528,9 @@ panel_view_prepare_text.bivar <- function(vars, scale, dat, time, schemas = NULL
   # Get the text for the single left variable
   titles_texts <- mapply(\(title, var, explanation, title_color, time_col, l_r) {
 
-    # Update schemas
-    if (!is.null(schemas)) {
-      names(schemas) <- gsub(l_r, vars[[l_r]], names(schemas))
-    }
-    names(time) <- gsub(l_r, vars[[l_r]], names(time))
-
     # Column name
-    col <- match_schema_to_col(data = dat, time = time, col = var,
-                               data_schema = attr(dat, sprintf("schema_%s", l_r)),
-                               schemas = schemas)
+    col <- match_schema_to_z_col(data = dat, time = time, col = vars[[l_r]],
+                                 vl_vr = l_r, schemas = schemas)
     class(col) <- class(var)
 
     panel_view_prepare_text_helper(
@@ -623,8 +605,6 @@ panel_view_prepare_text.delta_bivar <- function(vars, scale, time, dat, schemas 
       exp, t[1], t[2]
     )
   })
-
-
 
   # Get the text for every columns
   titles_texts <- mapply(\(title, var, explanation, title_color, t) {

@@ -9,17 +9,17 @@
 \alias{panel_view_rename_cols.bivar_ldelta_rq3}
 \title{Rename pretty columns in data frame for panel view}
 \usage{
-panel_view_rename_cols(vars, dat, time, lang = NULL, ...)
+panel_view_rename_cols(vars, dat, time, schemas = NULL, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{q5}(vars, dat, time, lang = NULL, ...)
+\method{panel_view_rename_cols}{q5}(vars, dat, time, schemas = NULL, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{delta}(vars, dat, time, lang = NULL, ...)
+\method{panel_view_rename_cols}{delta}(vars, dat, time, schemas = NULL, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{bivar}(vars, dat, time, lang = NULL, ...)
+\method{panel_view_rename_cols}{bivar}(vars, dat, time, schemas = NULL, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{delta_bivar}(vars, dat, time, lang = NULL, ...)
+\method{panel_view_rename_cols}{delta_bivar}(vars, dat, time, schemas = NULL, lang = NULL, ...)
 
-\method{panel_view_rename_cols}{bivar_ldelta_rq3}(vars, dat, time, lang = NULL, ...)
+\method{panel_view_rename_cols}{bivar_ldelta_rq3}(vars, dat, time, schemas = NULL, lang = NULL, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}

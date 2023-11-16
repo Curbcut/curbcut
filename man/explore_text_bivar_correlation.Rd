@@ -4,7 +4,7 @@
 \alias{explore_text_bivar_correlation}
 \title{Function for exploring bivariate correlation between two variables}
 \usage{
-explore_text_bivar_correlation(vars, data, time, lang = NULL)
+explore_text_bivar_correlation(vars, data, time, lang = NULL, schemas = NULL)
 }
 \arguments{
 \item{vars}{<\code{character}> A list containing the variable names for which the
@@ -18,6 +18,9 @@ A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$t
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 }
 \value{
 A list containing the correlation coefficient, a boolean indicating

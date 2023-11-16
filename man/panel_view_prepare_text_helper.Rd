@@ -12,6 +12,7 @@ panel_view_prepare_text_helper(
   explanation,
   title_color = "#73AE80",
   time_col,
+  schemas_col = NULL,
   lang = NULL
 )
 }
@@ -32,6 +33,10 @@ the variable. A piece of the \code{variables} table.}
 
 \item{title_color}{<\code{character}> The color code for the title. Default is
 #73AE80' for the left variable's green.}
+
+\item{schemas_col}{<\verb{named list}> One subset of the current schema information.
+The additional widget values that have an impact on which data column to pick.
+Usually \code{r[[id]]$schema()}, with \code{var_left} or\code{var_right} subset.}
 
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}
