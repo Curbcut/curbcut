@@ -181,15 +181,19 @@ explore_text_parent_title <- function(var, lang = NULL) {
 #' @param data <`data.frame`> The output of \code{\link{data_get}}.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return The resulting data frame after subsetting or list when there is a
 #' selection.
 explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
-                                       scale, data, lang = NULL, time, schemas = NULL, ...) {
+                                       scale, data, lang = NULL, time, schemas = NULL,
+                                       data_path = get_data_path(), ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
     region_values <- region_value(var = var, data = data, time = time, col = col,
-                                  scale = scale, region = region, schemas = schemas)
+                                  scale = scale, region = region, schemas = schemas,
+                                  data_path = data_path)
 
     # Return the values
     return(region_values)
@@ -205,6 +209,7 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
     time = time,
     data = data,
     schemas = schemas,
+    data_path = data_path,
     ...
   ))
 }
@@ -224,17 +229,20 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
 #' value information. Defaults to `var_left`, but could also be `var_right` or
 #' `var_left_1` in delta.
 #' @param time_col <`numeric`> Time at which to show the data.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return A vector containing the parent value for the zone.
 explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
-                                    time_col) {
+                                    time_col, data_path) {
   # Get the parent string
   parent_string <- var_get_info(var = var, what = "parent_vec")
 
   # Grab the parent data, usually through data_get. If it fails, try to grab
   # the data from the global scale in the global environment (this is useful for
   # place explorer generation.)
-  parent_data <- tryCatch(data_get(parent_string, scale = scale, vr_vl = col),
+  parent_data <- tryCatch(data_get(parent_string, scale = scale, vr_vl = col,
+                                   data_path = data_path),
     error = function(e) {
       data <- get_from_globalenv(scale)
       if (!parent_string %in% names(data)) {
@@ -285,9 +293,11 @@ explore_text_select_val <- function(var, ...) {
 }
 
 #' @describeIn explore_text_select_val Method for pct
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @export
 explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_left",
-                                        time, schemas = NULL, ...) {
+                                        time, schemas = NULL, data_path,...) {
   # Create empty vector
   out <- c()
 
@@ -304,7 +314,8 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
   # Get the parent data
   all_count <- explore_get_parent_data(
     var = var, select_id = select_id,
-    scale = scale, time_col = time[[col]]
+    scale = scale, time_col = time[[col]],
+    data_path = data_path
   )
 
   # Multiply the percentage by the count of parent in the zone

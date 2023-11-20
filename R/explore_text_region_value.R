@@ -16,15 +16,19 @@
 #' value information. Defaults to `var_left`, but could also be `var_right`.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments to pass to specific method functions.
 #'
 #' @return Varies based on the method specified in \code{var}. Commonly
 #' returns a list with elements like \code{val} and \code{count}.
 #' @export
-region_value <- function(var, data, time, scale, region, select_id, col, schemas = NULL, ...) {
+region_value <- function(var, data, time, scale, region, select_id, col, schemas = NULL,
+                         data_path, ...) {
   # Get the parent variable data
   rv <- region_value_data_grab(var = var, data = data, time = time, col = col,
-                               scale = scale, region = region, schemas = schemas)
+                               scale = scale, region = region, schemas = schemas,
+                               data_path = data_path)
 
   # Return the output of every method
   region_value_method(var = var, data_vals = rv$data_vals,
@@ -153,12 +157,15 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 #' `var_left_1` in delta.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return Returns a list containing two elements: \code{data_vals}, which
 #' holds the data values for the specified variable, and \code{parent_vals},
 #' which holds the parent data values.
 #' @export
-region_value_data_grab <- function(var, data, time, scale, region, col, schemas = NULL) {
+region_value_data_grab <- function(var, data, time, scale, region, col, schemas = NULL,
+                                   data_path) {
 
   # Get the parent variable
   parent_string <- var_get_info(var, what = "parent_vec")
@@ -167,7 +174,8 @@ region_value_data_grab <- function(var, data, time, scale, region, col, schemas 
   if ("count" %in% class(var)) {
     parent_vals <- NULL
   } else {
-    parent_data <- data_get(vars = parent_string, scale = scale, region = region, vr_vl = col)
+    parent_data <- data_get(vars = parent_string, scale = scale, region = region, vr_vl = col,
+                            data_path = data_path)
     # In the case where there is just one value, no time. Like `area`.
     if (col %in% names(parent_data)) {
       parent_vals <- parent_data[[col]]

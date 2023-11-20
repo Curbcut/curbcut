@@ -4,7 +4,16 @@
 \alias{region_value_data_grab}
 \title{Retrieve data values and parent data for specific region and scale}
 \usage{
-region_value_data_grab(var, data, time, scale, region, col, schemas = NULL)
+region_value_data_grab(
+  var,
+  data,
+  time,
+  scale,
+  region,
+  col,
+  schemas = NULL,
+  data_path
+)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest.}
@@ -24,8 +33,8 @@ value information. Defaults to \code{var_left}, but could also be \code{var_righ
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
-\item{data_path}{<\code{character}> The path to the data directory, defaults to
-"data/".}
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 }
 \value{
 Returns a list containing two elements: \code{data_vals}, which

@@ -4,7 +4,14 @@
 \alias{explore_get_parent_data}
 \title{Get parent data for a given variable and ID}
 \usage{
-explore_get_parent_data(var, select_id, scale, col = "var_left", time_col)
+explore_get_parent_data(
+  var,
+  select_id,
+  scale,
+  col = "var_left",
+  time_col,
+  data_path
+)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable for which to retrieve the
@@ -20,6 +27,9 @@ value information. Defaults to \code{var_left}, but could also be \code{var_righ
 \code{var_left_1} in delta.}
 
 \item{time_col}{<\code{numeric}> Time at which to show the data.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 }
 \value{
 A vector containing the parent value for the zone.

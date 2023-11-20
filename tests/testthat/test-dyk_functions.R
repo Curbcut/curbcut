@@ -5,9 +5,9 @@ test_dyk_helper <- function(var_left, var_right, region, scale, time, select_id)
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = scale, region = region)
 
-  actual <- dyk_text(vars = vars, scale = scale, select_id = select_id, lang = lang,
-                     region = region, zoom_levels = zoom_levels, time = time,
-                     scales_as_DA = c("building", "street"))
+  actual <- dyk_text(vars = vars, scale = scale, select_id = select_id,
+                     region = region, zoom_levels = mzl_CSD_CT_DA_building, time = time,
+                     scales_as_DA = c("building", "street"), lang = "en")
 
   expect_equal(class(actual), "list")
   expect_equal(class(actual[[1]]), "character")

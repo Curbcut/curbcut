@@ -12,11 +12,12 @@
 \alias{explore_text_values_q5.ppo}
 \title{Generate text for the given variables and region - q5 version}
 \usage{
-explore_text_values_q5(var, region, ...)
+explore_text_values_q5(var, region, data_path = get_data_path(), ...)
 
 \method{explore_text_values_q5}{pct}(
   var,
   region,
+  data_path = get_data_path(),
   data,
   scale,
   select_id,
@@ -30,6 +31,7 @@ explore_text_values_q5(var, region, ...)
 \method{explore_text_values_q5}{count}(
   var,
   region,
+  data_path = get_data_path(),
   data,
   scale,
   select_id,
@@ -50,15 +52,17 @@ explore_text_values_q5(var, region, ...)
   lang,
   time,
   schemas = NULL,
+  data_path = get_data_path(),
   ...
 )
 
 \method{explore_text_values_q5}{ind}(
   var,
   region,
-  select_id,
+  data_path = get_data_path(),
   data,
   scale,
+  select_id,
   col = "var_left",
   lang,
   time,
@@ -69,9 +73,10 @@ explore_text_values_q5(var, region, ...)
 \method{explore_text_values_q5}{avg}(
   var,
   region,
-  select_id,
+  data_path = get_data_path(),
   data,
   scale,
+  select_id,
   col = "var_left",
   lang,
   time,
@@ -82,9 +87,10 @@ explore_text_values_q5(var, region, ...)
 \method{explore_text_values_q5}{sqkm}(
   var,
   region,
-  select_id,
+  data_path = get_data_path(),
   data,
   scale,
+  select_id,
   col = "var_left",
   lang,
   time,
@@ -95,11 +101,12 @@ explore_text_values_q5(var, region, ...)
 \method{explore_text_values_q5}{per1k}(
   var,
   region,
-  select_id,
+  data_path = get_data_path(),
   data,
   scale,
+  select_id,
   col = "var_left",
-  lang = lang,
+  lang,
   time,
   schemas = NULL,
   ...
@@ -108,9 +115,10 @@ explore_text_values_q5(var, region, ...)
 \method{explore_text_values_q5}{ppo}(
   var,
   region,
-  select_id,
+  data_path = get_data_path(),
   data,
   scale,
+  select_id,
   col = "var_left",
   lang,
   time,
@@ -124,6 +132,9 @@ generated. Usually \code{vars$var_left}}
 
 \item{region}{<\code{character}> Character string specifying the name of the region.
 Usually equivalent of \code{r$region()}.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to the function..}
 
