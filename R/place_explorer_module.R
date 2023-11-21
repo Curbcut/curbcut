@@ -41,11 +41,18 @@ place_explorer_server <- function(id, r,
   shiny::moduleServer(id, function(input, output, session) {
 
     map_token <- get_from_globalenv("map_token")
+    page <- modules[modules$id == id, ]
+    regions <- page$regions[[1]]
+    if (is.null(regions)) {
+      stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
+                          "check the `regions` column in the `modules` ",
+                          "dataframe.", id)))
+    }
+    avail_scale_combinations <- page$avail_scale_combinations[[1]]
+    mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
 
     # Declare the map id
     id_map <- paste0(id, "-map")
-    # Get default values for the place explorer
-    pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA())
 
     # Initiate the map.
     output[[shiny::NS(id, "map_ph")]] <- shiny::renderUI({
@@ -62,80 +69,13 @@ place_explorer_server <- function(id, r,
       )
     })
 
-    # Get df ------------------------------------------------------------------
+    # Region and zoom levels change depending on the geography widget
+    zl <- geography_server(id = id,
+                           r = r,
+                           regions = regions,
+                           avail_scale_combinations = avail_scale_combinations)
 
-    # # Initial reactives
-    # rv_zoom_string <- shiny::reactiveVal(
-    #   zoom_get_string(
-    #     zoom = map_zoom,
-    #     zoom_levels = pe_vars$map_zoom_levels,
-    #     region = pe_vars$default_region
-    #   )
-    # )
-
-    # Get the map view state
-    map_viewstate <- get_viewstate(id_map)
-
-    # Zoom reactive when the view state of the map changes.
-    shiny::observeEvent(map_viewstate(), {
-      r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
-    })
-
-    # Now that we only get the first scale of every region, the following can
-    # be simpler
-
-    # NDS
-    zoom_levels <- shiny::reactive(mzl_CSD_CT_DA_building)
-
-    # # Map zoom levels change depending on r$region()
-    # zoom_levels_ <-
-    #   shiny::reactive(geography_server(id = id, region = r$region()))
-    # # Do not include scales as DA like buildings or streets
-    # zoom_levels <- shiny::reactive({
-    #   zoom_lvls <- zoom_levels_()$zoom_levels
-    #   zoom_levels <- zoom_lvls[!names(zoom_lvls) %in% scales_as_DA()]
-    #
-    #   return(list(
-    #     zoom_levels = zoom_levels,
-    #     region = zoom_levels_()$region
-    #   ))
-    # })
-    #
-    # # Zoom string reactive
-    # shiny::observe({
-    #   rv_zoom_string({
-    #     zoom_get_string(
-    #       zoom = r[[id]]$zoom(),
-    #       zoom_levels = zoom_levels()$zoom_levels,
-    #       region = zoom_levels()$region
-    #     )
-    #   })
-    # })
-    #
-    # # Choose tileset
-    # tile <- zoom_server(
-    #   id = id,
-    #   r = r,
-    #   zoom_string = rv_zoom_string,
-    #   zoom_levels = zoom_levels
-    # )
-
-    tile <- shiny::reactive(sprintf("%s_%s", r$region(), names(zoom_levels()$zoom_levels)[1]))
-
-    # Get df
-    shiny::observeEvent(
-      {
-        tile()
-        # rv_zoom_string()
-      },
-      {
-        # r[[id]]$df(update_scale(
-        #   tile = tile(),
-        #   zoom_string = rv_zoom_string()
-        # ))
-        r[[id]]$df(tile())
-      }
-    )
+    tile <- shiny::reactive(names(zl()$zoom_levels)[[1]])
 
     # Misc --------------------------------------------------------------------
 
@@ -163,12 +103,9 @@ place_explorer_server <- function(id, r,
           type = "error"
         )
       } else {
-        DA_table <- get_from_globalenv(paste0(r$region(), "_DA"))
-        if (is.null(DA_table)) {
-          return(NULL)
-        }
-        scale <- gsub(".*_", "", r[[id]]$df())
-        right_id <- DA_table[[paste0(scale, "_ID")]][DA_table$ID == DA_id]
+        DA_table <- get_from_globalenv("DA")
+        scale <- r[[id]]$scale()
+        right_id <- DA_table[[paste0(scale, "_ID")]][DA_table$ID == DA_id][[1]][1]
         r[[id]]$select_id(right_id)
       }
     })
@@ -176,13 +113,22 @@ place_explorer_server <- function(id, r,
 
     # Map ---------------------------------------------------------------------
 
+    dat <- shiny::reactive({
+      data <- get_from_globalenv(tile())
+      data <- filter_region(data = data, scale = tile(), region = zl()$region)
+      data <- data[c("ID")]
+      names(data) <- "ID_color"
+      data$fill <- hex8_to_rgba("#AAB6CF90")
+      data
+    })
+
     map_js_server(
       id = id,
       r = r,
-      tile = r[[id]]$df,
+      tile = tile,
+      data_colours = dat,
       coords = r[[id]]$coords,
       zoom = r[[id]]$zoom,
-      fill_fun = shiny::reactive(\(...) hex8_to_rgba("#AAB6CF90")),
       stories = NULL
     )
 
@@ -208,10 +154,13 @@ place_explorer_server <- function(id, r,
     # explorer to be fully concatenated and shown.
     main_panel <- shiny::reactive({
       if (!is.na(r[[id]]$select_id())) {
+        # If selection outside region
+        if (!r[[id]]$select_id() %in% dat()$ID_color) return(NULL)
+
         pe_links <- place_explorer_html_links(
           temp_folder = temp_folder,
-          region = zoom_levels()$region,
-          df = r[[id]]$df(),
+          region = zl()$region,
+          scale = tile(),
           select_id = r[[id]]$select_id(),
           lang = r$lang()
         )
@@ -279,9 +228,16 @@ place_explorer_server <- function(id, r,
 #' @export
 place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   # Get default values for the place explorer
-  pe_vars <- place_explorer_vars(scales_as_DA = scales_as_DA)
   modules <- get_from_globalenv("modules")
   page <- modules[modules$id == id, ]
+  regions <- page$regions[[1]]
+  if (is.null(regions)) {
+    stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
+                        "check the `regions` column in the `modules` ",
+                        "dataframe."), id))
+  }
+  avail_scale_combinations <- page$avail_scale_combinations[[1]]
+  mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
   theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
   shiny::tagList(
@@ -292,7 +248,7 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
       sidebar_UI(
         shiny::NS(id, id),
         # Search box
-        shiny::strong(curbcut::cc_t("Enter postal code or click on the map")),
+        shiny::strong(cc_t("Enter postal code or click on the map")),
         # Imitate a split layout which only works this way on iOS
         shiny::HTML(paste0(
           '<div class="shiny-split-layout">
@@ -308,12 +264,9 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
           ),
           "</div></div>"
         )),
-        # bottom =
-        # # Scale slider
-        #   curbcut::zoom_UI(
-        #     id = shiny::NS(id, id),
-        #     zoom_levels = pe_vars$map_zoom_levels
-        #   ),
+        hr(),
+        geography_UI(shiny::NS(id, id), regions = regions,
+                     avail_scale_combinations = avail_scale_combinations),
       ),
 
       # Map
