@@ -18,7 +18,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
   shiny::moduleServer(id, function(input, output, session) {
     # Region default
     regions_dictionary <- get_from_globalenv("regions_dictionary")
-    names(regions) <- regions_dictionary$name[regions_dictionary$region %in% regions]
+    names(regions) <- sapply(regions,
+                             \(x) regions_dictionary$name[regions_dictionary$region == x],
+                             simplify = TRUE, USE.NAMES = FALSE)
     regions_list <- shiny::reactive({
       names(regions) <- sapply(names(regions), cc_t, lang = r$lang())
       return(list("Region" = regions))
@@ -168,7 +170,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
 geography_UI <- function(id, regions, avail_scale_combinations) {
   # Region default
   regions_dictionary <- get_from_globalenv("regions_dictionary")
-  names(regions) <- regions_dictionary$name[regions_dictionary$region %in% regions]
+  names(regions) <- sapply(regions,
+                           \(x) regions_dictionary$name[regions_dictionary$region == x],
+                           simplify = TRUE, USE.NAMES = FALSE)
   regions_list <- list("Region" = regions)
 
   # Top scale default
