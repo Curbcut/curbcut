@@ -117,6 +117,23 @@ region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col
 
 }
 
+#' @describeIn region_value_method The people per object (ppo) method.
+#' @export
+region_value_method.default <- function(var, data_vals, parent_vals, ...) {
+
+  out <- list()
+
+  # Calculating total number of trees
+  total_trees <- sum(parent_vals / data_vals)
+
+  # Calculating total number of people
+  total_population <- sum(parent_vals)
+
+  # Calculating overall people per tree in the region
+  total_population / total_trees
+
+}
+
 #' @describeIn region_value_method The default method (works for dollar, sqkm, per1k, ...).
 #' Simple weighted mean.
 #' @export
@@ -129,13 +146,6 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 
   # Return
   return(out)
-
-
-# if ("ppo" %in% type) {
-#   df <- df[c(v, "population")]
-#   objects <- df[["population"]] / df[[v]]
-#   out$val <- sum(df[["population"]]) / sum(objects, na.rm = TRUE)
-# }
 
 }
 

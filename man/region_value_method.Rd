@@ -26,6 +26,8 @@ region_value_method(var, data_vals, parent_vals, ...)
 )
 
 \method{region_value_method}{default}(var, data_vals, parent_vals, ...)
+
+\method{region_value_method}{default}(var, data_vals, parent_vals, ...)
 }
 \arguments{
 \item{var}{<\code{character}> The code of the variable of interest, with its class
@@ -65,6 +67,8 @@ indicators.
 \item \code{region_value_method(count)}: The method for count variables.
 
 \item \code{region_value_method(ind)}: The method for \code{ind} variables.
+
+\item \code{region_value_method(default)}: The people per object (ppo) method.
 
 \item \code{region_value_method(default)}: The default method (works for dollar, sqkm, per1k, ...).
 Simple weighted mean.
