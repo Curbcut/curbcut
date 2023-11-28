@@ -24,11 +24,9 @@ test_explore_graph_helper <- function(var_left, var_right, scale, region, time,
       if (length(val) > 0) {
         expect_true(val >= x_range[1] & val <= x_range[2])
       }
-
     } else if ("bivar" %in% class(vars)) {
 
     }
-
   }
 
   expect_true(is.data.frame(actual$data))
@@ -59,7 +57,7 @@ test_explores <- function(var_right, select_id, scale, region) {
   test_explore_graph_helper(
     var_left = "access_foot_food_grocery",
     var_right = var_right, scale = "DA", region = "city",
-    select_id = select_id, schemas = list(var_left = setNames(20, "transportationtime")),
+    select_id = select_id, schemas = list(var_left = stats::setNames(20, "transportationtime")),
     time = 2023
   )
 
@@ -146,7 +144,8 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   )
 
   # Dollar
-  test_explore_graph_helper("housing_rent", time = c(2016, 2021),
+  test_explore_graph_helper("housing_rent",
+    time = c(2016, 2021),
     var_right = var_right,
     scale = scale, region = region, select_id = select_id
   )
@@ -156,7 +155,8 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   # select_id = select_id)
 
   # Ind scalar
-  test_explore_graph_helper(var_left = "alp", time = c(2016, 2021),
+  test_explore_graph_helper(
+    var_left = "alp", time = c(2016, 2021),
     var_right = var_right, scale = scale, region = region,
     select_id = select_id
   )
@@ -218,16 +218,3 @@ test_that("delta explore works with selections", {
 # test_explore_graph_helper(var_left = "crash_ped", var_right = "housing_tenant",
 #                           scale = "DA", region = "city", time = c(2014, 2017),
 #                           select_id = NA)
-
-
-
-
-
-
-
-
-
-
-
-
-

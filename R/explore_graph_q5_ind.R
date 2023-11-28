@@ -11,11 +11,9 @@
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param scale <`character`> Current scale.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The output of \code{\link{data_get}}.
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their graph will be the one of their DA.
@@ -82,7 +80,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time, sche
     # remove_outliers_df(cols = c("var_left")) |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
     ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
-                            bins = bin_number
+      bins = bin_number
     ) +
     ggplot2::binned_scale(
       aesthetics = "fill",
@@ -140,7 +138,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time, sch
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data_inrange[[rcol]],
+    data_vals = data[[rcol]],
     scale = shared_info$treated_scale,
     lang = lang,
     breaks = 0:5

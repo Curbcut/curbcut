@@ -1,6 +1,8 @@
 test_that("data_get_colours.q5  works", {
-  vars <- vars_build(var_left = "housing_tenant", scale = "CSD",
-                     time = 2021)
+  vars <- vars_build(
+    var_left = "housing_tenant", scale = "CSD",
+    time = 2021
+  )
   time <- vars$time
   vars <- vars$vars
 
@@ -16,11 +18,13 @@ test_that("data_get_colours.q5  works", {
 })
 
 test_that("data_get_colours.q5  works", {
-  vars <- vars_build(var_left = "access_foot_food_grocery", scale = "CSD",
-                     time = 2023)
+  vars <- vars_build(
+    var_left = "access_foot_food_grocery", scale = "CSD",
+    time = 2023
+  )
   time <- vars$time
   vars <- vars$vars
-  schemas <- list(var_left = setNames(20, "transportationtime"))
+  schemas <- list(var_left = stats::setNames(20, "transportationtime"))
 
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
@@ -60,7 +64,7 @@ test_that("data_get_colours.bivar works", {
   vars <- vars$vars
   data_colours <- data_get_colours(
     vars = vars, region = "CMA", time = time,
-    zoom_levels = mzl_CSD_CT, schemas = list(var_left = setNames(20, "transportationtime"))
+    zoom_levels = mzl_CSD_CT, schemas = list(var_left = stats::setNames(20, "transportationtime"))
   )
   expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
@@ -120,4 +124,3 @@ test_that("data_get_colours.bivar_ldelta_rq3 works", {
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
-

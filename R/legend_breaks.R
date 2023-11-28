@@ -39,11 +39,14 @@ legend_breaks.q5_ind <- function(vars, data, lang = NULL, ...) {
   # NDS: take out the tryCatch once it's in vars
   breaks <-
     tryCatch(
-      var_get_info(var = if (is.list(vars)) vars$var_left else vars, what = "rank_name_short",
-                   translate = FALSE, lang = NULL)[[1]],
+      var_get_info(
+        var = if (is.list(vars)) vars$var_left else vars, what = "rank_name_short",
+        translate = FALSE, lang = NULL
+      )[[1]],
       error = function(e) {
         return(c("V. low", "Low", "Mod.", "High", "V. high"))
-      })
+      }
+    )
   breaks <- breaks[!is.na(breaks)]
 
   # If the default, filter out some breaks to lighten the legend
@@ -90,6 +93,9 @@ legend_breaks.delta <- function(vars, data, ...) {
 }
 
 #' @describeIn legend_breaks bivar_ldelta_rq3 method
+#' @param time <`reactive numeric vector`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' Usually `r[[id]]$time`.
 #' @export
 legend_breaks.bivar_ldelta_rq3 <- function(vars, data, time, ...) {
   break_labs_y <- c(

@@ -42,6 +42,10 @@ data_get_delta_fun(
 
 \item{scale}{<\code{character}> The scale at which the user is on.}
 
+\item{region}{<\verb{character vector}> A vector of IDs with which to filter the
+retrieved data for a specific region, probably retrieved from
+\code{regions_dictionary$scales}.}
+
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}

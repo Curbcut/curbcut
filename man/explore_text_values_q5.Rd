@@ -12,7 +12,7 @@
 \alias{explore_text_values_q5.ppo}
 \title{Generate text for the given variables and region - q5 version}
 \usage{
-explore_text_values_q5(var, region, data_path = get_data_path(), ...)
+explore_text_values_q5(var, region, data_path = get_data_path(), data, ...)
 
 \method{explore_text_values_q5}{pct}(
   var,
@@ -45,6 +45,7 @@ explore_text_values_q5(var, region, data_path = get_data_path(), ...)
 \method{explore_text_values_q5}{dollar}(
   var,
   region,
+  data_path = get_data_path(),
   data,
   scale,
   select_id,
@@ -52,7 +53,6 @@ explore_text_values_q5(var, region, data_path = get_data_path(), ...)
   lang,
   time,
   schemas = NULL,
-  data_path = get_data_path(),
   ...
 )
 
@@ -136,9 +136,9 @@ Usually equivalent of \code{r$region()}.}
 \item{data_path}{<\code{character}> A string representing the path to the
 directory containing the QS files. Default is "data/".}
 
-\item{...}{Additional arguments passed to the function..}
-
 \item{data}{<\code{data.frame}> The output of \code{\link{data_get}}.}
+
+\item{...}{Additional arguments passed to the function..}
 
 \item{scale}{<\code{character}> Current scale. The output of
 \code{\link{update_scale}}.}

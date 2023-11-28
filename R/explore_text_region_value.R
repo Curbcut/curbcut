@@ -26,14 +26,18 @@
 region_value <- function(var, data, time, scale, region, select_id, col, schemas = NULL,
                          data_path, ...) {
   # Get the parent variable data
-  rv <- region_value_data_grab(var = var, data = data, time = time, col = col,
-                               scale = scale, region = region, schemas = schemas,
-                               data_path = data_path)
+  rv <- region_value_data_grab(
+    var = var, data = data, time = time, col = col,
+    scale = scale, region = region, schemas = schemas,
+    data_path = data_path
+  )
 
   # Return the output of every method
-  region_value_method(var = var, data_vals = rv$data_vals,
-                      parent_vals = rv$parent_vals, data = data,
-                      time = time, col = col, schemas = schemas, ...)
+  region_value_method(
+    var = var, data_vals = rv$data_vals,
+    parent_vals = rv$parent_vals, data = data,
+    time = time, col = col, schemas = schemas, ...
+  )
 }
 
 #' Methods to compute regional values
@@ -61,7 +65,6 @@ region_value_method <- function(var, data_vals, parent_vals, ...) {
 #' @describeIn region_value_method The method for percentage variables.
 #' @export
 region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
-
   out <- list()
 
   # Make the region values
@@ -76,7 +79,6 @@ region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
 #' @describeIn region_value_method The method for count variables.
 #' @export
 region_value_method.count <- function(var, data_vals, parent_vals, ...) {
-
   out <- list()
 
   # Make the region values
@@ -95,7 +97,6 @@ region_value_method.count <- function(var, data_vals, parent_vals, ...) {
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @export
 region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col, schemas = schemas, ...) {
-
   # Which column breaks do we want to use
   col <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
   brk_col <- sprintf("%s_q5", col)
@@ -114,13 +115,11 @@ region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col
 
   # Return
   return(out)
-
 }
 
 #' @describeIn region_value_method The people per object (ppo) method.
 #' @export
 region_value_method.default <- function(var, data_vals, parent_vals, ...) {
-
   out <- list()
 
   # Calculating total number of trees
@@ -131,14 +130,12 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 
   # Calculating overall people per tree in the region
   total_population / total_trees
-
 }
 
 #' @describeIn region_value_method The default method (works for dollar, sqkm, per1k, ...).
 #' Simple weighted mean.
 #' @export
 region_value_method.default <- function(var, data_vals, parent_vals, ...) {
-
   out <- list()
 
   # Make the region values
@@ -146,7 +143,6 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 
   # Return
   return(out)
-
 }
 
 #' Retrieve data values and parent data for specific region and scale
@@ -176,7 +172,6 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
 #' @export
 region_value_data_grab <- function(var, data, time, scale, region, col, schemas = NULL,
                                    data_path) {
-
   # Get the parent variable
   parent_string <- var_get_info(var, what = "parent_vec")
 
@@ -184,14 +179,18 @@ region_value_data_grab <- function(var, data, time, scale, region, col, schemas 
   if ("count" %in% class(var)) {
     parent_vals <- NULL
   } else {
-    parent_data <- data_get(vars = parent_string, scale = scale, region = region, vr_vl = col,
-                            data_path = data_path)
+    parent_data <- data_get(
+      vars = parent_string, scale = scale, region = region, vr_vl = col,
+      data_path = data_path
+    )
     # In the case where there is just one value, no time. Like `area`.
     if (col %in% names(parent_data)) {
       parent_vals <- parent_data[[col]]
     } else {
-      pv_col <- match_schema_to_col(data = parent_data, time = time, col = col,
-                                    schemas = NULL, closest_time = TRUE)
+      pv_col <- match_schema_to_col(
+        data = parent_data, time = time, col = col,
+        schemas = NULL, closest_time = TRUE
+      )
       parent_vals <- parent_data[[pv_col]]
     }
   }
@@ -207,5 +206,4 @@ region_value_data_grab <- function(var, data, time, scale, region, col, schemas 
 
   # Return both the data and the parent data
   return(list(data_vals = data_vals, parent_vals = parent_vals))
-
 }

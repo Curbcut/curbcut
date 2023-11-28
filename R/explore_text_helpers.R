@@ -56,8 +56,10 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, la
     name <- dat$name
     name_2 <- dat$name_2
     if (is.na(name_2)) {
-      name_2 <- fill_name_2(ID_scale = select_id, scale = scale,
-                            top_scale = names(zoom_levels)[[1]])
+      name_2 <- fill_name_2(
+        ID_scale = select_id, scale = scale,
+        top_scale = names(zoom_levels)[[1]]
+      )
     }
     name_2 <- cc_t(name_2, lang = lang)
     heading <- cc_t(scale_df$place_heading, lang = lang)
@@ -95,8 +97,8 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, la
 
     # Switch the scale
     scale_df <- scales_dictionary[is_scale_in(scales_dictionary$scale,
-                                              treated_scale,
-                                              vectorized = TRUE
+      treated_scale,
+      vectorized = TRUE
     ), ]
   }
 
@@ -191,9 +193,11 @@ explore_text_region_val_df <- function(var, region, select_id, col = "var_left",
                                        data_path = get_data_path(), ...) {
   if (is.na(select_id)) {
     # Grab the region values dataframe
-    region_values <- region_value(var = var, data = data, time = time, col = col,
-                                  scale = scale, region = region, schemas = schemas,
-                                  data_path = data_path)
+    region_values <- region_value(
+      var = var, data = data, time = time, col = col,
+      scale = scale, region = region, schemas = schemas,
+      data_path = data_path
+    )
 
     # Return the values
     return(region_values)
@@ -241,8 +245,11 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
   # Grab the parent data, usually through data_get. If it fails, try to grab
   # the data from the global scale in the global environment (this is useful for
   # place explorer generation.)
-  parent_data <- tryCatch(data_get(parent_string, scale = scale, vr_vl = col,
-                                   data_path = data_path),
+  parent_data <- tryCatch(
+    data_get(parent_string,
+      scale = scale, vr_vl = col,
+      data_path = data_path
+    ),
     error = function(e) {
       data <- get_from_globalenv(scale)
       if (!parent_string %in% names(data)) {
@@ -297,7 +304,7 @@ explore_text_select_val <- function(var, ...) {
 #' directory containing the QS files. Default is "data/".
 #' @export
 explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_left",
-                                        time, schemas = NULL, data_path,...) {
+                                        time, schemas = NULL, data_path, ...) {
   # Create empty vector
   out <- c()
 
@@ -331,7 +338,7 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
 #' @describeIn explore_text_select_val Method for `ind`
 #' @param lang <`character`> Active language. `"en"` or `"fr"`
 #' @export
-explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_left",
+explore_text_select_val.ind <- function(var, data, select_id, col = "var_left",
                                         time, lang, schemas = NULL, ...) {
   # Create empty vector
   out <- c()
@@ -362,7 +369,7 @@ explore_text_select_val.ind <- function(var, data, df, select_id, col = "var_lef
 
 #' @describeIn explore_text_select_val Default method
 #' @export
-explore_text_select_val.default <- function(var, data, df, select_id, col = "var_left",
+explore_text_select_val.default <- function(var, data, select_id, col = "var_left",
                                             time, schemas = NULL, ...) {
   # Create empty vector
   out <- c()
@@ -502,7 +509,6 @@ explore_text_bivar_correlation_helper <- function(vars, data, time, lang = NULL,
 explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
                                                          lang = NULL,
                                                          schemas = NULL, ...) {
-
   # Match schema
   vl_col <- match_schema_to_col(data = data, time = time, col = "var_left", schemas = schemas)
   vr_col <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = schemas)
@@ -530,7 +536,6 @@ explore_text_bivar_correlation_helper.scalar <- function(vars, data, time,
 explore_text_bivar_correlation_helper.ordinal <- function(vars, data, time,
                                                           lang = NULL,
                                                           schemas = NULL, ...) {
-
   # Match schema
   vl_col <- match_schema_to_col(data = data, time = time, col = "var_left", schemas = schemas)
   vr_col <- match_schema_to_col(data = data, time = time, col = "var_right", schemas = schemas)
@@ -541,8 +546,9 @@ explore_text_bivar_correlation_helper.ordinal <- function(vars, data, time,
   if (length(vr_col) == 2) vr_col <- "var_right"
 
   # Correlation
-  corr <- stats::cor(data[[vl_col]], data[[vr_col]], use = "complete.obs",
-                     method = "spearman"
+  corr <- stats::cor(data[[vl_col]], data[[vr_col]],
+    use = "complete.obs",
+    method = "spearman"
   )
   corr_string <- sprintf(
     cc_t("Spearman's rho: %s", lang = lang),
@@ -648,11 +654,15 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
   if (length(vl) == 2) vl <- "var_right"
 
   out <- lapply(c(vl, vr), \(col) {
-    if (!col %in% names(data)) return(NULL)
+    if (!col %in% names(data)) {
+      return(NULL)
+    }
 
     val <- data[[col]][data$ID == select_id]
 
-    if (!is.na(val)) return (NULL)
+    if (!is.na(val)) {
+      return(NULL)
+    }
 
     var_left <- grepl("var_left", col)
     var <- if (var_left) vars$var_left else vars$var_right
@@ -662,7 +672,7 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
       translate = TRUE, lang = lang
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
 

@@ -20,8 +20,9 @@ bookmark_shorts <- c(
 )
 
 # All unique?
-if (!all(table(c(bookmark_codes, bookmark_shorts) |> unname()) == 1))
+if (!all(table(c(bookmark_codes, bookmark_shorts) |> unname()) == 1)) {
   stop("Duplicate bookmark codes")
+}
 
 usethis::use_data(bookmark_codes, overwrite = TRUE)
 usethis::use_data(bookmark_shorts, overwrite = TRUE)

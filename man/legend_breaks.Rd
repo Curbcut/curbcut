@@ -40,6 +40,10 @@ output of \code{\link{vars_build}}.}
 
 \item{lang}{<\code{character}> String indicating the language to translate the
 breaks to. Defaults to \code{NULL}, which is no translation.}
+
+\item{time}{<\verb{reactive numeric vector}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+Usually \code{r[[id]]$time}.}
 }
 \value{
 It returns an output of \code{\link[ggplot2]{labs}}.

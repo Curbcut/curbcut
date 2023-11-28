@@ -30,6 +30,9 @@ renamed.}
 
 \item{time}{<\verb{named list}>}
 
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}
 

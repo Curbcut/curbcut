@@ -43,20 +43,24 @@ stories_server <- function(id, r) {
     })
 
     # Map
-    map_js_server(id = id,
-                  r = r,
-                  tile = shiny::reactive(NULL),
-                  coords = shiny::reactive(NULL),
-                  zoom = shiny::reactive(NULL),
-                  stories = stories,
-                  stories_min_zoom = 2)
+    map_js_server(
+      id = id,
+      r = r,
+      tile = shiny::reactive(NULL),
+      coords = shiny::reactive(NULL),
+      zoom = shiny::reactive(NULL),
+      stories = stories,
+      stories_min_zoom = 2
+    )
 
     # Click reactive
     update_select_id(id = id, r = r)
 
     # Render the story in question
     content <- shiny::reactive({
-      if (is.na(r[[id]]$select_id())) return(NULL)
+      if (is.na(r[[id]]$select_id())) {
+        return(NULL)
+      }
 
       rmd_name <- stories$name_id[stories$ID == r[[id]]$select_id()]
       story_link <- paste0("stories/", rmd_name, "_", r$lang(), ".html")
@@ -69,21 +73,26 @@ stories_server <- function(id, r) {
       )
     })
     show_popup <- shiny::reactive(!is.na(r[[id]]$select_id()))
-    popup_server(id = id,
-                 content = content,
-                 show_popup = show_popup)
+    popup_server(
+      id = id,
+      content = content,
+      show_popup = show_popup
+    )
 
     # Prepare reactive values to get which stories are available
     photo_ids_rv <- shiny::reactiveVal(character())
     list_photos_rv <- shiny::reactiveVal(character())
 
     shiny::observe({
-      if (is.na(r[[id]]$select_id())) return(NULL)
+      if (is.na(r[[id]]$select_id())) {
+        return(NULL)
+      }
 
       # Get photos ID + links
       name_id <- stories$name_id[stories$ID == r[[id]]$select_id()]
       list_photos <- list.files(sprintf("www/stories/photos/%s", name_id),
-                                full.names = TRUE)
+        full.names = TRUE
+      )
       list_photos <- gsub("www/", "", list_photos)
       photo_ids <- gsub(sprintf(".*/%s/", name_id), "", list_photos)
 
@@ -96,7 +105,9 @@ stories_server <- function(id, r) {
 
     # Right panel output when a stories is selected
     output$rp_output <- shiny::renderUI({
-      if (is.na(r[[id]]$select_id())) return(NULL)
+      if (is.na(r[[id]]$select_id())) {
+        return(NULL)
+      }
 
       shiny::tagList(
         shiny::div(
@@ -109,8 +120,10 @@ stories_server <- function(id, r) {
             shiny::fluidRow(
               shiny::column(
                 width = 7,
-                shiny::h4(icon_material_title("photo_camera"),
-                          cc_t("Image gallery", lang = r$lang()))
+                shiny::h4(
+                  icon_material_title("photo_camera"),
+                  cc_t("Image gallery", lang = r$lang())
+                )
               )
             )
           ),
@@ -118,15 +131,16 @@ stories_server <- function(id, r) {
             id = shiny::NS(id, "images"),
             shiny::tagList(
               mapply(\(id, photo_link) {
-                sprintf("<img src = '%s' id = 'stories-%s' style = 'width:20%%; margin:5px; cursor:pointer'>",
-                        photo_link, id) |>
+                sprintf(
+                  "<img src = '%s' id = 'stories-%s' style = 'width:20%%; margin:5px; cursor:pointer'>",
+                  photo_link, id
+                ) |>
                   shiny::HTML()
               }, photo_ids_rv(), list_photos_rv(), SIMPLIFY = FALSE)
             )
           )
         )
       )
-
     })
 
     # Set listeners for every active photos
@@ -147,8 +161,12 @@ stories_server <- function(id, r) {
     # When to show the right panel
     shiny::observe({
       show_panel <- (\(x) {
-        if (is.na(r[[id]]$select_id())) return(FALSE)
-        if (length(photo_ids_rv()) == 0) return(FALSE)
+        if (is.na(r[[id]]$select_id())) {
+          return(FALSE)
+        }
+        if (length(photo_ids_rv()) == 0) {
+          return(FALSE)
+        }
         return(TRUE)
       })()
 
@@ -157,42 +175,46 @@ stories_server <- function(id, r) {
 
 
     # Add stories on the left-hand panel and react on a click
-    themes_c <- picker_server(id = id,
-                              picker_id = "var",
-                              r = r,
-                              var_list = themes,
-                              selected = shiny::reactive(unlist(themes())))
+    themes_c <- picker_server(
+      id = id,
+      picker_id = "var",
+      r = r,
+      var_list = themes,
+      selected = shiny::reactive(unlist(themes()))
+    )
 
     shiny::observeEvent(themes_c(), {
       in_theme <-
         stories$ID[which(
-          sapply(sapply(stories$themes, `%in%`, themes_c()), sum) > 0)]
+          sapply(sapply(stories$themes, `%in%`, themes_c()), sum) > 0
+        )]
 
       show_stories <- stories$short_title[stories$ID %in% in_theme]
       show_stories <- show_stories[order(show_stories)]
 
       shiny::removeUI(selector = "#stories-bullet_points")
       shiny::insertUI(paste0("#stories-hr"),
-                      where = "afterEnd",
-                      shiny::tags$ul(
-                        id = "stories-bullet_points",
-                        lapply(show_stories, \(x) {
-                          shiny::tags$li(
-                            cc_t(x, lang = r$lang()),
-                            style = "cursor: pointer; text-decoration: none;",
-                            title = stories[[sprintf("preview_%s", r$lang())]][stories$short_title == x],
-                            onclick = paste0("Shiny.setInputValue(`",
-                                             shiny::NS(id, "clicked_linked"),
-                                             "`, '",
-                                             stories$ID[stories$short_title == x],
-                                             "');"),
-                            onmouseover = "$(this).css('text-decoration', 'underline');",
-                            onmouseout = "$(this).css('text-decoration', 'none');"
-                          )
-                        })
-                      )
+        where = "afterEnd",
+        shiny::tags$ul(
+          id = "stories-bullet_points",
+          lapply(show_stories, \(x) {
+            shiny::tags$li(
+              cc_t(x, lang = r$lang()),
+              style = "cursor: pointer; text-decoration: none;",
+              title = stories[[sprintf("preview_%s", r$lang())]][stories$short_title == x],
+              onclick = paste0(
+                "Shiny.setInputValue(`",
+                shiny::NS(id, "clicked_linked"),
+                "`, '",
+                stories$ID[stories$short_title == x],
+                "');"
+              ),
+              onmouseover = "$(this).css('text-decoration', 'underline');",
+              onmouseout = "$(this).css('text-decoration', 'none');"
+            )
+          })
+        )
       )
-
     })
 
     # If language changes, update the selection to NA
@@ -220,7 +242,6 @@ stories_server <- function(id, r) {
       select_id = r[[id]]$select_id,
       exclude_input = "ccpicker_var"
     )
-
   })
 }
 
@@ -254,7 +275,8 @@ stories_UI <- function(id) {
           label = cc_t("Choose themes:"),
           var_list = themes,
           selected = unlist(themes),
-          multiple = TRUE),
+          multiple = TRUE
+        ),
         shiny::hr(id = shiny::NS(id, "hr"))
       ),
 
@@ -269,8 +291,9 @@ stories_UI <- function(id) {
         right_panel(
           id = id,
           style = "top: var(--side-bar-top) !important;",
-          shiny::htmlOutput(shiny::NS(id, "rp_output"))))
-
+          shiny::htmlOutput(shiny::NS(id, "rp_output"))
+        )
+      )
     )
   )
 }

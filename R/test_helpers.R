@@ -41,8 +41,10 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
   vars <- vars_build(var_left, var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
-  data <- data_get(vars = vars, scale = scale, region = region, time = time,
-                   data_path = data_path)
+  data <- data_get(
+    vars = vars, scale = scale, region = region, time = time,
+    data_path = data_path
+  )
 
   assign("scale", scale, envir = as.environment(pos))
   assign("region", region, envir = as.environment(pos))
@@ -68,14 +70,16 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
 #' @return Assigns objects in the global environment which are needed for testthat and
 #' other testing functions.
 test_setup <- function(pos = 1, folder = get_data_path()) {
-  load_data(data_folder = folder,
-            pos = 1,
-            site_name = "Curbcut Montréal",
-            site_url = "https://montreal.curbcut.ca",
-            stories_page = "Montréal stories",
-            tileset_prefix = "mtl",
-            mapbox_username = "curbcut",
-            default_random_address = "845 Sherbrooke Ouest, Montréal, Quebec",
-            map_zoom = 9.9,
-            map_loc = c(lat = -73.70, lon = 45.53))
+  load_data(
+    data_folder = folder,
+    pos = 1,
+    site_name = "Curbcut Montreal",
+    site_url = "https://montreal.curbcut.ca",
+    stories_page = "Montreal stories",
+    tileset_prefix = "mtl",
+    mapbox_username = "curbcut",
+    default_random_address = "845 Sherbrooke Ouest, Montreal, Quebec",
+    map_zoom = 9.9,
+    map_loc = c(lat = -73.70, lon = 45.53)
+  )
 }

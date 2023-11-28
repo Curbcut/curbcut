@@ -62,7 +62,6 @@ test_that("legend_labels.bivar_ldelta_rq3 works", {
 })
 
 test_that("legend_labels.delta works", {
-
   vars <- vars_build("housing_tenant", scale = "DA", time = c(2001, 2021))
   time <- vars$time
   vars <- vars$vars
@@ -103,8 +102,10 @@ test_that("legend_labels.bivar works", {
 })
 
 test_that("legend_labels.delta_bivar works", {
-  vars <- vars_build("housing_tenant", var_right = "housing_rent",
-                     scale = "DA", time = c(2001, 2021))
+  vars <- vars_build("housing_tenant",
+    var_right = "housing_rent",
+    scale = "DA", time = c(2001, 2021)
+  )
   time <- vars$time
   vars <- vars$vars
 
@@ -116,13 +117,17 @@ test_that("legend_labels.delta_bivar works", {
     )
   )
 
-  expect_equal(names(legend_labels(vars, time = time)),
-               c("", "x_short", "y_short"))
+  expect_equal(
+    names(legend_labels(vars, time = time)),
+    c("", "x_short", "y_short")
+  )
 })
 
 test_that("legend_labels translation works", {
-  vars <- vars_build("housing_tenant", var_right = "alp",
-                     scale = "DA", time = c(2001, 2021))
+  vars <- vars_build("housing_tenant",
+    var_right = "alp",
+    scale = "DA", time = c(2001, 2021)
+  )
   time <- vars$time
   vars <- vars$vars
 
@@ -132,5 +137,4 @@ test_that("legend_labels translation works", {
   expect_equal(actual[[1]]$y, "Locataire (Δ 2001 - 2021)")
   expect_equal(actual$x_short, "Vie active")
   expect_equal(actual$y_short, "Locataire")
-
 })

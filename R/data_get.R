@@ -52,7 +52,6 @@ data_get_sql <- function(var, df, select = "*") {
 #'
 #' @return A data.frame object with the selected data from the specified table.
 data_get_qs <- function(var, scale, data_path = get_data_path()) {
-
   # Construct the file path
   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
 
@@ -86,7 +85,6 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
 #' change between the two variables.
 data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
                            data_path = get_data_path()) {
-
   # Grab the correct var/time
   var <- vars[[vl_vr]]
   time_col <- time[[vl_vr]]
@@ -100,10 +98,12 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
   data <- data[unique(keep_cols)]
 
   # Append breaks
-  data <- data_append_breaks(var = var,
-                             data = data,
-                             q3_q5 = "q5",
-                             rename_col = vl_vr)
+  data <- data_append_breaks(
+    var = var,
+    data = data,
+    q3_q5 = "q5",
+    rename_col = vl_vr
+  )
   data <- data$data
 
   # Keep columns of the two years
@@ -164,7 +164,6 @@ data_get <- function(vars, scale, region,
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
                         data_path = get_data_path(), ...) {
-
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -175,14 +174,15 @@ data_get.q5 <- function(vars, scale, region = NULL,
   data <- filter_region(data = data, scale = scale, region = region)
 
   # Append breaks
-  data <- data_append_breaks(var = vars$var_left,
-                             data = data,
-                             q3_q5 = "q5",
-                             rename_col = "var_left")
+  data <- data_append_breaks(
+    var = vars$var_left,
+    data = data,
+    q3_q5 = "q5",
+    rename_col = "var_left"
+  )
 
   # Return output
   return(data$data)
-
 }
 
 #' @describeIn data_get The method for bivar.
@@ -226,10 +226,10 @@ data_get.bivar <- function(vars, scale, region,
   if (length(other_vl_schemas) > 0) {
     # possible_other_schemas <- NULL
     # for (i in names(other_vl_schemas)) {
-      sch_rege <- "_\\d{1,2}_"#other_vl_schemas[[i]]
-      possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
-      possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
-      possible_other_schemas <- gsub("_", "", possible_other_schemas)
+    sch_rege <- "_\\d{1,2}_" # other_vl_schemas[[i]]
+    possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
+    possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
+    possible_other_schemas <- gsub("_", "", possible_other_schemas)
     # }
   }
 
@@ -262,18 +262,20 @@ data_get.bivar <- function(vars, scale, region,
       for (s in possible_other_schemas) {
         vr_year <- var_closest_year(vars$var_right, i)$closest_year
         out <- paste(data[[sprintf("var_left_%s_%s_q3", s, i)]],
-                     data[[sprintf("var_right_%s_q3", vr_year)]],
-                     sep = " - ")
+          data[[sprintf("var_right_%s_q3", vr_year)]],
+          sep = " - "
+        )
         data[[sprintf("group_%s_%s", s, i)]] <- out
       }
     }
   } else {
     for (i in possible_vl_times) {
-        vr_year <- var_closest_year(vars$var_right, i)$closest_year
-        out <- paste(data[[sprintf("var_left_%s_q3", i)]],
-                     data[[sprintf("var_right_%s_q3", vr_year)]],
-                     sep = " - ")
-        data[[sprintf("group_%s", i)]] <- out
+      vr_year <- var_closest_year(vars$var_right, i)$closest_year
+      out <- paste(data[[sprintf("var_left_%s_q3", i)]],
+        data[[sprintf("var_right_%s_q3", vr_year)]],
+        sep = " - "
+      )
+      data[[sprintf("group_%s", i)]] <- out
     }
   }
 
@@ -287,9 +289,11 @@ data_get.bivar <- function(vars, scale, region,
 #' @export
 data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                            data_path = get_data_path(), time, ...) {
-  data_get_delta_fun(vars = vars, scale = scale, region = region,
-                     scales_as_DA = scales_as_DA, data_path = data_path,
-                     time = time, ...)
+  data_get_delta_fun(
+    vars = vars, scale = scale, region = region,
+    scales_as_DA = scales_as_DA, data_path = data_path,
+    time = time, ...
+  )
 }
 
 #' @title Inner function to get data based on the type of `vars`
@@ -300,6 +304,9 @@ data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "st
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
 #' @param scale <`character`> The scale at which the user is on.
+#' @param region <`character vector`> A vector of IDs with which to filter the
+#' retrieved data for a specific region, probably retrieved from
+#' `regions_dictionary$scales`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -318,13 +325,14 @@ data_get_delta_fun <- function(vars, scale, region, scales_as_DA = c("building",
 #' @describeIn data_get_delta_fun The method for scalar variables.
 data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), time, ...) {
-
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Get data
-  data <- data_get_delta(vars = vars, time = time,
-                         scale = scale, data_path = data_path)
+  data <- data_get_delta(
+    vars = vars, time = time,
+    scale = scale, data_path = data_path
+  )
 
   # Filter to region
   data <- filter_region(data = data, scale = scale, region = region)
@@ -351,13 +359,14 @@ data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("bui
 #' @describeIn data_get_delta_fun The method for ordinal variables.
 data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                        data_path = get_data_path(), time, ...) {
-
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Get data
-  data <- data_get_delta(vars = vars, time = time,
-                         scale = scale, data_path = data_path)
+  data <- data_get_delta(
+    vars = vars, time = time,
+    scale = scale, data_path = data_path
+  )
 
   # Filter to region
   data <- filter_region(data = data, scale = scale, region = region)
@@ -393,10 +402,14 @@ data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
-  data_vl <- data_get_delta(vars = vars, time = time, vl_vr = "var_left",
-                            scale = scale, data_path = data_path)
-  data_vr <- data_get_delta(vars = vars, time = time, vl_vr = "var_right",
-                            scale = scale, data_path = data_path)[-1]
+  data_vl <- data_get_delta(
+    vars = vars, time = time, vl_vr = "var_left",
+    scale = scale, data_path = data_path
+  )
+  data_vr <- data_get_delta(
+    vars = vars, time = time, vl_vr = "var_right",
+    scale = scale, data_path = data_path
+  )[-1]
 
   # Prepare for merge, keep attributes
   prev_attr_vl <- attributes(data_vl)
@@ -431,21 +444,24 @@ data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building
 #' @export
 data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("building", "street"),
                                       data_path = get_data_path(), time, ...) {
-
   # Reconstruct vars for delta
   vl_vars <- vars_build(var_left = vars$var_left, scale = scale, time = time$var_left)
   vl_time <- vl_vars$time
   vl_vars <- vl_vars$vars
-  data_vl <- data_get(vl_vars, scale = scale, time = vl_time, region = region,
-                      scales_as_DA = scales_as_DA)
+  data_vl <- data_get(vl_vars,
+    scale = scale, time = vl_time, region = region,
+    scales_as_DA = scales_as_DA
+  )
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
   # Reconstruct vars for q3
   vr_vars <- vars_build(var_left = vars$var_right, scale = scale, time = time$var_right)
   vr_time <- vr_vars$time
   vr_vars <- vr_vars$vars
-  data_vr <- data_get(vr_vars, scale = scale, time = vr_time, region = region,
-                      scales_as_DA = scales_as_DA)
+  data_vr <- data_get(vr_vars,
+    scale = scale, time = vr_time, region = region,
+    scales_as_DA = scales_as_DA
+  )
   cv <- match_schema_to_col(data_vr, time = vr_time, schemas = NULL)
   data_vr <- data_vr[cv]
   names(data_vr) <- gsub("var_left", "var_right", names(data_vr))
@@ -491,9 +507,10 @@ data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("bui
 #' to the specified region and scale.
 #' @export
 filter_region <- function(data, scale, region) {
-
   # If no region supplied, return all
-  if (is.null(region)) return(data)
+  if (is.null(region)) {
+    return(data)
+  }
 
   # Get the regions dictionary to grab the vector of IDs with which to filter
   # the retrieved data
@@ -515,7 +532,6 @@ filter_region <- function(data, scale, region) {
 data_get.default <- function(vars, scale, region = NULL,
                              scales_as_DA = c("building", "street"),
                              data_path = get_data_path(), vr_vl, ...) {
-
   # Check if `vars` has been entered without being subset from `vars_build()`
   if (all(c("vars", "time") %in% names(vars))) {
     stop("`vars` is invalid. Subset `$vars` from the output of `vars_build()`.")

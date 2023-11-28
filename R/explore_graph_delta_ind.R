@@ -1,4 +1,3 @@
-
 #' Explore Graph Function for delta `INDEX` type
 #'
 #' This function creates a ggplot for the explore panel of Curbcut, based on the
@@ -8,15 +7,13 @@
 #' output of \code{\link{vars_build}}.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
+#' @param scale <`character`> Current scale.
 #' @param data <`data.frame`> A data frame containing the variables and
 #' observations. The output of \code{\link{data_get}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_scale}}.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their graph will be the one of their DA.
@@ -75,7 +72,7 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time, 
 
   x_scale <- explore_graph_scale(
     var = structure(vars$var_left,
-                    class = class(vars$var_left)
+      class = class(vars$var_left)
     ),
     x_y = "x",
     scale = shared_info$treated_scale,
@@ -84,7 +81,7 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time, 
 
   y_scale <- explore_graph_scale(
     var = structure(vars$var_left,
-                    class = class(vars$var_left)
+      class = class(vars$var_left)
     ),
     scale = shared_info$treated_scale,
     x_y = "y",
@@ -98,12 +95,13 @@ explore_graph_delta_ind.ordinal <- function(vars, select_id, scale, data, time, 
 
   # Create a formula for the aggregate function dynamically
   formula_text <- sprintf("frequency ~ %s + %s + group", xcol, ycol)
-  agg_formula <- as.formula(formula_text)
+  agg_formula <- stats::as.formula(formula_text)
 
   # Use the dynamically created formula in the aggregate function
   dat <- stats::aggregate(agg_formula,
-                          data = dat,
-                          FUN = sum)
+    data = dat,
+    FUN = sum
+  )
 
   # Unchanged vs changed
   unchanged <- dat[dat[[xcol]] == dat[[ycol]], ]

@@ -251,5 +251,4 @@ convert_unit.default <- function(var, x, compact = FALSE, precise_round = TRUE, 
     }
     return(scales::comma(x, 0.01))
   }
-
 }

@@ -88,7 +88,8 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
           page_id = page,
           element = "cccheckbox_cbx"
         )),
-        value = if (length(date) == 2) TRUE else FALSE)
+        value = if (length(date) == 2) TRUE else FALSE
+      )
       shiny::updateSliderInput(
         session = r$server_session(),
         inputId = sprintf("%s-%s", page, ns_doubled(
@@ -136,7 +137,6 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
         latitude = as.numeric(coords[2]),
         zoom = r[[page]]$zoom()
       )
-
     }
   }
 
@@ -155,5 +155,4 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
       )
     })
   }
-
 }

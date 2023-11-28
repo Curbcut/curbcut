@@ -9,7 +9,6 @@ Description: The purpose of the package is to centralise the functions used by a
 Imports:
     cc.map,
     cc.landing,
-    rdeck,
     shiny,
     glue,
     shinyjs,
@@ -23,19 +22,12 @@ Imports:
     utils,
     sf,
     qs,
-    urltools,
     rintrojs,
     zip,
-    rmarkdown,
-    plotly,
-    htmlwidgets,
-    RCurl,
-    bsicons
+    data.table
 Remotes:
     Curbcut/cc.map,
-    Curbcut/cc.landing,
-    bdbmax/bslib,
-    qfes/rdeck
+    Curbcut/cc.landing
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

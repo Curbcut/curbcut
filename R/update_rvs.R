@@ -196,13 +196,13 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
     shiny::observeEvent(new_ID(), {
       # If the same ID has been selected twice, return NA. If not, return the
       # newly selected ID
-        out <- update_select_id_helper(
-          new_ID = new_ID(),
-          select_id = r[[id]]$select_id()
-        )
+      out <- update_select_id_helper(
+        new_ID = new_ID(),
+        select_id = r[[id]]$select_id()
+      )
 
-        # Save the new selected ID in the reactive.
-        r[[id]]$select_id(out)
+      # Save the new selected ID in the reactive.
+      r[[id]]$select_id(out)
     })
 
     # Update selected ID if there are default selections (from the advanced options,
@@ -291,7 +291,6 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #'
 #' @export
 update_scale <- function(tile, zoom_string) {
-
   # If on auto-scale (when tile contains an underscore declaring it's a combination
   # of scales), simply return the zoom_string
   if (grepl("_", tile)) {
@@ -327,7 +326,6 @@ update_scale <- function(tile, zoom_string) {
 #' whenever var_left, var_right and or df changes.
 #' @export
 update_vars <- function(id, r, var_left, var_right, widget_time) {
-
   vr <- shiny::reactive({
     vars_build(
       var_left = var_left(),
@@ -340,7 +338,6 @@ update_vars <- function(id, r, var_left, var_right, widget_time) {
   # Update vars and time only if they actually change
   update_rv(id, r, rv_name = "vars", new_val = shiny::reactive(vr()$vars))
   update_rv(id, r, rv_name = "time", new_val = shiny::reactive(vr()$time))
-
 }
 
 #' Update a reactive value object
@@ -437,13 +434,11 @@ update_zoom_levels <- function(id, r, new_zl) {
 #' @return <`eventReactive`> An eventReactive object containing the previous value.
 #' @export
 track_previous_reactive <- function(reactive_expr) {
-
   # Create reactiveValues to store current and previous values
   value_tracker <- shiny::reactiveValues()
 
   # Observe changes in reactive_expr and update value_tracker
   shiny::observeEvent(reactive_expr(), {
-
     # Do not update the values if they are the same
     if (!is.null(value_tracker$current_value)) {
       if (reactive_expr() == value_tracker$current_value) {

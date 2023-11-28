@@ -198,6 +198,7 @@ var_row_index <- function(var) {
 #' `translate` is TRUE. If not specified, the function will not attempt to translate.
 #' @param check_year <`logical`> Should the year be removed from `var` to grab
 #' variable's info? Defaults to TRUE
+#' @param ... Any additional arguments to pass to \code{\link{var_get_info}}
 #'
 #' @return The requested information about the parent variable, with optional
 #' translation using the \code{\link{cc_t}} function.
@@ -234,7 +235,6 @@ var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
 #' dates at which the variable is available, and then finds the closest year to
 #' the given \code{time} value.
 var_closest_year <- function(input, time) {
-
   # If `time` is NULL, return the input
   if (is.null(time)) {
     return(input)
@@ -257,7 +257,7 @@ var_closest_year <- function(input, time) {
 
   # Get the closest years
   closest_year <- sapply(time, \(x) dates[which.min(abs(dates - x))],
-                         USE.NAMES = FALSE
+    USE.NAMES = FALSE
   )
   closest_year <- unique(closest_year)
 

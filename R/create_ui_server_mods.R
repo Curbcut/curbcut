@@ -20,9 +20,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
     page <- modules[modules$id == id, ]
     regions <- page$regions[[1]]
     if (is.null(regions)) {
-      stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
-                          "check the `regions` column in the `modules` ",
-                          "dataframe."), id))
+      stop(sprintf(paste0(
+        "Page `%s` does not have available regions. Please ",
+        "check the `regions` column in the `modules` ",
+        "dataframe."
+      ), id))
     }
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
     mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -44,8 +46,10 @@ create_ui_server_mods <- function(modules, pos = 1) {
             id = shiny::NS(id, id),
             var_list = dropdown_make(vars = " ", compare = TRUE)
           ),
-          geography_UI(shiny::NS(id, id), regions = regions,
-                       avail_scale_combinations = avail_scale_combinations),
+          geography_UI(shiny::NS(id, id),
+            regions = regions,
+            avail_scale_combinations = avail_scale_combinations
+          ),
           shiny::hr(),
           zoom_UI(shiny::NS(id, id), zoom_levels = mzp),
           bottom = shiny::tagList(
@@ -78,9 +82,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
       page <- modules[modules$id == id, ]
       regions <- page$regions[[1]]
       if (is.null(regions)) {
-        stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
-                            "check the `regions` column in the `modules` ",
-                            "dataframe.", id)))
+        stop(sprintf(paste0(
+          "Page `%s` does not have available regions. Please ",
+          "check the `regions` column in the `modules` ",
+          "dataframe.", id
+        )))
       }
       avail_scale_combinations <- page$avail_scale_combinations[[1]]
       mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -123,19 +129,24 @@ create_ui_server_mods <- function(modules, pos = 1) {
       )
 
       # Zoom and POI reactives when the view state of the map changes.
-      shiny::observeEvent(map_viewstate(), {
-        r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
-        r[[id]]$poi(update_poi(
-          id = id, poi = r[[id]]$poi(),
-          map_viewstate = map_viewstate()
-        ))
-      }, ignoreInit = TRUE)
+      shiny::observeEvent(map_viewstate(),
+        {
+          r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
+          r[[id]]$poi(update_poi(
+            id = id, poi = r[[id]]$poi(),
+            map_viewstate = map_viewstate()
+          ))
+        },
+        ignoreInit = TRUE
+      )
 
       # Region and zoom levels change depending on the geography widget
-      zl <- geography_server(id = id,
-                             r = r,
-                             regions = regions,
-                             avail_scale_combinations = avail_scale_combinations)
+      zl <- geography_server(
+        id = id,
+        r = r,
+        regions = regions,
+        avail_scale_combinations = avail_scale_combinations
+      )
       update_region(id = id, r = r, new_region = shiny::reactive(zl()$region))
       update_zoom_levels(id = id, r = r, new_zl = shiny::reactive(zl()$zoom_levels))
 

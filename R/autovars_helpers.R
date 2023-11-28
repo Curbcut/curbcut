@@ -110,7 +110,9 @@ autovars_common_widgets <- function(id) {
   # Fish for other widgets only when `tb` is a list
   if (is.list(tb)) {
     groups <- variables$group_diff[variables$var_code %in% var_list]
-    wdg_names <- lapply(groups, names) |> unlist() |> unique()
+    wdg_names <- lapply(groups, names) |>
+      unlist() |>
+      unique()
 
     widgets <- sapply(wdg_names, \(x) {
       # All entries that need this widget

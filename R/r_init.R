@@ -32,7 +32,6 @@ r_init <- function(server_session,
                    map_zoom = get_from_globalenv("map_zoom"),
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
-
   regions_dictionary <- get_from_globalenv("regions_dictionary")
 
   # Initate

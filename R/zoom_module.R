@@ -79,7 +79,6 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
     # auto-scale or a scale. Auto-scale are tiles like CMA_CT_DA_building (
     # a collapsed version of the individual scales).
     tile <- shiny::reactive({
-
       # On auto-scale, return the auto_zoom
       if (zoom_auto() && !no_autozoom()) {
         out <- paste0(names(zoom_levels()), collapse = "_")
@@ -134,12 +133,14 @@ zoom_UI <- function(id, zoom_levels) {
         shiny::div(
           id = shiny::NS(id, "zoom_right_lab"),
           style = "width: 64%; margin:0px !important; text-align: right;",
-          shiny::div(id = shiny::NS(id, "zoom_cbx_loc"),
-                     checkbox_UI(
-                       id = shiny::NS(id, "zoom_auto"),
-                       label = cc_t("Auto-scale"),
-                       value = TRUE
-                     )),
+          shiny::div(
+            id = shiny::NS(id, "zoom_cbx_loc"),
+            checkbox_UI(
+              id = shiny::NS(id, "zoom_auto"),
+              label = cc_t("Auto-scale"),
+              value = TRUE
+            )
+          ),
           shiny::div(id = shiny::NS(id, "zoom_scale_chr"))
         )
       ),

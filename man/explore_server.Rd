@@ -54,10 +54,14 @@ selected region.}
 
 \item{time}{<\verb{reactive numeric vector}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
-Usually r[\link{id}]$time.}
+Usually \code{r[[id]]$time}.}
 
 \item{schemas}{<\verb{reactive named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,

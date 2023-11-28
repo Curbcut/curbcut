@@ -60,11 +60,11 @@ place_explorer_html_links <- function(temp_folder, region, scale, select_id, lan
           system(sprintf("cat %s %s > %s", head, pef, tmpfile))
         }
       } else {
-        # If the place explorer is not already pre-processed, process it on the spot.
-        place_explorer_create_html(
-          tmpfile = tmpfile, region = region, df = df,
-          select_id = select_id, lang = lang
-        )
+        # # If the place explorer is not already pre-processed, process it on the spot.
+        # place_explorer_create_html(
+        #   tmpfile = tmpfile, region = region, df = df,
+        #   select_id = select_id, lang = lang
+        # )
       }
 
       shiny::incProgress(0.3)

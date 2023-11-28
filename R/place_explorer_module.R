@@ -39,14 +39,16 @@ place_explorer_server <- function(id, r,
                                   map_base_style = get_from_globalenv("map_base_style"),
                                   temp_folder = get_from_globalenv("temp_folder")) {
   shiny::moduleServer(id, function(input, output, session) {
-
     map_token <- get_from_globalenv("map_token")
+    modules <- get_from_globalenv("modules")
     page <- modules[modules$id == id, ]
     regions <- page$regions[[1]]
     if (is.null(regions)) {
-      stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
-                          "check the `regions` column in the `modules` ",
-                          "dataframe.", id)))
+      stop(sprintf(paste0(
+        "Page `%s` does not have available regions. Please ",
+        "check the `regions` column in the `modules` ",
+        "dataframe.", id
+      )))
     }
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
     mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -70,10 +72,12 @@ place_explorer_server <- function(id, r,
     })
 
     # Region and zoom levels change depending on the geography widget
-    zl <- geography_server(id = id,
-                           r = r,
-                           regions = regions,
-                           avail_scale_combinations = avail_scale_combinations)
+    zl <- geography_server(
+      id = id,
+      r = r,
+      regions = regions,
+      avail_scale_combinations = avail_scale_combinations
+    )
 
     tile <- shiny::reactive(names(zl()$zoom_levels)[[1]])
 
@@ -155,7 +159,9 @@ place_explorer_server <- function(id, r,
     main_panel <- shiny::reactive({
       if (!is.na(r[[id]]$select_id())) {
         # If selection outside region
-        if (!r[[id]]$select_id() %in% dat()$ID_color) return(NULL)
+        if (!r[[id]]$select_id() %in% dat()$ID_color) {
+          return(NULL)
+        }
 
         pe_links <- place_explorer_html_links(
           temp_folder = temp_folder,
@@ -232,9 +238,11 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   page <- modules[modules$id == id, ]
   regions <- page$regions[[1]]
   if (is.null(regions)) {
-    stop(sprintf(paste0("Page `%s` does not have available regions. Please ",
-                        "check the `regions` column in the `modules` ",
-                        "dataframe."), id))
+    stop(sprintf(paste0(
+      "Page `%s` does not have available regions. Please ",
+      "check the `regions` column in the `modules` ",
+      "dataframe."
+    ), id))
   }
   avail_scale_combinations <- page$avail_scale_combinations[[1]]
   mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -264,9 +272,11 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
           ),
           "</div></div>"
         )),
-        hr(),
-        geography_UI(shiny::NS(id, id), regions = regions,
-                     avail_scale_combinations = avail_scale_combinations),
+        shiny::hr(),
+        geography_UI(shiny::NS(id, id),
+          regions = regions,
+          avail_scale_combinations = avail_scale_combinations
+        ),
       ),
 
       # Map

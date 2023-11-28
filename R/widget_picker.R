@@ -81,7 +81,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
       disabled_options <- unlist(var_list_t())[disable()]
       anything_disabled <- length(disabled_options) > 0
       if (anything_disabled) {
-        if (current_val %in% disabled_options){
+        if (current_val %in% disabled_options) {
           current_val <- NULL
         }
       }
@@ -103,14 +103,16 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     })
 
     # Update the selected variable if it changes
-    shiny::observeEvent(selected(), {
-
-      shinyWidgets::updatePickerInput(
-        session = session,
-        inputId = picker_id,
-        selected = selected()
-      )
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(selected(),
+      {
+        shinyWidgets::updatePickerInput(
+          session = session,
+          inputId = picker_id,
+          selected = selected()
+        )
+      },
+      ignoreNULL = TRUE
+    )
 
     # # # If the dropdown is a compare, highlight differently the background
     # # # of the options that have a strong correlation

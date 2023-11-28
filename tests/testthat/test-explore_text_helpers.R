@@ -103,10 +103,9 @@ test_that("explore_text_region_val_df works", {
     data = data,
     scale = scale,
     time = time,
-    schemas = list(var_left = setNames(20, "transportationtime"))
+    schemas = list(var_left = stats::setNames(20, "transportationtime"))
   )
   expect_equal(all(c("val") %in% names(actual)), TRUE)
-
 })
 
 
@@ -153,4 +152,3 @@ test_that("explore_text_selection_comparison works", {
   )
   expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
 })
-

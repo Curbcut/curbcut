@@ -28,7 +28,6 @@ test_that("legend_breaks.q5_ind works", {
   legend <- legend_breaks(vars2, scale = "grd250", data = data2)
   expect_true(length(legend) == 5)
   expect_true(all(is.character(legend)))
-
 })
 
 test_that("legend_breaks.q100 works", {
@@ -65,7 +64,7 @@ test_that("legend_breaks.bivar_ldelta_rq3 works", {
     data = data,
     time = time,
     schemas =
-  )
+    )
   expect_equal(
     names(actual),
     c("x", "y")
@@ -109,7 +108,8 @@ test_that("legend_breaks.bivar works", {
     var_left = "inc_50",
     var_right = "lst",
     scale = "CSD",
-    time = 2021)
+    time = 2021
+  )
   time <- vars$time
   vars <- vars$vars
 
@@ -134,7 +134,8 @@ test_that("legend_breaks.delta_bivar works", {
     var_left = "housing_tenant",
     var_right = "edu_no_degree",
     scale = "DA",
-    time = c(1996, 2021))
+    time = c(1996, 2021)
+  )
   time <- vars$time
   vars <- vars$vars
 

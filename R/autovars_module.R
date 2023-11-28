@@ -175,7 +175,9 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                     if (all(vals == which(1:60 %% 5 == 0))) {
                       selected <- 20
                     } else {
-                      selected <- vals[{(length(vals)) / 2} |> floor()]
+                      selected <- vals[{
+                        (length(vals)) / 2
+                      } |> floor()]
                     }
                   }
 
@@ -522,22 +524,32 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Update the schemas!
     shiny::observe({
-      if (is.null(schemas)) return(NULL)
-      if (is.null(schema_reactive())) return(NULL)
+      if (is.null(schemas)) {
+        return(NULL)
+      }
+      if (is.null(schema_reactive())) {
+        return(NULL)
+      }
 
       final_schemas <- NULL
       for (i in names(schema_reactive())) {
         input_name <- schema_reactive()[[i]]
         input_val <- input[[shiny::NS(id, input_name)]]
         if (is.null(input_val)) next
-        final_schemas <- c(final_schemas,
-                           stats::setNames(input_val, i))
+        final_schemas <- c(
+          final_schemas,
+          stats::setNames(input_val, i)
+        )
       }
-      if (is.null(final_schemas)) return(NULL)
+      if (is.null(final_schemas)) {
+        return(NULL)
+      }
       final_schemas <- list(var_left = final_schemas)
 
-      update_rv(id = id, r = r, rv_name = "schemas",
-                new_val = shiny::reactive(final_schemas))
+      update_rv(
+        id = id, r = r, rv_name = "schemas",
+        new_val = shiny::reactive(final_schemas)
+      )
     })
 
     return(shiny::reactive(list(var = out_var(), time = time())))

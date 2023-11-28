@@ -54,6 +54,8 @@ their colour will be the one of their DA.}
 \item{scale}{<\code{character}> Scale under study. The output of
 \code{\link{update_scale}}.}
 
+\item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
+
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
 

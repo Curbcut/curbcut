@@ -35,7 +35,7 @@ test_that("table_view_prep_table works as expected (q5)", {
   region <- "city"
   time <- 2023
   var_right <- " "
-  schemas <- list(var_left = setNames(20, "transportationtime"))
+  schemas <- list(var_left = stats::setNames(20, "transportationtime"))
   map_zoom_levels <- mzl_borough_CT_DA_building
   test_table_view_prep_table_helper(
     var_left = var_left,
@@ -82,7 +82,6 @@ test_that("table_view_prep_table works as expected (q5)", {
     time = 2021,
     map_zoom_levels = mzl_cmhczone
   )
-
 })
 
 test_that("table_view_prep_table works as expected (bivar)", {
@@ -102,7 +101,7 @@ test_that("table_view_prep_table works as expected (bivar)", {
     region = "city",
     time = 2023,
     map_zoom_levels = mzl_CSD_CT_DA_building,
-    schemas = list(var_left = setNames(20, "transportationtime"))
+    schemas = list(var_left = stats::setNames(20, "transportationtime"))
   )
 
   test_table_view_prep_table_helper(
@@ -165,7 +164,7 @@ test_that("table_view_prep_table works as expected (delta)", {
   #   region = region,
   #   time = time,
   #   map_zoom_levels = map_zoom_levels,
-  #   schemas = list(var_left = setNames(20, "transportationtime"))
+  #   schemas = list(var_left = stats::setNames(20, "transportationtime"))
   # )
 
   test_table_view_prep_table_helper(

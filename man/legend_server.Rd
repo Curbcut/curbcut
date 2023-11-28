@@ -34,6 +34,8 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
 
+\item{scale}{<\code{character}> Current scale.}
+
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 
@@ -59,9 +61,6 @@ that will be placed as the legend. Defaults to \code{\link{legend_render}}.}
 \item{force_height}{<\verb{reactive numeric}> Optional argument. Use to overwrite
 the height of the legend. Default height is 60 pixels, and 150 on a \code{bivar}
 class.}
-
-\item{df}{<\verb{reactive character}> Scale under study. The output of
-\code{\link{update_scale}}.}
 }
 \value{
 The legend Shiny UI and server module functions

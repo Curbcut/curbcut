@@ -18,11 +18,12 @@
 #' subsequently).
 #' @export
 dyk_poi <- function(id, poi, lang = NULL) {
-
   # Get POIs; currently just Stories. Return nothing if the `stories` df is
   # missing.
   stories <- get0("stories", envir = .GlobalEnv)
-  if (is.null(stories)) return(NULL)
+  if (is.null(stories)) {
+    return(NULL)
+  }
   pois <- stories[c("ID", "name_id", "preview_en", "preview_fr")]
 
   # Grab two stories
@@ -35,12 +36,13 @@ dyk_poi <- function(id, poi, lang = NULL) {
 
   # Text with link
   previews <- lapply(seq_along(out$name_id), \(x) {
-    dyk_link(id = id, element_id = x, text = out[[preview_col]][x],
-             page = "stories", lang = lang, select_id = out$ID[x])
+    dyk_link(
+      id = id, element_id = x, text = out[[preview_col]][x],
+      page = "stories", lang = lang, select_id = out$ID[x]
+    )
   })
 
   return(previews)
-
 }
 
 #### DYK FUNCTIONS #############################################################
@@ -138,16 +140,13 @@ dyk_text <- function(vars, scale, select_id, lang, region, zoom_levels, time, sc
 #' @export
 #'
 dyk_text.default <- function(vars, scale, select_id, lang, region, zoom_levels, time, scales_as_DA, ...) {
-
   return(NULL)
-
 }
 
 #' @rdname dyk_text
 #' @export
 #'
 dyk_text.q5 <- function(vars, scale, select_id, lang, region, zoom_levels, time, scales_as_DA, ...) {
-
   # Grab `dyk`
   dyk <- get_from_globalenv("dyk")
 
@@ -166,7 +165,7 @@ dyk_text.q5 <- function(vars, scale, select_id, lang, region, zoom_levels, time,
   dyk_high <- dyk_high[dyk_high$scale == scale, ]
   dyk_high <- dyk_high[unlist(dyk_high$date) == date, ]
 
-  if (nrow(dyk_high) > 0) dyk_high <- dyk_high[round(stats::runif(1, 1, 2)),]
+  if (nrow(dyk_high) > 0) dyk_high <- dyk_high[round(stats::runif(1, 1, 2)), ]
 
   dyk_change <- dyk_df[dyk_df$dyk_type == "change", ]
 
@@ -174,35 +173,45 @@ dyk_text.q5 <- function(vars, scale, select_id, lang, region, zoom_levels, time,
   dyk_compare <- dyk_compare[dyk_compare$scale == scale, ]
   dyk_compare <- dyk_compare[dyk_compare$date == date, ]
 
-  if (nrow(dyk_compare) > 0) dyk_compare <- dyk_compare[
-    sample(length(dyk_compare$dyk_weight), 1, prob = dyk_compare$dyk_weight ^ 2),]
+  if (nrow(dyk_compare) > 0) {
+    dyk_compare <- dyk_compare[
+      sample(length(dyk_compare$dyk_weight), 1, prob = dyk_compare$dyk_weight^2),
+    ]
+  }
 
   # Randomly choose one
   dyk_out <- rbind(dyk_high, dyk_change, dyk_compare)
-  if (nrow(dyk_out) == 0) return(NULL)
+  if (nrow(dyk_out) == 0) {
+    return(NULL)
+  }
   out <- dyk_out[sample(seq_along(dyk_out$dyk_text_en), 1), ]
 
   # Column to subset
   text_col <- sprintf("dyk_text_%s", lang)
 
   out <- if (out$dyk_type %in% c("highest", "lowest")) {
-    dyk_link(id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
-             scale = out$scale, region = out$region, select_id = out$select_ID,
-             # Feed zoom_levels to the link. The zoom will be adjusted using exactly
-             # the ones specified (sometimes, map_zoom_levels_* may undergo transformation
-             # in some pages. Better to have the current zoom_levels follow)..
-             zoom_levels = zoom_levels)
+    dyk_link(
+      id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
+      scale = out$scale, region = out$region, select_id = out$select_ID,
+      # Feed zoom_levels to the link. The zoom will be adjusted using exactly
+      # the ones specified (sometimes, map_zoom_levels_* may undergo transformation
+      # in some pages. Better to have the current zoom_levels follow)..
+      zoom_levels = zoom_levels
+    )
   } else if (out$dyk_type == "change") {
-    dyk_link(id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
-             date = out$date[[1]])
+    dyk_link(
+      id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
+      date = out$date[[1]]
+    )
   } else if (out$dyk_type == "compare") {
-    dyk_link(id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
-             var_right = out$var_right)
+    dyk_link(
+      id = out$module, element_id = 1, text = out[[text_col]], lang = lang,
+      var_right = out$var_right
+    )
   }
 
   # Return output
   return(list(out))
-
 }
 
 
@@ -278,4 +287,3 @@ dyk_text.q5 <- function(vars, scale, select_id, lang, region, zoom_levels, time,
 #   return(out)
 #
 # }
-

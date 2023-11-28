@@ -8,16 +8,16 @@
 #' @export
 use_curbcut_js <- function() {
   copy_current_url <- readLines(system.file("js_scripts/shinyjs/copy_current_url.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
   set_language <- readLines(system.file("js_scripts/shinyjs/language.js",
-                                        package = "curbcut"
+    package = "curbcut"
   ))
   highlightOptions <- readLines(system.file("js_scripts/shinyjs/highlight_dropdown_option.js",
-                                            package = "curbcut"
+    package = "curbcut"
   ))
   checkForMapDiv <- readLines(system.file("js_scripts/shinyjs/checkForMapDiv.js",
-                                             package = "curbcut"
+    package = "curbcut"
   ))
 
   # Add the JS resource path

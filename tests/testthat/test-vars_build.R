@@ -4,8 +4,7 @@ test_that("vars_build works", {
     scale = "CSD", time = 2016
   )
   expect_type(q5, "list")
-  expect_equal(q5$vars$var_left, structure("housing_tenant", class = c("pct", "scalar", "character"
-  )))
+  expect_equal(q5$vars$var_left, structure("housing_tenant", class = c("pct", "scalar", "character")))
   expect_equal(q5$vars$var_right, " ")
   expect_equal(attributes(q5$vars)$class, c("q5", "scalar"))
   expect_equal(q5$time$var_left, 2016)
@@ -16,9 +15,7 @@ test_that("vars_build works", {
     scale = "building", time = 2016
   )
   expect_type(q5_building, "list")
-  expect_equal(q5_building$vars$var_left, structure("housing_tenant", class = c("pct", "scalar", "character"
-  ))
-  )
+  expect_equal(q5_building$vars$var_left, structure("housing_tenant", class = c("pct", "scalar", "character")))
   expect_equal(q5_building$vars$var_right, " ")
   expect_equal(attributes(q5_building$vars)$class, c("q5", "scalar"))
   expect_equal(q5_building$time$var_left, 2016)
@@ -28,7 +25,7 @@ test_that("vars_build works", {
   expect_equal(
     vars_build(
       var_left = "housing_tenant", var_right = "alp",
-      scale= "CSD", time = 2016
+      scale = "CSD", time = 2016
     )$vars |> class(),
     c("bivar", "scalar")
   )
@@ -56,9 +53,13 @@ test_that("vars_build works", {
       scale = "DA",
       time = c(2006, 2016)
     ),
-    list(vars = structure(list(var_left = structure("housing_tenant", class = c("pct",
-                                                                                "scalar", "character")), var_right = " "), class = c("delta",
-                                                                                                                                     "scalar")), time = list(var_left = c(2006, 2016)))
+    list(vars = structure(list(var_left = structure("housing_tenant", class = c(
+      "pct",
+      "scalar", "character"
+    )), var_right = " "), class = c(
+      "delta",
+      "scalar"
+    )), time = list(var_left = c(2006, 2016)))
   )
 
   expect_equal(
@@ -92,7 +93,8 @@ test_that("vars_build works", {
       scale = "DA",
       time = c("2016", "2016")
     )$vars |> class(),
-    c("q5", "scalar"))
+    c("q5", "scalar")
+  )
 
   expect_equal(
     vars_build(
@@ -103,7 +105,8 @@ test_that("vars_build works", {
       scale = "DA",
       time = c("2016", "2016")
     )$vars$var_left |> class(),
-    c("pct", "scalar", "character"))
+    c("pct", "scalar", "character")
+  )
 
   expect_equal(
     vars_build(

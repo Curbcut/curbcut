@@ -315,7 +315,7 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
               shiny::incProgress(0.4)
 
               # Prepare data by attaching geometries
-              require(sf)
+              requireNamespace("sf", quietly = TRUE)
               geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_scale()))
               data <- merge(datas()$data, geo, by = "ID")
               data <- sf::st_as_sf(data)

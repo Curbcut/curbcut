@@ -22,10 +22,9 @@
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
-#' @param df <`reactive character`> Scale under study. The output of
-#' \code{\link{update_scale}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
+#' @param scale <`character`> Current scale.
 #' @param time <`reactive named list`> Object built using the \code{\link{vars_build}}
 #' function. It contains the time for both var_left and var_right variables.
 #' @param hide <`reactive logical`> Should the legend be hidden? Defaults to
@@ -64,15 +63,17 @@ legend_server <- function(id, r, vars, scale, data, time, hide = shiny::reactive
   stopifnot(shiny::is.reactive(legend_args))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # If `time` should have an impact on the legend, add it to the list of arguments.
     # It's not directly an argument as we don't want the legend to be triggered by a
     # change in `time` when it's not needed (q5, bivar, ...)
     legend_arguments <- shiny::reactiveVal(legend_args())
     # shiny::observeEvent(legend_args(), legend_arguments(legend_args()))
-    shiny::observeEvent({time()
-      legend_args()}, {
-
+    shiny::observeEvent(
+      {
+        time()
+        legend_args()
+      },
+      {
         # Isolate the change to legend_arguments
         shiny::isolate(legend_arguments(legend_args()))
 
@@ -82,7 +83,8 @@ legend_server <- function(id, r, vars, scale, data, time, hide = shiny::reactive
           # args <- legend_arguments()[names(legend_arguments()) != "time"]
           legend_arguments(c(legend_arguments(), list(time = time())))
         }
-      })
+      }
+    )
 
     # Make legend
     legend <- shiny::reactive(

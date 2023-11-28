@@ -47,27 +47,32 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
   # Get all the data
-  data_r <- sapply(dfs, \(x) data_get(vars, scale = x, time = time, region = region,
-                                      data_path = data_path),
-    simplify = FALSE,
-    USE.NAMES = TRUE
+  data_r <- sapply(dfs, \(x) data_get(vars,
+    scale = x, time = time, region = region,
+    data_path = data_path
+  ),
+  simplify = FALSE,
+  USE.NAMES = TRUE
   )
   data <- Reduce(rbind, data_r)
 
   # Is group already calculated?
-  group <- match_schema_to_z_col(data = data, time = time, col = "group", vl_vr = "var_left",
-                                 schemas = schemas)
+  group <- match_schema_to_z_col(
+    data = data, time = time, col = "group", vl_vr = "var_left",
+    schemas = schemas
+  )
 
   if ("group" %in% names(data)) {
     group <- "group"
   } else if (length(group) == 0 || !group %in% names(data)) {
-
     group <- sprintf("group_%s", time$var_left)
 
     if (!group %in% names(data)) {
       # Grab the correct column from which to use colors on
-      var <- match_schema_to_col(data = data, time = time, col = "var_left",
-                                 schemas = schemas)
+      var <- match_schema_to_col(
+        data = data, time = time, col = "var_left",
+        schemas = schemas
+      )
       group <- sprintf("%s_q5", var)
     }
   }
@@ -107,6 +112,8 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param data_path <`character`> A string representing the path to the
 #' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.

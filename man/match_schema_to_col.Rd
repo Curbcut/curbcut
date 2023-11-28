@@ -15,7 +15,7 @@ match_schema_to_col(
 }
 \arguments{
 \item{data}{<\code{data.frame}> A data frame containing the data. The output of
-output of \code{\link{get_data}}.}
+output of \code{\link{data_get}}.}
 
 \item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
@@ -25,7 +25,7 @@ Can also be a simple numeric.}
 
 \item{data_schema}{<\verb{named list}> A list containing the schema information, specifically the
 'time' attribute. Typically obtained, and defaulted, as an attribute to
-\code{data} (output of \code{\link{get_data}}).}
+\code{data} (output of \code{\link{data_get}}).}
 
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.
@@ -39,7 +39,7 @@ Returns the name of the variable that corresponds to the given
 schema as a character string.
 }
 \description{
-This function identifies the column in a \code{data} (output of \code{\link{get_data}})
+This function identifies the column in a \code{data} (output of \code{\link{data_get}})
 that matches a given schema named list. It is designed to be used in situations where
 the schema for the data frame can be dynamic. For example, if the schema is
 based on the time of the data, this function can be used to identify the

@@ -217,7 +217,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
     value_string_right <- explore_text_values_q5(
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
-      scale = context$treated_scale,time = time,
+      scale = context$treated_scale, time = time,
       col = "var_right", lang = lang, schemas = schemas
     )
 
@@ -264,8 +264,10 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       )
 
       # Grab the explanation
-      exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang,
-                          schemas_col = schemas[[col]])
+      exp <- var_get_info(var,
+        what = "explanation", translate = TRUE, lang = lang,
+        schemas_col = schemas[[col]]
+      )
       # If there are bullet points, change the explanation to something more generic
       if (grepl("</ul>", exp)) {
         out <- if (col == "var_left") {
@@ -327,7 +329,8 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
 
   # Correlation
   relation <- explore_text_bivar_correlation(
-    vars = vars, data = data, time = time, lang = lang, schemas = schemas)
+    vars = vars, data = data, time = time, lang = lang, schemas = schemas
+  )
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {
@@ -700,7 +703,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
 
   # Correlation
   relation <- explore_text_bivar_correlation(
-    vars = vars, data = data, time = time, lang = lang)
+    vars = vars, data = data, time = time, lang = lang
+  )
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {

@@ -227,7 +227,6 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       }
       return(NULL)
     } else {
-
       # If no DA has been found in a 1km radius, return a notification and NULL
       if (all_ids$min_dist > 1000) {
         if (!is.null(shiny::getDefaultReactiveDomain())) {

@@ -52,6 +52,8 @@ output of \code{\link{vars_build}}.}
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
 selected region (if any). Usually \code{r[[id]]$select_id()}}
 
+\item{scale}{<\code{character}> Current scale.}
+
 \item{data}{<\code{data.frame}> A data frame containing the variables and
 observations. The output of \code{\link{data_get}}.}
 
@@ -72,10 +74,6 @@ translate variable titles to.}
 plot, default is "acidgrotesk-book".}
 
 \item{...}{Additional arguments passed to the specific method.}
-
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_scale}}.}
 }
 \value{
 A ggplot2 object representing the plot.

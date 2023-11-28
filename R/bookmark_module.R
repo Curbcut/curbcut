@@ -91,7 +91,6 @@ bookmark_server <- function(id, r, select_id = shiny::reactive(NULL),
 #' @return A character string representing the bookmarkable URL.
 bookmark_build_url <- function(id, lang = NULL, widgets, map_viewstate,
                                select_id) {
-
   # First string
   url <- sprintf("/?tb=%s", id)
 

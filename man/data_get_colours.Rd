@@ -108,6 +108,9 @@ is last (so it makes sense on an auto-scale).}
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
 \item{data_path}{<\code{character}> A string representing the path to the
 directory containing the QS files. Default is "data/".}
 

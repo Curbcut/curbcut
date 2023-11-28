@@ -24,7 +24,6 @@ explore_text_select_val(var, ...)
 \method{explore_text_select_val}{ind}(
   var,
   data,
-  df,
   select_id,
   col = "var_left",
   time,
@@ -36,7 +35,6 @@ explore_text_select_val(var, ...)
 \method{explore_text_select_val}{default}(
   var,
   data,
-  df,
   select_id,
   col = "var_left",
   time,

@@ -20,7 +20,6 @@ explore_graph_labels <- function(vars, lang = NULL, ...) {
 #' @param time <`named list`> A named list with the time variables.
 #' @export
 explore_graph_labels.delta <- function(vars, lang = NULL, time, ...) {
-
   title <- var_get_title(
     var = vars$var_left, short_treshold = 16,
     translate = TRUE, lang = lang

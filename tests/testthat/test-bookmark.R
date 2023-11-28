@@ -75,7 +75,6 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
 })
 
 test_that("bookmark_widget_helper returns the right info using bookmark shorts", {
-
   wgt <- "pifir:2"
   expected_val <- variables$var_code[2]
   result <- bookmark_widget_helper(id = "housing", wgt)

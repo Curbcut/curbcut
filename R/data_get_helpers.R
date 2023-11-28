@@ -15,7 +15,6 @@
 #' character.
 #' @export
 breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
-
   if (is.null(data)) {
     data <- data_get(vars = vars, scale = scale)
   }
@@ -42,15 +41,19 @@ breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
   if (character) breaks <- convert_unit.pct(x = breaks, decimal = 0)
 
   # Construct the output
-  out <- c(sprintf("-%s", breaks[3]),
-           sprintf("-%s", breaks[2]),
-           sprintf("-%s", breaks[1]),
-           breaks[1],
-           breaks[2],
-           breaks[3])
+  out <- c(
+    sprintf("-%s", breaks[3]),
+    sprintf("-%s", breaks[2]),
+    sprintf("-%s", breaks[1]),
+    breaks[1],
+    breaks[2],
+    breaks[3]
+  )
   out <- unname(out)
 
-  if (!character) return(as.numeric(out))
+  if (!character) {
+    return(as.numeric(out))
+  }
   out
 }
 
@@ -62,7 +65,6 @@ breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
 #' @return Returns a numeric vector with quintile breaks.
 #' @export
 find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
-
   # Remove outliers
   which_out <- find_outliers(x = dist)
   no_outliers <- dist[-which_out]
@@ -77,7 +79,9 @@ find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
     0.2
   } else if (q3_q5 == "q3") {
     0.33
-  } else stop("`q3_q5` argument needs to be q3 or q5")
+  } else {
+    stop("`q3_q5` argument needs to be q3 or q5")
+  }
 
   q <- stats::quantile(dat, probs = seq(0, 1, by = by), names = FALSE)
 
@@ -89,13 +93,12 @@ find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
 
   # Loop through all the quantiles
   for (i in seq_along(q)) {
-
     # Check if difference between current quantile and previous one is zero
     if (q[i] - previous_q == 0) {
       round_base <- 1
     } else {
       # Determine the rounding base for each quantile difference
-      round_base <- 10 ^ floor(log10(abs(q[i] - previous_q)))
+      round_base <- 10^floor(log10(abs(q[i] - previous_q)))
     }
 
     # Create a "pretty" break ensuring it's different from the previous one
@@ -131,7 +134,6 @@ find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
 
 
   return(breaks)
-
 }
 
 #' Find pretty q5 breaks
@@ -143,12 +145,13 @@ find_breaks_quintiles <- function(dist, q3_q5 = "q5") {
 #' @export
 find_breaks_q5 <- function(min_val, max_val) {
   breaks <- unlist(lapply(
-    -4:7, \(x) (10 ^ x) * c(0.75, 1, 1.5, 2, 2.5, 3, 4, 5, 6)))
+    -4:7, \(x) (10^x) * c(0.75, 1, 1.5, 2, 2.5, 3, 4, 5, 6)
+  ))
   range <- max_val - min_val
   break_val <- range / 5
   break_val <- breaks[as.numeric(cut(break_val, breaks)) + 1]
   break_digits <- floor(log10(break_val))
-  new_min <- floor(min_val / (10 ^ break_digits)) * 10 ^ break_digits
+  new_min <- floor(min_val / (10^break_digits)) * 10^break_digits
   return(c(new_min + 0:5 * break_val))
 }
 
@@ -159,6 +162,7 @@ find_breaks_q5 <- function(min_val, max_val) {
 #' `find_breaks_quintiles`. The function also preserves other attributes of the
 #' original data.
 #'
+#' @param var <`character`> var_code field, which will be renamed using `rename_col`.
 #' @param data <`data.frame`> Data frame to append columns to.
 #' @param q3_q5 <`character`> Specifies whether to use three or five quantiles.
 #' Default is "q5".
@@ -167,14 +171,15 @@ find_breaks_q5 <- function(min_val, max_val) {
 #'
 #' @return <`data.frame`> Modified data frame with additional columns.
 data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left") {
-
   # Keep track of previous attributes
   prev_attr <- attributes(data)
-  prev_attr <- prev_attr[!names(prev_attr) %in% c("names", "row.names", "class",
-                                                  "quintiles", "breaks")]
+  prev_attr <- prev_attr[!names(prev_attr) %in% c(
+    "names", "row.names", "class",
+    "quintiles", "breaks"
+  )]
 
   # Rename attributes so it's clearly assigned on var_left or var_right
-  names(prev_attr) <- sprintf("%s_%s", names(prev_attr),rename_col)
+  names(prev_attr) <- sprintf("%s_%s", names(prev_attr), rename_col)
 
   # Calculate breaks
   data_val <- data[-1]
@@ -211,5 +216,3 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
 
   return(list(data = data, attr = prev_attr))
 }
-
-

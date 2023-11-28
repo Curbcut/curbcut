@@ -127,7 +127,6 @@ legend_labels.bivar <- function(vars, lang = NULL, ...) {
 #' @describeIn legend_labels delta_bivar method
 #' @export
 legend_labels.delta_bivar <- function(vars, lang = NULL, time, ...) {
-
   title_left <-
     var_get_title(
       var = vars$var_left, short_treshold = 12,
@@ -156,7 +155,6 @@ legend_labels.delta_bivar <- function(vars, lang = NULL, time, ...) {
   )
 
   return(list(ggplot2::labs(x = title_right, y = title_left),
-              x_short = title_right_short, y_short = title_left_short
+    x_short = title_right_short, y_short = title_left_short
   ))
-
 }

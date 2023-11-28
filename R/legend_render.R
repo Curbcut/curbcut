@@ -302,6 +302,8 @@ legend_render.qual <- function(vars, font_family = "acidgrotesk-book",
 }
 
 #' @describeIn legend_render bivar method
+#' @param lang <`character`> String indicating the language to translate the
+#' breaks to. Defaults to `NULL`, which is no translation.
 #' @export
 legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
@@ -354,8 +356,10 @@ legend_render.bivar <- function(vars, font_family = "acidgrotesk-book",
 legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
                                 scales_as_DA = c("building", "street"),
                                 scale, data, time, lang = NULL, ...) {
-  legend_render_delta(vars = vars, data = data, time = time, font_family = font_family,
-                      scales_as_DA = scales_as_DA, scale = scale, lang = lang, ...)
+  legend_render_delta(
+    vars = vars, data = data, time = time, font_family = font_family,
+    scales_as_DA = scales_as_DA, scale = scale, lang = lang, ...
+  )
 }
 
 #' Internal function for dispatching `legend_render_delta`.
@@ -370,6 +374,7 @@ legend_render.delta <- function(vars, font_family = "acidgrotesk-book",
 #' their colour will be the one of their DA.
 #' @param scale <`character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
+#' @param data <`data.frame`> The current data. The output of \code{\link{data_get}}.
 #' @param time <`named list`> Object built using the \code{\link{vars_build}}
 #' function. It contains the time for both var_left and var_right variables.
 #' @param ... Additional arguments passed to other functions.
@@ -389,13 +394,14 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
                                        scale, data, time, lang = NULL, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
-  group <- y <- fill <- xmin <- xmax <-  NULL
+  group <- y <- fill <- xmin <- xmax <- NULL
 
   # Get all necessary information
   leg_info <- legend_get_info(vars,
-                              font_family = font_family,
-                              scales_as_DA = scales_as_DA,
-                              scale = scale, data = data, time = time, ...)
+    font_family = font_family,
+    scales_as_DA = scales_as_DA,
+    scale = scale, data = data, time = time, ...
+  )
 
   # Adapt breaks to add the `NA` bar
   leg <- leg_info$colours_dfs$delta[1:5, 2:3]
@@ -512,19 +518,20 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
 #'
 #' @return A ggplot object representing the `delta` legend for ordinal data.
 legend_render_delta.ordinal <- function(vars, font_family = "acidgrotesk-book",
-                                       scales_as_DA = c("building", "street"), scale,
-                                       data, lang = NULL, time, ...) {
+                                        scales_as_DA = c("building", "street"), scale,
+                                        data, lang = NULL, time, ...) {
   # NULL out problematic variables for the R CMD check (no visible binding for
   # global variable)
   group <- y <- fill <- NULL
 
   # Get all necessary information
   leg_info <- legend_get_info(vars,
-                              font_family = font_family,
-                              scales_as_DA = scales_as_DA,
-                              scale = scale, time = time,
-                              lang = lang, data = data,
-                              ...)
+    font_family = font_family,
+    scales_as_DA = scales_as_DA,
+    scale = scale, time = time,
+    lang = lang, data = data,
+    ...
+  )
 
   # Adapt breaks to add the `NA` bar
   leg <- rbind(

@@ -27,7 +27,6 @@ vars_build <- function(var_left, var_right = " ", scale, time,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
-
   # Unique time
   time <- unique(time)
 
@@ -42,7 +41,7 @@ vars_build <- function(var_left, var_right = " ", scale, time,
 
   # Add var left and right measurement variable as classes
   var_left_m <- var_get_info(var_left, "var_measurement",
-                             variables = variables
+    variables = variables
   )[[1]]
   # var_left_m <- var_left_m$measurement[var_left_m$df == df]
   var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
@@ -50,7 +49,7 @@ vars_build <- function(var_left, var_right = " ", scale, time,
 
   if (var_right != " ") {
     var_right_m <- var_get_info(var_right, "var_measurement",
-                                variables = variables
+      variables = variables
     )[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
     class(vr$var) <- c(if (!is.na(var_right_m)) var_right_m, class(var_right))
@@ -124,7 +123,6 @@ vars_build <- function(var_left, var_right = " ", scale, time,
       return(c("q5_ind", "q5"))
     }
     return("q5")
-
   })()
 
   # Add the measurement variable as a class to the main output, in order.
@@ -136,9 +134,12 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   out_class <- c(z, current_measurement_var[meas])
 
   # Output vars and time
-  vars <- structure(list(var_left = vl[["var"]],
-                         var_right = if (all(vr != " ")) vr[["var"]] else " "),
-                    class = out_class
+  vars <- structure(
+    list(
+      var_left = vl[["var"]],
+      var_right = if (all(vr != " ")) vr[["var"]] else " "
+    ),
+    class = out_class
   )
   time <- list(var_left = vl[["closest_year"]])
   if (all(vr != " ")) time$var_right <- vr[["closest_year"]]

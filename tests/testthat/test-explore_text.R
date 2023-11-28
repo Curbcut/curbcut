@@ -17,50 +17,58 @@ test_explores_helper <- function(var_left, var_right, region, scale, time, selec
 
 test_explores <- function(var_right, select_id, region, scale) {
   # Pct
-  test_explores_helper(var_left = "housing_tenant",
+  test_explores_helper(
+    var_left = "housing_tenant",
     var_right = var_right, region = region, scale = scale,
     select_id = select_id, time = 2021
   )
 
   # Dollar
-  test_explores_helper(var_left = "housing_rent",
+  test_explores_helper(
+    var_left = "housing_rent",
     var_right = var_right, region = region, scale = scale,
     select_id = select_id, time = 2021
   )
 
   # Ind scalar
-  test_explores_helper(var_left = "alp",
+  test_explores_helper(
+    var_left = "alp",
     var_right = var_right, region = region, scale = scale,
     select_id = select_id, time = 2021
   )
 
   # Count
-  test_explores_helper(var_left = "crash_count_ped",
-                       var_right = var_right, region = region, scale = scale,
-                       select_id = select_id, time = 2021
+  test_explores_helper(
+    var_left = "crash_count_ped",
+    var_right = var_right, region = region, scale = scale,
+    select_id = select_id, time = 2021
   )
 
   # Ind ordinal
-  test_explores_helper(var_left = "climate_drought",
-                       var_right = var_right, region = region, scale = scale,
-                       select_id = select_id, time = 2021
+  test_explores_helper(
+    var_left = "climate_drought",
+    var_right = var_right, region = region, scale = scale,
+    select_id = select_id, time = 2021
   )
 
   # Ind ordinal, multiple schemas
-  test_explores_helper(var_left = "access_foot_food_grocery",
-                       var_right = var_right,
-                       region = region, scale = "DA", select_id = select_id,
-                       time = 2023, schemas = list(var_left = setNames(20, "transportationtime"))
+  test_explores_helper(
+    var_left = "access_foot_food_grocery",
+    var_right = var_right,
+    region = region, scale = "DA", select_id = select_id,
+    time = 2023, schemas = list(var_left = stats::setNames(20, "transportationtime"))
   )
 
   # sqkm
-  test_explores_helper(var_left = "alley_sqkm",
+  test_explores_helper(
+    var_left = "alley_sqkm",
     var_right = var_right, region = "city", scale = "CT",
     select_id = if (is.na(select_id)) NA else "4620225.00", time = 2023
   )
 
   # per1k
-  test_explores_helper(var_left = "alley_per1k",
+  test_explores_helper(
+    var_left = "alley_per1k",
     var_right = var_right, region = "city", scale = "DA",
     select_id = if (is.na(select_id)) NA else "24662027", time = 2023
   )
@@ -100,13 +108,15 @@ test_that("q5 explore works with selections", {
 
 test_explores_delta <- function(var_right, select_id, scale, region) {
   # Pct
-  test_explores_helper(var_left = "housing_tenant", time = c(2016, 2021),
+  test_explores_helper(
+    var_left = "housing_tenant", time = c(2016, 2021),
     var_right = var_right, scale = scale, region = region,
     select_id = select_id
   )
 
   # Dollar
-  test_explores_helper(var_left = "housing_rent", time =  c(2016, 2021),
+  test_explores_helper(
+    var_left = "housing_rent", time = c(2016, 2021),
     var_right = var_right, scale = scale, region = region,
     select_id = select_id
   )
@@ -116,21 +126,24 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   # select_id = select_id)
 
   # Ind scalar
-  test_explores_helper(var_left = "alp", time =  c(2016, 2021),
-    var_right = var_right,  scale = scale, region = region,
+  test_explores_helper(
+    var_left = "alp", time = c(2016, 2021),
+    var_right = var_right, scale = scale, region = region,
     select_id = select_id
   )
 
   # Count
-  test_explores_helper(var_left = "crash_count_ped",
-                       var_right = var_right, region = region, scale = scale,
-                       select_id = select_id, time = c(2015, 2020)
+  test_explores_helper(
+    var_left = "crash_count_ped",
+    var_right = var_right, region = region, scale = scale,
+    select_id = select_id, time = c(2015, 2020)
   )
 
   # Ind ordinal
-  test_explores_helper(var_left = "climate_drought",
-                       var_right = var_right, region = region, scale = scale,
-                       select_id = select_id, time = c(2015, 2022)
+  test_explores_helper(
+    var_left = "climate_drought",
+    var_right = var_right, region = region, scale = scale,
+    select_id = select_id, time = c(2015, 2022)
   )
 }
 
@@ -158,5 +171,3 @@ test_that("delta explore works with selections", {
   test_explores_delta(var_right = "iden_imm", select_id = "2471095", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = "inc_limat", select_id = "b10000763", scale = "building", region = "city")
 })
-
-

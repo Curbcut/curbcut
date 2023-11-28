@@ -18,54 +18,63 @@ home_server <- function(id = "home", r) {
 
     # Detect page clicks on other pages and update the active page accordingly
     page_click <- shiny::reactive(cc.landing::get_landing_click("landing"))
-    shiny::observeEvent(page_click(), {
-      update_tab(session = r$server_session(), selected = page_click())
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(page_click(),
+      {
+        update_tab(session = r$server_session(), selected = page_click())
+      },
+      ignoreNULL = TRUE
+    )
 
     # Detect discover card click and update the active page accordingly
     discover_click <- shiny::reactive(cc.landing::get_landing_discover("landing"))
-    shiny::observeEvent(discover_click(), {
-      # Selected row
-      disc_card <- discover_cards[discover_cards$id == discover_click(), ]
+    shiny::observeEvent(discover_click(),
+      {
+        # Selected row
+        disc_card <- discover_cards[discover_cards$id == discover_click(), ]
 
-      # Card type
-      type <- disc_card$type
+        # Card type
+        type <- disc_card$type
 
-      if (type == "page") {
-        update_tab(session = r$server_session(), selected = disc_card$id)
-      }
+        if (type == "page") {
+          update_tab(session = r$server_session(), selected = disc_card$id)
+        }
 
-      if (type == "stories") {
-        update_tab(session = r$server_session(), selected = "stories")
-        shinyjs::delay(500, {
-          r[["stories"]]$select_id(disc_card$select_id)
-        })
-      }
+        if (type == "stories") {
+          update_tab(session = r$server_session(), selected = "stories")
+          shinyjs::delay(500, {
+            r[["stories"]]$select_id(disc_card$select_id)
+          })
+        }
 
-      if (type == "dyk") {
-        scale <- disc_card$scale
-        scale <- if (is.na(scale)) NULL else scale
+        if (type == "dyk") {
+          scale <- disc_card$scale
+          scale <- if (is.na(scale)) NULL else scale
 
-        link(r = r, page = disc_card$page, select_id = disc_card$select_id,
-             date = disc_card$date[[1]], var_right = disc_card$var_right,
-             var_left = disc_card$var_left, scale = scale)
-      }
-
-    }, ignoreNULL = TRUE)
+          link(
+            r = r, page = disc_card$page, select_id = disc_card$select_id,
+            date = disc_card$date[[1]], var_right = disc_card$var_right,
+            var_left = disc_card$var_left, scale = scale
+          )
+        }
+      },
+      ignoreNULL = TRUE
+    )
 
     # Detect discover card click and update the active page accordingly
     news_click <- shiny::reactive(cc.landing::get_landing_news("landing"))
-    shiny::observeEvent(news_click(), {
-      # Selected row
-      news_card <- news_cards[news_cards$id == news_click(), ]
+    shiny::observeEvent(news_click(),
+      {
+        # Selected row
+        news_card <- news_cards[news_cards$id == news_click(), ]
 
-      if (grepl("^https://", news_card$link)) {
-        session$sendCustomMessage(type = 'openURL', message = news_card$link)
-      } else if (news_card$link %in% modules$id) {
-        update_tab(session = r$server_session(), selected = news_card$link)
-      }
-
-    }, ignoreNULL = TRUE)
+        if (grepl("^https://", news_card$link)) {
+          session$sendCustomMessage(type = "openURL", message = news_card$link)
+        } else if (news_card$link %in% modules$id) {
+          update_tab(session = r$server_session(), selected = news_card$link)
+        }
+      },
+      ignoreNULL = TRUE
+    )
 
     # Update the landing input based on the active page
     shiny::observeEvent(r$server_session()$input$cc_page, {
@@ -93,39 +102,38 @@ home_server <- function(id = "home", r) {
       name = "lang"
     ))
     shiny::observeEvent(lang_cookie(),
-                        {
-                          # Update the website language (span + r$lang)
-                          update_lang(r = r, lang = lang_cookie())
+      {
+        # Update the website language (span + r$lang)
+        update_lang(r = r, lang = lang_cookie())
 
-                          # Update the language of the landing UI
-                          cc.landing::update_landing(
-                            session = session,
-                            inputId = "landing",
-                            configuration = list(
-                              lang = lang_cookie()
-                            )
-                          )
-                        },
-                        once = TRUE,
-                        ignoreNULL = TRUE
+        # Update the language of the landing UI
+        cc.landing::update_landing(
+          session = session,
+          inputId = "landing",
+          configuration = list(
+            lang = lang_cookie()
+          )
+        )
+      },
+      once = TRUE,
+      ignoreNULL = TRUE
     )
 
     # Detect lang button click
     lang_click <- shiny::reactive(cc.landing::get_lang_click("landing"))
     shiny::observeEvent(lang_click(),
-                        {
-                          # Update the website language (span + r$lang)
-                          update_lang(r = r, lang_click())
-                          # Set the cookie
-                          cookie_set(
-                            session = r$server_session(), name = "lang",
-                            value = lang_click()
-                          )
-                        },
-                        ignoreNULL = TRUE,
-                        ignoreInit = TRUE
+      {
+        # Update the website language (span + r$lang)
+        update_lang(r = r, lang_click())
+        # Set the cookie
+        cookie_set(
+          session = r$server_session(), name = "lang",
+          value = lang_click()
+        )
+      },
+      ignoreNULL = TRUE,
+      ignoreInit = TRUE
     )
-
   })
 }
 
@@ -155,7 +163,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
 
   # Get translations from the global environment and filter it
   translation_df <- get0("translation_df")
-  translation_df <-  if (is.null(translation_df)) {
+  translation_df <- if (is.null(translation_df)) {
     tibble::tibble(en = unlist(pages), fr = unlist(pages))
   } else {
     translation_df[translation_df$en %in% unlist(pages), ]

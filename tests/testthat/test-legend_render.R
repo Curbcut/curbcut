@@ -77,8 +77,10 @@ test_that("legend_render.delta_ind  works", {
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = "DA", region = "city")
 
-  p <- legend_render(vars, scale = "grd250", time = time, data = data,
-                     font_family = NULL, lang = "fr")
+  p <- legend_render(vars,
+    scale = "grd250", time = time, data = data,
+    font_family = NULL, lang = "fr"
+  )
   expect_error(p, NA)
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
   expect_equal(p$labels$fill, "fill")
@@ -94,41 +96,53 @@ test_that("legend_render.delta_ind  works", {
 # })
 
 test_that("legend_render.delta_bivar  works", {
-  vars <- vars_build("housing_tenant", var_right = "alp",
-                     scale = "DA", time = c(2001, 2021))
+  vars <- vars_build("housing_tenant",
+    var_right = "alp",
+    scale = "DA", time = c(2001, 2021)
+  )
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = "DA", region = "city")
 
-  p <- legend_render(vars, scale = "DA", time = time,
-                     data = data, font_family = NULL)
+  p <- legend_render(vars,
+    scale = "DA", time = time,
+    data = data, font_family = NULL
+  )
   expect_error(p, NA)
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
   expect_equal(p$labels$fill, "fill")
 })
 
 test_that("legend_render.bivar_ldelta_rq3  works", {
-  vars <- vars_build("housing_tenant", var_right = "alp",
-                     scale = "DA", time = c(1996, 2001))
+  vars <- vars_build("housing_tenant",
+    var_right = "alp",
+    scale = "DA", time = c(1996, 2001)
+  )
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = "DA", region = "city")
 
-  p <- legend_render(vars, scale = "DA", time = time,
-                     data = data, font_family = NULL)
+  p <- legend_render(vars,
+    scale = "DA", time = time,
+    data = data, font_family = NULL
+  )
   expect_error(p, NA)
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
   expect_equal(p$labels$fill, "fill")
 
 
-  vars <- vars_build("climate_drought", var_right = "alp",
-                     scale = "DA", time = c(2006, 2016))
+  vars <- vars_build("climate_drought",
+    var_right = "alp",
+    scale = "DA", time = c(2006, 2016)
+  )
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, time = time, scale = "DA", region = "city")
 
-  p <- legend_render(vars, scale = "DA", time = time,
-                     data = data, font_family = NULL)
+  p <- legend_render(vars,
+    scale = "DA", time = time,
+    data = data, font_family = NULL
+  )
   expect_error(p, NA)
   expect_equal(p$layers[[1]]$setup_layer |> class(), "ggproto_method")
   expect_equal(p$labels$fill, "fill")

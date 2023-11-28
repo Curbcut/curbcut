@@ -23,8 +23,10 @@ explore_graph_scale <- function(var, x_y, limits = NULL, ...) {
 explore_graph_scale.pct <- function(var, x_y, limits = NULL, ...) {
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
   range <- if (is.null(limits)) NULL else range(limits)
-  list(do.call(eval(parse(text = scale)), list(labels = scales::percent,
-                                               limits = range)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scales::percent,
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for dollar values. Applies a
@@ -51,21 +53,25 @@ explore_graph_scale.dollar <- function(var, x_y, limits = NULL, data_vals, ...) 
   # Return the ggplot2 scale
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
   range <- if (is.null(limits)) NULL else range(limits)
-  list(do.call(eval(parse(text = scale)), list(labels = scl,
-                                               limits = range)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scl,
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for degrees Celsius values.
 #' Applies a degrees Celsius scale to the x-axis.
 #' @export
-explore_graph_scale.degree <- function(var, x_y, limits = NULL,...) {
+explore_graph_scale.degree <- function(var, x_y, limits = NULL, ...) {
   # Create the scale function
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
 
   # Return the ggplot2 scale with custom labels
   range <- if (is.null(limits)) NULL else range(limits)
-  list(do.call(eval(parse(text = scale)), list(labels = function(x) paste0(x, "\u00B0C"),
-                                               limits = range)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = function(x) paste0(x, "\u00B0C"),
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for ordinal values.
@@ -88,8 +94,10 @@ explore_graph_scale.ind <- function(var, x_y, limits = NULL, scale, data_vals, l
 explore_graph_scale.default <- function(var, x_y, limits = NULL, ...) {
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
   range <- if (is.null(limits)) NULL else range(limits)
-  list(do.call(eval(parse(text = scale)), list(labels = scales::comma,
-                                               limits = range)))
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scales::comma,
+    limits = range
+  )))
 }
 
 #' Explore Graph Scale Indice
@@ -115,6 +123,7 @@ explore_graph_scale_ind <- function(var, x_y, scale, limits, lang = NULL, ...) {
 }
 
 #' @describeIn explore_graph_scale_ind scalar method for index values
+#' @param data_vals <`numeric vector`> Data values
 #' @export
 explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
                                            data_vals, ...) {
@@ -143,6 +152,7 @@ explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
 }
 
 #' @describeIn explore_graph_scale_ind ordinal method for index values
+#' @param breaks <`vector`> Current breaks
 #' @export
 explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits = NULL,
                                             lang = NULL, breaks, ...) {

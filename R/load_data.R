@@ -27,12 +27,11 @@ load_data <- function(data_folder = "data", pos = 1,
                       site_name, site_url, stories_page,
                       tileset_prefix, mapbox_username,
                       default_random_address, map_zoom, map_loc) {
-
   # Load all .qs and .qsm files that are in the root of the data folder
   data_files <- list.files(data_folder, full.names = TRUE)
   invisible(lapply(data_files[grepl("qsm$", data_files)],
-                   qs::qload,
-                   env = as.environment(pos)
+    qs::qload,
+    env = as.environment(pos)
   ))
   invisible(lapply(
     data_files[grepl("qs$", data_files)],
@@ -60,7 +59,7 @@ load_data <- function(data_folder = "data", pos = 1,
 
   first_level_choropleth <-
     sapply(ls(pos = 1)[grepl("mzl_", ls(pos = 1))], \(x) names(get(x)[1]),
-           USE.NAMES = FALSE
+      USE.NAMES = FALSE
     ) |> unique()
 
   all_choropleths <-
@@ -84,5 +83,4 @@ load_data <- function(data_folder = "data", pos = 1,
   assign("default_random_address", default_random_address, envir = as.environment(pos))
   assign("map_zoom", map_zoom, envir = as.environment(pos))
   assign("map_loc", map_loc, envir = as.environment(pos))
-
 }

@@ -32,7 +32,6 @@
 dyk_server <- function(id, r, vars, scale, select_id, region, zoom_levels,
                        time, poi = shiny::reactive(NULL),
                        scales_as_DA = shiny::reactive(c("building", "street"))) {
-
   # Error checking
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(select_id))
@@ -41,7 +40,6 @@ dyk_server <- function(id, r, vars, scale, select_id, region, zoom_levels,
   stopifnot(shiny::is.reactive(zoom_levels))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Get the DYKs
     dyk <- shiny::reactive(dyk_get(
       id = id, vars = vars(), scale = scale(), select_id = select_id(),

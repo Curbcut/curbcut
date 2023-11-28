@@ -7,6 +7,8 @@
 data_append_breaks(var, data, q3_q5 = "q5", rename_col = "var_left")
 }
 \arguments{
+\item{var}{<\code{character}> var_code field, which will be renamed using \code{rename_col}.}
+
 \item{data}{<\code{data.frame}> Data frame to append columns to.}
 
 \item{q3_q5}{<\code{character}> Specifies whether to use three or five quantiles.

@@ -41,7 +41,6 @@ dyk_get <- function(id, vars, scale, select_id, poi, region, zoom_levels, time,
   if (is.null(dyk_out)) {
     dyk_out <- dyk_text(
       vars = vars,
-      df = df,
       select_id = select_id,
       scale = scale,
       region = region,

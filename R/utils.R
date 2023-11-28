@@ -129,9 +129,9 @@ ntile <- function(x, n) {
     smaller_size <- as.integer(floor(size))
     larger_threshold <- larger_size * n_larger
     bins <- ifelse(x <= larger_threshold,
-                   (x + (larger_size - 1L)) / larger_size,
-                   (x + (-larger_threshold + smaller_size - 1L)) /
-                     smaller_size + n_larger
+      (x + (larger_size - 1L)) / larger_size,
+      (x + (-larger_threshold + smaller_size - 1L)) /
+        smaller_size + n_larger
     )
     as.integer(floor(bins))
   }
@@ -319,48 +319,6 @@ get_dist <- function(x, y) {
   6371e3 * c_dist
 }
 
-#' Generate a Mapbox Tile JSON
-#'
-#' Given a Mapbox username, tileset prefix, and tile name, this function
-#' generates a Mapbox Tile JSON using \code{\link[rdeck]{tile_json}}. If the
-#' specified tile is not found, a warning message is displayed and NULL is
-#' returned. This prevents the app from crashing.
-#'
-#' @param mapbox_username <`character`> string representing the Mapbox username.
-#' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
-#' correspond to the Curbcut city, e.g. `mtl`.
-#' @param tile <`character`> The tile name to be fetched.
-#' @param return_error <`logical`> Print the error if the tileset isn't found.
-#'
-#' @return A JSON list if succesfull. If missing tile, returns NULL preventing
-#' the app from crashing. If the tile is missing and it's a _building tile,
-#' grab the first region of the regions_dictionary and show buildings for those.
-#'
-#' @export
-tilejson <- function(mapbox_username, tileset_prefix, tile, return_error = FALSE) {
-  # urltools is necessary for tile_json use
-  requireNamespace("urltools", quietly = TRUE)
-  tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
-  out <- tryCatch(
-    suppressWarnings(rdeck::tile_json(tile_link)),
-    error = function(e) {
-      if (curbcut::is_scale_in("building", tile)) {
-        regions_dictionary <- get_from_globalenv("regions_dictionary")
-        base_building_tile <-
-          sprintf(
-            "%s.%s_%s_building", mapbox_username, tileset_prefix,
-            regions_dictionary$region[1]
-          )
-        rdeck::tile_json(base_building_tile)
-      } else {
-        if (return_error) print(e)
-        return(NULL)
-      }
-    }
-  )
-  return(out)
-}
-
 #' Verify widget ID validity
 #'
 #' This function checks the validity of a given widget ID by verifying if it
@@ -496,16 +454,16 @@ remove_outliers_df <- function(df, cols) {
 #' weighted_mean(x, w, na.rm = TRUE) # weighted mean excluding NA
 #'
 #' @export
-weighted_mean = function(x, w, ..., na.rm = FALSE){
+weighted_mean <- function(x, w, ..., na.rm = FALSE) {
   # Check if the lengths of x and w are equal
   if (length(x) != length(w)) {
     stop("Lengths of 'x' and 'w' must be equal.")
   }
 
   if (na.rm) {
-    keep = !is.na(x) & !is.na(w)
-    w = w[keep]
-    x = x[keep]
+    keep <- !is.na(x) & !is.na(w)
+    w <- w[keep]
+    x <- x[keep]
   }
   stats::weighted.mean(x, w, ..., na.rm = na.rm)
 }
@@ -705,21 +663,21 @@ hex_to_rgb_or_rgba <- function(hex) {
 
 #' Match schema list to right column in `data`
 #'
-#' This function identifies the column in a `data` (output of \code{\link{get_data}})
+#' This function identifies the column in a `data` (output of \code{\link{data_get}})
 #' that matches a given schema named list. It is designed to be used in situations where
 #' the schema for the data frame can be dynamic. For example, if the schema is
 #' based on the time of the data, this function can be used to identify the
 #' column in the data frame that corresponds to the given time.
 #'
 #' @param data <`data.frame`> A data frame containing the data. The output of
-#' output of \code{\link{get_data}}.
+#' output of \code{\link{data_get}}.
 #' @param time <`numeric named list`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' Can also be a simple numeric.
 #' @param col <`character`> Which column should be extracted? `var_left` or `var_right`.
 #' @param data_schema <`named list`> A list containing the schema information, specifically the
 #' 'time' attribute. Typically obtained, and defaulted, as an attribute to
-#' `data` (output of \code{\link{get_data}}).
+#' `data` (output of \code{\link{data_get}}).
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' Can be NULL if there are none (ex. taking a parent variable, no schemas).
@@ -732,7 +690,6 @@ hex_to_rgb_or_rgba <- function(hex) {
 match_schema_to_col <- function(data, time, col = "var_left",
                                 data_schema = attr(data, sprintf("schema_%s", col)),
                                 schemas, closest_time = FALSE) {
-
   # Default data_get method does not return schema_*
   if (is.null(data_schema)) {
     if (!is.null(attr(data, "schema"))) {
@@ -789,7 +746,6 @@ match_schema_to_col <- function(data, time, col = "var_left",
 
   # Return the var as a character
   return(var)
-
 }
 
 #' Match schema list to a specific column (`col`) in `data` based on `vl_vr` parameter
@@ -823,9 +779,11 @@ match_schema_to_z_col <- function(data, time, col, vl_vr,
     group_schema <- NULL
   }
 
-  match_schema_to_col(data = data, time = time[[vl_vr]], col = col,
-                      data_schema = data_schema,
-                      schemas = group_schema)
+  match_schema_to_col(
+    data = data, time = time[[vl_vr]], col = col,
+    data_schema = data_schema,
+    schemas = group_schema
+  )
 }
 
 #' Get the data path for Curbcut
@@ -842,13 +800,17 @@ get_data_path <- function() {
   cc_repo <- grepl("(/curbcut$)|(/curbcut/tests/testthat$)|(curbcut.Rcheck/tests/testthat)", getwd())
 
   # If not, return data/ as default
-  if (!cc_repo) return("data/")
+  if (!cc_repo) {
+    return("data/")
+  }
 
   # Retrieve the value of the CURBCUT_DATA environment variable
   data_path <- Sys.getenv("CURBCUT_DATA")
 
   # Check if the environment variable is empty
-  if (data_path == "") return("data/")
+  if (data_path == "") {
+    return("data/")
+  }
 
   # Return the data path
   return(data_path)
@@ -869,7 +831,6 @@ get_data_path <- function() {
 #' @return A character vector of names in the order of 'ID_scale'.
 #' @export
 fill_name_2 <- function(ID_scale, scale, top_scale) {
-
   # Get the top scale table
   ts <- get_from_globalenv(top_scale)[c("ID", "name")]
 

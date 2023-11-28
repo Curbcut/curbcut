@@ -38,7 +38,12 @@ warnuser_server <- function(id, r, vars, time, widget_time, data,
     ))
 
     output$warnuser <- shiny::renderText(
-      if (warn() == "") return(NULL) else shiny::HTML(warn()))
+      if (warn() == "") {
+        return(NULL)
+      } else {
+        shiny::HTML(warn())
+      }
+    )
   })
 }
 

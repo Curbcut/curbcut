@@ -37,9 +37,10 @@ explore_graph <- function(vars, select_id, scale, data, time, schemas,
 explore_graph.q5_ind <- function(vars, select_id, scale, data, time, schemas,
                                  scales_as_DA = c("building", "street"), lang = NULL,
                                  font_family = "acidgrotesk-book", ...) {
-  explore_graph_q5_ind(vars = vars, select_id = select_id, scale = scale,
-                       data = data, time = time, scales_as_DA = scales_as_DA,
-                       lang = lang, font_family = "acidgrotesk-book", ...
+  explore_graph_q5_ind(
+    vars = vars, select_id = select_id, scale = scale,
+    data = data, time = time, scales_as_DA = scales_as_DA,
+    lang = lang, font_family = "acidgrotesk-book", ...
   )
 }
 
@@ -66,8 +67,10 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
 
   # Keep the data inside the breaks
   vl_breaks <- attr(data, "breaks_var_left")
-  data_inrange <- filter_inrange(data = data, col = rcol, range = vl_breaks,
-                                 select_id = shared_info$select_id)
+  data_inrange <- filter_inrange(
+    data = data, col = rcol, range = vl_breaks,
+    select_id = shared_info$select_id
+  )
 
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
@@ -157,10 +160,14 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
   vl_breaks <- attr(data, "breaks_var_left")
 
   # Remove out-of-bounds
-  data_in_range <- filter_inrange(data = data, col = vr_col, range = vr_breaks,
-                                  select_id = shared_info$select_id)
-  data_in_range <- filter_inrange(data = data_in_range, col = vl_col, range = vl_breaks,
-                                  select_id = shared_info$select_id)
+  data_in_range <- filter_inrange(
+    data = data, col = vr_col, range = vr_breaks,
+    select_id = shared_info$select_id
+  )
+  data_in_range <- filter_inrange(
+    data = data_in_range, col = vl_col, range = vl_breaks,
+    select_id = shared_info$select_id
+  )
   # If there aren't enough observations, revert back to automatic breaks
   if (nrow(data_in_range) < 10) {
     vr_breaks <- NULL
@@ -201,9 +208,11 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
   }
 
   # Grab group column
-  group_col <- match_schema_to_z_col(data = data_in_range, time = time,
-                                     col = "group", vl_vr = "var_left",
-                                     schemas = schemas)
+  group_col <- match_schema_to_z_col(
+    data = data_in_range, time = time,
+    col = "group", vl_vr = "var_left",
+    schemas = schemas
+  )
 
 
   # # Breaks range
@@ -252,10 +261,11 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
 explore_graph.delta_ind <- function(vars, select_id, scale, data, time, schemas,
                                     scales_as_DA = c("building", "street"), lang = NULL,
                                     font_family = "acidgrotesk-book", ...) {
-  explore_graph_delta_ind(vars = vars, select_id = select_id, scale = scale,
-                          data = data, time = time, schemas = schemas,
-                          scales_as_DA = scales_as_DA, lang = lang,
-                          font_family = font_family, ...
+  explore_graph_delta_ind(
+    vars = vars, select_id = select_id, scale = scale,
+    data = data, time = time, schemas = schemas,
+    scales_as_DA = scales_as_DA, lang = lang,
+    font_family = font_family, ...
   )
 }
 
@@ -309,8 +319,8 @@ explore_graph.delta <- function(vars, select_id, scale, data, time, schemas,
   }
 
   # Filter out rows where xcol, ycol, or group have NA or non-finite values
-  filtered_data <- data[complete.cases(data[, c(xcol, ycol, 'group')]),]
-  filtered_data <- filtered_data[is.finite(rowSums(filtered_data[, c(xcol, ycol)])),]
+  filtered_data <- data[stats::complete.cases(data[, c(xcol, ycol, "group")]), ]
+  filtered_data <- filtered_data[is.finite(rowSums(filtered_data[, c(xcol, ycol)])), ]
 
   # Draw plot
   plot <-
@@ -438,6 +448,6 @@ explore_graph.bivar_ind <- function(vars, select_id, scale, data, time, schemas,
                                     font_family = "acidgrotesk-book", ...) {
   explore_graph_bivar_ind(
     vars = vars, select_id = select_id, scale = scale, data = data, time = time, schemas = schemas,
-    scales_as_DA = scales_as_DA, lang = lang,  font_family = "acidgrotesk-book", ...
+    scales_as_DA = scales_as_DA, lang = lang, font_family = "acidgrotesk-book", ...
   )
 }

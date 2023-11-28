@@ -21,6 +21,7 @@
 #' and ID. The output of \code{\link{data_get}}.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param lang <`character`> Language for translation.
 #' @param ... Additional arguments passed to the dispatched method.
 #'
 #' @return A list with the following elements:
@@ -31,20 +32,19 @@
 #' \code{region_vals}, containing the variable values formatted according
 #' to the class of `var`}
 explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
-                                   time, scale, data, schemas, ...) {
+                                   time, scale, data, schemas, lang, ...) {
   UseMethod("explore_text_delta_exp", var)
 }
 
 #' @rdname explore_text_delta_exp
-#' @param lang <`character`> Language for translation.
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
-                                       time, scale, data, lang, schemas, ...) {
-
+                                       time, scale, data, schemas, lang, ...) {
   # Grab values for single years. Allow for `apply`
   var_lr <- sprintf("var_%s", left_right)
-  times <- sapply(time[[var_lr]], \(x) setNames(list(x), var_lr),
-                  simplify = FALSE, USE.NAMES = TRUE)
+  times <- sapply(time[[var_lr]], \(x) stats::setNames(list(x), var_lr),
+    simplify = FALSE, USE.NAMES = TRUE
+  )
   names(times) <- time[[var_lr]]
 
   # If there is no selection
@@ -88,8 +88,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     region_vals <- sapply(region_vals, `[[`, "val")
     region_vals <- rev(region_vals)
     region_vals_strings <- convert_unit.pct(var,
-                                            x = region_vals,
-                                            decimal = 1
+      x = region_vals,
+      decimal = 1
     )
 
     # Return
@@ -169,13 +169,14 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 
 #' @rdname explore_text_delta_exp
 #' @export
-explore_text_delta_exp.default <- function(var, region, select_id,
-                                           left_right = "left", scale, data,
-                                           time, lang, schemas, ...) {
+explore_text_delta_exp.default <- function(var, region, select_id, left_right = "left",
+                                           time, scale, data, schemas, lang, ...) {
   var_lr <- sprintf("var_%s", left_right)
   # Grab the explanation
-  exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang,
-                      schemas_col = schemas[[var_lr]])
+  exp <- var_get_info(var,
+    what = "explanation", translate = TRUE, lang = lang,
+    schemas_col = schemas[[var_lr]]
+  )
   if (grepl("</ul>", exp)) {
     out <- if (left_right == "left") {
       "the first value"
@@ -186,8 +187,9 @@ explore_text_delta_exp.default <- function(var, region, select_id,
   }
 
   # Grab values for single years. Allow for `apply`
-  times <- sapply(time[[var_lr]], \(x) setNames(list(x), var_lr),
-                  simplify = FALSE, USE.NAMES = TRUE)
+  times <- sapply(time[[var_lr]], \(x) stats::setNames(list(x), var_lr),
+    simplify = FALSE, USE.NAMES = TRUE
+  )
   names(times) <- time[[var_lr]]
 
   # Grab the region values

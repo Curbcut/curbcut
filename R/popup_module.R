@@ -17,30 +17,39 @@ popup_server <- function(id, content, show_popup) {
   stopifnot(shiny::is.reactive(show_popup))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Initiate the content
     content_val <- shiny::reactiveVal(NULL)
     show_popup_val <- shiny::reactiveVal(FALSE)
 
     # Update content when it changes. Also, if show_pop changes, make sure
     # the content is up to date.
-    shiny::observeEvent({content()
-      show_popup()}, {
+    shiny::observeEvent(
+      {
+        content()
+        show_popup()
+      },
+      {
         content_val(content())
         show_popup_val(show_popup())
-      })
+      }
+    )
 
     # If show_popup is true, show the popup with an X
     output$popup <- shiny::renderUI({
-      if (!show_popup_val()) return(NULL)
-      if (is.null(content_val())) return(NULL)
+      if (!show_popup_val()) {
+        return(NULL)
+      }
+      if (is.null(content_val())) {
+        return(NULL)
+      }
 
       shiny::div(
         class = "main_panel_popup",
-        shiny::div(class = "back-to-map",
-                   shiny::actionLink(
-                     shiny::NS(id, shiny::NS(id, "back")), "X"
-                   )
+        shiny::div(
+          class = "back-to-map",
+          shiny::actionLink(
+            shiny::NS(id, shiny::NS(id, "back")), "X"
+          )
         ),
         content_val()
       )
@@ -51,7 +60,6 @@ popup_server <- function(id, content, show_popup) {
       content_val(NULL)
       show_popup_val(FALSE)
     })
-
   })
 }
 

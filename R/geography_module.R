@@ -19,8 +19,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     # Region default
     regions_dictionary <- get_from_globalenv("regions_dictionary")
     names(regions) <- sapply(regions,
-                             \(x) regions_dictionary$name[regions_dictionary$region == x],
-                             simplify = TRUE, USE.NAMES = FALSE)
+      \(x) regions_dictionary$name[regions_dictionary$region == x],
+      simplify = TRUE, USE.NAMES = FALSE
+    )
     regions_list <- shiny::reactive({
       names(regions) <- sapply(names(regions), cc_t, lang = r$lang())
       return(list("Region" = regions))
@@ -40,22 +41,29 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     })
 
     # If there's a default region, chane the ger to use it.
-    shiny::observeEvent(r$region(), {
-      if (!r$region() %in% regions) return(NULL)
+    shiny::observeEvent(
+      r$region(), {
+        if (!r$region() %in% regions) {
+          return(NULL)
+        }
 
-      update_ger_val(NULL)
-      update_ger_val(r$region())
-    }#, once = TRUE
+        update_ger_val(NULL)
+        update_ger_val(r$region())
+      } # , once = TRUE
     )
 
     # Grab the value of the dropdowns
-    reg_out <- picker_server(id = "ger", r = r,
-                             var_list = regions_list,
-                             selected = update_ger_val)
+    reg_out <- picker_server(
+      id = "ger", r = r,
+      var_list = regions_list,
+      selected = update_ger_val
+    )
 
-    tp_out <- picker_server(id = "get", r = r,
-                            var_list = top_scales_list,
-                            selected = update_get_val)
+    tp_out <- picker_server(
+      id = "get", r = r,
+      var_list = top_scales_list,
+      selected = update_get_val
+    )
 
     # Keep track of previous values when they change. This will be needed
     # if the user wants to undo a geography change.
@@ -68,7 +76,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
       # For this newly picked region, does the current top scale works?
       tp_works <- vapply(scales_dictionary$regions, \(x) reg_out() %in% x, logical(1))
       # If it works, return
-      if (tp_out() %in% names(tp_works)[tp_works]) return()
+      if (tp_out() %in% names(tp_works)[tp_works]) {
+        return()
+      }
 
       # If the top scale does not correspond to the newly picked region, update
       # the top scale picker to the highest scale in order of priority (first in
@@ -90,8 +100,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
         container_div = "geography_message",
         message = sprintf(
           cc_t("Changing the region to <b>%s</b> required changing the ",
-               "main scale to <b>%s</b>.",
-               lang = r$lang()),
+            "main scale to <b>%s</b>.",
+            lang = r$lang()
+          ),
           cc_t(reg_name, lang = r$lang()),
           cc_t(tp_name, lang = r$lang())
         ),
@@ -114,7 +125,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
       possible_regions <- scales_dictionary$regions[[tp_out()]]
 
       # If the top scale is already in the possible regions, return
-      if (reg_out() %in% possible_regions) return()
+      if (reg_out() %in% possible_regions) {
+        return()
+      }
 
       # If the region does not correspond anymore to the newly picked scale, update
       # the region picker to the highest scale in order of priority (first in
@@ -136,8 +149,9 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
         container_div = "geography_message",
         message = sprintf(
           cc_t("Changing the main scale to <b>%s</b> required changing the ",
-               "region to <b>%s</b>.",
-               lang = r$lang()),
+            "region to <b>%s</b>.",
+            lang = r$lang()
+          ),
           cc_t(tp_name, lang = r$lang()),
           cc_t(reg_name, lang = r$lang())
         ),
@@ -146,7 +160,8 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
           update_get_val(NULL)
           update_ger_val(static_previous_reg)
           update_get_val(previous_tp())
-        })
+        }
+      )
 
       update_ger_val(NULL)
       update_ger_val(new_region)
@@ -154,13 +169,17 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
 
     # Grab a zoom level out of the top scale value
     mzl <- shiny::reactive({
-      calculate_map_zoom_level(top_scale = tp_out(),
-                               avail_scale_combinations = avail_scale_combinations)
+      calculate_map_zoom_level(
+        top_scale = tp_out(),
+        avail_scale_combinations = avail_scale_combinations
+      )
     })
 
     # Return the pickers
-    return(shiny::reactive(list(region = reg_out(),
-                                zoom_levels = mzl())))
+    return(shiny::reactive(list(
+      region = reg_out(),
+      zoom_levels = mzl()
+    )))
   })
 }
 
@@ -171,8 +190,9 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
   # Region default
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   names(regions) <- sapply(regions,
-                           \(x) regions_dictionary$name[regions_dictionary$region == x],
-                           simplify = TRUE, USE.NAMES = FALSE)
+    \(x) regions_dictionary$name[regions_dictionary$region == x],
+    simplify = TRUE, USE.NAMES = FALSE
+  )
   regions_list <- list("Region" = regions)
 
   # Top scale default
@@ -204,14 +224,18 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
       shiny::div(
         id = shiny::NS(id, "geography_div"),
         class = "sus-sidebar-control",
-        picker_UI(id = shiny::NS(id, "ger"),
-                  var_list = regions_list,
-                  # label = cc_t("Region"),
-                  div_style = "display: inline-block; width: 50%;"),
-        picker_UI(id = shiny::NS(id, "get"),
-                  var_list = top_scales_list,
-                  # label = cc_t("Main scale"),
-                  div_style = "display: inline-block; width: 48%;")
+        picker_UI(
+          id = shiny::NS(id, "ger"),
+          var_list = regions_list,
+          # label = cc_t("Region"),
+          div_style = "display: inline-block; width: 50%;"
+        ),
+        picker_UI(
+          id = shiny::NS(id, "get"),
+          var_list = top_scales_list,
+          # label = cc_t("Main scale"),
+          div_style = "display: inline-block; width: 48%;"
+        )
       ),
       # Location of a short-lived message
       shiny::div(

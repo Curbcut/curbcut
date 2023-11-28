@@ -62,7 +62,7 @@ explore_text_bivar_correlation <- function(vars, data, time, lang = NULL, schema
     )
   } else if (absolute > 0.1) {
     relation_text <- cc_t("often have _X_, although with many exceptions",
-                          lang = lang
+      lang = lang
     )
     strength <- cc_t("weak", lang = lang)
 

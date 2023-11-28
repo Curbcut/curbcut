@@ -108,8 +108,10 @@ test_that("var_closest_year returns empty string if input is empty", {
 test_that("var_closest_year returns variable code with closest year", {
   input <- "housing_tenant"
   time <- 2017
-  expect_equal(var_closest_year(input, time), list(var = "housing_tenant",
-                                                   closest_year = 2016))
+  expect_equal(var_closest_year(input, time), list(
+    var = "housing_tenant",
+    closest_year = 2016
+  ))
 })
 
 test_that("var_closest_year returns correct year when `time` isn't in the dates", {

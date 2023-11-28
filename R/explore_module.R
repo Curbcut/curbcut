@@ -30,9 +30,12 @@
 #' `r[[id]]$select_id()`.
 #' @param time <`reactive numeric vector`> The `time` at which data is displayed.
 #' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
-#' Usually r[[id]]$time.
+#' Usually `r[[id]]$time`.
 #' @param schemas <`reactive named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -131,15 +134,16 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
     })
 
     # Clear selection on button click
-    shiny::observeEvent(input$clear_selection, {
-      r[[id]]$select_id(NA)
-      cc.map::map_choropleth_update_selection(
-        session = session,
-        map_ID = "map",
-        select_id = NA
-      )
-    },
-    ignoreInit = TRUE
+    shiny::observeEvent(input$clear_selection,
+      {
+        r[[id]]$select_id(NA)
+        cc.map::map_choropleth_update_selection(
+          session = session,
+          map_ID = "map",
+          select_id = NA
+        )
+      },
+      ignoreInit = TRUE
     )
   })
 }

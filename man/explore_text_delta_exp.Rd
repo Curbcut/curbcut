@@ -15,6 +15,7 @@ explore_text_delta_exp(
   scale,
   data,
   schemas,
+  lang,
   ...
 )
 
@@ -26,8 +27,8 @@ explore_text_delta_exp(
   time,
   scale,
   data,
-  lang,
   schemas,
+  lang,
   ...
 )
 
@@ -36,11 +37,11 @@ explore_text_delta_exp(
   region,
   select_id,
   left_right = "left",
+  time,
   scale,
   data,
-  time,
-  lang,
   schemas,
+  lang,
   ...
 )
 }
@@ -70,9 +71,9 @@ and ID. The output of \code{\link{data_get}}.}
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
-\item{...}{Additional arguments passed to the dispatched method.}
-
 \item{lang}{<\code{character}> Language for translation.}
+
+\item{...}{Additional arguments passed to the dispatched method.}
 }
 \value{
 A list with the following elements:

@@ -28,7 +28,7 @@
 #'
 #' @return The resulting text.
 #' @export
-explore_text_values_q5 <- function(var, region, data_path = get_data_path(), ...) {
+explore_text_values_q5 <- function(var, region, data_path = get_data_path(), data, ...) {
   UseMethod("explore_text_values_q5", var)
 }
 
@@ -62,8 +62,10 @@ explore_text_values_q5.pct <- function(var, region, data_path = get_data_path(),
 
   # NA message
   if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE,
-                        lang = lang, schemas_col = schemas[[col]])
+    exp <- var_get_info(
+      var = var, what = "explanation", translate = TRUE,
+      lang = lang, schemas_col = schemas[[col]]
+    )
     out <- sprintf(cc_t("we currently don't have information regarding %s", lang = lang), exp)
     return(list(
       text = out,
@@ -94,8 +96,10 @@ explore_text_values_q5.count <- function(var, region, data_path = get_data_path(
   parent_string <- explore_text_parent_title(var, lang = lang)
 
   # Grab the q5 explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang,
-                      schemas_col = schemas[[col]])
+  exp <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE, lang = lang,
+    schemas_col = schemas[[col]]
+  )
 
   # Grab the region values
   region_values <- explore_text_region_val_df(
@@ -118,7 +122,7 @@ explore_text_values_q5.count <- function(var, region, data_path = get_data_path(
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -141,9 +145,9 @@ explore_text_values_q5.count <- function(var, region, data_path = get_data_path(
 
 #' @describeIn explore_text_values_q5 The method for dollar values.
 #' @export
-explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
-                                          col = "var_left", lang, time, schemas = NULL,
-                                          data_path = get_data_path(), ...) {
+explore_text_values_q5.dollar <- function(var, region, data_path = get_data_path(),
+                                          data, scale, select_id,
+                                          col = "var_left", lang, time, schemas = NULL, ...) {
   # Grab the region values
   region_values <- explore_text_region_val_df(
     var = var,
@@ -165,7 +169,7 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -176,8 +180,10 @@ explore_text_values_q5.dollar <- function(var, region, data, scale, select_id,
   dollar_string <- convert_unit.dollar(x = region_values$val, compact = FALSE)
 
   # Grab the explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang,
-                      schemas_col = schemas[[col]])
+  exp <- var_get_info(
+    var = var, what = "exp_q5", translate = TRUE, lang = lang,
+    schemas_col = schemas[[col]]
+  )
 
   # Build the return
   out <- sprintf("%s %s", exp, dollar_string)
@@ -218,7 +224,7 @@ explore_text_values_q5.ind <- function(var, region, data_path = get_data_path(),
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -306,7 +312,7 @@ explore_text_values_q5.avg <- function(var, region, data_path = get_data_path(),
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -378,7 +384,7 @@ explore_text_values_q5.sqkm <- function(var, region, data_path = get_data_path()
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -442,7 +448,7 @@ explore_text_values_q5.ppo <- function(var, region, data_path = get_data_path(),
       lang = lang, schemas_col = schemas[[col]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
-                        lang = lang
+      lang = lang
     ), exp)
     return(list(
       text = out,
@@ -461,7 +467,7 @@ explore_text_values_q5.ppo <- function(var, region, data_path = get_data_path(),
 
   # If the two last brackets is recognized as the default, write a particular string
   out <- cc_t(sprintf("there are %s people for every %s", count_string, exp_q5),
-              lang = lang
+    lang = lang
   )
 
   # Return

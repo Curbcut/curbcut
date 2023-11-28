@@ -119,6 +119,9 @@ their colour will be the one of their DA.}
 
 \item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
 
+\item{lang}{<\code{character}> String indicating the language to translate the
+breaks to. Defaults to \code{NULL}, which is no translation.}
+
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
 }

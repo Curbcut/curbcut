@@ -34,6 +34,9 @@ the variable. A piece of the \code{variables} table.}
 \item{title_color}{<\code{character}> The color code for the title. Default is
 #73AE80' for the left variable's green.}
 
+\item{time_col}{<\code{vector}> Vector of dates. Usually \code{r[[id]]$time()}, with
+\code{var_left} or\code{var_right} subset.}
+
 \item{schemas_col}{<\verb{named list}> One subset of the current schema information.
 The additional widget values that have an impact on which data column to pick.
 Usually \code{r[[id]]$schema()}, with \code{var_left} or\code{var_right} subset.}

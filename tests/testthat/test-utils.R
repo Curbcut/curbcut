@@ -194,17 +194,17 @@ test_that("widget_id_verif throws an error when the widget ID interferes with kn
 })
 
 test_that("fill_name_2 returns correct name_2 ordered", {
-
-  ID_scale <- DA$ID[c(6000,456,3334,5522,22,1,34,77)]
+  ID_scale <- DA$ID[c(6000, 456, 3334, 5522, 22, 1, 34, 77)]
   output <- fill_name_2(ID_scale = ID_scale, scale = "DA", top_scale = "CSD")
 
   real <- sapply(ID_scale, \(ID) {
     csd <- DA$CSD_ID[DA$ID == ID]
     out <- CSD$name[CSD$ID == csd]
-    if (length(out) == 0) return(NA)
+    if (length(out) == 0) {
+      return(NA)
+    }
     out
   }, USE.NAMES = FALSE)
 
   expect_equal(output, real)
-
 })

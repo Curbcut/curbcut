@@ -55,10 +55,18 @@ warnuser_get <- function(vars, data, time, widget_time, more_text = NULL, lang =
   # Year displayed != year chosen -------------------------------------------
 
   year_mismatch_left <- (\(x) {
-    if (!all(widget_time != "")) return(NULL)
-    if (length(widget_time) == 2 & length(left_year) == 1) return(NULL)
-    if (length(left_year) != 1) return(NULL)
-    if (left_year == unique(widget_time)) return(NULL)
+    if (!all(widget_time != "")) {
+      return(NULL)
+    }
+    if (length(widget_time) == 2 & length(left_year) == 1) {
+      return(NULL)
+    }
+    if (length(left_year) != 1) {
+      return(NULL)
+    }
+    if (left_year == unique(widget_time)) {
+      return(NULL)
+    }
 
     # If all the previous passed
     list(cc_t(
@@ -70,10 +78,18 @@ warnuser_get <- function(vars, data, time, widget_time, more_text = NULL, lang =
   if (!is.null(year_mismatch_left)) out <- c(out, year_mismatch_left)
 
   year_mismatch_right <- (\(x) {
-    if (!all(widget_time != "")) return(NULL)
-    if (length(widget_time) == 2 & length(right_year) == 1) return(NULL)
-    if (length(right_year) != 1) return(NULL)
-    if (right_year == unique(widget_time)) return(NULL)
+    if (!all(widget_time != "")) {
+      return(NULL)
+    }
+    if (length(widget_time) == 2 & length(right_year) == 1) {
+      return(NULL)
+    }
+    if (length(right_year) != 1) {
+      return(NULL)
+    }
+    if (right_year == unique(widget_time)) {
+      return(NULL)
+    }
 
     # If all the previous passed
     list(cc_t(
