@@ -88,6 +88,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                     )
                   ),
                   shiny::div(
+                    id = widget_ns("compare_dates"),
                     style = "width: 64%; margin:0px !important; text-align: right;",
                     checkbox_UI(
                       id = widget_ns(id),

@@ -98,7 +98,7 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
       # Add one namespace as these are inside other module servers
       shinyjs::toggle("zoom_cbx_loc", condition = multiple_levels)
       # Follow the rest of the slidertext addition ID for the zoom slider
-      shinyjs::toggle("zoon_slider_div", condition = multiple_levels)
+      shinyjs::toggle("zoom_slider_div", condition = multiple_levels)
 
       # Replace the content of zoom_cbx_loc (zoom checkbox location)
       zoom_name <- zoom_get_name(names(zoom_levels()), r$lang())
@@ -145,7 +145,7 @@ zoom_UI <- function(id, zoom_levels) {
         )
       ),
       shiny::div(
-        id = shiny::NS(id, "zoon_slider_div"),
+        id = shiny::NS(id, "zoom_slider_div"),
         class = "sus-sidebar-control",
         slider_text_UI(
           id = shiny::NS(id, "zoom_slider"),
