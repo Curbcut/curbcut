@@ -150,6 +150,33 @@ map_js_server <- function(id, r, tile, coords, zoom,
       cc.map::map_update_lang(session, map_ID = "map", lang = r$lang())
     })
 
+    # Add points for access module
+    is_access <- shiny::eventReactive(r[[id]]$vars(), {
+      var <- r[[id]]$vars()$var_left
+      if (grepl("^access_", var)) {
+        # Remove the mode, send it
+        return(gsub(paste0("_foot|_bicycle|_car|_transit_opwe|_transit_pwe|",
+                           "_transit_nwd|_transit_nwe|_transit_opwd|_transit_pwd"),
+                    "", var))
+      } else NULL
+    })
+    shiny::observeEvent(is_access(), {
+
+      colours_dfs <- colours_get()
+      colours <- colours_dfs$left_5$fill[1:5]
+      colours[1] <- sprintf("%s00", colours[1])
+      colours <- sapply(colours, hex_to_rgb_or_rgba, USE.NAMES = FALSE)
+
+      cc.map::map_heatmap(
+        session = session,
+        map_ID = "map",
+        tileset = is_access(),
+        pickable = FALSE,
+        colours = colours
+      )
+
+    }, ignoreNULL = TRUE)
+
     # Grab the viewstate (lat, lon, zoom)
     viewstate <- curbcut::get_viewstate("map")
 
