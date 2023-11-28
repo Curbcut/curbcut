@@ -203,7 +203,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   # Ensure there are 4 cards in the final sample
   if (nrow(final_sample) < 4) {
     num_needed <- 4 - nrow(final_sample)
-    extra_df <- discover_cards[!(discover_cards$type %in% final_sample$type), ]
+    extra_df <- discover_cards[!discover_cards$id %in% final_sample$id, ]
     extra_sample <- extra_df[sample(nrow(extra_df), num_needed), ]
     final_sample <- rbind(final_sample, extra_sample)
   }
@@ -211,16 +211,13 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   # Randomize row placement
   final_sample <- final_sample[sample(nrow(final_sample)), ]
 
-  # Update 'discover_cards'
-  discover_cards <- final_sample
-
   # Create landing page
   cc.landing::landing_input(
     inputId = shiny::NS(id, "landing"),
     pages = pages,
     c_city_svg = get_from_globalenv("c_city_svg"),
     news_cards = get_from_globalenv("news_cards"),
-    discover_cards = discover_cards,
+    discover_cards = final_sample,
     team_cards = get_from_globalenv("team_cards"),
     contributors = get_from_globalenv("contributors"),
     translation_df = translation_df,
