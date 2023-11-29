@@ -47,12 +47,13 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
   # Get all the data
-  data_r <- sapply(dfs, \(x) data_get(vars,
-    scale = x, time = time, region = region,
-    data_path = data_path
-  ),
-  simplify = FALSE,
-  USE.NAMES = TRUE
+  data_r <- sapply(dfs, \(x) tryCatch(
+    data_get(vars,
+             scale = x, time = time, region = region,
+             data_path = data_path
+    ), error = function(e) tibble::tibble()),
+    simplify = FALSE,
+    USE.NAMES = TRUE
   )
   data <- Reduce(rbind, data_r)
 

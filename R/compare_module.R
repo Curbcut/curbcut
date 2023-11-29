@@ -14,6 +14,9 @@
 #' same length as this argument.
 #' @param show_panel <`reactive logical`> Controls whether the comparison panel
 #' should be shown.
+#' @param scales_as_DA <`character vector`> A character vector of `scales` that
+#' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
+#' their colour will be the one of their DA.
 #'
 #' @details This function uses the \code{\link{picker_server}} function to
 #' generate a reactive expression (`var_right`) that contains the selected
@@ -25,7 +28,8 @@
 #' comparing variables in Curbcut
 #' @export
 compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
-                           show_panel = shiny::reactive(TRUE)) {
+                           show_panel = shiny::reactive(TRUE),
+                           scales_as_DA = shiny::reactive(c("building", "street"))) {
   stopifnot(shiny::is.reactive(var_list))
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(show_panel))
@@ -40,7 +44,20 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
       # identifier = "housing_comparedrop"
     )
 
+    # Is var_right available in the scale? Useful for when, e.g. variables are
+    # available at the DB level, but the comapare variable isn't.
+    avail_comparison <- shiny::reactive({
+      if (var_right() != " ") {
+        scale <- treat_to_DA(scales_as_DA(), r[[id]]$scale())
+        scale_files <- get_from_globalenv(sprintf("%s_files", scale))
+        return(var_right() %in% scale_files)
+      } else TRUE
+    })
+
     # If we shouldn't show the panel
+    shiny::observeEvent(avail_comparison(), {
+      shinyjs::toggle("compare_panel", condition = avail_comparison())
+    })
     shiny::observeEvent(show_panel(), {
       shinyjs::toggle("compare_panel", condition = show_panel())
     })
@@ -52,20 +69,18 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
 #' @describeIn compare_server Create the UI for the compare module
 #' @export
 compare_UI <- function(id, var_list) {
-  shiny::tagList(
+  shiny::div(
+    id = shiny::NS(id, "compare_panel"),
+    shiny::hr(id = shiny::NS(id, "hr_compare_panel")),
     shiny::div(
-      id = shiny::NS(id, "compare_panel"),
-      shiny::hr(id = shiny::NS(id, "hr_compare_panel")),
+      class = "shiny-split-layout sidebar-section-title",
       shiny::div(
-        class = "shiny-split-layout sidebar-section-title",
-        shiny::div(
-          style = "width: 9%",
-          icon_material_title("balance")
-        ),
-        shiny::div(
-          style = "width: 89%",
-          cc_t_span("Comparison")
-        )
+        style = "width: 9%",
+        icon_material_title("balance")
+      ),
+      shiny::div(
+        style = "width: 89%",
+        cc_t_span("Comparison")
       )
     ),
     shiny::div(

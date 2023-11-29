@@ -27,6 +27,19 @@ vars_build <- function(var_left, var_right = " ", scale, time,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
                        variables = get_from_globalenv("variables")) {
+
+  # Switch scales to DA if necessary
+  scale <- treat_to_DA(scales_as_DA, scale)
+
+  # Is var_right available in the scale? Useful for when, e.g. variables are
+  # available at the DB level, but the comapare variable isn't.
+  if (var_right != " ") {
+    scale_files <- get_from_globalenv(sprintf("%s_files", scale))
+    if (!var_right %in% scale_files) {
+      var_right <- " "
+    }
+  }
+
   # Unique time
   time <- unique(time)
 
@@ -35,9 +48,6 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   if (!is.list(vl)) vl <- list(var = vl)
   vr <- var_closest_year(var_right, time)
   if (!is.list(vr)) vr <- list(var = vr)
-
-  # Switch scales to DA if necessary
-  scale <- treat_to_DA(scales_as_DA, scale)
 
   # Add var left and right measurement variable as classes
   var_left_m <- var_get_info(var_left, "var_measurement",

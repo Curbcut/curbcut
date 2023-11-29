@@ -15,6 +15,9 @@
 #' @param select_id <`reactive character`> The ID of the selected polygon.
 #' @param zoom <`reactive numeric`> The current zoom level of the map, also
 #' the zoom at which the map will initiate. Usually `r[[id]]$zoom`
+#' @param vars <`named list`> Named list with a class. Object built using the
+#' \code{\link{vars_build}} function. The class of the vars object is
+#' used to determine how to grab de data and output it.
 #' @param coords <`reactive numeric vector`> The current central map location
 #' of the map. Bookmark can have an input on it. Usually `r[[id]]$coords`.
 #' @param data_colours <`reactive data.frame`> The output of
@@ -37,7 +40,7 @@
 #' the current position and zoom level.
 #'
 #' @export
-map_js_server <- function(id, r, tile, coords, zoom,
+map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
                           stories = NULL, stories_min_zoom = 13,
                           select_id = shiny::reactive(NA),
                           data_colours = shiny::reactive(data.frame()),
@@ -117,21 +120,21 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
     # Whenever the tileset changes, load it with the according data_colours.
     shiny::observeEvent(tileset_trigger(),
-      {
-        cc.map::map_choropleth(
-          session = session,
-          map_ID = "map",
-          tileset = tileset_trigger(),
-          fill_colour = data_colours(),
-          select_id = select_id(),
-          fill_fun = fill_fun(),
-          fill_fun_args = fill_fun_args(),
-          pickable = pickable(),
-          outline_width = outline_width(),
-          outline_color = outline_color()
-        )
-      },
-      ignoreNULL = TRUE
+                        {
+                          cc.map::map_choropleth(
+                            session = session,
+                            map_ID = "map",
+                            tileset = tileset_trigger(),
+                            fill_colour = data_colours(),
+                            select_id = select_id(),
+                            fill_fun = fill_fun(),
+                            fill_fun_args = fill_fun_args(),
+                            pickable = pickable(),
+                            outline_width = outline_width(),
+                            outline_color = outline_color()
+                          )
+                        },
+                        ignoreNULL = TRUE
     )
 
     # Only update the fill_colour when data_colours change
@@ -151,15 +154,16 @@ map_js_server <- function(id, r, tile, coords, zoom,
     })
 
     # Add points for access module
-    is_access <- shiny::eventReactive(r[[id]]$vars(), {
-      var <- r[[id]]$vars()$var_left
+    print(vars())
+    is_access <- shiny::eventReactive(vars(), {
+      var <- vars()$var_left
       if (grepl("^access_", var)) {
         # Remove the mode, send it
         return(gsub(paste0("_foot|_bicycle|_car|_transit_opwe|_transit_pwe|",
                            "_transit_nwd|_transit_nwe|_transit_opwd|_transit_pwd"),
                     "", var))
       } else NULL
-    })
+    }, ignoreNULL = TRUE)
     shiny::observeEvent(is_access(), {
 
       colours_dfs <- colours_get()
@@ -181,17 +185,17 @@ map_js_server <- function(id, r, tile, coords, zoom,
     viewstate <- curbcut::get_viewstate("map")
 
     shiny::observeEvent(input$mapboxDivExists,
-      {
-        if (isFALSE(input$mapboxDivExists)) {
-          # The following follows if a map redraw should be asked for (in cases
-          # where the map faults are initiation, or if the tileset_trigger() event
-          # happens, at first, before the map is loaded.)
-          shinyjs::delay(1500, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-          shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-          shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-        }
-      },
-      ignoreNULL = TRUE
+                        {
+                          if (isFALSE(input$mapboxDivExists)) {
+                            # The following follows if a map redraw should be asked for (in cases
+                            # where the map faults are initiation, or if the tileset_trigger() event
+                            # happens, at first, before the map is loaded.)
+                            shinyjs::delay(1500, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+                            shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+                            shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+                          }
+                        },
+                        ignoreNULL = TRUE
     )
 
     # Return
