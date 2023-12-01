@@ -175,6 +175,8 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
       )
     })
 
+    # observe(print(input$geo_hover))
+
     # Return the pickers
     return(shiny::reactive(list(
       region = reg_out(),
@@ -206,6 +208,20 @@ geography_UI <- function(id, regions, avail_scale_combinations) {
   top_scales_list <- list("Main scale" = top_scales)
 
   out <- shiny::tagList(
+    # # Add the necessary piece of JS to inform a hover event. HOWEVER, IT DOES
+    # # NOT WORK AS THE CONTAINER FOR OPENED DROPDOWN IS 'BODY' IN PICKER_UI.
+    # shiny::tags$head(
+    #   shiny::tags$script(
+    #     shiny::HTML(
+    #       paste0(
+    #         "$(document).on('mouseenter', '",
+    #         "#", shiny::NS(id, "geography_div"),
+    #         " .dropdown-menu.inner li', function() {",
+    #         "var hoveredText = $(this).text().trim();",
+    #         "Shiny.setInputValue('", shiny::NS(id, "geo_hover"), "', hoveredText, {priority: 'event'});",
+    #         "});")))
+    # ),
+
     shiny::div(
       class = "geography-panel",
       id = shiny::NS(id, "geo_div"),

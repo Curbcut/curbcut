@@ -47,17 +47,35 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
     # Is var_right available in the scale? Useful for when, e.g. variables are
     # available at the DB level, but the comapare variable isn't.
     avail_comparison <- shiny::reactive({
-      if (var_right() != " ") {
-        scale <- treat_to_DA(scales_as_DA(), r[[id]]$scale())
-        scale_files <- get_from_globalenv(sprintf("%s_files", scale))
-        return(var_right() %in% scale_files)
-      } else TRUE
+      cvars <- unname(unlist(var_list()))
+      cvars <- cvars[cvars != " "]
+
+      scale <- treat_to_DA(scales_as_DA(), r[[id]]$scale())
+      scale_files <- get_from_globalenv(sprintf("%s_files", scale))
+      return(all(cvars %in% scale_files))
     })
 
     # If we shouldn't show the panel
+    selector <- sprintf("#%s-%s-compare_widgets", id, id)
+    new_div <- shiny::NS(id, shiny::NS(id, "compare_warn"))
     shiny::observeEvent(avail_comparison(), {
-      shinyjs::toggle("compare_panel", condition = avail_comparison())
+      shinyjs::toggle("compare_widgets", condition = avail_comparison())
+
+      if (avail_comparison()) {
+        shiny::removeUI(selector = sprintf("#%s", new_div))
+      } else {
+        shiny::removeUI(selector = sprintf("#%s", new_div))
+
+        scale_name <- cc_t(zoom_get_name(r[[id]]$scale()), lang = r$lang())
+        scale_name <- tolower(scale_name)
+        txt <- sprintf(cc_t("Comparison is unavailable at the <b>%s</b> scale.",
+                            lang = r$lang()), scale_name)
+        txt <- shiny::p(class = "sus-sidebar-widget-warning-text", shiny::HTML(txt))
+        shiny::insertUI(selector = selector, where = "beforeBegin",
+                        ui = shiny::div(id = new_div, txt))
+      }
     })
+
     shiny::observeEvent(show_panel(), {
       shinyjs::toggle("compare_panel", condition = show_panel())
     })
@@ -89,7 +107,7 @@ compare_UI <- function(id, var_list) {
       picker_UI(
         id = shiny::NS(id, "compare"),
         var_list = var_list,
-        open_left = TRUE
+        live_search = TRUE
       )
     )
   )

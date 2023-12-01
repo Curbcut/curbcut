@@ -56,7 +56,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         # selector = html_ns("autovars"),
         # where = "beforeEnd",
         # place after the compare panel
-        selector = html_ns("compare_widgets"),
+        selector = html_ns("compare_panel"),
         where = "afterEnd",
         ui = {
           if (!is.null(default_year)) {

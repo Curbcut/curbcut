@@ -172,3 +172,8 @@
 	bottom: 35px;
 	position: relative;
 }
+
+.bs-searchbox .form-control {
+	font-size: 12px;
+	height: 30px;
+}

@@ -160,7 +160,7 @@ explore_UI <- function(id) {
         shiny::fluidRow(
           shiny::column(
             width = 7,
-            shiny::h4(icon_material_title("location_on"), cc_t("Explore"))
+            shiny::h4(icon_material_title("location_on"), cc_t_span("Explore"))
           )
         )
       ),

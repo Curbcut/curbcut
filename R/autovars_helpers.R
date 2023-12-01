@@ -18,7 +18,7 @@ label_indicators <- function(id) {
     ),
     shiny::div(
       style = "width: 88%",
-      cc_t("Indicator")
+      cc_t_span("Indicator")
     )
   )
 }

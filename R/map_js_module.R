@@ -154,7 +154,6 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
     })
 
     # Add points for access module
-    print(vars())
     is_access <- shiny::eventReactive(vars(), {
       var <- vars()$var_left
       if (grepl("^access_", var)) {

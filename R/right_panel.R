@@ -19,7 +19,7 @@ right_panel <- function(id, ..., style = "") {
     style = style,
     class = "panel panel-default sus-map-panel scrollable-div",
     shiny::div(
-      shiny::h4(class = "mobile-panel-title", cc_t("Explore")),
+      shiny::h4(class = "mobile-panel-title", cc_t_span("Explore")),
       shiny::div(
         class = "sus-map-panel-content scrollable-div",
         id = "cc-right-panel", ...

@@ -170,7 +170,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @export
 picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
                       width = "100%", div_style = NULL, selected = NULL,
-                      open_left = TRUE, identifier = NULL, ...) {
+                      open_left = TRUE, identifier = NULL, live_search = FALSE, ...) {
   # Verify if the widget ID will interfere with bookmark
   picker_id <- widget_id_verif(widget_id = picker_id)
 
@@ -208,7 +208,8 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
       options = shinyWidgets::pickerOptions(
         dropdownAlignRight = !open_left,
         container = "body",
-        identifier = identifier
+        identifier = identifier,
+        liveSearch = live_search
       ),
       ...
     )

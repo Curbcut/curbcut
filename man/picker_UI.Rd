@@ -14,6 +14,7 @@ picker_UI(
   selected = NULL,
   open_left = TRUE,
   identifier = NULL,
+  container = "body",
   ...
 )
 }

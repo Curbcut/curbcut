@@ -128,7 +128,7 @@ legend_server <- function(id, r, vars, scale, data, time, hide = shiny::reactive
 legend_UI <- function(id) {
   shiny::div(
     id = shiny::NS(id, "legend_div"),
-    shiny::h5(cc_t("Legend"),
+    shiny::h5(cc_t_span("Legend"),
       style = "font-size: 12px;"
     ),
     shiny::uiOutput(shiny::NS(id, "legend_render"))

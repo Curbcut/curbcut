@@ -30,6 +30,10 @@ cc_translation_df <-
     fr = "Comparez"
   ) |>
   tibble::add_row(
+    en = "Comparison is unavailable at the <b>%s</b> scale.",
+    fr = "La comparaison n'est pas possible à l'échelle <b>%s</b>."
+  ) |>
+  tibble::add_row(
     en = "[LEARN MORE]",
     fr = "[EN SAVOIR PLUS]"
   ) |>
