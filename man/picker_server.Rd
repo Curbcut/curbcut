@@ -11,6 +11,7 @@ picker_server(
   var_list,
   time = shiny::reactive(NULL),
   selected = shiny::reactive(NULL),
+  subtext = shiny::reactive(NULL),
   ...
 )
 }
@@ -34,6 +35,9 @@ appending a time to the variables picked. The returned vector will be the
 same length as this argument.}
 
 \item{selected}{<\verb{reactive character}> The value for which to update the picker.}
+
+\item{subtext}{<\verb{reactive character}> Additional text for every option. Will
+be added to choicesOpt in \code{\link[shinyWidgets]{updatePickerInput}}.}
 
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}}
 }

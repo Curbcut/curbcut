@@ -389,6 +389,13 @@ is_numeric <- function(x) {
 #' of a data frame, preserving the original row indices.
 #'
 #' @param x <`numeric`> A numeric vector for which to find outliers.
+#' @param lower_bracket <`numeric`> The lower percentile to use for the
+#' IQR calculation. Defaults to 0.02.
+#' @param higher_bracket <`numeric`> The higher percentile to use for the
+#' IQR calculation. Defaults to 0.98.
+#' @param iqr_multiplier <`numeric`> Multiplier for the IQR to determine
+#' outlier thresholds. Defaults to 1.5.
+#' @param
 #'
 #' @return For find_outliers(): A vector of indices of the outliers in x.
 #' For remove_outliers_df(): A data frame with outliers removed from specified
@@ -402,10 +409,10 @@ is_numeric <- function(x) {
 #' remove_outliers_df(df, cols = "a")
 #'
 #' @export
-find_outliers <- function(x) {
-  q1 <- stats::quantile(x, 0.02, na.rm = TRUE)
-  q3 <- stats::quantile(x, 0.98, na.rm = TRUE)
-  iqr <- (q3 - q1) * 1.5
+find_outliers <- function(x, lower_bracket = 0.02, higher_bracket = 0.98, iqr_multiplier = 1.5) {
+  q1 <- stats::quantile(x, lower_bracket, na.rm = TRUE)
+  q3 <- stats::quantile(x, higher_bracket, na.rm = TRUE)
+  iqr <- (q3 - q1) * iqr_multiplier
   which(x < q1 - iqr | x > q3 + iqr)
 }
 

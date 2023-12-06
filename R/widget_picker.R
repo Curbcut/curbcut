@@ -25,6 +25,8 @@
 #' appending a time to the variables picked. The returned vector will be the
 #' same length as this argument.
 #' @param selected <`reactive character`> The value for which to update the picker.
+#' @param subtext <`reactive character`> Additional text for every option. Will
+#' be added to choicesOpt in \code{\link[shinyWidgets]{updatePickerInput}}.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}
 #'
 #' @return A reactive expression that returns the selected variable with `time`
@@ -33,6 +35,7 @@
 #' @export
 picker_server <- function(id, r, picker_id = "var", var_list,
                           time = shiny::reactive(NULL), selected = shiny::reactive(NULL),
+                          subtext = shiny::reactive(NULL),
                           # identifier = NULL,
                           ...) {
   stopifnot(shiny::is.reactive(time))
@@ -95,7 +98,8 @@ picker_server <- function(id, r, picker_id = "var", var_list,
           if (!is.null(hovers())) hovers(),
           list(
             disabled = disable(),
-            style = disable_style()
+            style = disable_style(),
+            subtext = subtext()
           )
         ),
         ...

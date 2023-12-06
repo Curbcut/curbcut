@@ -34,6 +34,26 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     names(top_scales) <- sapply(top_scales, function(x) {
       scales_dictionary$plur[scales_dictionary$scale == x]
     }, simplify = TRUE, USE.NAMES = FALSE)
+
+    scales_subtext_pre <- sapply(top_scales, function(x) {
+      out <- scales_dictionary$subtext[scales_dictionary$scale == x]
+    }, simplify = TRUE, USE.NAMES = FALSE)
+    nb_residents <- sapply(top_scales, \(x) {
+      pop <- get_from_globalenv(x)$population
+      pop <- pop[-find_outliers(pop, lower_bracket = 0.25, higher_bracket = 0.75,
+                                iqr_multiplier = 0)]
+      min_val <- convert_unit(x = min(pop, na.rm = TRUE))
+      max_val <- convert_unit(x = max(pop, na.rm = TRUE))
+
+      sprintf("%s-%s", min_val, max_val)
+    })
+
+    scales_subtext <- shiny::reactive({
+      out <- sapply(scales_subtext_pre, cc_t, lang = r$lang())
+      res <- cc_t("residents", lang = r$lang())
+      sprintf("%s. %s %s.", out, nb_residents, res)
+    })
+
     top_scales_list <- shiny::reactive({
       names(top_scales) <- sapply(names(top_scales), cc_t, lang = r$lang())
       names(top_scales) <- s_sentence(names(top_scales))
@@ -62,7 +82,8 @@ geography_server <- function(id, r, regions, avail_scale_combinations) {
     tp_out <- picker_server(
       id = "get", r = r,
       var_list = top_scales_list,
-      selected = update_get_val
+      selected = update_get_val,
+      subtext = scales_subtext
     )
 
     # Keep track of previous values when they change. This will be needed
