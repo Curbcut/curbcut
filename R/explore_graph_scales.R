@@ -153,16 +153,18 @@ explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
 
 #' @describeIn explore_graph_scale_ind ordinal method for index values
 #' @param breaks <`vector`> Current breaks
+#' @param biv <`character`> Is it for bivariate graph? BOXPLOT
 #' @export
 explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits = NULL,
-                                            lang = NULL, breaks, ...) {
-  labels <- c(NA_character_, legend_breaks.q5_ind(var, scale = scale, lang = lang))
-  names(labels) <- as.character(breaks)
+                                            lang = NULL, breaks, biv = FALSE, ...) {
+  labels <- legend_breaks.q5_ind(var, scale = scale, lang = lang)
+  if (!biv) labels <- c(NA_character_, labels)
+  if (!biv) names(labels) <- as.character(breaks)
 
   scale <- sprintf("ggplot2::scale_%s_discrete", x_y)
   range <- if (is.null(limits)) NULL else range(limits)
   list(do.call(eval(parse(text = scale)), list(
-    labels = labels,
-    breaks = breaks
+    labels = unname(labels),
+    breaks = if (biv) 1:5 else breaks
   )))
 }

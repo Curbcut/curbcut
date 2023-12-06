@@ -17,6 +17,10 @@
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param compare_avail_compare_always <`logical`> Should the compare panel be
+#' hidden when not all compare variables are available at the current scale? e.g.
+#' no census data at DB level. By default, when on DB scale, if there are census
+#' variables in the compare dropdown, the compare panel will be hidden.
 #'
 #' @details This function uses the \code{\link{picker_server}} function to
 #' generate a reactive expression (`var_right`) that contains the selected
@@ -29,7 +33,8 @@
 #' @export
 compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
                            show_panel = shiny::reactive(TRUE),
-                           scales_as_DA = shiny::reactive(c("building", "street"))) {
+                           scales_as_DA = shiny::reactive(c("building", "street")),
+                           compare_avail_compare_always = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(var_list))
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(show_panel))
@@ -47,11 +52,16 @@ compare_server <- function(id, r, var_list, time = shiny::reactive(NULL),
     # Is var_right available in the scale? Useful for when, e.g. variables are
     # available at the DB level, but the comapare variable isn't.
     avail_comparison <- shiny::reactive({
+      if (compare_avail_compare_always()) return(TRUE)
       cvars <- unname(unlist(var_list()))
       cvars <- cvars[cvars != " "]
 
       scale <- treat_to_DA(scales_as_DA(), r[[id]]$scale())
-      scale_files <- get_from_globalenv(sprintf("%s_files", scale))
+      scale_files <- get0(sprintf("%s_files", scale))
+      if (is.null(scale_files)) {
+        stop(sprintf(paste0("Missing `%s_files`. Should `compare_avail_compare_always` ",
+                            "in `compare_server` be TRUE?"), scale))
+      }
       return(all(cvars %in% scale_files))
     })
 

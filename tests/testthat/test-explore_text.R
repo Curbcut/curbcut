@@ -81,6 +81,13 @@ test_explores <- function(var_right, select_id, region, scale) {
 test_that("q5 explore works without a selection", {
   test_explores(var_right = " ", select_id = NA, region = "CMA", scale = "CSD")
   test_explores(var_right = " ", select_id = NA, region = "city", scale = "building")
+
+  # Ind ordinal (using SQLite)
+  test_explores_helper(
+    var_left = "climate_drought",
+    var_right = " ", region = "island", scale = "grd100",
+    select_id = "grd100_10200", time = 2022
+  )
 })
 
 test_that("q5 explore works with selections", {

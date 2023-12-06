@@ -836,7 +836,9 @@ fill_name_2 <- function(ID_scale, scale, top_scale) {
 
   # Get the scale table and subset necessary scale
   ts_id <- sprintf("%s_ID", top_scale)
-  sc <- get_from_globalenv(scale)[c("ID", ts_id)]
+  sc <- get0(scale)
+  if (is.null(sc)) return(rep(NA, length(ID_scale)))
+  sc <- sc[c("ID", ts_id)]
   sc <- sc[sc$ID %in% ID_scale, ]
 
   # Keep, in order, the ID to grab name_2 for

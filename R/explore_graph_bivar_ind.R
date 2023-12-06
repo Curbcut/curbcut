@@ -64,20 +64,36 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time, 
   clr_df <- shared_info$colours_dfs$left_5
   clr <- clr_df$fill[1:6]
 
+  # Remove outliers from data before getting the x-y labels
+  vr_col <- match_schema_to_col(
+    data = data,
+    col = "var_right",
+    time = time,
+    schemas = schemas
+  )
+  vl_col <- match_schema_to_col(
+    data = data,
+    col = "var_left",
+    time = time,
+    schemas = schemas
+  )
+  vr_breaks <- attr(data, "breaks_var_right")
+  vl_breaks <- attr(data, "breaks_var_left")
+
   # Get the scales ggplot function
   x_scale <- explore_graph_scale(
     var = vars$var_left,
     x_y = "x",
-    data_vals = data$var_left,
-    df = shared_info$treated_scale,
+    data_vals = data[[vl_col]],
+    scale = shared_info$treated_scale,
     lang = lang,
-    limits = attr(data, "breaks_var_left")
+    breaks = attr(data, "breaks_var_left"),
+    biv = TRUE
   )
   y_scale <- explore_graph_scale(
     var = vars$var_right,
     x_y = "y",
-    data_vals = data$var_right,
-    limits = attr(data, "breaks_var_right")
+    data_vals = data[[vr_col]]
   )
 
   # Update labels (wrong axis)
@@ -87,10 +103,9 @@ explore_graph_bivar_ind.ordinal <- function(vars, select_id, scale, data, time, 
 
   # Draw the plot
   plot <-
-    data[!is.na(data$var_left) & !is.na(data$var_right), ] |>
-    remove_outliers_df(cols = c("var_left", "var_right")) |>
-    ggplot2::ggplot(ggplot2::aes(as.factor(var_left), var_right)) +
-    ggplot2::geom_boxplot(ggplot2::aes(fill = as.factor(var_left))) +
+    data[!is.na(data[[vl_col]]) & !is.na(data[[vr_col]]), ] |>
+    ggplot2::ggplot(ggplot2::aes(as.factor(!!ggplot2::sym(vl_col)), !!ggplot2::sym(vr_col))) +
+    ggplot2::geom_boxplot(ggplot2::aes(fill = as.factor(!!ggplot2::sym(vl_col)))) +
     ggplot2::scale_fill_manual(breaks = 0:5, values = clr) +
     x_scale +
     y_scale +

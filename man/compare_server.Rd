@@ -11,7 +11,8 @@ compare_server(
   var_list,
   time = shiny::reactive(NULL),
   show_panel = shiny::reactive(TRUE),
-  scales_as_DA = shiny::reactive(c("building", "street"))
+  scales_as_DA = shiny::reactive(c("building", "street")),
+  compare_avail_compare_always = shiny::reactive(FALSE)
 )
 
 compare_UI(id, var_list)
@@ -36,6 +37,11 @@ should be shown.}
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{compare_avail_compare_always}{<\code{logical}> Should the compare panel be
+hidden when not all compare variables are available at the current scale? e.g.
+no census data at DB level. By default, when on DB scale, if there are census
+variables in the compare dropdown, the compare panel will be hidden.}
 }
 \value{
 A Shiny module server function that provides the logic for

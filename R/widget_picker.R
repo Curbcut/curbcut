@@ -162,6 +162,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @param identifier <`character`> Unique identifier that will be used by
 #' \code{\link{highlight_dropdown}} to change the background color of options.
 #' Defaults to NULL to not set any.
+#' @param live_search <`logical`> Argument sent to \code{\link[shinyWidgets]{pickerOptions}}.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}
 #'
 #' @return A `div` container containing a \code{\link[shinyWidgets]{pickerInput}}
