@@ -5,7 +5,14 @@
 \alias{geography_UI}
 \title{Geography module for CUrbcut}
 \usage{
-geography_server(id, r, regions, avail_scale_combinations)
+geography_server(
+  id,
+  r,
+  vars,
+  regions,
+  avail_scale_combinations,
+  scales_as_DA = shiny::reactive(c("building", "street"))
+)
 
 geography_UI(id, regions, avail_scale_combinations)
 }
@@ -16,10 +23,17 @@ e.g. \code{alp}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
+\item{vars}{<\verb{named list}> Named list with a class. Object built using the
+\code{\link{vars_build}} function. The class of the vars object is
+used to determine which type of legend to draw.}
+
 \item{regions}{<\verb{character vector}> Possible available regions for selection.}
 
 \item{avail_scale_combinations}{<\verb{character vector}> Available scale combinations
 for the top scale.}
+
+\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+that should be handled as a "DA" scale, e.g. \code{building} and \code{street}.}
 }
 \value{
 A reactive list containing selected region and calculated zoom levels.

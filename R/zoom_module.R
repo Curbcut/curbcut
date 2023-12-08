@@ -27,12 +27,17 @@
 #' first, and the highest is last (so it makes sense on an auto-scale).
 #' @param no_autozoom <`reactive logical`> Whether the output tile() reactive
 #' should include autozooms or not.
+#' @param hide_if_one_zoom_level <`reactive logical`> If there is only one
+#' zoom level available, should the zoom slider be hidden? Careful, as setting
+#' it will have a \code{\link[shinyjs]{toggle}} around the zoom div and create
+#' some inconsistencies with other potential shinyjs hide/show functions.
 #'
 #' @return A reactive object representing the current tile that should be
 #' displayed on the map.
 #' @export
 zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
-                        no_autozoom = shiny::reactive(FALSE)) {
+                        no_autozoom = shiny::reactive(FALSE),
+                        hide_if_one_zoom_level = shiny::reactive(FALSE)) {
   stopifnot(shiny::is.reactive(zoom_string))
   stopifnot(shiny::is.reactive(zoom_levels))
 
@@ -85,7 +90,6 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
         return(out)
       }
 
-
       scale <- zoom_get_code(zoom_slider(), lang = r$lang())
 
       return(scale)
@@ -93,6 +97,8 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
 
     # If there's only one zoom level, hide the slider and the auto-zoom
     shiny::observe({
+      if (!hide_if_one_zoom_level()) return(NULL)
+
       multiple_levels <- length(zoom_levels()) > 1
 
       # Add one namespace as these are inside other module servers
@@ -102,6 +108,7 @@ zoom_server <- function(id, r = r, zoom_string, region, zoom_levels,
 
       # Replace the content of zoom_cbx_loc (zoom checkbox location)
       zoom_name <- zoom_get_name(names(zoom_levels()), r$lang())
+      zoom_name <- s_sentence(zoom_name)
 
       if (!multiple_levels) shinyjs::html("zoom_scale_chr", zoom_name)
       if (multiple_levels) shinyjs::html("zoom_scale_chr", character())

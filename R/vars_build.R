@@ -31,15 +31,6 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   # Switch scales to DA if necessary
   scale <- treat_to_DA(scales_as_DA, scale)
 
-  # Is var_right available in the scale? Useful for when, e.g. variables are
-  # available at the DB level, but the comapare variable isn't.
-  if (var_right != " ") {
-    scale_files <- get_from_globalenv(sprintf("%s_files", scale))
-    if (!var_right %in% scale_files) {
-      var_right <- " "
-    }
-  }
-
   # Unique time
   time <- unique(time)
 
@@ -55,14 +46,14 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   )[[1]]
   # var_left_m <- var_left_m$measurement[var_left_m$df == df]
   var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
-  class(vl$var) <- c(if (!is.na(var_left_m)) var_left_m, class(var_left))
+  class(vl$var) <- c(if (length(var_left_m) > 0 && !is.na(var_left_m)) var_left_m, class(var_left))
 
   if (var_right != " ") {
     var_right_m <- var_get_info(var_right, "var_measurement",
       variables = variables
     )[[1]]
     var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
-    class(vr$var) <- c(if (!is.na(var_right_m)) var_right_m, class(var_right))
+    class(vr$var) <- c(if (length(var_right_m) > 0 && !is.na(var_right_m)) var_right_m, class(var_right))
   } else {
     var_right_m <- " "
   }

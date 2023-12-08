@@ -1,15 +1,40 @@
-#' Calculate the map zoom level based on top scale value
+#' Internal function for dispatching `zoom_level_selection`.
 #'
-#' @param top_scale <`character`> The current top scale value.
-#' @param avail_scale_combinations <`character vector`> Available scale combinations
-#' for the top scale.
-#' @return A numeric vector representing the map zoom levels.
-calculate_map_zoom_level <- function(top_scale, avail_scale_combinations) {
-  # Function to return the got mzl
-  return_got_mzl <- \(x) get_from_globalenv(sprintf("mzl_%s", x))
+#' @param vars <`named list`> Named list with a class. Object built using the
+#' \code{\link{vars_build}} function. The class of the vars object is
+#' used to determine which type of legend to draw.
+#' @param top_scale <`character`>
+#' @param avail_scale_combinations <`character vector`>
+#' @param scales_as_DA <`character vector`> A character vector of `scales`
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. They won't
+#' be taken into account when all the scales need to hold data.
+#' @param ... Additional arguments to be passed to the methods.
+#'
+#' @return A ggplot object that represents the `delta` legend.
+#' @export
+zoom_level_selection <- function(vars, top_scale, avail_scale_combinations,
+                                 scales_as_DA = c("building", "street"), ...) {
+  UseMethod("zoom_level_selection", vars)
+}
 
-  # Filter only the map zoom levels (mzl) that have the top scale
-  contains <- grep(
+#' @describeIn zoom_level_selection bivar method
+#' @export
+zoom_level_selection.bivar <- function(vars, top_scale, avail_scale_combinations,
+                                       scales_as_DA = c("building", "street"), ...) {
+
+  # In most cases, we should be only looking at the longest string of scales,
+  # as there is most likely data available for all scales.
+  scale_comb_init <- longest_scale_combination(top_scale, avail_scale_combinations)
+  scale_comb <- strsplit(scale_comb_init, split = "_")[[1]]
+  # Remove scales that are going to be replaced by DAs
+  scale_comb <- scale_comb[!scale_comb %in% scales_as_DA]
+  avail_dat <- sapply(scale_comb, \(x) sapply(vars, is_data_present_in_scale, scale = x))
+  # If data is available for all the scales, return it as the wanted zoom level
+  if (all(avail_dat)) return(scale_comb_init)
+
+  # Go over all other possibilities
+  # Filter only the combinations that fit with the top scale
+  possible_scale_comb <- grep(
     sprintf(
       "(_%s_)|(^%s_)|(_%s$)|(^%s$)", top_scale, top_scale,
       top_scale, top_scale
@@ -18,9 +43,57 @@ calculate_map_zoom_level <- function(top_scale, avail_scale_combinations) {
     value = TRUE
   )
 
+  # Separate scales
+  scale_combs <- strsplit(possible_scale_comb, split = "_")
+
+  # Remove scales that are going to be replaced by DAs
+  scale_combs <- lapply(scale_combs, \(x) x[!x %in% scales_as_DA])
+
+  # Which ones have all the data available in all the scales?
+  scale_combs <- lapply(scale_combs, sapply, \(x) sapply(vars, is_data_present_in_scale, scale = x))
+
+  # If it's not all the scales that have the data, make sure it's not picked.
+  # If not, sum the number of TRUEs (the highest will be the scale combinations
+  # with the most scales available)
+  scale_combs <- sapply(scale_combs, \(x) if (!all(x)) 0 else sum(x))
+
+  # Return the scale combinations with the scale combinations having the most
+  # scales and all containing data
+  return(possible_scale_comb[which.max(scale_combs)])
+
+}
+
+#' @describeIn zoom_level_selection default method
+#' @export
+zoom_level_selection.default <- function(vars, top_scale, avail_scale_combinations,
+                                         scales_as_DA = c("building", "street"), ...) {
+  longest_scale_combination(top_scale, avail_scale_combinations)
+}
+
+#' Find the longest scale combination
+#'
+#' This function identifies the longest scale combination string for a given
+#' top scale within available scale combinations. It selects the combination
+#' that contains the highest number of scales in its string.
+#'
+#' @param top_scale <`character`> The top scale to search for in the combinations.
+#' @param avail_scale_combinations <`character vector`> A vector of available
+#' scale combinations.
+#' @return <`character`> The longest scale combination string for the specified
+#' top scale. If there's only one matching scale, it is returned. If
+#' there are multiple, the one with the most scales is returned.
+longest_scale_combination <- function(top_scale, avail_scale_combinations) {
+  contains <- grep(
+    sprintf(
+      "(_%s_)|(^%s_)|(_%s$)|(^%s$)", top_scale, top_scale,
+      top_scale, top_scale
+    ),
+    avail_scale_combinations,
+    value = TRUE
+  )
   # If there's only one choice, return it
   if (length(contains) == 1) {
-    return(return_got_mzl(contains))
+    return(contains)
   }
 
   # If not, pick the map zoom levels which offers the highest number of
@@ -30,11 +103,30 @@ calculate_map_zoom_level <- function(top_scale, avail_scale_combinations) {
   # Grab the string with the highest number of scales
   scales_string <- names(which.max(underscore_nb))[[1]]
 
-  # Grab the mzl corresponding, and its value
-  mzl_final <- return_got_mzl(scales_string)
+  return(scales_string)
+}
 
-  # Return
-  return(mzl_final)
+#' Map single scales to their longest combinations
+#'
+#' This function maps each unique top scale in the available scale combinations
+#' to its longest scale combination. It processes each top scale and finds the
+#' combination with the most scales included.
+#'
+#' @param avail_scale_combinations <character vector> A vector of available
+#' scale combinations.
+#' @return <list> A list where each element represents the longest scale
+#' combination for a single top scale.
+single_scales_combination <- function(avail_scale_combinations) {
+
+  # Grab the top scales
+  top_scales <- gsub("_.*", "", avail_scale_combinations)
+  top_scales <- unique(top_scales)
+
+  # Loop over all top scales to only grab the combinations of the top scale
+  # that includes the most scales (priority to CSD_CT_DA_building over CSD_CT).
+  sapply(top_scales, longest_scale_combination, avail_scale_combinations,
+         USE.NAMES = FALSE)
+
 }
 
 #' Show a temporary message with an undo button

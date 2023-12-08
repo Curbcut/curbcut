@@ -11,7 +11,8 @@ zoom_server(
   zoom_string,
   region,
   zoom_levels,
-  no_autozoom = shiny::reactive(FALSE)
+  no_autozoom = shiny::reactive(FALSE),
+  hide_if_one_zoom_level = shiny::reactive(FALSE)
 )
 
 zoom_UI(id, zoom_levels)
@@ -37,6 +38,11 @@ first, and the highest is last (so it makes sense on an auto-scale).}
 
 \item{no_autozoom}{<\verb{reactive logical}> Whether the output tile() reactive
 should include autozooms or not.}
+
+\item{hide_if_one_zoom_level}{<\verb{reactive logical}> If there is only one
+zoom level available, should the zoom slider be hidden? Careful, as setting
+it will have a \code{\link[shinyjs]{toggle}} around the zoom div and create
+some inconsistencies with other potential shinyjs hide/show functions.}
 }
 \value{
 A reactive object representing the current tile that should be

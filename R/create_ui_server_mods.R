@@ -144,9 +144,11 @@ create_ui_server_mods <- function(modules, pos = 1) {
       zl <- geography_server(
         id = id,
         r = r,
+        vars = r[[id]]$vars,
         regions = regions,
         avail_scale_combinations = avail_scale_combinations
       )
+
       update_region(id = id, r = r, new_region = shiny::reactive(zl()$region))
       update_zoom_levels(id = id, r = r, new_zl = shiny::reactive(zl()$zoom_levels))
 
@@ -169,7 +171,14 @@ create_ui_server_mods <- function(modules, pos = 1) {
         r = r,
         zoom_string = rv_zoom_string,
         region = r[[id]]$region,
-        zoom_levels = r[[id]]$zoom_levels
+        zoom_levels = r[[id]]$zoom_levels,
+        hide_if_one_zoom_level = shiny::reactive({
+          # If there is one scale combinations that only includes ONE scale,
+          # allow the mechanic to hide the zoom div if that scale combination
+          # is active.
+          sac <- single_scales_combination(avail_scale_combinations)
+          all(!grepl("_", sac))
+        })
       )
 
       # Get scale

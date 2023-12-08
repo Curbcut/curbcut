@@ -197,7 +197,13 @@ data_get.bivar <- function(vars, scale, region,
 
   # Get var_left and var_right data
   vl <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
+
+  # If data isn't present, throw an empty tibble
+  if (!is_data_present_in_scale(var = vars$var_right, scale = scale)) {
+    return(tibble::tibble())
+  }
   vr <- data_get_qs(vars$var_right, scale = scale, data_path = data_path)
+
 
   # Append breaks
   all_data <- mapply(
