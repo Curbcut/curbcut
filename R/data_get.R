@@ -204,7 +204,6 @@ data_get.bivar <- function(vars, scale, region,
   }
   vr <- data_get_qs(vars$var_right, scale = scale, data_path = data_path)
 
-
   # Append breaks
   all_data <- mapply(
     \(var, data, rename_col) {

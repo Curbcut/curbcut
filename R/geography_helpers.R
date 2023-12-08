@@ -1,8 +1,9 @@
 #' Internal function for dispatching `zoom_level_selection`.
 #'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function. The class of the vars object is
-#' used to determine which type of legend to draw.
+#' @param var_right <`character`> Character string of the selected
+#' compared variable, e.g. `housing_value`. It will be used to check on all
+#' possible scale combinations which combinations have scales that all have
+#' valid data.
 #' @param top_scale <`character`>
 #' @param avail_scale_combinations <`character vector`>
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
@@ -12,15 +13,8 @@
 #'
 #' @return A ggplot object that represents the `delta` legend.
 #' @export
-zoom_level_selection <- function(vars, top_scale, avail_scale_combinations,
+zoom_level_selection <- function(var_right, top_scale, avail_scale_combinations,
                                  scales_as_DA = c("building", "street"), ...) {
-  UseMethod("zoom_level_selection", vars)
-}
-
-#' @describeIn zoom_level_selection bivar method
-#' @export
-zoom_level_selection.bivar <- function(vars, top_scale, avail_scale_combinations,
-                                       scales_as_DA = c("building", "street"), ...) {
 
   # In most cases, we should be only looking at the longest string of scales,
   # as there is most likely data available for all scales.
@@ -28,7 +22,7 @@ zoom_level_selection.bivar <- function(vars, top_scale, avail_scale_combinations
   scale_comb <- strsplit(scale_comb_init, split = "_")[[1]]
   # Remove scales that are going to be replaced by DAs
   scale_comb <- scale_comb[!scale_comb %in% scales_as_DA]
-  avail_dat <- sapply(scale_comb, \(x) sapply(vars, is_data_present_in_scale, scale = x))
+  avail_dat <- sapply(scale_comb, \(x) sapply(var_right, is_data_present_in_scale, scale = x))
   # If data is available for all the scales, return it as the wanted zoom level
   if (all(avail_dat)) return(scale_comb_init)
 
@@ -50,24 +44,19 @@ zoom_level_selection.bivar <- function(vars, top_scale, avail_scale_combinations
   scale_combs <- lapply(scale_combs, \(x) x[!x %in% scales_as_DA])
 
   # Which ones have all the data available in all the scales?
-  scale_combs <- lapply(scale_combs, sapply, \(x) sapply(vars, is_data_present_in_scale, scale = x))
+  scale_combs <- lapply(scale_combs, sapply, \(x) sapply(var_right, is_data_present_in_scale, scale = x))
 
   # If it's not all the scales that have the data, make sure it's not picked.
   # If not, sum the number of TRUEs (the highest will be the scale combinations
   # with the most scales available)
   scale_combs <- sapply(scale_combs, \(x) if (!all(x)) 0 else sum(x))
 
+  # If they're all equal to 0, return the top scale as a single scale (single tileset)
+  if (sum(scale_combs) == 0) return(top_scale)
+
   # Return the scale combinations with the scale combinations having the most
   # scales and all containing data
   return(possible_scale_comb[which.max(scale_combs)])
-
-}
-
-#' @describeIn zoom_level_selection default method
-#' @export
-zoom_level_selection.default <- function(vars, top_scale, avail_scale_combinations,
-                                         scales_as_DA = c("building", "street"), ...) {
-  longest_scale_combination(top_scale, avail_scale_combinations)
 }
 
 #' Find the longest scale combination

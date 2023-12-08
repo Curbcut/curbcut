@@ -318,7 +318,7 @@ update_scale <- function(tile, zoom_string) {
 #' selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' #' "housing_tenant_2016").
 #' @param var_right <`reactive character`> A reactive character string of the
-#' selected compared variable, e.g. housing_value_2016.
+#' selected compared variable, e.g. `housing_value`.
 #' @param widget_time <`reactive vector`> The time selected by the user on the
 #' time widget. Length 1 (single year) or 2 (compare years).
 #'
@@ -375,7 +375,7 @@ update_rv <- function(id, r, rv_name, new_val, default_val = NULL) {
       return(NULL)
     }
     r[[id]][[rv_name]](new_val())
-  })
+  }, ignoreNULL = TRUE)
 }
 
 #' Update the page's `region` reactive value in the reactive list `r`

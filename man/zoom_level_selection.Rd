@@ -2,28 +2,10 @@
 % Please edit documentation in R/geography_helpers.R
 \name{zoom_level_selection}
 \alias{zoom_level_selection}
-\alias{zoom_level_selection.bivar}
-\alias{zoom_level_selection.default}
 \title{Internal function for dispatching \code{zoom_level_selection}.}
 \usage{
 zoom_level_selection(
-  vars,
-  top_scale,
-  avail_scale_combinations,
-  scales_as_DA = c("building", "street"),
-  ...
-)
-
-\method{zoom_level_selection}{bivar}(
-  vars,
-  top_scale,
-  avail_scale_combinations,
-  scales_as_DA = c("building", "street"),
-  ...
-)
-
-\method{zoom_level_selection}{default}(
-  vars,
+  var_right,
   top_scale,
   avail_scale_combinations,
   scales_as_DA = c("building", "street"),
@@ -31,9 +13,10 @@ zoom_level_selection(
 )
 }
 \arguments{
-\item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link{vars_build}} function. The class of the vars object is
-used to determine which type of legend to draw.}
+\item{var_right}{<\code{character}> Character string of the selected
+compared variable, e.g. \code{housing_value}. It will be used to check on all
+possible scale combinations which combinations have scales that all have
+valid data.}
 
 \item{top_scale}{<\code{character}>}
 
@@ -51,10 +34,3 @@ A ggplot object that represents the \code{delta} legend.
 \description{
 Internal function for dispatching \code{zoom_level_selection}.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{zoom_level_selection(bivar)}: bivar method
-
-\item \code{zoom_level_selection(default)}: default method
-
-}}

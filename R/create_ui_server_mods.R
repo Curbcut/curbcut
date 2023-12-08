@@ -140,11 +140,24 @@ create_ui_server_mods <- function(modules, pos = 1) {
         ignoreInit = TRUE
       )
 
+      # Right variable / compare panel
+      var_right <- compare_server(
+        id = id,
+        r = r,
+        var_list = shiny::reactive(dropdown_make(
+          vars = vars_right,
+          compare = TRUE
+        )),
+        # If there are no time in the page, use the latest census for date of
+        # comparisons
+        time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021)
+      )
+
       # Region and zoom levels change depending on the geography widget
       zl <- geography_server(
         id = id,
         r = r,
-        vars = r[[id]]$vars,
+        var_right = var_right,
         regions = regions,
         avail_scale_combinations = avail_scale_combinations
       )
@@ -206,19 +219,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
       var_left <- shiny::reactive(autovars()$var)
       widget_time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
-
-      # Right variable / compare panel
-      var_right <- compare_server(
-        id = id,
-        r = r,
-        var_list = shiny::reactive(dropdown_make(
-          vars = vars_right,
-          compare = TRUE
-        )),
-        # If there are no time in the page, use the latest census for date of
-        # comparisons
-        time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021)
-      )
 
       # Update the `r[[id]]$vars` reactive
       update_vars(

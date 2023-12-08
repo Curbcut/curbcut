@@ -4,7 +4,7 @@
 #' @param var_left <`reactive character`> Character string of the selected
 #' variable, e.g. `alp_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
 #' @param var_right <`reactive character`> Character string of the selected
-#' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
+#' compared variable, e.g. `housing_value`. Defaults to what no compared
 #' variable is represented by (" ").
 #' @param scale <`character`> Scale under study. The output of
 #' \code{\link{update_scale}}.
@@ -30,6 +30,13 @@ vars_build <- function(var_left, var_right = " ", scale, time,
 
   # Switch scales to DA if necessary
   scale <- treat_to_DA(scales_as_DA, scale)
+
+  # Is everything valid? Return NULL if it's invalid.
+  if (var_right != " ") {
+    if (!is_data_present_in_scale(var = var_right, scale = scale)) {
+      return(NULL)
+    }
+  }
 
   # Unique time
   time <- unique(time)

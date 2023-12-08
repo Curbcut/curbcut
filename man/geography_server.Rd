@@ -8,7 +8,7 @@
 geography_server(
   id,
   r,
-  vars,
+  var_right,
   regions,
   avail_scale_combinations,
   scales_as_DA = shiny::reactive(c("building", "street"))
@@ -23,9 +23,10 @@ e.g. \code{alp}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{vars}{<\verb{named list}> Named list with a class. Object built using the
-\code{\link{vars_build}} function. The class of the vars object is
-used to determine which type of legend to draw.}
+\item{var_right}{<\verb{reactive character}> Character string of the selected
+compared variable, e.g. \code{housing_value}. It will be used to check on all
+possible scale combinations which combinations have scales that all have
+valid data.}
 
 \item{regions}{<\verb{character vector}> Possible available regions for selection.}
 

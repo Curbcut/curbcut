@@ -20,7 +20,7 @@ selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' "housing_tenant_2016").}
 
 \item{var_right}{<\verb{reactive character}> A reactive character string of the
-selected compared variable, e.g. housing_value_2016.}
+selected compared variable, e.g. \code{housing_value}.}
 
 \item{widget_time}{<\verb{reactive vector}> The time selected by the user on the
 time widget. Length 1 (single year) or 2 (compare years).}

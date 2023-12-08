@@ -20,7 +20,7 @@ vars_build(
 variable, e.g. \code{alp_2016} or \code{c("housing_tenant_2006", "housing_tenant_2016")}.}
 
 \item{var_right}{<\verb{reactive character}> Character string of the selected
-compared variable, e.g. \code{housing_value_2016}. Defaults to what no compared
+compared variable, e.g. \code{housing_value}. Defaults to what no compared
 variable is represented by (" ").}
 
 \item{scale}{<\code{character}> Scale under study. The output of

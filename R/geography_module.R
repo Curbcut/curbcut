@@ -8,9 +8,10 @@
 #' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function. The class of the vars object is
-#' used to determine which type of legend to draw.
+#' @param var_right <`reactive character`> Character string of the selected
+#' compared variable, e.g. `housing_value`. It will be used to check on all
+#' possible scale combinations which combinations have scales that all have
+#' valid data.
 #' @param regions <`character vector`> Possible available regions for selection.
 #' @param avail_scale_combinations <`character vector`> Available scale combinations
 #' for the top scale.
@@ -19,7 +20,7 @@
 #'
 #' @return A reactive list containing selected region and calculated zoom levels.
 #' @export
-geography_server <- function(id, r, vars, regions, avail_scale_combinations,
+geography_server <- function(id, r, var_right, regions, avail_scale_combinations,
                              scales_as_DA = shiny::reactive(c("building", "street"))) {
   shiny::moduleServer(id, function(input, output, session) {
     # Region default
@@ -197,7 +198,7 @@ geography_server <- function(id, r, vars, regions, avail_scale_combinations,
     # Grab a zoom level out of the top scale value
     mzl <- shiny::reactive({
       scale_comb <- zoom_level_selection(
-        vars = vars(),
+        var_right = var_right(),
         top_scale = tp_out(),
         avail_scale_combinations = avail_scale_combinations,
         scales_as_DA = scales_as_DA())
