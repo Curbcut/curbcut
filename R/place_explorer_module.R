@@ -75,6 +75,7 @@ place_explorer_server <- function(id, r,
     zl <- geography_server(
       id = id,
       r = r,
+      var_right = shiny::reactive(" "),
       regions = regions,
       avail_scale_combinations = avail_scale_combinations
     )
@@ -133,7 +134,8 @@ place_explorer_server <- function(id, r,
       data_colours = dat,
       coords = r[[id]]$coords,
       zoom = r[[id]]$zoom,
-      stories = NULL
+      stories = NULL,
+      vars = shiny::reactive(NULL)
     )
 
     # Map click
@@ -210,7 +212,8 @@ place_explorer_server <- function(id, r,
     output$download_portrait <-
       shiny::downloadHandler(
         filename = shiny::reactive(paste0(
-          r[[id]]$df(), "_",
+          zl()$region, "_",
+          tile(),
           r[[id]]$select_id(), ".html"
         )),
         content = function(file) {

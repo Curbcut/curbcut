@@ -123,6 +123,14 @@ cc_translation_df <-
       "n\u00e9cessit\u00e9 le passage de la r\u00e9gion \u00E0 <b>%s</b>."
     )
   ) |>
+  tibble::add_row(
+    en = paste0(
+      "residents"
+    ),
+    fr = paste0(
+      "résidents"
+    )
+  ) |>
   # Legend ------------------------------------------------------------------
 
   tibble::add_row(

@@ -16,6 +16,10 @@
 zoom_level_selection <- function(var_right, top_scale, avail_scale_combinations,
                                  scales_as_DA = c("building", "street"), ...) {
 
+  if (var_right == " ") {
+    return(longest_scale_combination(top_scale, avail_scale_combinations))
+  }
+
   # In most cases, we should be only looking at the longest string of scales,
   # as there is most likely data available for all scales.
   scale_comb_init <- longest_scale_combination(top_scale, avail_scale_combinations)

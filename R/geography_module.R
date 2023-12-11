@@ -46,13 +46,19 @@ geography_server <- function(id, r, var_right, regions, avail_scale_combinations
       out <- scales_dictionary$subtext[scales_dictionary$scale == x]
     }, simplify = TRUE, USE.NAMES = FALSE)
     nb_residents <- sapply(top_scales, \(x) {
-      pop <- get_from_globalenv(x)$population
+
+      pop <- suppressWarnings(get_from_globalenv(x)$population)
+      if (is.null(pop)) {
+        pop <-data_get_qs(var = "c_population",
+                          scale = x,
+                          data_path = get_data_path())
+        pop <- pop[[ncol(pop)]]
+      }
       pop <- pop[-find_outliers(pop, lower_bracket = 0.25, higher_bracket = 0.75,
                                 iqr_multiplier = 0)]
-      min_val <- convert_unit(x = min(pop, na.rm = TRUE))
-      max_val <- convert_unit(x = max(pop, na.rm = TRUE))
-
-      sprintf("%s-%s", min_val, max_val)
+      vals <- convert_unit(x = c(min(pop, na.rm = TRUE), max(pop, na.rm = TRUE)),
+                           compact = TRUE)
+      sprintf("%s - %s", vals[[1]], vals[[2]])
     })
 
     scales_subtext <- shiny::reactive({
@@ -112,6 +118,9 @@ geography_server <- function(id, r, var_right, regions, avail_scale_combinations
       # the top scale picker to the highest scale in order of priority (first in
       # the dictionary).
       new_top_scale <- top_scales[[which(tp_works)[1]]]
+
+      # Whatever the region, if there is only one scale, do nothing!
+      if (new_top_scale == tp_out()) return(NULL)
 
       # Inform the message
       reg_name <- regions_dictionary$name[regions_dictionary$region == reg_out()]
@@ -202,7 +211,14 @@ geography_server <- function(id, r, var_right, regions, avail_scale_combinations
         top_scale = tp_out(),
         avail_scale_combinations = avail_scale_combinations,
         scales_as_DA = scales_as_DA())
-      get_from_globalenv(sprintf("mzl_%s", scale_comb))
+
+      mzl <- get0(sprintf("mzl_%s", scale_comb))
+      if (is.null(mzl) & length(scale_comb) == 1) {
+        return(stats::setNames(0, scale_comb))
+      }
+      if (is.null(mzl)) stop(sprintf("Missing mzl_%s", scale_comb))
+
+      return(mzl)
     })
 
     # observe(print(input$geo_hover))
