@@ -109,6 +109,7 @@ longest_scale_combination <- function(top_scale, avail_scale_combinations) {
 #' scale combinations.
 #' @return <list> A list where each element represents the longest scale
 #' combination for a single top scale.
+#' @export
 single_scales_combination <- function(avail_scale_combinations) {
 
   # Grab the top scales

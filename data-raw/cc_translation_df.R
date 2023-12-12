@@ -994,7 +994,7 @@ cc_translation_df <-
     fr = "Explorer"
   ) |>
   tibble::add_row(
-    en = "Demopgrahics",
+    en = "Demographics",
     fr = "D\u00e9mographie"
   ) |>
   tibble::add_row(
