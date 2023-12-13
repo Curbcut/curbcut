@@ -374,13 +374,21 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     mnd_list <- autovars_groupnames(id = id)
     # If it's a list already formated using `dropdown_make(), use it as is. If
     # not, format it for the picker updates.
-    mnd_list <- if (is.list(mnd_list)) {
-      mnd_list
-    } else {
-      mnd_list <- list(mnd_list)
-      names(mnd_list) <- main_dropdown_title
-      mnd_list
-    }
+    mnd_list <- (\(x) {
+      if (is.list(mnd_list)) {
+        mnd_list
+      } else {
+        mnd_list_list <- list(mnd_list)
+        # picker server can ONLY take a list. The list must be named. In the case
+        # there is to be no label on the dropdown, return mnd_list as a list of
+        # all the choices. If not, name the dropdown according to main_drop_title.
+        if (!is.null(main_dropdown_title)) {
+          if (is.na(main_dropdown_title)) return(sapply(mnd_list, list))
+          names(mnd_list_list) <- main_dropdown_title
+        }
+        mnd_list_list
+      }
+    })()
 
     mnd <- picker_server(
       id = id, r = r, picker_id = "mnd",
