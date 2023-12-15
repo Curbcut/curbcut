@@ -34,21 +34,28 @@ label_indicators_server <- function(id, r, label = shiny::reactive("Advanced con
   })
 }
 
-#' Advanced Controls - UI
+#' Create a UI Element with Advanced Controls
 #'
-#' This function creates the user interface for the advanced controls module.
-#' It is designed to be used in tandem with the advanced_controls_server function.
+#' This function creates a Shiny UI element with a section for common widgets and
+#' a hidden section for advanced controls. The advanced section can be toggled
+#' with a checkbox. Additional arguments can be passed to customize both the
+#' main label and the advanced controls sections.
 #'
-#' @param id <`character`> The ID of the page in which the legend will appear,
-#' e.g. `alp`. NOT A MODULE, NO NAMESPACING.
-#' @param label <`character`> Label for the checkbox. Defaults to `cc_t("Advanced controls")`
-#' @param ... <`args`> UIs to be inserted in the advanced controls div.
+#' @param id <`character`> A unique identifier for the UI element.
+#' @param label <`character`> Label for the checkbox that toggles the display of
+#' advanced controls. Default is 'Advanced controls'.
+#' @param main_UIs <`list`> A list of additional arguments for the main
+#' indicator label div. Default is an empty list.
+#' @param adv_UIs <`list`> A list of additional arguments for the advanced
+#' controls div. Default is an empty list.
 #'
-#' @return A Shiny UI definition
+#' @return A `shiny::tagList` object containing the UI elements.
 #' @export
-label_indicators_UI <- function(id, label = cc_t("Advanced controls"), ...) {
+label_indicators_UI <- function(id, label = cc_t("Advanced controls"),
+                                main_UIs = list(), adv_UIs = list()) {
+
   shiny::tagList(
-    shinyjs::hidden(shiny::div(
+    shiny::div(
       id = shiny::NS(id, "indicator_label"),
       class = "shiny-split-layout sidebar-section-title",
       shiny::div(
@@ -59,19 +66,17 @@ label_indicators_UI <- function(id, label = cc_t("Advanced controls"), ...) {
         style = "width: 30%",
         cc_t("Indicator")
       ),
-      shinyjs::hidden(
-        shiny::div(
-          id = shiny::NS(id, "cb_adv_opt_div"),
-          style = "width: 60%; margin:0px !important; text-align: right; overflow: hidden;",
-          checkbox_UI(
-            id = shiny::NS(id, "cb_advanced_controls"),
-            label = label,
-            value = FALSE
-          )
+      shiny::div(
+        id = shiny::NS(id, "cb_adv_opt_div"),
+        style = "width: 60%; margin:0px !important; text-align: right; overflow: hidden;",
+        checkbox_UI(
+          id = shiny::NS(id, "cb_advanced_controls"),
+          label = label,
+          value = FALSE
         )
-      ),
-    )),
-    shiny::div(id = shiny::NS(id, "common_widgets")),
+      )
+    ),
+    shiny::div(id = shiny::NS(id, "common_widgets"), main_UIs),
     shinyjs::hidden(shiny::div(
       id = shiny::NS(id, "advanced_controls_div"),
       shiny::hr(id = shiny::NS(id, "hr_advanced_controls")),
@@ -87,7 +92,8 @@ label_indicators_UI <- function(id, label = cc_t("Advanced controls"), ...) {
         )
       ),
       shiny::div(id = shiny::NS(id, "additional_widgets_div")),
-      ...
+      adv_UIs
     ))
   )
+
 }

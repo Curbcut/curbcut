@@ -566,12 +566,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 }
 
 #' @describeIn autovars_server Create the UI for the autovars module
+#' @param ... UIs to be inserted in the advanced controls div.
 #' @export
-autovars_UI <- function(id) {
+autovars_UI <- function(id, ...) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "autovars"),
-      label_indicators_UI(id = shiny::NS(id, "indicators_label")),
+      label_indicators_UI(id = shiny::NS(id, "indicators_label"), ...),
     )
   )
 }
