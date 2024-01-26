@@ -274,12 +274,15 @@ treat_to_DA <- function(scales_as_DA, scale) {
 #'
 #' @param x <`character`> The name of the object to retrieve from the global
 #' environment.
+#' @param stop_if_missing <`logical`> Should it trigger an error if the object
+#' is missing?
 #'
 #' @return The requested object from the global environment.
 #' @export
-get_from_globalenv <- function(x) {
+get_from_globalenv <- function(x, stop_if_missing = TRUE) {
   out <- get0(x, envir = .GlobalEnv)
-  if (is.null(out)) {
+
+  if (stop_if_missing & is.null(out)) {
     stop(glue::glue_safe("`{x}` object not found in the global environment."))
   }
   return(out)
@@ -723,7 +726,7 @@ match_schema_to_col <- function(data, time, col = "var_left",
 
   # Extract available time
   avail_time <- s_extract(data_schema$time, pv) |> unique()
-  avail_time <- gsub("_", "", avail_time) |> as.numeric()
+  avail_time <- gsub("_", "", avail_time)
 
   # Which var out of those correspond to the right time
   var <- pv[avail_time %in% time_col]
@@ -731,6 +734,8 @@ match_schema_to_col <- function(data, time, col = "var_left",
   if (closest_time) {
     if (length(var) == 0) {
       # Get the closest years
+      avail_time <- as.numeric(avail_time)
+      time_col <- as.numeric(time_col)
       closest_t <- which.min(abs(avail_time - time_col))
       var <- pv[closest_t]
     }
@@ -738,6 +743,10 @@ match_schema_to_col <- function(data, time, col = "var_left",
 
   # Subset from schemas the col schema
   sch <- schemas[[col]]
+  # If time is part of the schema, it's already been treated. Forget it.
+  sch <- sch[names(sch) != "time"]
+  # If time was the only `sch`
+  if (length(sch) == 0) return(var)
 
   for (i in names(sch)) {
     regex <- data_schema[[i]]
@@ -811,7 +820,7 @@ get_data_path <- function() {
   }
 
   # Retrieve the value of the CURBCUT_DATA environment variable
-  data_path <- Sys.getenv("CURBCUT_DATA")
+  data_path <- "C:/Users/maxim/Unsync/curbcut-comox/data/"##Sys.getenv("CURBCUT_DATA")
 
   # Check if the environment variable is empty
   if (data_path == "") {
@@ -946,3 +955,25 @@ is_data_present_in_scale <- function(var, scale) {
   return(TRUE)
 }
 
+#' Convert time value to character representation
+#'
+#' This function takes a variable and a time value, and returns the character
+#' representation of the time value if it is named in the variables table. If the
+#' `dates` column of the variable in the `variables` table is not a named vector,
+#' it returns the time value itself.
+#'
+#' @param var <`character vector`> String representing the code of the variable
+#' to retrieve information for.
+#' @param time_val <`numeric`> The time value to be checked.
+#'
+#' @return <`character`> Returns the name of the 'time_val' if its corresponding var in
+#' the `dates` column in the variables table is named. If  not named, returns 'time_val' itself.
+time_chr <- function(var, time_val) {
+  dates <- var_get_info(var, what = "dates")[[1]]
+  if (is.null(names(dates))) return(time_val)
+
+  # If dates is named, return the character
+  value <- names(dates)[which(dates == time_val)]
+
+  return(value)
+}

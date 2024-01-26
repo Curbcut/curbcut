@@ -99,10 +99,18 @@ autovars_common_widgets <- function(id) {
     var_list <- var_list$var_code
   }
 
-  # Time?
+  # Unique time, keep names if there are
   time <- unlist(variables$dates[variables$var_code %in% var_list])
-  time <- unique(time)
-  time <- as.numeric(time)
+  unique_time <- unique(time)
+  names(unique_time) <- names(time)[match(unique_time, time)]
+  time <- unique_time
+  # If at least one is already numeric, then convert all to numeric. This
+  # prevents from switching a slider text time slider to go numeric and ignore
+  # such as "000" to convert it to 0.
+  if (is.null(names(time))) {
+    time <- as.numeric(time)
+  }
+
   # What happens when there is no time?
 
   # Other widgets
@@ -323,4 +331,87 @@ autovars_placeholder_var <- function(id) {
 
   # Return it
   return(default_var)
+}
+
+autovars_time_ui <- function(id, default_var, common_widgets, widget_ns) {
+
+  # Grab the dates for this variable (and most likely the whole page!)
+  times <- common_widgets()$time
+
+  # Is it named? If so, slider text must be used.
+  slider_type <- if (is.null(names(times))) "slider" else "slider_text"
+
+  if (slider_type == "slider") {
+    min_ <- times |> min()
+    max_ <- times |> max()
+    step_ <- unique(diff(times))[1]
+    double_value_ <- times[ceiling(length(times) / 2)]
+    double_value_ <- c(double_value_, max_)
+    length_ <- times |> length()
+    # If there are less than 10 options, slim sliders
+    ys_classes <- if (length_ < 10) "year-slider-slim" else "year-slider"
+
+    sliders <- shiny::tagList(
+      slider_UI(
+        id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
+        step = step_, label = NULL
+      ),
+      shinyjs::hidden(slider_UI(
+        id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
+        step = step_, label = NULL,
+        value = double_value_
+      )
+      )
+    )
+  }
+
+  if (slider_type == "slider_text") {
+    dates_names <- names(times)
+
+    sliders <- shiny::tagList(
+      slider_text_UI(
+        id = widget_ns(id), slider_text_id = "slu", label = NULL,
+        choices = dates_names, selected = dates_names[1]
+      ),
+      shinyjs::hidden(slider_text_UI(
+        id = widget_ns(id), slider_text_id = "slb", label = NULL,
+        choices = dates_names, selected = dates_names[1:2]
+      ))
+    )
+  }
+
+  full_out <- tagList(
+    shiny::div(
+      id = widget_ns("year_sliders"),
+      # class = ys_classes,
+      shiny::hr(id = widget_ns("above_year_hr")),
+      shiny::div(
+        class = "shiny-split-layout sidebar-section-title",
+        shiny::div(
+          style = "width: 9%",
+          icon_material_title("date_range")
+        ),
+        shiny::div(
+          style = "width: 24%",
+          shiny::tags$span(
+            id = shiny::NS(id, "year_label"),
+            cc_t("Time", force_span = TRUE)
+          )
+        ),
+        shiny::div(
+          id = widget_ns("compare_dates"),
+          style = "width: 64%; margin:0px !important; text-align: right;",
+          checkbox_UI(
+            id = widget_ns(id),
+            label = cc_t("Compare dates", force_span = TRUE),
+            value = FALSE
+          )
+        )
+      ),
+      sliders
+    )
+  )
+
+  return(full_out)
+
 }

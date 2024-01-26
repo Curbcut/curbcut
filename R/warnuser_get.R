@@ -55,6 +55,10 @@ warnuser_get <- function(vars, data, time, widget_time, more_text = NULL, lang =
   # Year displayed != year chosen -------------------------------------------
 
   year_mismatch_left <- (\(x) {
+    # If time is named, the selected time can only be valid
+    if (!is.null(names(time))) {
+      return(NULL)
+    }
     if (!all(widget_time != "")) {
       return(NULL)
     }
@@ -78,6 +82,10 @@ warnuser_get <- function(vars, data, time, widget_time, more_text = NULL, lang =
   if (!is.null(year_mismatch_left)) out <- c(out, year_mismatch_left)
 
   year_mismatch_right <- (\(x) {
+    # If time is named, the selected time can only be valid
+    if (!is.null(names(time))) {
+      return(NULL)
+    }
     if (!all(widget_time != "")) {
       return(NULL)
     }

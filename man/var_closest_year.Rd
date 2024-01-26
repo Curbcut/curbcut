@@ -4,7 +4,7 @@
 \alias{var_closest_year}
 \title{Return variable based on time and input}
 \usage{
-var_closest_year(input, time)
+var_closest_year(input, time, variables = get_from_globalenv("variables"))
 }
 \arguments{
 \item{input}{<\code{character}> A character string representing the variable code.}
@@ -12,6 +12,9 @@ var_closest_year(input, time)
 \item{time}{<\code{numeric}> A numeric value indicating the time in years for
 which the variable is needed. If \code{NULL}, the function returns the
 \code{input} as is.}
+
+\item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
+from the global environment using \code{\link{get_from_globalenv}}.}
 }
 \value{
 A character string representing the variable code with the closest

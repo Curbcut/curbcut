@@ -99,9 +99,23 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
   # If schema isn't NULL, see if it needs to be switched in explanations
   if (!is.null(schemas_col)) {
     if (grepl("explanation|explanation_nodet|exp_q5", what)) {
-      for (i in names(schemas_col)) {
-        scm <- sprintf("__%s__", i)
-        out <- gsub(scm, schemas_col[[i]], out)
+      for (sch in names(schemas_col)) {
+        value <-  schemas_col[[sch]]
+
+        # Special case if time needs to be seen as character
+        if (sch == "time") {
+          value <- time_chr(var, value)
+        }
+
+        scm <- sprintf("__%s__", sch)
+
+        # Determine the number of occurrences to replace
+        num_replacements <- min(length(value), gregexpr(scm, out)[[1]] |> length())
+
+        # Loop through each occurrence and replace with corresponding value
+        for (i in 1:num_replacements) {
+          out <- sub(scm, value[i], out, fixed = TRUE)
+        }
       }
     }
   }
@@ -226,6 +240,8 @@ var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
 #' @param time <`numeric`> A numeric value indicating the time in years for
 #' which the variable is needed. If \code{NULL}, the function returns the
 #' \code{input} as is.
+#' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
+#' from the global environment using \code{\link{get_from_globalenv}}.
 #'
 #' @return A character string representing the variable code with the closest
 #' year attached, or the original \code{input} if \code{time} is \code{NULL} or
@@ -234,33 +250,42 @@ var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
 #' @details The function uses the \code{\link{var_get_info}} function to obtain the
 #' dates at which the variable is available, and then finds the closest year to
 #' the given \code{time} value.
-var_closest_year <- function(input, time) {
+var_closest_year <- function(input, time, variables = get_from_globalenv("variables")) {
   # If `time` is NULL, return the input
   if (is.null(time)) {
     return(input)
   }
 
   # If input isn't in `variables` returns input
-  variables <- get_from_globalenv("variables")
   if (!input %in% variables$var_code) {
     return(input)
   }
 
   # Grab the dates at which the variable is available
-  dates <- as.numeric(var_get_info(input, what = "dates")[[1]])
+  dates <- var_get_info(input, what = "dates")[[1]]
+  dates <- setNames(dates, names(dates))
+
   # If no dates, return the input
   if (all(is.na(dates))) {
     return(input)
   }
-  # Get time as numeric
-  time <- as.numeric(time)
 
   # Get the closest years
-  closest_year <- sapply(time, \(x) dates[which.min(abs(dates - x))],
-    USE.NAMES = FALSE
-  )
-  closest_year <- unique(closest_year)
+  closest_year <- if (is.numeric(time)) {
+    dates <- as.numeric(dates)
+    sapply(time, \(x) dates[which.min(abs(dates - x))],
+           USE.NAMES = FALSE
+    )
+  } else if (all(time %in% dates)) {
+    dates[dates %in% time]
+  } else {
+    # If it's character and it doesn't fit in dates, return the latest year
+    max(as.numeric(dates))
+  }
+
+  unique_cy <- unique(closest_year)
+  names(unique_cy) <- names(closest_year)[match(unique_cy, closest_year)]
 
   # Return the var
-  return(list(var = input, closest_year = closest_year))
+  return(list(var = input, closest_year = unique_cy))
 }

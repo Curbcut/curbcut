@@ -29,7 +29,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
     mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
     theme_lowercased <- gsub(" .*", "", tolower(page$theme))
-    stories <- get_from_globalenv("stories")
+    # stories <- get_from_globalenv("stories")
 
     # Grab the possible regions for the module
     possible_regions <- page$regions[[1]][1]
@@ -95,7 +95,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       default_year <- page$dates[[1]]
       default_year <- if (is.null(default_year)) NULL else max(default_year)
       vars_right <- page$var_right[[1]]
-      stories <- get_from_globalenv("stories")
+      stories <- get_from_globalenv("stories", stop_if_missing = FALSE)
 
       map_zoom <- get_from_globalenv("map_zoom")
       map_loc <- get_from_globalenv("map_loc")

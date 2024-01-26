@@ -9,7 +9,11 @@ bookmark_codes <- c(
   "ccslider_sld" = "sl",
   "ger-ccpicker_var" = "gr",
   "get-ccpicker_var" = "gt",
-  "indicators_label-cb_advanced_controls-chcbx" = "ic"
+  "indicators_label-cb_advanced_controls-chcbx" = "ic",
+  "ccslider_slu" = "nu",
+  "ccslider_slb" = "nb",
+  "ccslidertext_slu" = "tu",
+  "ccslidertext_slb" = "tb"
 )
 
 bookmark_shorts <- c(
@@ -18,6 +22,7 @@ bookmark_shorts <- c(
   "cccheckbox_" = "ch",
   "ccslider_" = "sd"
 )
+
 
 # All unique?
 if (!all(table(c(bookmark_codes, bookmark_shorts) |> unname()) == 1)) {

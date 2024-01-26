@@ -60,54 +60,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         where = "afterEnd",
         ui = {
           if (!is.null(default_year)) {
-            min_ <- common_widgets()$time |> min()
-            max_ <- common_widgets()$time |> max()
-            step_ <- unique(diff(common_widgets()$time))[1]
-            double_value_ <- common_widgets()$time[ceiling(length(common_widgets()$time) / 2)]
-            double_value_ <- c(double_value_, max_)
-            length_ <- common_widgets()$time |> length()
-            # If there are less than 10 options, slim sliders
-            ys_classes <- if (length_ < 10) "year-slider-slim" else "year-slider"
-
-            shiny::tagList(
-              shiny::div(
-                id = widget_ns("year_sliders"),
-                class = ys_classes,
-                shiny::hr(id = widget_ns("above_year_hr")),
-                shiny::div(
-                  class = "shiny-split-layout sidebar-section-title",
-                  shiny::div(
-                    style = "width: 9%",
-                    icon_material_title("date_range")
-                  ),
-                  shiny::div(
-                    style = "width: 24%",
-                    shiny::tags$span(
-                      id = shiny::NS(id, "year_label"),
-                      cc_t("Time", force_span = TRUE)
-                    )
-                  ),
-                  shiny::div(
-                    id = widget_ns("compare_dates"),
-                    style = "width: 64%; margin:0px !important; text-align: right;",
-                    checkbox_UI(
-                      id = widget_ns(id),
-                      label = cc_t("Compare dates", force_span = TRUE),
-                      value = FALSE
-                    )
-                  )
-                ),
-                slider_UI(
-                  id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
-                  step = step_, label = NULL
-                ),
-                shinyjs::hidden(slider_UI(
-                  id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
-                  step = step_, label = NULL,
-                  value = double_value_
-                ))
-              )
-            )
+            autovars_time_ui(id, default_var, common_widgets, widget_ns)
           }
         }
       )
@@ -243,8 +196,12 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       }
     })
     # Grab the time values
-    slider_uni <- slider_server(id = id, slider_id = "slu")
-    slider_bi <- slider_server(id = id, slider_id = "slb")
+    # If numeric time
+    slider_uni_num <- slider_server(id = id, slider_id = "slu")
+    slider_bi_num <- slider_server(id = id, slider_id = "slb")
+    # If character time
+    slider_uni_text <- slider_text_server(id = id, slider_text_id = "slu")
+    slider_bi_text <- slider_text_server(id = id, slider_text_id = "slb")
     slider_switch <- checkbox_server(
       id = id, r = r,
       label = shiny::reactive("Compare dates")
@@ -252,8 +209,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Enable or disable first and second slider
     shiny::observeEvent(slider_switch(), {
       single_year <- length(common_widgets()$time) == 1
+      # Slider numeric
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
+      # Slider text
+      shinyjs::toggle(shiny::NS(id, "ccslidertext_slu"), condition = !slider_switch() & !single_year)
+      shinyjs::toggle(shiny::NS(id, "ccslidertext_slb"), condition = slider_switch() & !single_year)
+      # Checkbox
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
 
       # Hide the whole div if there's only one year of data
@@ -280,7 +242,25 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       if (is.null(slider_switch())) {
         return(default_year)
       }
-      if (slider_switch()) slider_bi() else slider_uni()
+
+      # Which type of slider?
+      times <- common_widgets()$time
+      slider_type <- if (is.null(names(times))) "slider" else "slider_text"
+
+      # If it's a numeric slider
+      if (slider_type == "slider") {
+        tm <- if (slider_switch()) slider_bi_num() else slider_uni_num()
+      }
+
+      # If it's a character slider
+      if (slider_type == "slider_text") {
+        # The selected time must be the 'real' value (the one selected by the
+        # user), not the pretty front-facing one (the name of the dates vector).
+        slider_val <- if (slider_switch()) slider_bi_text() else slider_uni_text()
+        tm <- times[which(names(times) %in% slider_val)]
+      }
+
+      return(tm)
     })
 
     # Grab the common widgets' value
@@ -533,26 +513,27 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
 
     # Update the schemas!
     shiny::observe({
-      if (is.null(schemas)) {
-        return(NULL)
-      }
-      if (is.null(schema_reactive())) {
-        return(NULL)
-      }
+      # if (is.null(schemas)) {
+      #   return(NULL)
+      # }
+      # if (is.null(schema_reactive())) {
+      #   return(NULL)
+      # }
 
-      final_schemas <- NULL
+      final_schemas <- page$additional_schemas[[1]]
       for (i in names(schema_reactive())) {
         input_name <- schema_reactive()[[i]]
         input_val <- input[[shiny::NS(id, input_name)]]
         if (is.null(input_val)) next
-        final_schemas <- c(
-          final_schemas,
-          stats::setNames(input_val, i)
-        )
+        final_schemas[[i]] <- input_val
       }
-      if (is.null(final_schemas)) {
-        return(NULL)
-      }
+      # if (is.null(final_schemas)) {
+      #   return(NULL)
+      # }
+
+      # Grab the 'real' time (the one the user will see) so it can accurately
+      # inform the schema,
+      final_schemas <- c(final_schemas, list(time = time()))
       final_schemas <- list(var_left = final_schemas)
 
       update_rv(
