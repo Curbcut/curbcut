@@ -6,6 +6,7 @@
 \usage{
 ui(
   site_name,
+  city_two_words,
   web_description,
   web_title,
   placeholder_video_src,
@@ -21,6 +22,9 @@ ui(
 }
 \arguments{
 \item{site_name}{<\code{character}>¨Name of the site with the city, e.g. \verb{Curbcut Montréal}.}
+
+\item{city_two_words}{<\code{character}> Two words of the city. It will take place
+as the big heading. If \verb{Metro Vancouver}, we will read "Explore Metro Vancouver".}
 
 \item{web_description}{<\code{character}> The description of the website for metadata.
 e.g. \code{"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."}}

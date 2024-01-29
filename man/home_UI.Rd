@@ -4,10 +4,19 @@
 \alias{home_UI}
 \title{Create the home user interface}
 \usage{
-home_UI(id = "home", placeholder_video_src, video_src, lang_init = "en")
+home_UI(
+  id = "home",
+  city_two_words,
+  placeholder_video_src,
+  video_src,
+  lang_init = "en"
+)
 }
 \arguments{
 \item{id}{<\code{character}> A unique identifier for the home UI. Normally \code{home}.}
+
+\item{city_two_words}{<\code{character}> Two words of the city. It will take place
+as the big heading. If \verb{Metro Vancouver}, we will read "Explore Metro Vancouver".}
 
 \item{placeholder_video_src}{<\code{character}> External link to a publicly available
 mp4 video. The video will be used as the placeholder, until the user click on

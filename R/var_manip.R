@@ -96,8 +96,9 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
   out <- variables[[what]][subset_vector]
   if (translate) out <- cc_t(out, lang = lang)
 
-  # If schema isn't NULL, see if it needs to be switched in explanations
-  if (!is.null(schemas_col)) {
+  # If schema isn't NULL, see if it needs to be switched in explanations.
+  # And is there anything to replace?
+  if (!is.null(schemas_col) & grepl("__.*__", out)) {
     if (grepl("explanation|explanation_nodet|exp_q5", what)) {
       for (sch in names(schemas_col)) {
         value <-  schemas_col[[sch]]

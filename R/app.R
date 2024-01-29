@@ -106,6 +106,8 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' and the creation of the pages UI.
 #'
 #' @param site_name <`character`>¨Name of the site with the city, e.g. `Curbcut Montréal`.
+#' @param city_two_words <`character`> Two words of the city. It will take place
+#' as the big heading. If `Metro Vancouver`, we will read "Explore Metro Vancouver".
 #' @param web_description <`character`> The description of the website for metadata.
 #' e.g. `"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."`
 #' @param web_title <`character`> The title of the website for metadata.
@@ -134,7 +136,7 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
-ui <- function(site_name, web_description, web_title, placeholder_video_src,
+ui <- function(site_name, city_two_words, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics = NULL, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE) {
   modules_panel_calculated <- get0("modules_panel_calculated")
@@ -188,6 +190,7 @@ ui <- function(site_name, web_description, web_title, placeholder_video_src,
           title = shiny::actionLink("title", "Curbcut"),
           shiny::tabPanel(cc_t("Home"),
             home_UI("home",
+                    city_two_words = city_two_words,
               placeholder_video_src = placeholder_video_src,
               video_src = video_src,
               lang_init = lang_init

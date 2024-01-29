@@ -144,6 +144,8 @@ home_server <- function(id = "home", r) {
 #' the landing page with it.
 #'
 #' @param id <`character`> A unique identifier for the home UI. Normally `home`.
+#' @param city_two_words <`character`> Two words of the city. It will take place
+#' as the big heading. If `Metro Vancouver`, we will read "Explore Metro Vancouver".
 #' @param placeholder_video_src <`character`> External link to a publicly available
 #' mp4 video. The video will be used as the placeholder, until the user click on
 #' to watch the intro video. e.g. `https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_placeholder.mp4`
@@ -156,7 +158,7 @@ home_server <- function(id = "home", r) {
 #'
 #' @return A Shiny UI object for the home page.
 #' @export
-home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "en") {
+home_UI <- function(id = "home", city_two_words, placeholder_video_src, video_src, lang_init = "en") {
   # Get modules from the global environment
   modules <- get_from_globalenv("modules")
   pages <- modules[c("id", "theme", "nav_title")]
@@ -214,6 +216,7 @@ home_UI <- function(id = "home", placeholder_video_src, video_src, lang_init = "
   # Create landing page
   cc.landing::landing_input(
     inputId = shiny::NS(id, "landing"),
+    city_two_words = city_two_words,
     pages = pages,
     c_city_svg = get_from_globalenv("c_city_svg"),
     news_cards = get_from_globalenv("news_cards"),
