@@ -342,6 +342,13 @@ data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("bui
   # Filter to region
   data <- filter_region(data = data, scale = scale, region = region)
 
+  # Is delta ONLY positive or ONLY negative? Inform which color scale to use
+  vec <- data$var_left
+  vec <- vec[!is.na(vec)]
+  current <- "normal"
+  if (all(vec >= 0)) current <- "positive" else if (all(vec <= 0)) current <- "negative"
+  class(data) <- c(current, class(data))
+
   # Grab the breaks in the data
   breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
 
@@ -375,6 +382,13 @@ data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("bu
 
   # Filter to region
   data <- filter_region(data = data, scale = scale, region = region)
+
+  # Is delta ONLY positive or ONLY negative? Inform which color scale to use
+  vec <- data$var_left
+  vec <- vec[!is.na(vec)]
+  current <- "normal"
+  if (all(vec >= 0)) current <- "positive" else if (all(vec <= 0)) current <- "negative"
+  class(data) <- c(current, class(data))
 
   # Grab the breaks in the data
   breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)

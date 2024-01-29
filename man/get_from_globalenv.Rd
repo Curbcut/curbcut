@@ -4,11 +4,14 @@
 \alias{get_from_globalenv}
 \title{Get object from global environment}
 \usage{
-get_from_globalenv(x)
+get_from_globalenv(x, stop_if_missing = TRUE)
 }
 \arguments{
 \item{x}{<\code{character}> The name of the object to retrieve from the global
 environment.}
+
+\item{stop_if_missing}{<\code{logical}> Should it trigger an error if the object
+is missing?}
 }
 \value{
 The requested object from the global environment.

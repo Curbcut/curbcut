@@ -19,6 +19,29 @@ breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
     data <- data_get(vars = vars, scale = scale)
   }
 
+  return(breaks_delta_helper(data, character))
+}
+
+#' Breaks Delta Helper Function
+#'
+#' This function and its methods create breaks for positive, negative, or both
+#' types of values in a given vector. It handles outliers and provides options
+#' for output format.
+#'
+#' @param data <`numeric`> Data containg the class fo inform if the values are
+#' only negative, positive or mixed.
+#' @param character <`logical`> If TRUE, returns breaks as character strings.
+#'
+#' @return <`numeric/character`> Breaks from negative to positive values.
+#' @export
+breaks_delta_helper <- function(data, character, ...) {
+  UseMethod("breaks_delta_helper", data)
+}
+
+#' @describeIn breaks_delta_helper default method
+#' @return Return breaks from negative to positive values
+#' @export
+breaks_delta_helper.default <- function(data, character, ...) {
   # Data as absolute
   data_vl <- abs(data$var_left)
 
@@ -56,6 +79,92 @@ breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
   }
   out
 }
+
+#' @describeIn breaks_delta_helper positive method
+#' @return Return breaks as only positive values
+#' @export
+breaks_delta_helper.positive <- function(data, character, ...) {
+
+  vec <- data$var_left
+
+  # Remove outliers
+  which_out <- find_outliers(x = vec)
+  if (length(which_out) > 0) vec <- vec[-which_out]
+
+  # Split in 5
+  probs <- c(0.2,0.4,0.6,0.8,1)
+  breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
+
+  # If the breaks start with 0, try to push the probs
+  while (any(breaks == 0)) {
+    probs <- probs + 0.025
+    probs <- pmin(probs, 1)
+    if (sum(probs == 1) > 1) break
+    breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
+  }
+
+  breaks <- c(0, breaks)
+  # Try and make the second break a 2% increase (only if it's suitable: if
+  # the following break is higher than a 3% increase)
+  if (breaks[3] > 0.03) breaks[2] <- 0.02
+
+  # Convert to character
+  if (character) breaks <- convert_unit.pct(x = breaks, decimal = 0)
+
+  out <- unname(breaks)
+
+  if (!character) {
+    return(as.numeric(out))
+  }
+
+  out
+}
+
+#' @describeIn breaks_delta_helper negative method
+#' @return Return breaks as only negative values
+#' @export
+breaks_delta_helper.negative <- function(data, character, ...) {
+
+  vec <- data$var_left
+
+  # Remove outliers
+  which_out <- find_outliers(x = vec)
+  if (length(which_out) > 0) vec <- vec[-which_out]
+
+  # Split in 5
+  probs <- c(0.2,0.4,0.6,0.8,1)
+  breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
+
+  # If the breaks start with 0, try to push the probs
+  while (any(breaks == 0)) {
+    probs <- probs + 0.025
+    probs <- pmin(probs, 1)
+    if (sum(probs == 1) > 1) break
+    breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
+  }
+
+  breaks <- c(breaks, 0)
+  # Try and make the second break a 2% increase (only if it's suitable: if
+  # the following break is higher than a 3% increase)
+  if (breaks[4] < -0.03) breaks[5] <- -0.02
+
+  # Convert to character
+  if (character) breaks <- convert_unit.pct(x = breaks, decimal = 0)
+
+  out <- unname(breaks)
+
+  if (!character) {
+    return(as.numeric(out))
+  }
+
+  out
+}
+
+
+
+
+
+
 
 #' Find quintile breaks
 #'

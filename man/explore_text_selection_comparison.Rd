@@ -12,7 +12,8 @@ explore_text_selection_comparison(
   ranks_override = NULL,
   lang = NULL,
   time_col,
-  schemas = NULL
+  schemas = NULL,
+  larger = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ to. Defaults to NULL for no translation.}
 
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{larger}{<\code{logical}> Should we write 'larger than' or 'higher than' ?}
 }
 \value{
 A named list with two elements:

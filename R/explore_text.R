@@ -66,7 +66,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    time = time, lang = lang
+    time = time, lang = lang, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -117,8 +117,8 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
 
     # Plug the right elements for the final sentence
     second_step <- sprintf(
-      cc_t("%s %s is higher than in %s of other %s %s", lang = lang), exp,
-      context$p_start, relat$higher_than, context$scale_plur,
+      curbcut::cc_t("%s %s is %s than in %s of other %s %s", lang = lang), exp,
+      context$p_start, relat$higher_lower, relat$higher_lower_than, context$scale_plur,
       context$to_compare_short
     )
 
@@ -197,7 +197,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    time = time, lang = lang
+    time = time, lang = lang, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -291,8 +291,8 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
         exp
       }
       first_step <- sprintf(
-        cc_t("%s is higher than in %s of other %s", lang = lang), first_step_1,
-        relat$higher_than, context$scale_plur
+        cc_t("%s is %s than in %s of other %s", lang = lang), first_step_1,
+        relat$higher_lower, relat$higher_lower_than, context$scale_plur
       )
 
       # Make the second step of the sentence
@@ -302,13 +302,14 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       )
 
       return(list(
-        higher_than = relat$higher_than_num,
+        higher_lower = relat$higher_lower,
+        higher_lower_than = relat$higher_lower_than_num,
         text = sprintf("%s, %s", first_step, second_step)
       ))
     })
 
     # Is the rank similar or different
-    percs <- sapply(compare_texts, `[[`, "higher_than")
+    percs <- sapply(compare_texts, `[[`, "higher_lower_than")
     percs_distance <- abs(percs[[1]] - percs[[2]])
     connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
     connector <- cc_t(connector, lang = lang)
@@ -449,7 +450,7 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang, time = time
+    lang = lang, time = time, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -515,7 +516,8 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
     ),
     lang = lang,
     time_col = time$var_left,
-    schemas = schemas
+    schemas = schemas,
+    larger = TRUE
   )
 
   # If `ind` and data remained the same, we add 'slight' decrease/increase
@@ -537,11 +539,11 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
   second_part <-
     sprintf(
       cc_t(paste0(
-        "The change in %s %s between %s and %s is larger than in %s of ",
+        "The change in %s %s between %s and %s is %s than in %s of ",
         "other %s between the same years."
       ), lang = lang),
-      exp_nodet, context$p_start, exp_vals$times[1],
-      exp_vals$times[2], relat$higher_than, context$scale_plur
+      exp_nodet, context$p_start, exp_vals$times[1], exp_vals$times[2],
+      relat$higher_lower, relat$higher_lower_than, context$scale_plur
     )
 
   out <- sprintf("%s<p>%s %s", out, first_part, second_part)
@@ -582,7 +584,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang, time = time
+    lang = lang, time = time, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -639,7 +641,8 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
       ),
       time_col = time$var_left,
       lang = lang,
-      schemas = schemas
+      schemas = schemas,
+      larger = TRUE
     )
     # Get the information on how the selection compares
     relat_right <- explore_text_selection_comparison(
@@ -653,32 +656,34 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
       ),
       time_col = time$var_right,
       lang = lang,
-      schemas = schemas
+      schemas = schemas,
+      larger = TRUE
     )
 
     # Is the rank similar or different
-    percs_distance <- abs(relat_left$higher_than_num - relat_right$higher_than_num)
+    percs_distance <- abs(relat_left$higher_lower_than_num - relat_right$higher_lower_than_num)
     connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
     connector <- cc_t(connector, lang = lang)
 
     # Craft the left side of the second paragraph
     first_s <-
       sprintf(
-        cc_t("The change in %s %s from %s to %s is larger than %s ",
+        cc_t("The change in %s %s from %s to %s is %s than %s ",
           "other %s, which is %s for %s.",
           lang = lang
         ),
         exp_vals_left$exp, context$name, exp_vals_left$times[1],
-        exp_vals_left$times[2], relat_left$higher_than, context$scale_plur,
+        exp_vals_left$times[2], relat_left$higher_lower, relat_left$higher_lower_than,
+        context$scale_plur,
         relat_left$rank_chr, context$to_compare_determ
       )
     second_s <-
       sprintf(
-        cc_t("%s, the change in %s between the same years is larger ",
+        cc_t("%s, the change in %s between the same years is %s ",
           "than %s of other %s, which is %s for %s.",
           lang = lang
         ),
-        connector, exp_vals_right$exp, relat_right$higher_than,
+        connector, exp_vals_right$exp, relat_right$higher_lower, relat_right$higher_lower_than,
         context$scale_plur, relat_right$rank_chr, context$to_compare_determ
       )
 

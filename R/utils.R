@@ -904,6 +904,8 @@ filter_inrange <- function(data, col, range, select_id = NA) {
     # Get the ID value
     id_val <- dat[[col]][dat$ID == select_id]
 
+    if (length(id_val) == 0) return(data)
+
     # If the ID value is not in the range, tweak the range
     if (id_val < lower) lower <- id_val
     if (id_val > upper) upper <- id_val
@@ -968,6 +970,7 @@ is_data_present_in_scale <- function(var, scale) {
 #'
 #' @return <`character`> Returns the name of the 'time_val' if its corresponding var in
 #' the `dates` column in the variables table is named. If  not named, returns 'time_val' itself.
+#' @export
 time_chr <- function(var, time_val) {
   dates <- var_get_info(var, what = "dates")[[1]]
   if (is.null(names(dates))) return(time_val)
@@ -976,4 +979,28 @@ time_chr <- function(var, time_val) {
   value <- names(dates)[which(dates == time_val)]
 
   return(value)
+}
+
+#' Determine Delta Colors Based on Data Class
+#'
+#' This function selects the appropriate color set from a predefined set of
+#' colors (`colours_dfs`) based on the class of the input data. It supports
+#' three classes: 'normal', 'negative', and 'positive'. Depending on the class
+#' of the data, it returns a corresponding set of delta colors.
+#'
+#' @param data <`ANY`> The data object for which the color set needs to be
+#' determined. The function checks for specific classes ('normal', 'negative',
+#' 'positive') in the data object to decide which color set to return.
+#'
+#' @return A color set from `colours_dfs`. If the class of `data` is 'normal',
+#' `colours_dfs$delta` is returned. If the class is 'negative',
+#' `colours_dfs$delta_neg` is returned. If the class is 'positive',
+#' `colours_dfs$delta_pos` is returned. The return type is dependent on the
+#' structure of `colours_dfs`.
+delta_which_colors <- function(data) {
+  colours_dfs <- colours_get()
+
+  if ("normal" %in% class(data)) return(colours_dfs$delta)
+  if ("negative" %in% class(data)) return(colours_dfs$delta_neg)
+  if ("positive" %in% class(data)) return(colours_dfs$delta_pos)
 }

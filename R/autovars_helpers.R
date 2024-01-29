@@ -333,10 +333,27 @@ autovars_placeholder_var <- function(id) {
   return(default_var)
 }
 
-autovars_time_ui <- function(id, default_var, common_widgets, widget_ns) {
-
-  # Grab the dates for this variable (and most likely the whole page!)
-  times <- common_widgets()$time
+#' Create UI for time variable selection
+#'
+#' This function creates a user interface element for selecting time variables.
+#' It allows for the creation of either a slider or
+#' a slider with text, depending on the structure of the time data provided.
+#'
+#' @param id <`character`> The namespace ID of the page.
+#' @param times <`vector`> Vector of times (Usually common_widgets$time())
+#' @param widget_ns <`function`> A function for namespacing widget IDs.
+#' @param time_div_label <`character`> A function that returns the label for the
+#' time division.
+#' @param time_div_icon <`character`> Material ion name for the time selection UI, defaults
+#' to "date_range".
+#'
+#' @return <`shiny.tagList`> A tag list containing the UI elements for the
+#' time variable selection.
+#' @export
+autovars_time_ui <- function(id, times, widget_ns,
+                             time_div_label = "Time",
+                             time_div_icon = "date_range",
+                             compare_label = "Compare dates") {
 
   # Is it named? If so, slider text must be used.
   slider_type <- if (is.null(names(times))) "slider" else "slider_text"
@@ -389,13 +406,13 @@ autovars_time_ui <- function(id, default_var, common_widgets, widget_ns) {
         class = "shiny-split-layout sidebar-section-title",
         shiny::div(
           style = "width: 9%",
-          icon_material_title("date_range")
+          icon_material_title(time_div_icon)
         ),
         shiny::div(
           style = "width: 24%",
           shiny::tags$span(
             id = shiny::NS(id, "year_label"),
-            cc_t("Time", force_span = TRUE)
+            cc_t(time_div_label, force_span = TRUE)
           )
         ),
         shiny::div(
@@ -403,7 +420,7 @@ autovars_time_ui <- function(id, default_var, common_widgets, widget_ns) {
           style = "width: 64%; margin:0px !important; text-align: right;",
           checkbox_UI(
             id = widget_ns(id),
-            label = cc_t("Compare dates", force_span = TRUE),
+            label = cc_t(compare_label, force_span = TRUE),
             value = FALSE
           )
         )

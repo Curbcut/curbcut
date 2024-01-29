@@ -5,7 +5,15 @@
 \alias{autovars_UI}
 \title{Auto-vars module}
 \usage{
-autovars_server(id, r, main_dropdown_title, default_year)
+autovars_server(
+  id,
+  r,
+  main_dropdown_title,
+  default_year,
+  time_div_label = shiny::reactive("Time"),
+  time_div_icon = shiny::reactive("date_range"),
+  compare_label = shiny::reactive("Compare dates")
+)
 
 autovars_UI(id, ...)
 }
@@ -21,6 +29,12 @@ title of the main dropdown selector.}
 
 \item{default_year}{<\code{numeric}> An optional numeric value specifying the default
 year for time widgets. If not provided, these widgets will not be initialized.}
+
+\item{time_div_label}{<\verb{reactive character}> The label of the time div. Defaults
+to \code{Time}.}
+
+\item{time_div_icon}{<\verb{reactive character}> Material ion name for the time
+selection UI, defaults to "date_range".}
 
 \item{...}{UIs to be inserted in the advanced controls div.}
 }

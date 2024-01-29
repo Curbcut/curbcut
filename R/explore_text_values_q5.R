@@ -83,7 +83,8 @@ explore_text_values_q5.pct <- function(var, region, data_path = get_data_path(),
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = pct_string
   ))
 }
 
@@ -139,7 +140,8 @@ explore_text_values_q5.count <- function(var, region, data_path = get_data_path(
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = count_string
   ))
 }
 
@@ -191,7 +193,8 @@ explore_text_values_q5.dollar <- function(var, region, data_path = get_data_path
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = dollar_string
   ))
 }
 
@@ -279,7 +282,8 @@ explore_text_values_q5.ind <- function(var, region, data_path = get_data_path(),
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = region_values$val
   ))
 }
 
@@ -354,7 +358,8 @@ explore_text_values_q5.avg <- function(var, region, data_path = get_data_path(),
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = count_string
   ))
 }
 
@@ -407,7 +412,8 @@ explore_text_values_q5.sqkm <- function(var, region, data_path = get_data_path()
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = count_string
   ))
 }
 
@@ -473,6 +479,7 @@ explore_text_values_q5.ppo <- function(var, region, data_path = get_data_path(),
   # Return
   return(list(
     text = out,
-    na = FALSE
+    na = FALSE,
+    val = count_string
   ))
 }

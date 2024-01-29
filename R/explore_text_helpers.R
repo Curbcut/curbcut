@@ -20,6 +20,7 @@
 #' for no translation.
 #'
 #' @return A list containing multiple texts used for the explore text panel.
+#' @export
 explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, lang = NULL) {
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
@@ -415,6 +416,7 @@ explore_text_select_val.default <- function(var, data, select_id, col = "var_lef
 #' @param time_col <`numeric`> Time at which to show the data.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param larger <`logical`> Should we write 'larger than' or 'higher than' ?
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -431,7 +433,8 @@ explore_text_select_val.default <- function(var, data, select_id, col = "var_lef
 explore_text_selection_comparison <- function(var = NULL, data, select_id,
                                               col = "var_left",
                                               ranks_override = NULL,
-                                              lang = NULL, time_col, schemas = NULL) {
+                                              lang = NULL, time_col, schemas = NULL,
+                                              larger = FALSE) {
   # Throw error if the selected ID is not in the data.
   if (!select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
@@ -444,13 +447,13 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
   # The value is higher than X of other observations
   higher_than <- data[[rcol]][data$ID == select_id] > data[[rcol]]
   higher_than <- mean(higher_than, na.rm = TRUE)
+
   if (is.na(higher_than)) {
     return(list(
       higher_than = NA,
       rank_chr = NA
     ))
   }
-  higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 0)
 
   # Ranking as characters. We can't use q5 as it's built for breaks of
   # multiple years. Here we only compare with ONE year.
@@ -469,11 +472,21 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
   rank_chr <- cc_t(rank_chr, lang = lang)
   rank_chr <- sprintf("<b>%s</b>", rank_chr)
 
+  # Update which is we want to read: 'lower' or 'higher' than x ?
+  if (higher_than < 0.5) {
+    higher_lower <- cc_t(if (!larger) "lower" else "smaller", lang = lang)
+    higher_than <- 1 - higher_than
+  } else {
+    higher_lower <- cc_t(if (!larger) "higher" else "larger", lang = lang)
+  }
+  higher_than_chr <- convert_unit.pct(x = higher_than, decimal = 0)
+
   # Return both
   return(list(
-    higher_than = higher_than_chr,
+    higher_lower = higher_lower,
+    higher_lower_than = higher_than_chr,
     rank_chr = rank_chr,
-    higher_than_num = higher_than
+    higher_lower_than_num = higher_than
   ))
 }
 
@@ -669,7 +682,7 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
 
     exp <- var_get_info(
       var = var, what = "explanation",
-      translate = TRUE, lang = lang
+      translate = TRUE, lang = lang, schemas_col = schemas[[if (var_left) "var_left" else "var_right"]]
     )
     out <- sprintf(cc_t("we currently don't have information regarding %s",
       lang = lang

@@ -404,7 +404,7 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
   )
 
   # Adapt breaks to add the `NA` bar
-  leg <- leg_info$colours_dfs$delta[1:5, 2:3]
+  leg <- delta_which_colors(data)[1:5, 2:3]
 
   # Get breaks as numeric
   brks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)

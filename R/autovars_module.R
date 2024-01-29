@@ -15,11 +15,18 @@
 #' title of the main dropdown selector.
 #' @param default_year <`numeric`> An optional numeric value specifying the default
 #' year for time widgets. If not provided, these widgets will not be initialized.
+#' @param time_div_label <`reactive character`> The label of the time div. Defaults
+#' to `Time`.
+#' @param time_div_icon <`reactive character`> Material ion name for the time
+#' selection UI, defaults to "date_range".
 #'
 #' @return A reactive list with the final variable ('var') and the selected
 #' time ('time').
 #' @export
-autovars_server <- function(id, r, main_dropdown_title, default_year) {
+autovars_server <- function(id, r, main_dropdown_title, default_year,
+                            time_div_label = shiny::reactive("Time"),
+                            time_div_icon = shiny::reactive("date_range"),
+                            compare_label = shiny::reactive("Compare dates")) {
   shiny::moduleServer(id, function(input, output, session) {
     # Global preparation ------------------------------------------------------
 
@@ -60,7 +67,10 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         where = "afterEnd",
         ui = {
           if (!is.null(default_year)) {
-            autovars_time_ui(id, default_var, common_widgets, widget_ns)
+            autovars_time_ui(id = id,
+                             times = common_widgets()$time,
+                             widget_ns = widget_ns,
+                             time_div_label(), time_div_icon(), compare_label())
           }
         }
       )

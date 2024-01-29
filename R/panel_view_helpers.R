@@ -410,7 +410,7 @@ panel_view_prepare_text.q5 <- function(vars, scale, dat, time, schemas = NULL,
                                        lang = NULL, ...) {
   # Title
   title <- legend_labels(vars, lang = lang, short_threshold = 5)[[1]]$x
-  title <- sprintf("%s (%s)", title, time$var_left)
+  title <- sprintf("%s (%s)", title, time_chr(var = vars$var_left, time$var_left))
 
   colours <- colours_get()$bivar
   title_color <- colours$fill[colours$group == "3 - 1"]
@@ -456,9 +456,10 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, schemas = NULL
     what = "var_short",
     translate = TRUE, lang = lang, schemas_col = NULL
   )
+  times <- sapply(time$var_left, \(x) time_chr(vars$var_left, x))
   new_names <-
     c(
-      sprintf("%s (%s)", vars_sep, time$var_left),
+      sprintf("%s (%s)", vars_sep, times),
       legend_labels(vars, short_threshold = 5, lang = lang, time = time)[[1]]$x
     )
 
@@ -467,24 +468,21 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, schemas = NULL
 
   # Tweak a bit the explanation if it's the variation column
   explanations <- lapply(titles, \(x) {
-    explanation <- var_get_info(vars$var_left,
-      what = "explanation",
-      translate = TRUE, lang = lang
-    )
-
     if (!grepl("_variation$", x)) {
       return(var_get_info(vars$var_left,
         what = "explanation",
-        translate = TRUE, lang = lang
+        translate = TRUE, lang = lang, schemas_col = schemas$var_left
       ))
     }
+
     explanation <- var_get_info(vars$var_left,
-      what = "explanation_nodet",
-      translate = TRUE, lang = lang
+                                what = "explanation_nodet",
+                                translate = TRUE, lang = lang, schemas_col = schemas$var_left
     )
     sprintf(
       cc_t("the change in %s between %s and %s", lang = lang),
-      explanation, time$var_left[1], time$var_left[2]
+      explanation, time_chr(vars$var_left, time$var_left[1]),
+      time_chr(vars$var_left, time$var_left[2])
     )
   })
 
@@ -508,7 +506,8 @@ panel_view_prepare_text.delta <- function(vars, scale, dat, time, schemas = NULL
       explanation = explanation,
       title_color = title_color,
       lang = lang,
-      time_col = t
+      time_col = t,
+      schemas_col = schemas$var_left
     )
   }, new_names, title_vars, explanations, c(time$var_left, ""))
 

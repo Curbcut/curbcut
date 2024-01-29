@@ -42,7 +42,6 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
       "list."
     ))
   }
-  colour_table <- colours[[colours_table]]
 
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
@@ -56,6 +55,13 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
     USE.NAMES = TRUE
   )
   data <- Reduce(rbind, data_r)
+
+  # If it's delta, maybe change the colour table to use only negatives/positives!
+  colour_table <- if (colours_table == "delta") {
+    delta_which_colors(data)
+  } else {
+    colours[[colours_table]]
+  }
 
   # Is group already calculated?
   group <- match_schema_to_z_col(
