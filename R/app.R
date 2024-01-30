@@ -133,12 +133,15 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' app. Defaults to english.
 #' @param show_lang_button <`logical`> Should there be a language button? Defaults
 #' to FALSE (only english).
+#' @param show_cities <`logical`> Should we be showing the list of Curbcut Cities
+#' in the footer? Defaults to TRUE.
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
 ui <- function(site_name, city_two_words, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics = NULL, website_url,
-               share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE) {
+               share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE,
+               show_cities) {
   modules_panel_calculated <- get0("modules_panel_calculated")
 
   shiny::tagList(
@@ -189,12 +192,13 @@ ui <- function(site_name, city_two_words, web_description, web_title, placeholde
           windowTitle = site_name,
           title = shiny::actionLink("title", "Curbcut"),
           shiny::tabPanel(cc_t("Home"),
-            home_UI("home",
-                    city_two_words = city_two_words,
-              placeholder_video_src = placeholder_video_src,
-              video_src = video_src,
-              lang_init = lang_init
-            ),
+                          home_UI("home",
+                                  city_two_words = city_two_words,
+                                  placeholder_video_src = placeholder_video_src,
+                                  video_src = video_src,
+                                  lang_init = lang_init,
+                                  show_cities = show_cities
+                          ),
             value = "home"
           )
         ),

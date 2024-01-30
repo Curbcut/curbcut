@@ -20,6 +20,8 @@ breaks_delta_helper(data, character, ...)
 only negative, positive or mixed.}
 
 \item{character}{<\code{logical}> If TRUE, returns breaks as character strings.}
+
+\item{...}{Additional arguments}
 }
 \value{
 <\code{numeric/character}> Breaks from negative to positive values.

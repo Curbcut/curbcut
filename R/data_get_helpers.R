@@ -31,6 +31,7 @@ breaks_delta <- function(vars, scale = NULL, character = FALSE, data = NULL) {
 #' @param data <`numeric`> Data containg the class fo inform if the values are
 #' only negative, positive or mixed.
 #' @param character <`logical`> If TRUE, returns breaks as character strings.
+#' @param ... Additional arguments
 #'
 #' @return <`numeric/character`> Breaks from negative to positive values.
 #' @export
@@ -159,12 +160,6 @@ breaks_delta_helper.negative <- function(data, character, ...) {
 
   out
 }
-
-
-
-
-
-
 
 #' Find quintile breaks
 #'

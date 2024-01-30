@@ -397,7 +397,7 @@ autovars_time_ui <- function(id, times, widget_ns,
     )
   }
 
-  full_out <- tagList(
+  full_out <- shiny::tagList(
     shiny::div(
       id = widget_ns("year_sliders"),
       # class = ys_classes,

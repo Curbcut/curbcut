@@ -9,7 +9,8 @@ home_UI(
   city_two_words,
   placeholder_video_src,
   video_src,
-  lang_init = "en"
+  lang_init = "en",
+  show_cities
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ intro video. e.g. \code{list(en = "https://s3.amazonaws.com/curbcut.public.resou
 
 \item{lang_init}{<\code{character}> Language which should be used to initiate the
 app.}
+
+\item{show_cities}{<\code{logical}> Should we be showing the list of Curbcut Cities
+in the footer? Defaults to TRUE.}
 }
 \value{
 A Shiny UI object for the home page.

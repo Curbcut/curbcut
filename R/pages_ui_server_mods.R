@@ -343,9 +343,20 @@ create_ui_server_mods <- function(modules, pos = 1) {
   create <- create[create]
   ids <- names(create)
 
-  # Iterate over the ids to assign the functions in the global environment
-  lapply(ids, \(id) assign(sprintf("%s_UI", id), ui, envir = as.environment(pos)))
-  lapply(ids, \(id) assign(sprintf("%s_server", id), server, envir = as.environment(pos)))
+  # Iterate over the ids to assign the functions in the global environment, only
+  # if they don't exist (like somewhere else in the `curbcut` package!)
+  lapply(ids, \(id) {
+    ui_func_name <- sprintf("%s_UI", id)
+    server_func_name <- sprintf("%s_server", id)
+
+    if (!exists(ui_func_name, envir = as.environment(pos))) {
+      assign(ui_func_name, ui, envir = as.environment(pos))
+    }
+
+    if (!exists(server_func_name, envir = as.environment(pos))) {
+      assign(server_func_name, server, envir = as.environment(pos))
+    }
+  })
 
   return(invisible())
 }

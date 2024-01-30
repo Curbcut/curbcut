@@ -155,10 +155,13 @@ home_server <- function(id = "home", r) {
 #' intro video. e.g. `list(en = "https://s3.amazonaws.com/curbcut.public.resources/mtl_vid_en.mp4")`
 #' @param lang_init <`character`> Language which should be used to initiate the
 #' app.
+#' @param show_cities <`logical`> Should we be showing the list of Curbcut Cities
+#' in the footer? Defaults to TRUE.
 #'
 #' @return A Shiny UI object for the home page.
 #' @export
-home_UI <- function(id = "home", city_two_words, placeholder_video_src, video_src, lang_init = "en") {
+home_UI <- function(id = "home", city_two_words, placeholder_video_src,
+                    video_src, lang_init = "en", show_cities) {
   # Get modules from the global environment
   modules <- get_from_globalenv("modules")
   pages <- modules[c("id", "theme", "nav_title")]
@@ -227,6 +230,7 @@ home_UI <- function(id = "home", city_two_words, placeholder_video_src, video_sr
     collabs = get_from_globalenv("collabs"),
     lang = lang_init,
     placeholder_video_src = placeholder_video_src,
-    video_src = video_src
+    video_src = video_src,
+    show_cities = show_cities
   )
 }

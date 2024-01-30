@@ -17,7 +17,8 @@ ui(
   share_jpg,
   apple_touch_icon,
   lang_init = "en",
-  show_lang_button = FALSE
+  show_lang_button = FALSE,
+  show_cities
 )
 }
 \arguments{
@@ -61,6 +62,9 @@ app. Defaults to english.}
 
 \item{show_lang_button}{<\code{logical}> Should there be a language button? Defaults
 to FALSE (only english).}
+
+\item{show_cities}{<\code{logical}> Should we be showing the list of Curbcut Cities
+in the footer? Defaults to TRUE.}
 }
 \value{
 A Shiny UI object that includes all elements of the Curbcut application interface.

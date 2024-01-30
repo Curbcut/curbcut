@@ -264,7 +264,7 @@ var_closest_year <- function(input, time, variables = get_from_globalenv("variab
 
   # Grab the dates at which the variable is available
   dates <- var_get_info(input, what = "dates")[[1]]
-  dates <- setNames(dates, names(dates))
+  dates <- stats::setNames(dates, names(dates))
 
   # If no dates, return the input
   if (all(is.na(dates))) {

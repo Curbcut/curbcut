@@ -820,7 +820,7 @@ get_data_path <- function() {
   }
 
   # Retrieve the value of the CURBCUT_DATA environment variable
-  data_path <- "C:/Users/maxim/Unsync/curbcut-comox/data/"##Sys.getenv("CURBCUT_DATA")
+  data_path <- "C:/Users/maxim/Unsync/curbcut-comox/data/" #Sys.getenv("CURBCUT_DATA")
 
   # Check if the environment variable is empty
   if (data_path == "") {

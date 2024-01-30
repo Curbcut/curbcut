@@ -19,6 +19,8 @@
 #' to `Time`.
 #' @param time_div_icon <`reactive character`> Material ion name for the time
 #' selection UI, defaults to "date_range".
+#' @param compare_label <`reactive character`> The label of the compare checkbox.
+#' Defaults to `Compare dates`.
 #'
 #' @return A reactive list with the final variable ('var') and the selected
 #' time ('time').

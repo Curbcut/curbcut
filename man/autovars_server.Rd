@@ -36,6 +36,9 @@ to \code{Time}.}
 \item{time_div_icon}{<\verb{reactive character}> Material ion name for the time
 selection UI, defaults to "date_range".}
 
+\item{compare_label}{<\verb{reactive character}> The label of the compare checkbox.
+Defaults to \verb{Compare dates}.}
+
 \item{...}{UIs to be inserted in the advanced controls div.}
 }
 \value{
