@@ -221,6 +221,19 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
 
       # Save the new selected ID in the reactive.
       r[[id]]$select_id(out)
+
+      # With it, update the map (This does not come from a click on the map!)
+      if (!is.na(out)) {
+        cc.map::map_choropleth_update_selection(
+          session = r$server_session(),
+          map_ID = ns_doubled(
+            page_id = id,
+            element = "map"
+          ),
+          select_id = out
+        )
+      }
+
     })
   })
 }

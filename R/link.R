@@ -18,7 +18,7 @@ link_get_zoom <- function(zoom_levels, scale) {
   zoom <- unname(zoom)
 
   if (zoom == 0) {
-    zoom <- if (length(zoom_levels) > 1) unname(zoom_levels[2] - 0.2) else 9
+    zoom <- if (length(zoom_levels) > 1) unname(zoom_levels[2] - 0.55) else 9
   }
 
   return(zoom)
@@ -62,6 +62,11 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
     stop("The function needs to be used in a reactive context")
   }
 
+  # Change the default initial value
+  if (!is.null(var_left)) {
+    r[[page]]$var_left_force(var_left)
+  }
+
   # Update the current tab
   if (!is.null(page)) {
     update_tab(session = r$server_session(), selected = page)
@@ -100,10 +105,6 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
       )
     }
 
-    if (!is.null(var_left)) {
-      r[[page]]$var_left_force(var_left)
-    }
-
     if (!is.null(var_right)) {
       shinyWidgets::updatePickerInput(
         session = r$server_session(),
@@ -127,16 +128,19 @@ link <- function(r, page, region = r$region(), select_id = NA, scale = NULL,
       }
       coords <- df_data$centroid[df_data$ID == select_id][[1]]
       coords <- sapply(coords, round, digits = 2)
-      cc.map::map_viewstate(
-        session = r$server_session(),
-        map_ID = ns_doubled(
-          page_id = page,
-          element = "map"
-        ),
-        longitude = as.numeric(coords[1]),
-        latitude = as.numeric(coords[2]),
-        zoom = r[[page]]$zoom()
-      )
+
+      shinyjs::delay(500, {
+        cc.map::map_viewstate(
+          session = r$server_session(),
+          map_ID = ns_doubled(
+            page_id = page,
+            element = "map"
+          ),
+          longitude = as.numeric(coords[1]),
+          latitude = as.numeric(coords[2]),
+          zoom = r[[page]]$zoom()
+        )
+      })
     }
   }
 

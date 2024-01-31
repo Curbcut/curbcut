@@ -65,7 +65,7 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
     counter <- shiny::reactiveVal(0)
     shouldContinue <- shiny::reactiveVal(TRUE)
 
-    # Create observer
+    # Follow if map exists
     shiny::observe({
       # Check if observer should continue running
       if (!isTRUE(shiny::isolate(shouldContinue()))) {
@@ -88,6 +88,9 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
 
       # Invalidate this observer after 500ms
       shiny::invalidateLater(500, session)
+    })
+    shiny::observeEvent(input$mapboxDivExists, {
+      if (input$mapboxDivExists) r[[id]]$map_exists(input$mapboxDivExists)
     })
 
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
@@ -183,18 +186,17 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
     # Grab the viewstate (lat, lon, zoom)
     viewstate <- curbcut::get_viewstate("map")
 
-    shiny::observeEvent(input$mapboxDivExists,
-                        {
-                          if (isFALSE(input$mapboxDivExists)) {
-                            # The following follows if a map redraw should be asked for (in cases
-                            # where the map faults are initiation, or if the tileset_trigger() event
-                            # happens, at first, before the map is loaded.)
-                            shinyjs::delay(1500, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-                            shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-                            shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
-                          }
-                        },
-                        ignoreNULL = TRUE
+    shiny::observeEvent(input$mapboxDivExists, {
+      if (isFALSE(input$mapboxDivExists)) {
+        # The following follows if a map redraw should be asked for (in cases
+        # where the map faults are initiation, or if the tileset_trigger() event
+        # happens, at first, before the map is loaded.)
+        shinyjs::delay(1500, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+        shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
+      }
+    },
+    ignoreNULL = TRUE
     )
 
     # Return

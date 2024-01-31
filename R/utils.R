@@ -505,6 +505,9 @@ grab_DA_ID_from_bslike <- function(scale, select_id) {
     call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", scale, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
     out <- unname(unlist(out))
+    # If length is zero, it means the selection was for another scale before,
+    # and the user zoomed on building. Return as if it's NA.
+    if (length(out) == 0) out <- NA
   } else {
     out <- dat$DA_ID[dat$ID == select_id]
   }

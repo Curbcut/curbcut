@@ -251,6 +251,13 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
   mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
   theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
+  # Postal code placeholder
+  postal_codes <- get_from_globalenv("postal_codes")
+  pc_ph <- sample(postal_codes$postal_code, 1)
+  pc_ph <- toupper(pc_ph)
+  pc_ph <- paste0(substr(pc_ph, 1, 3), " ", substr(pc_ph, 4, nchar(pc_ph)))
+
+
   shiny::tagList(
     shiny::div(
       `data-theme` = theme_lowercased,
@@ -266,7 +273,7 @@ place_explorer_UI <- function(id, scales_as_DA = c("building", "street")) {
                      <div style="width: 80%;">',
           shiny::textInput(
             inputId = shiny::NS(id, "address_searched"),
-            label = NULL, placeholder = "H3A 2T5"
+            label = NULL, placeholder = pc_ph
           ),
           '</div><div style="width: 20%;">',
           shiny::actionButton(

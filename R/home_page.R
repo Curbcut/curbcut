@@ -50,10 +50,15 @@ home_server <- function(id = "home", r) {
           scale <- disc_card$scale
           scale <- if (is.na(scale)) NULL else scale
 
+          modules <- get_from_globalenv("modules")
+          default_comb <- modules$avail_scale_combinations[modules$id == disc_card$page][[1]]
+          default_comb <- sprintf("mzl_%s", default_comb)
+          zoom_levels <- get_from_globalenv(default_comb)
+
           link(
             r = r, page = disc_card$page, select_id = disc_card$select_id,
             date = disc_card$date[[1]], var_right = disc_card$var_right,
-            var_left = disc_card$var_left, scale = scale
+            var_left = disc_card$var_left, scale = scale, zoom_levels = zoom_levels
           )
         }
       },

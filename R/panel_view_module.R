@@ -317,6 +317,7 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
               # Prepare data by attaching geometries
               requireNamespace("sf", quietly = TRUE)
               geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_scale()))
+              geo <- geo["ID"]
               data <- merge(datas()$data, geo, by = "ID")
               data <- sf::st_as_sf(data)
 
