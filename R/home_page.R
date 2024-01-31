@@ -161,7 +161,7 @@ home_server <- function(id = "home", r) {
 #' @return A Shiny UI object for the home page.
 #' @export
 home_UI <- function(id = "home", city_two_words, placeholder_video_src,
-                    video_src, lang_init = "en", show_cities) {
+                    video_src, lang_init = "en", show_cities = TRUE) {
   # Get modules from the global environment
   modules <- get_from_globalenv("modules")
   pages <- modules[c("id", "theme", "nav_title")]

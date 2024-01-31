@@ -141,7 +141,7 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 ui <- function(site_name, city_two_words, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics = NULL, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE,
-               show_cities) {
+               show_cities = TRUE) {
   modules_panel_calculated <- get0("modules_panel_calculated")
 
   shiny::tagList(
