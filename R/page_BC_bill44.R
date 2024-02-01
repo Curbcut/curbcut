@@ -381,9 +381,6 @@ bill44_UI <- function(id) {
       # Map
       map_js_UI(shiny::NS(id, id)),
 
-      # Tutorial
-      tutorial_UI(id = shiny::NS(id, id)),
-
       # Change view (Map/Data/Place explorer)
       panel_view_UI(id = shiny::NS(id, id)),
 
@@ -582,12 +579,6 @@ bill44_server <- function(id, r) {
       time = r[[id]]$time,
       widget_time = widget_time,
       data = data
-    )
-
-    # Tutorial
-    tutorial_server(
-      id = id,
-      r = r
     )
 
     # Legend
