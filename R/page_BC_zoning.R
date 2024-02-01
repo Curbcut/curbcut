@@ -84,8 +84,11 @@ zoning_server <- function(id, r) {
 
     mapbox_username <- get_from_globalenv("mapbox_username")
     map_token <- get_from_globalenv("map_token")
-    map_loc <- get_from_globalenv("map_loc")
-    map_zoom <- get_from_globalenv("map_zoom")
+    # Map location and zoom different for this page
+    sc <- get_from_globalenv("scales_dictionary")$scale[[1]]
+    sc <- get_from_globalenv(sc)
+    map_loc <- sc$centroid[which.max(sc$population)][[1]]
+    map_zoom <- 12
     map_base_style <- get_from_globalenv("map_base_style")
     tileset_prefix <- get_from_globalenv("tileset_prefix")
 
