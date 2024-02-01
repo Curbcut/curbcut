@@ -66,6 +66,7 @@ r_init <- function(server_session,
         zoom = shiny::reactiveVal(zoom_get(map_zoom)),
         coords = shiny::reactiveVal(map_loc),
         poi = shiny::reactiveVal(NULL),
+        map_exists = shiny::reactiveVal(FALSE),
         ...
       )
     } else {

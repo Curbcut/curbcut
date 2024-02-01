@@ -10,7 +10,7 @@ home_UI(
   placeholder_video_src,
   video_src,
   lang_init = "en",
-  show_cities
+  show_cities = TRUE
 )
 }
 \arguments{
