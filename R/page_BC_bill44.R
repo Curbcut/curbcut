@@ -70,7 +70,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
         select_id = select_id, data = count_data,
         scale = context$treated_scale,
         left_right = "left", lang = lang,
-        time = time_status_quo_compare, schemas = schemas_status_quo_compare
+        time = time, schemas = schemas
       )
 
       change_string <- explore_text_delta_change(
