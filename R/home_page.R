@@ -52,7 +52,10 @@ home_server <- function(id = "home", r) {
 
           modules <- get_from_globalenv("modules")
           default_comb <- modules$avail_scale_combinations[modules$id == disc_card$page][[1]]
-          default_comb <- sprintf("mzl_%s", default_comb)
+          if (!is.null(scale)) {
+            default_comb <- grep(scale, default_comb, value = TRUE)
+          }
+          default_comb <- sprintf("mzl_%s", default_comb[1])
           zoom_levels <- get_from_globalenv(default_comb)
 
           link(

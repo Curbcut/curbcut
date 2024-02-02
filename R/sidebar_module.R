@@ -46,7 +46,6 @@ sidebar_server <- function(id, r) {
     ))
 
     shiny::observeEvent(first_visit_titletext(), {
-      print(first_visit_titletext())
 
       # If it's not NULL, return
       if (!is.null(first_visit_titletext())) return(NULL)
