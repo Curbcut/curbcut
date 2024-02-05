@@ -123,11 +123,11 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
       inc_pct <- convert_unit.pct(x = change_string$pct_change)
       current_val <- convert_unit(x = exp_vals$region_vals[[2]])
 
-      tot_dw <- sprintf(" (%s total dwellings).", count_current_val)
+      tot_dw <- sprintf(" (%s total dwellings).", count_new_val)
       out <- gsub("\\.", tot_dw, out)
       out <- sprintf(paste0("%s This is a %s increase over the initial %s ",
                             "dwellings per square kilometre (%s total dwellings)."),
-                     out, inc_pct, current_val, count_new_val)
+                     out, inc_pct, current_val, count_current_val)
     }
 
   }
