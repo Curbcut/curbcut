@@ -24,6 +24,10 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
     zoom_levels = zoom_levels, switch_DA = switch_DA, lang = "en"
   )
 
+  # The context might have used a scale in the `scales_as_DA` argument, and
+  # the select_id needs to be switched to that of the dissemination area.
+  if ("select_id" %in% names(context)) select_id <- context$select_id
+
   # Check for NAs in the selected value. Return NA message if it is the case
   na_check <- explore_text_check_na(
     context = context, data = data,
