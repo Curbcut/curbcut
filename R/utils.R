@@ -251,7 +251,6 @@ colours_get <- function() {
 #' @param scales_as_DA <`character vector`> dfs to check if they should be
 #' treated like a DA scale
 #' @param scale <`character`> The `scale` to check if it is a DA scale
-#'
 #' @return If the current `df` is part of the scales that should be treated
 #' as a DA, thye function appends "_DA" to the `df` string instead of the
 #' current scale, and returns the new name. If not, the original `df` is returned.
@@ -823,7 +822,7 @@ get_data_path <- function() {
   }
 
   # Retrieve the value of the CURBCUT_DATA environment variable
-  data_path <- "C:/Users/maxim/Unsync/curbcut-comox/data/" #Sys.getenv("CURBCUT_DATA")
+  data_path <- "C:/Users/maxim/Unsync/curbcut-kelowna/data/" #Sys.getenv("CURBCUT_DATA")
 
   # Check if the environment variable is empty
   if (data_path == "") {

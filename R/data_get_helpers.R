@@ -81,6 +81,36 @@ breaks_delta_helper.default <- function(data, character, ...) {
   out
 }
 
+#' Adjust Probabilities for Quantile Breaks
+#'
+#' This function incrementally adjusts a vector of probabilities used for
+#' quantile breaks. It ensures that each break has a non-zero value and
+#' maintains at least a specified minimum gap between each consecutive
+#' probability value.
+#'
+#' @param probs <`numeric vector`> A numeric vector of probabilities.
+#' @param breaks <`numeric vector`> A numeric vector of quantile breaks
+#' corresponding to `probs`.
+#' @param min_gap <`numeric`> Minimum gap to maintain between consecutive
+#' probabilities.
+#'
+#' @return <`numeric vector`> An adjusted vector of probabilities where each
+#' element is non-zero and consecutive elements have at least `min_gap`
+#' difference.
+adjust_probs <- function(probs, breaks, min_gap) {
+  for (i in seq_along(probs)) {
+    if (breaks[i] == 0) {
+      probs[i] <- probs[i] + min_gap
+    }
+    # Ensure probs do not exceed 1 and maintain minimum gap
+    if (i > 1) {
+      probs[i] <- max(probs[i], probs[i-1] + min_gap)
+    }
+    probs[i] <- min(probs[i], 1)
+  }
+  return(probs)
+}
+
 #' @describeIn breaks_delta_helper positive method
 #' @return Return breaks as only positive values
 #' @export
@@ -96,11 +126,10 @@ breaks_delta_helper.positive <- function(data, character, ...) {
   probs <- c(0.2,0.4,0.6,0.8,1)
   breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
 
-  # If the breaks start with 0, try to push the probs
-  while (any(breaks == 0)) {
-    probs <- probs + 0.025
-    probs <- pmin(probs, 1)
-    if (sum(probs == 1) > 1) break
+  # Loop to adjust breaks until no zeros and maintain minimum gap
+  min_gap <- 0.025
+  while (any(breaks == 0) || any(diff(probs) < min_gap)) {
+    probs <- adjust_probs(probs, breaks, min_gap)
     breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
   }
 
@@ -136,11 +165,10 @@ breaks_delta_helper.negative <- function(data, character, ...) {
   probs <- c(0.2,0.4,0.6,0.8,1)
   breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
 
-  # If the breaks start with 0, try to push the probs
-  while (any(breaks == 0)) {
-    probs <- probs + 0.025
-    probs <- pmin(probs, 1)
-    if (sum(probs == 1) > 1) break
+  # Loop to adjust breaks until no zeros and maintain minimum gap
+  min_gap <- 0.025
+  while (any(breaks == 0) || any(diff(probs) < min_gap)) {
+    probs <- adjust_probs(probs, breaks, min_gap)
     breaks <- stats::quantile(vec, probs = probs, na.rm = TRUE)
   }
 
