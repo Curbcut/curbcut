@@ -1,3 +1,13 @@
+auckland_scenario_nb <- function(time) {
+  if (time == "050") {
+    "2.055"
+  } else if (time == "100") {
+    "4.11"
+  } else if (time == "150") {
+    "6.165"
+  }
+}
+
 #' @export
 explore_text_bill44 <- function(vars, region, select_id, scale, time, data,
                                 schemas, zoom_levels,
@@ -29,7 +39,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(
+  na_check <- curbcut:::explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
     time = time, lang = lang, schemas = schemas
@@ -40,7 +50,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
 
   # Under which scenario
   scn <- time_chr(var = vars$var_left, time_val = time)
-  scn <- sprintf("<p>Under the '%s' scenario", scn)
+  scn <- if (time$var_left == "000") "In 2021" else sprintf("<p>Under the '%s' scenario", scn)
 
   # Value
   value <- explore_text_values_q5(
@@ -53,7 +63,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
   # Sentence form
   type <- var_get_info(vars$var_left, what = "type")[[1]]
   verb_tense <- if (time$var_left == "000") {
-    if ("count" %in% type) "are" else "is"
+    if ("count" %in% type) "were" else "was"
   } else {
     "would be"
   }
@@ -67,40 +77,40 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
   # If it's not status quo, add a parenthesis
   if (time$var_left != "000") {
 
+    # COUNT INFORMATION
+    time_status_quo_compare <- time
+    time_status_quo_compare$var_left <- c("000",  time_status_quo_compare$var_left)
+
+    schemas_status_quo_compare <- schemas
+    schemas_status_quo_compare$var_left$time <- c("000", schemas_status_quo_compare$var_left$time)
+
+    count_vars <- vars_build("bill44_count", scale = context$treated_scale, time = time$var_left)$vars
+    count_data <- data_get(vars = count_vars, scale = context$treated_scale, region = region)
+
     if ("count" %in% class(vars$var_left)) {
 
-      exp_vals <- explore_text_delta_exp(
+      exp_vals <- curbcut:::explore_text_delta_exp(
         var = vars$var_left, region = region,
         select_id = select_id, data = count_data,
         scale = context$treated_scale,
         left_right = "left", lang = lang,
-        time = time, schemas = schemas
+        time = time_status_quo_compare, schemas = schemas_status_quo_compare
       )
 
       change_string <- explore_text_delta_change(
         var = vars$var_left, exp_vals = exp_vals, lang = lang
       )
 
-      inc_pct <- convert_unit.pct(x = change_string$pct_change)
-      current_val <- convert_unit(x = exp_vals$region_vals[[2]])
+      inc_pct <- curbcut:::convert_unit.pct(x = change_string$pct_change)
+      current_val <- curbcut:::convert_unit(x = exp_vals$region_vals[[2]])
 
-      out <- sprintf("%s This is a %s increase over the initial %s dwelling units.",
+      out <- sprintf("%s This is a %s increase over the initial (2021) %s dwelling units .",
                      out, inc_pct, current_val)
     }
 
     if ("sqkm" %in% class(vars$var_left)) {
 
-      # COUNT INFORMATION
-      time_status_quo_compare <- time
-      time_status_quo_compare$var_left <- c("000",  time_status_quo_compare$var_left)
-
-      schemas_status_quo_compare <- schemas
-      schemas_status_quo_compare$var_left$time <- c("000", schemas_status_quo_compare$var_left$time)
-
-      count_vars <- vars_build("bill44_count", scale = context$treated_scale, time = time$var_left)$vars
-      count_data <- data_get(vars = count_vars, scale = context$treated_scale, region = region)
-
-      count_exp_vals <- explore_text_delta_exp(
+      count_exp_vals <- curbcut:::explore_text_delta_exp(
         var = count_vars$var_left, region = region,
         select_id = select_id, data = count_data,
         scale = context$treated_scale,
@@ -112,7 +122,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
       count_current_val <- convert_unit(x = count_exp_vals$region_vals[[2]])
 
       # SQKM INFORMATION
-      exp_vals <- explore_text_delta_exp(
+      exp_vals <- curbcut:::explore_text_delta_exp(
         var = vars$var_left, region = region,
         select_id = select_id, data = data,
         scale = context$treated_scale,
@@ -124,11 +134,11 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
         var = vars$var_left, exp_vals = exp_vals, lang = lang
       )
 
-      inc_pct <- convert_unit.pct(x = change_string$pct_change)
+      inc_pct <- curbcut:::convert_unit.pct(x = change_string$pct_change)
       current_val <- convert_unit(x = exp_vals$region_vals[[2]])
 
       tot_dw <- sprintf(" (%s total dwellings).", count_new_val)
-      out <- gsub("\\.", tot_dw, out)
+      out <- gsub("\\.$", tot_dw, out)
       out <- sprintf(paste0("%s This is a %s increase over the initial %s ",
                             "dwellings per square kilometre (%s total dwellings)."),
                      out, inc_pct, current_val, count_current_val)
@@ -142,29 +152,30 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
     out <- sprintf("<p><b>%s</b>%s", context$heading, out)
 
     # Get the information on how the selection compares
-    relat <- explore_text_selection_comparison(
+    relat <- curbcut:::explore_text_selection_comparison(
       var = vars$var_left, data = data,
       select_id = select_id, lang = lang,
       time_col = time$var_left, schemas = schemas
     )
 
     # Make the first sentence of the paragraph
+    verb <- if (time$var_left == "000") "was" else "would be"
     first_step <- sprintf(
-      cc_t("This is %s for %s", lang = lang), relat$rank_chr,
+      cc_t("This %s %s for %s", lang = lang), verb, relat$rank_chr,
       context$to_compare_determ
     )
 
     # Grab the explanation and capitalize the first letter
     exp <- var_get_info(vars$var_left,
-                                 what = "explanation", translate = TRUE,
-                                 lang = lang, schemas_col = schemas$var_left
+                        what = "explanation", translate = TRUE,
+                        lang = lang, schemas_col = schemas$var_left
     ) |>
       s_sentence()
 
     # Plug the right elements for the final sentence
     second_step <- sprintf(
-      cc_t("%s %s is %s than in %s of other %s %s", lang = lang), exp,
-      context$p_start, relat$higher_lower, relat$higher_lower_than, context$scale_plur,
+      cc_t("%s %s %s %s than in %s of other %s %s", lang = lang), exp,
+      context$p_start, verb, relat$higher_lower, relat$higher_lower_than, context$scale_plur,
       context$to_compare_short
     )
 
@@ -173,16 +184,29 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
 
   }
 
-  # Second paragraph
-  out <- sprintf(paste0("%s<p>The Small-Scale, Multi-Unit Housing (SSMUH) ",
-                        "legislation, or Bill 44, aims to increase housing ",
-                        "supply, create more diverse housing choices, and over ",
-                        "time, contribute to more affordable housing across BC."),
-                 out)
-  out <- sprintf(paste0("%s This scenario assumes that %s%% of the total ",
-                        "development possible under Bill 44 is implemented and ",
-                        "evenly distributed."),
-                 out, as.numeric(time$var_left))
+  if (time$var_left == "000") return(out)
+
+  # Reduced, complete, expanded
+  rce <- if (time$var_left == "050") {
+    "a reduced"
+  } else if (time$var_left == "100") {
+    "an exact"
+  } else if (time$var_left == "150") {
+    "an exceeding"
+  }
+
+  additional_inc <- auckland_scenario_nb(time$var_left)
+
+  out <- sprintf(paste0(
+    "%s<p>This scenario represents the potential future increase in housing supp",
+    "ly following the assumption that construction trends follow %s ",
+    "version (%s%%) of the outcomes in Auckland. The projection includes the",
+    " historical rate of housing growth from 2016-2021, based on Census dat",
+    "a, and the assumption that this rate remains unchanged from 2021-2029.",
+    " Following the implementation of Bill 44, from 2024-2029, this scenari",
+    "o projects an evenly distributed additional %s%% increase in housing",
+    " growth based on Auckland’s precedent."
+  ), out, rce, as.numeric(time$var_left), additional_inc)
 
   # Return the text
   return(out)
@@ -212,7 +236,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- explore_text_check_na(
+  na_check <- curbcut:::explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
     lang = lang, time = time, schemas = schemas
@@ -222,7 +246,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   }
 
   # Grab the explanation and region values
-  exp_vals <- explore_text_delta_exp(
+  exp_vals <- curbcut:::explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale,
@@ -278,61 +302,84 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   }
 
   # Return the first paragraph if there are no selections
-  if (is.na(select_id)) {
-    return(out)
-  }
+  if (!is.na(select_id)) {
 
-  # Craft the second paragraph
-  relat <- explore_text_selection_comparison(
-    var = vars$var_left,
-    data = data,
-    select_id = select_id,
-    col = "var_left",
-    ranks_override = c(
-      "exceptionally small", "unusually small",
-      "just about average", "unusually large",
-      "exceptionally large"
-    ),
-    lang = lang,
-    time_col = time$var_left,
-    schemas = schemas,
-    larger = TRUE
-  )
-
-  inc_dec <- if (change_string$pct_change > 0) {
-    cc_t("increase", lang = lang) |>
-      explore_text_color(meaning = "increase")
-  } else {
-    cc_t("decrease", lang = lang) |>
-      explore_text_color(meaning = "decrease")
-  }
-
-  first_part <- sprintf(
-    cc_t("This %s is %s for %s.", lang = lang), inc_dec,
-    relat$rank_chr, context$to_compare_deter
-  )
-
-  second_part <-
-    sprintf(
-      paste0("The change in %s between the '%s' and the ",
-             "'%s' scenarios is %s than in %s of other %s between the same scenarios."),
-      exp_nodet, time_chr(vars$var_left, exp_vals$times[1]),
-      time_chr(vars$var_left, exp_vals$times[2]),
-      relat$higher_lower, relat$higher_lower_than, context$scale_plur
+    # Craft the second paragraph
+    relat <- curbcut:::explore_text_selection_comparison(
+      var = vars$var_left,
+      data = data,
+      select_id = select_id,
+      col = "var_left",
+      ranks_override = c(
+        "exceptionally small", "unusually small",
+        "just about average", "unusually large",
+        "exceptionally large"
+      ),
+      lang = lang,
+      time_col = time$var_left,
+      schemas = schemas,
+      larger = TRUE
     )
 
-  out <- sprintf("%s<p>%s %s", out, first_part, second_part)
+    inc_dec <- if (change_string$pct_change > 0) {
+      cc_t("increase", lang = lang) |>
+        explore_text_color(meaning = "increase")
+    } else {
+      cc_t("decrease", lang = lang) |>
+        explore_text_color(meaning = "decrease")
+    }
+
+    first_part <- sprintf(
+      cc_t("This %s is %s for %s.", lang = lang), inc_dec,
+      relat$rank_chr, context$to_compare_deter
+    )
+
+    second_part <-
+      sprintf(
+        paste0("The change in %s between the '%s' and the ",
+               "'%s' scenarios is %s than in %s of other %s between the same scenarios."),
+        exp_nodet, time_chr(vars$var_left, exp_vals$times[1]),
+        time_chr(vars$var_left, exp_vals$times[2]),
+        relat$higher_lower, relat$higher_lower_than, context$scale_plur
+      )
+
+    out <- sprintf("%s<p>%s %s", out, first_part, second_part)
+
+  }
+
+  # Separe the following into two sentences.
+  premier <- if (time$var_left[[1]] == "000") {
+    sprintf(paste0(
+      "The '%s' scenario represents the existing dwelling inform",
+      "ation from the latest Canadian census without any zoning changes."
+    ), time_chr(vars$var_left, exp_vals$times[1]))
+  } else {
+    additional_inc <- auckland_scenario_nb(time$var_left[[1]])
+    sprintf(paste0(
+      "The '%s' scenario projects a business as usual growth in dw",
+      "ellings units (based on the historical rate of housing growth from 201",
+      "6-2021) with an additional %s%% increase in evenly distributed develo",
+      "pment in areas impacted by Bill 44 from 2024-2029."
+    ), time_chr(vars$var_left, exp_vals$times[1]), additional_inc)
+  }
+
+  deuxieme <-  if (time$var_left[[1]] == "000") {
+    additional_inc <- auckland_scenario_nb(time$var_left[[2]])
+    sprintf(paste0(
+      "Whereas the '%s' scenario projects a business as usual growth in dw",
+      "ellings units (based on the historical rate of housing growth from 201",
+      "6-2021) with an additional %s%% increase in evenly distributed develo",
+      "pment in areas impacted by Bill 44 from 2024-2029."
+    ), time_chr(vars$var_left, exp_vals$times[2]), additional_inc)
+  } else {
+    additional_inc <- auckland_scenario_nb(time$var_left[[2]])
+    sprintf(paste0(
+      "Whereas the '%s' scenario projects an additional %s%% increase."
+    ), time_chr(vars$var_left, exp_vals$times[2]), additional_inc)
+  }
 
   # Scenarios explanation
-  out <- sprintf(paste0("%s<p>The '%s' scenario operates under the assumption that %s of the ",
-                        "total development possible under Bill 44 is implemented and ",
-                        "evenly distributed. Whereas the '%s' scenario assumes %s of ",
-                        "the total development is implemented."),
-                 out,
-                 time_chr(vars$var_left, exp_vals$times[1]),
-                 convert_unit.pct(x = as.numeric(exp_vals$times[1])/100),
-                 time_chr(vars$var_left, exp_vals$times[2]),
-                 convert_unit.pct(x = as.numeric(exp_vals$times[2])/100))
+  out <- sprintf("%s<p>%s %s", out, premier, deuxieme)
 
   # Return
   return(out)

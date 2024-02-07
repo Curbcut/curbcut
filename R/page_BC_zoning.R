@@ -19,7 +19,7 @@ zoning_UI <- function(id) {
     # Sidebar
     sidebar_UI(
       id = shiny::NS(id, id),
-      checkbox_UI(shiny::NS(id, id), label = "Explore residential areas and upcoming zoning changes under Bill 44",
+      checkbox_UI(shiny::NS(id, id), label = "Explore residential areas and upcoming zoning changes under SSMUH legislation (Bill 44)",
                   value = FALSE),
       shiny::br(),
       shiny::hr(),
@@ -445,7 +445,7 @@ zoning_server <- function(id, r) {
 
     # Residential only checkbox
     res <- checkbox_server(id = id, r = r,
-                           label = shiny::reactive("Explore residential areas and upcoming zoning changes under Bill 44"))
+                           label = shiny::reactive("Explore residential areas and upcoming zoning changes under SSMUH legislation (Bill 44)"))
     b_a_bill <- slider_text_server(id = id, r = r, slider_text_id = "abb")
     # When not on res, hide the slider_text!
     shiny::observeEvent(res(), {
