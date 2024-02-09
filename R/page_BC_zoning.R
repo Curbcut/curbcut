@@ -110,11 +110,14 @@ zoning_server <- function(id, r) {
     zoning_colour_pal <- zoning_colour_pal[order(zoning_colour_pal$group_short), ]
     zoning_colour_pal_res <- tibble::tibble(
       group = c("Single", "Single + Secondary suite/ADU", "Duplex",
-                "Multiresidential (3 units)", "Multiresidential (4 units)",
-                "Multiresidential (6 units)", "Multiresidential"),
-      group_short = c("Single", "Single + Suite", "Duplex", "Multi (3)", "Multi (4)",
-                      "Multi (6)", "Multi"),
-      fill = c("#ADB033", "#F5D574", "#A3B0D1", "#CD718C", "#E08565", "#C9C3FA", "#73AD80"))
+                #"Multiresidential (3 units)", "Multiresidential (4 units)",
+                #"Multiresidential (6 units)",
+                "Multiresidential"),
+      group_short = c("Single", "Single + Suite", "Duplex",# "Multi (3)", "Multi (4)",
+                      #"Multi (6)",
+                      "Multi"),
+      fill = c("#ADB033", "#F5D574", "#A3B0D1",# "#CD718C", "#E08565", "#C9C3FA",
+               "#73AD80"))
     colours_dfs <- get_from_globalenv("colours_dfs")
     zoning_colour_pal_compare <- tibble::tibble(group = c("None",
                                                           "+1 unit",
@@ -474,8 +477,9 @@ zoning_server <- function(id, r) {
     # Legend
     legend_height <- shiny::reactive({
       if (!res()) return(150)
-      if (compare_bill()) return(60)
-      return(120)
+      #if (compare_bill())
+      return(60)
+      #return(120)
     })
     legend_zoning_server(
       id = id,
