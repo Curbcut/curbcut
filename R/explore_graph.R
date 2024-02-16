@@ -56,7 +56,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale
+    data = data, lang = lang, scale = scale, ...
   )
 
   # Color as function
@@ -138,7 +138,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
   shared_info <- explore_graph_info(
     vars = vars, font_family = font_family,
     scales_as_DA = scales_as_DA, select_id = select_id,
-    data = data, lang = lang, scale = scale
+    data = data, lang = lang, scale = scale, ...
   )
   # Color as function
   clr_df <- shared_info$colours_dfs$bivar
@@ -230,6 +230,7 @@ explore_graph.bivar <- function(vars, select_id, scale, data, time, schemas,
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
     ) +
+    ggplot2::coord_cartesian(ylim = c(min(data_in_range[[vl_col]]), max(data_in_range[[vl_col]]))) +
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
@@ -416,6 +417,7 @@ explore_graph.delta_bivar <- function(vars, select_id, scale, data, time, schema
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
     ) +
+    ggplot2::coord_cartesian(ylim = c(min(data_in_range[[vl_col]]), max(data_in_range[[vl_col]]))) +
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +
