@@ -24,19 +24,19 @@ Imports:
     qs,
     rintrojs,
     zip,
-    data.table
+    data.table,
+    RSQLite
 Remotes:
     Curbcut/cc.map,
     Curbcut/cc.landing
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 URL: https://github.com/MSSI-urban/curbcut
 BugReports: https://github.com/MSSI-urban/curbcut/issues
 Suggests: 
     testthat (>= 3.0.0),
-    RSQLite,
     shinytest2,
     here,
     tibble

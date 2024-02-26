@@ -13,7 +13,8 @@ explore_text_selection_comparison(
   lang = NULL,
   time_col,
   schemas = NULL,
-  larger = FALSE
+  larger = FALSE,
+  val = NULL
 )
 }
 \arguments{
@@ -46,6 +47,11 @@ to. Defaults to NULL for no translation.}
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{larger}{<\code{logical}> Should we write 'larger than' or 'higher than' ?}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions. Defaults to NULL
+for normal operations.}
 }
 \value{
 A named list with two elements:

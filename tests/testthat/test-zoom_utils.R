@@ -24,7 +24,7 @@ test_that("zoom_get_name throws error for invalid input", {
 test_that("zoom_get_name returns correct output for `fr` in a non-reactive context (en)", {
   expect_equal(
     zoom_get_name("centraide", lang = "fr"),
-    c("Centraide zone")
+    c("Centraide Zone")
   )
 })
 

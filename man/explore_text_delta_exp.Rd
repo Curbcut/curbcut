@@ -29,6 +29,7 @@ explore_text_delta_exp(
   data,
   schemas,
   lang,
+  val = NULL,
   ...
 )
 
@@ -74,6 +75,11 @@ values that have an impact on which data column to pick. Usually \code{r[[id]]$s
 \item{lang}{<\code{character}> Language for translation.}
 
 \item{...}{Additional arguments passed to the dispatched method.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions. Defaults to NULL
+for normal operations.}
 }
 \value{
 A list with the following elements:

@@ -45,15 +45,23 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
     vars = vars, scale = scale, region = region, time = time,
     data_path = data_path
   )
+  schemas <- list(var_left = list(time = time$var_left))
+  if (var_right != " ") {
+    schemas$var_right <- list(time = time$var_right)
+  }
 
   assign("scale", scale, envir = as.environment(pos))
   assign("region", region, envir = as.environment(pos))
   assign("vars", vars, envir = as.environment(pos))
   assign("time", time, envir = as.environment(pos))
   assign("data", data, envir = as.environment(pos))
+  assign("schemas", schemas, envir = as.environment(pos))
   assign("select_id", select_id, envir = as.environment(pos))
   assign("scales_as_DA", c("building", "street"), envir = as.environment(pos))
   assign("lang", NULL, envir = as.environment(pos))
+  assign("data_path", data_path, envir = as.environment(pos))
+  assign("font_family", "acidgrotesk-book", envir = as.environment(pos))
+
 }
 
 #' Setup objects

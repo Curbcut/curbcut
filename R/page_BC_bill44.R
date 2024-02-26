@@ -39,7 +39,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- curbcut:::explore_text_check_na(
+  na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
     time = time, lang = lang, schemas = schemas
@@ -89,7 +89,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
 
     if ("count" %in% class(vars$var_left)) {
 
-      exp_vals <- curbcut:::explore_text_delta_exp(
+      exp_vals <- explore_text_delta_exp(
         var = vars$var_left, region = region,
         select_id = select_id, data = count_data,
         scale = context$treated_scale,
@@ -101,8 +101,8 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
         var = vars$var_left, exp_vals = exp_vals, lang = lang
       )
 
-      inc_pct <- curbcut:::convert_unit.pct(x = change_string$pct_change)
-      current_val <- curbcut:::convert_unit(x = exp_vals$region_vals[[2]])
+      inc_pct <- convert_unit.pct(x = change_string$pct_change)
+      current_val <- convert_unit(x = exp_vals$region_vals[[2]])
 
       out <- sprintf("%s This is a %s increase over the initial (2021) %s dwelling units .",
                      out, inc_pct, current_val)
@@ -110,7 +110,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
 
     if ("sqkm" %in% class(vars$var_left)) {
 
-      count_exp_vals <- curbcut:::explore_text_delta_exp(
+      count_exp_vals <- explore_text_delta_exp(
         var = count_vars$var_left, region = region,
         select_id = select_id, data = count_data,
         scale = context$treated_scale,
@@ -122,7 +122,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
       count_current_val <- convert_unit(x = count_exp_vals$region_vals[[2]])
 
       # SQKM INFORMATION
-      exp_vals <- curbcut:::explore_text_delta_exp(
+      exp_vals <- explore_text_delta_exp(
         var = vars$var_left, region = region,
         select_id = select_id, data = data,
         scale = context$treated_scale,
@@ -134,7 +134,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
         var = vars$var_left, exp_vals = exp_vals, lang = lang
       )
 
-      inc_pct <- curbcut:::convert_unit.pct(x = change_string$pct_change)
+      inc_pct <- convert_unit.pct(x = change_string$pct_change)
       current_val <- convert_unit(x = exp_vals$region_vals[[2]])
 
       tot_dw <- sprintf(" (%s total dwellings).", count_new_val)
@@ -152,7 +152,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
     out <- sprintf("<p><b>%s</b>%s", context$heading, out)
 
     # Get the information on how the selection compares
-    relat <- curbcut:::explore_text_selection_comparison(
+    relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
       select_id = select_id, lang = lang,
       time_col = time$var_left, schemas = schemas
@@ -236,7 +236,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   if ("select_id" %in% names(context)) select_id <- context$select_id
 
   # Check for NAs in the selected value. Return NA message if it is the case
-  na_check <- curbcut:::explore_text_check_na(
+  na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
     lang = lang, time = time, schemas = schemas
@@ -246,7 +246,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   }
 
   # Grab the explanation and region values
-  exp_vals <- curbcut:::explore_text_delta_exp(
+  exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale,
@@ -305,7 +305,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
   if (!is.na(select_id)) {
 
     # Craft the second paragraph
-    relat <- curbcut:::explore_text_selection_comparison(
+    relat <- explore_text_selection_comparison(
       var = vars$var_left,
       data = data,
       select_id = select_id,

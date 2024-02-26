@@ -31,7 +31,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "Comparison is unavailable at the <b>%s</b> scale.",
-    fr = "La comparaison n'est pas possible à l'échelle <b>%s</b>."
+    fr = "La comparaison n'est pas possible \u00e0 l'\u00e9chelle <b>%s</b>."
   ) |>
   tibble::add_row(
     en = "[LEARN MORE]",
@@ -128,7 +128,7 @@ cc_translation_df <-
       "residents"
     ),
     fr = paste0(
-      "résidents"
+      "r\u00e9sidents"
     )
   ) |>
   # Legend ------------------------------------------------------------------

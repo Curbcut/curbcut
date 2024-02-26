@@ -25,6 +25,8 @@ time division.}
 
 \item{time_div_icon}{<\code{character}> Material ion name for the time selection UI, defaults
 to "date_range".}
+
+\item{compare_label}{<\code{character}> Label of the checkbox used to compare dates}
 }
 \value{
 <\code{shiny.tagList}> A tag list containing the UI elements for the

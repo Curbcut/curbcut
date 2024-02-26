@@ -86,6 +86,7 @@ explore_graph(
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
+  val = NULL,
   ...
 )
 
@@ -145,6 +146,10 @@ translate variable titles to.}
 plot, default is "acidgrotesk-book".}
 
 \item{...}{Additional arguments passed to the specific method.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions.}
 }
 \value{
 A ggplot2 object representing the plot.

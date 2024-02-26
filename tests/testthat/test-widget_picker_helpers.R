@@ -71,10 +71,14 @@ test_that("picker_multi_year_disable disables nothing when variables aren't in `
 })
 
 test_that("picker_multi_year_disable does not disable any variables when none are needed", {
-  var_list <- dropdown_make(vars = vars)
+  # Remove age
+  v <- variables$var_code[variables$source == "Canadian census" & !is.na(variables$parent_vec) &
+                            variables$theme != "Age"]
+
+  var_list <- dropdown_make(vars = v)
   disable <- FALSE
   actual_output <- picker_multi_year_disable(var_list, disable)
-  expect_identical(actual_output, rep(F, length(vars)))
+  expect_identical(actual_output, rep(F, length(v)))
 })
 
 test_that("picker_multi_year_disable returns NULL when the list is empty", {

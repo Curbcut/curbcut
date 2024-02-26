@@ -40,21 +40,34 @@ explore_text <- function(vars, region, select_id, scale, time, data,
 # Q5 ----------------------------------------------------------------------
 
 #' @rdname explore_text
+#' @param shown_scale <`character`> While the `scale` argument is the scale
+#' for which to calculate regional values, `shown_scale` is the scale which
+#' would fit the `select_id`. In use for raster data, where we show region values
+#' for the highest resolution possible, but we still want to allow user to select
+#' grid cells of lower resolutions. `shown_scale` will only be used to grab the
+#' address of the grid cell. Defaults to NULL for normal operations.
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions. Defaults to NULL
+#' for normal operations.
 #' @export
 explore_text.q5 <- function(vars, region, select_id, scale, time, data,
                             schemas, zoom_levels,
                             scales_as_DA = c("building", "street"),
-                            lang = NULL, ...) {
+                            lang = NULL, shown_scale = NULL, val = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
   switch_DA <- is_scale_in(scales_as_DA, scale)
 
-  # Adjust the selected ID in the case where the selection is not in `data`
-  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  # Adjust the selected ID in the case where the selection is not in `data`,
+  # except if there is a value supplied, meaning
+  if (is.null(shown_scale) & is.null(val)) {
+    if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  }
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, scale = scale,
+    region = region, select_id = select_id, scale = scale, shown_scale = shown_scale,
     zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
@@ -66,7 +79,8 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    time = time, lang = lang, schemas = schemas
+    time = time, lang = lang, schemas = schemas,
+    val = val
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -77,7 +91,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
     scale = context$treated_scale, lang = lang,
-    time = time, schemas = schemas
+    time = time, schemas = schemas, val = val
   )
 
   # Put it all together
@@ -95,7 +109,8 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
       select_id = select_id, lang = lang,
-      time_col = time$var_left, schemas = schemas
+      time_col = time$var_left, schemas = schemas,
+      val = val
     )
 
     # Make the first sentence of the paragraph
@@ -428,17 +443,20 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
 explore_text.delta <- function(vars, region, select_id, scale, time, data,
                                schemas, zoom_levels,
                                scales_as_DA = c("building", "street"),
-                               lang = NULL, ...) {
+                               lang = NULL, shown_scale = NULL, val = NULL, ...) {
   # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
   switch_DA <- is_scale_in(scales_as_DA, scale)
 
-  # Adjust the selected ID in the case where the selection is not in `data`
-  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  # Adjust the selected ID in the case where the selection is not in `data`,
+  # except if there is a value supplied, meaning
+  if (is.null(shown_scale) & is.null(val)) {
+    if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  }
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, scale = scale,
+    region = region, select_id = select_id, scale = scale, shown_scale = shown_scale,
     zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
@@ -450,7 +468,8 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang, time = time, schemas = schemas
+    lang = lang, time = time, schemas = schemas,
+    val = val
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -462,7 +481,7 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
     select_id = select_id, data = data,
     scale = context$treated_scale,
     left_right = "left", lang = lang,
-    time = time, schemas = schemas
+    time = time, schemas = schemas, val = val
   )
 
   # Get the necessary information for the second paragraph
@@ -517,7 +536,8 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
     lang = lang,
     time_col = time$var_left,
     schemas = schemas,
-    larger = TRUE
+    larger = TRUE,
+    val = val
   )
 
   # If `ind` and data remained the same, we add 'slight' decrease/increase

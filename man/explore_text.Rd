@@ -33,6 +33,8 @@ explore_text(
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
+  shown_scale = NULL,
+  val = NULL,
   ...
 )
 
@@ -61,6 +63,8 @@ explore_text(
   zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
+  shown_scale = NULL,
+  val = NULL,
   ...
 )
 
@@ -112,6 +116,18 @@ default, their info will be the one of their DA.}
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{...}{Additional arguments passed to the dispatched function.}
+
+\item{shown_scale}{<\code{character}> While the \code{scale} argument is the scale
+for which to calculate regional values, \code{shown_scale} is the scale which
+would fit the \code{select_id}. In use for raster data, where we show region values
+for the highest resolution possible, but we still want to allow user to select
+grid cells of lower resolutions. \code{shown_scale} will only be used to grab the
+address of the grid cell. Defaults to NULL for normal operations.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions. Defaults to NULL
+for normal operations.}
 }
 \value{
 The resulting text.

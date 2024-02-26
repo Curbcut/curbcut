@@ -320,10 +320,16 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
 
   # Calculate break
   quintiles <- attr(data, "quintiles")
-  breaks <- if (q3_q5 == "q3" | quintiles) {
-    find_breaks_quintiles(dist = data_vec, q3_q5 = q3_q5)
-  } else {
-    find_breaks_q5(min_val = min(data_vec), max_val = max(data_vec))
+
+  # Are breaks hardcoded in the variables table? Output that.
+  variables <- get_from_globalenv("variables")
+  brks <- variables$breaks_q5[variables$var_code == var][[1]]
+  breaks <- if (!is.null(brks)) brks else {
+    if (q3_q5 == "q3" | quintiles) {
+      find_breaks_quintiles(dist = data_vec, q3_q5 = q3_q5)
+    } else {
+      find_breaks_q5(min_val = min(data_vec), max_val = max(data_vec))
+    }
   }
 
   # Rework breaks just for assembling (we want to include ALL observations)

@@ -822,7 +822,7 @@ get_data_path <- function() {
   }
 
   # Retrieve the value of the CURBCUT_DATA environment variable
-  data_path <- "C:/Users/maxim/Unsync/curbcut-kelowna/data/" #Sys.getenv("CURBCUT_DATA")
+  data_path <- Sys.getenv("CURBCUT_DATA")
 
   # Check if the environment variable is empty
   if (data_path == "") {
@@ -906,7 +906,10 @@ filter_inrange <- function(data, col, range, select_id = NA) {
     # Get the ID value
     id_val <- dat[[col]][dat$ID == select_id]
 
-    if (length(id_val) == 0) return(data)
+    if (length(id_val) == 0) {
+      attr(data, sprintf("updated_range_%s", col)) <- FALSE
+      return(data)
+    }
 
     # If the ID value is not in the range, tweak the range
     if (id_val < lower) lower <- id_val
@@ -1005,4 +1008,31 @@ delta_which_colors <- function(data) {
   if ("normal" %in% class(data)) return(colours_dfs$delta)
   if ("negative" %in% class(data)) return(colours_dfs$delta_neg)
   if ("positive" %in% class(data)) return(colours_dfs$delta_pos)
+}
+
+#' Safely evaluate reactive and non-reactive arguments
+#'
+#' This function iterates over a list of arguments and evaluates them. If an
+#' argument is a reactive expression, it is evaluated to obtain its current
+#' value. Non-reactive arguments are returned as is.
+#'
+#' @param argList <`list`> A list containing both reactive and non-reactive
+#' arguments. Reactive arguments are expected to be Shiny reactive expressions
+#' that need to be evaluated to obtain their current values. Non-reactive
+#' arguments are any other values or objects that do not require evaluation.
+#'
+#' @return A list of the same length as `argList`, where each element is the
+#' evaluated value of the corresponding argument in `argList`. Reactive
+#' expressions are evaluated to their current value, and non-reactive arguments
+#' are returned unchanged.
+safeEvaluate <- function(argList) {
+
+  lapply(argList, function(arg) {
+    if (shiny::is.reactive(arg)) {
+      return(arg())
+    } else {
+      return(arg)
+    }
+  })
+
 }

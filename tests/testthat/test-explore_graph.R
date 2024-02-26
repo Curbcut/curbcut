@@ -1,12 +1,12 @@
 test_explore_graph_helper <- function(var_left, var_right, scale, region, time,
-                                      select_id, schemas = NULL) {
+                                      select_id, schemas = NULL, ...) {
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time <- vars$time
   vars <- vars$vars
   data <- data_get(vars, scale = scale, region = region, time = time)
   actual <- explore_graph(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time, lang = "fr", schemas = schemas
+    data = data, time = time, lang = "fr", schemas = schemas, ...
   )
 
   # If there is a selection, the selection is within range
@@ -97,6 +97,51 @@ test_explores <- function(var_right, select_id, scale, region) {
 test_that("q5 explore works without a selection", {
   test_explores(var_right = " ", select_id = NA, scale = "CSD", region = "CMA")
   test_explores(var_right = " ", select_id = NA, scale = "building", region = "city")
+
+  # Ind ordinal (using SQLite)
+  var_left <- "climate_drought"
+  scale <- "grd250"
+  time <- 2022
+  vars <- vars_build(var_left, var_right = " ", scale = scale, time = time)
+  time <- vars$time
+  vars <- vars$vars
+
+  val <- val_get_sqlite_helper.q5(vars = vars, select_id = "grd100_10200",
+                                  time = time, conn = grd100_conn)
+
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = " ", region = "island", scale = "grd250",
+    select_id = "grd100_10200", time = 2022, val = val
+  )
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = " ", region = "island", scale = "grd250",
+    select_id = "grd100_10200", time = 2022, shown_scale = "grd100", val = NA
+  )
+
+  # Ind scalar (using SQLite)
+  var_left <- "ndvi"
+  scale <- "grd600"
+  time <- 2022
+  vars <- vars_build(var_left, var_right = " ", scale = scale, time = time)
+  time <- vars$time
+  vars <- vars$vars
+
+  val <- val_get_sqlite_helper.q5(vars = vars, select_id = "grd300_10200",
+                                  time = time, conn = grd300_conn)
+
+  test_explore_graph_helper(
+    var_left = "ndvi",
+    var_right = " ", region = "island", scale = "grd600",
+    select_id = "grd300_10200", time = 2022, val = val
+  )
+  test_explore_graph_helper(
+    var_left = "ndvi",
+    var_right = " ", region = "island", scale = "grd600",
+    select_id = "grd300_10200", time = 2022, shown_scale = "grd300", val = NA
+  )
+
 })
 
 test_that("q5 explore works with selections", {
@@ -183,22 +228,31 @@ test_that("delta explore works without a selection", {
 test_that("delta explore works with selections", {
   test_explores_delta(var_right = " ", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = " ", select_id = "b10000763", scale = "building", region = "city")
+
+  # Ind ordinal (using SQLite)
+  var_left <- "climate_drought"
+  scale <- "grd250"
+  time <- c(2015, 2022)
+  vars <- vars_build(var_left, var_right = " ", scale = scale, time = time)
+  time <- vars$time
+  vars <- vars$vars
+
+  val <- val_get_sqlite_helper.delta(vars = vars, select_id = "grd100_10200",
+                                     time = time, conn = grd100_conn)
+
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = " ", region = "island", scale = "grd250",
+    select_id = "grd100_10200", time = c(2015, 2022),
+    shown_scale = "grd100", val = val
+  )
+  test_explore_graph_helper(
+    var_left = "climate_drought",
+    var_right = " ", region = "island", scale = "grd250",
+    select_id = "grd100_10200", time = c(2015, 2022),
+    shown_scale = "grd100", val = NA
+  )
 })
-
-# test_that("delta_ind ordinal", {
-#   var_left <- c("climate_drought_2015", "climate_drought_2022")
-#   df <- "grid_grid250"
-#   var_right <- " "
-#   vars <- vars_build(var_left, var_right = var_right, df = df)
-#   data <- data_get(vars, df = df)
-#   actual <- explore_graph(vars,
-#     region = "grid", select_id = NA, df = df,
-#     data = data
-#   )
-#   expect_true(is.data.frame(actual$data))
-#   expect_true(is.list(actual$labels))
-# })
-
 
 # delta bivar -------------------------------------------------------------
 

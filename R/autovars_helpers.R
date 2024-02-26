@@ -346,6 +346,7 @@ autovars_placeholder_var <- function(id) {
 #' time division.
 #' @param time_div_icon <`character`> Material ion name for the time selection UI, defaults
 #' to "date_range".
+#' @param compare_label <`character`> Label of the checkbox used to compare dates
 #'
 #' @return <`shiny.tagList`> A tag list containing the UI elements for the
 #' time variable selection.

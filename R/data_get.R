@@ -55,6 +55,9 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
   # Construct the file path
   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
 
+  # The data exists?
+  file.exists(path)
+
   # Read the data
   tryCatch(qs::qread(path), error = function(e) {
     stop(glue::glue_safe(

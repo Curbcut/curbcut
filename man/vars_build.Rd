@@ -12,7 +12,8 @@ vars_build(
   time,
   scales_as_DA = c("building", "street"),
   check_choropleth = TRUE,
-  variables = get_from_globalenv("variables")
+  variables = get_from_globalenv("variables"),
+  data_path = get_data_path()
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ the \code{df} is not in \code{all_choropleth}, it is returned as a class (instea
 
 \item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
 from the global environment using \code{\link{get_from_globalenv}}.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 }
 \value{
 A named list containing both \code{var_left} and \code{var_right} variables with

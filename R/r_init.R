@@ -67,6 +67,7 @@ r_init <- function(server_session,
         coords = shiny::reactiveVal(map_loc),
         poi = shiny::reactiveVal(NULL),
         map_exists = shiny::reactiveVal(FALSE),
+        vars = shiny::reactiveVal(NULL),
         ...
       )
     } else {
@@ -112,6 +113,7 @@ r_init <- function(server_session,
           coords = shiny::reactiveVal(map_loc),
           poi = shiny::reactiveVal(NULL),
           map_exists = shiny::reactiveVal(FALSE),
+          vars = shiny::reactiveVal(NULL),
           ...
         )
       }

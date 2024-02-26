@@ -57,7 +57,8 @@ explore_text_values_q5.pct <- function(var, region, data_path = get_data_path(),
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -113,7 +114,8 @@ explore_text_values_q5.count <- function(var, region, data_path = get_data_path(
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -161,7 +163,8 @@ explore_text_values_q5.dollar <- function(var, region, data_path = get_data_path
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -217,7 +220,8 @@ explore_text_values_q5.ind <- function(var, region, data_path = get_data_path(),
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -306,7 +310,8 @@ explore_text_values_q5.avg <- function(var, region, data_path = get_data_path(),
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -379,7 +384,8 @@ explore_text_values_q5.sqkm <- function(var, region, data_path = get_data_path()
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message
@@ -444,7 +450,8 @@ explore_text_values_q5.ppo <- function(var, region, data_path = get_data_path(),
     lang = lang,
     time = time,
     schemas = schemas,
-    data_path = data_path
+    data_path = data_path,
+    ...
   )
 
   # NA message

@@ -24,7 +24,8 @@ explore_server(
   table_fun = shiny::reactive(explore_text),
   table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
     time = time(), select_id = select_id(), region = region(), zoom_levels =
-    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas()))
+    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas())),
+  ...
 )
 
 explore_UI(id)
@@ -96,6 +97,11 @@ passed to the info table function, you can provide a different reactive
 expression for this argument. The reactive expression should evaluate to a
 list of arguments to be passed to the info table function, including any
 additional arguments required by your custom table function.}
+
+\item{...}{Additional arguments which are added to both \code{graph_args} and
+\code{table_args} for further customization. For instance, \code{val = shiny::reactive(0.5)}
+could be used to pass the value of the selected feature, rather than
+grabbing if from the \code{data} argument as usual.}
 }
 \value{
 The explore Shiny UI and server module functions

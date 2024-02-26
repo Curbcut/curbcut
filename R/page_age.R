@@ -380,12 +380,14 @@ age_server <- function(id, r) {
                         r = r,
                         var_list = shiny::reactive(dat_rep))
     var_left_1 <- shiny::reactive({
+      print(unique(vl()))
       vvll <- unique(vl())
       # If it's only 85+, return it
       if (length(vvll) == 1 && vvll == "85+") return("age_agg_85plus")
       if (length(vvll) == 1) {
         return(sprintf("age_agg_%s_%s", vvll, as.numeric(vvll) + 4))
       }
+      if (identical(vvll, c("85", "85+"))) return("age_agg_85plus")
 
       last <- if (vvll[[2]] == "85+") "85plus" else as.numeric(vvll[[2]]) - 1
       sprintf("age_agg_%s_%s", vvll[[1]], last)

@@ -11,7 +11,8 @@ explore_text_check_na(
   vars,
   time,
   lang = NULL,
-  schemas = NULL
+  schemas = NULL,
+  val = NULL
 )
 }
 \arguments{
@@ -36,6 +37,10 @@ translates the variable. Defaults to NULL.}
 
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions.}
 }
 \value{
 If there is NAs in the selection, returns a string that starts with

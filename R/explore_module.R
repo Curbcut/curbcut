@@ -65,6 +65,10 @@
 #' expression for this argument. The reactive expression should evaluate to a
 #' list of arguments to be passed to the explore graph function, including any
 #' additional arguments required by your custom graph function.
+#' @param ... Additional arguments which are added to both `graph_args` and
+#' `table_args` for further customization. For instance, `val = shiny::reactive(0.5)`
+#' could be used to pass the value of the selected feature, rather than
+#' grabbing if from the `data` argument as usual.
 #'
 #' @return The explore Shiny UI and server module functions
 #' @export
@@ -83,7 +87,7 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
                              time = time(), select_id = select_id(), region = region(),
                              zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
                              lang = r$lang(), schemas = schemas()
-                           ))) {
+                           )), ...) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
@@ -98,10 +102,27 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
   stopifnot(shiny::is.reactive(table_args))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # Use ... to capture additional reactive arguments
+    dots <- list(...)
+
+    # Define reactive expressions for graph_args and table_args
+    graph_args_with_dots <- shiny::reactive({
+      argsList <- graph_args()
+      # Merge predefined args with evaluated ... args
+      c(argsList, safeEvaluate(dots))
+    })
+
+    table_args_with_dots <- shiny::reactive({
+      argsList <- table_args()
+      # Merge predefined args with evaluated ... args
+      c(argsList, safeEvaluate(dots))
+    })
+
     # Make info table. If fails, returns NULL
     table_out <- shiny::reactive(
       tryCatch(
-        do.call(table_fun(), table_args()),
+        do.call(table_fun(), table_args_with_dots()),
         error = function(e) {
           print(e)
           return(NULL)
@@ -115,7 +136,7 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
     # Make graph
     graph_out <- shiny::reactive(
       tryCatch(
-        do.call(graph_fun(), graph_args()),
+        do.call(graph_fun(), graph_args_with_dots()),
         error = function(e) {
           print(e)
           return(NULL)

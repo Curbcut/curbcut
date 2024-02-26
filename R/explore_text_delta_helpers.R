@@ -37,9 +37,14 @@ explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
 }
 
 #' @rdname explore_text_delta_exp
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions. Defaults to NULL
+#' for normal operations.
 #' @export
 explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
-                                       time, scale, data, schemas, lang, ...) {
+                                       time, scale, data, schemas, lang, val = NULL,
+                                       ...) {
   # Grab values for single years. Allow for `apply`
   var_lr <- sprintf("var_%s", left_right)
   times <- sapply(time[[var_lr]], \(x) stats::setNames(list(x), var_lr),
@@ -123,7 +128,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     col = var_lr,
     lang = lang,
     time_col = times[[1]],
-    schemas = schemas
+    schemas = schemas,
+    val = val[[1]]
   )$rank_chr
 
   rank_chr_after <- explore_text_selection_comparison(
@@ -133,7 +139,8 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
     col = var_lr,
     lang = lang,
     time_col = times[[2]],
-    schemas = schemas
+    schemas = schemas,
+    val = val[[2]]
   )$rank_chr
 
   # Did it remain in the same category, or it moved?
@@ -141,7 +148,7 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 
   # Grab the region values
   region_vals <-
-    lapply(times, \(t) {
+    mapply(\(t, v) {
       explore_text_region_val_df(
         var = var,
         region = region,
@@ -150,9 +157,12 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
         scale = scale,
         col = var_lr,
         lang = lang,
-        time = t
+        time = t,
+        val = v
       )
-    })
+    }, times, if (length(val) == 0) rep(list(NULL), 2) else val,  # In the case val is NULL, make `v` be NULL twice so not errors
+    SIMPLIFY = FALSE, USE.NAMES = FALSE)
+
   region_vals <- sapply(region_vals, `[[`, "num")
   # Newest value must be first, like for the no-selection values
   region_vals <- rev(region_vals)

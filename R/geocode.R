@@ -91,7 +91,7 @@ geocode <- function(address) {
 
   # Make the address
   add <- paste0(
-    "http://geogratis.gc.ca/services/geolocation/en/locate?q=",
+    "https://geogratis.gc.ca/services/geolocation/en/locate?q=",
     add
   )
 

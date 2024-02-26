@@ -16,12 +16,19 @@
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
 #' levels. Usually one of the `mzl_*`, or the output of
 #' \code{\link{geography_server}}.
+#' @param shown_scale <`character`> While the `scale` argument is the scale
+#' for which to calculate regional values, `shown_scale` is the scale which
+#' would fit the `select_id`. In use for raster data, where we show region values
+#' for the highest resolution possible, but we still want to allow user to select
+#' grid cells of lower resolutions. `shown_scale` will only be used to grab the
+#' address of the grid cell. Defaults to NULL for normal operations.
 #' @param lang <`character`> Active language. "en" or "fr". Defaults to NULL
 #' for no translation.
 #'
 #' @return A list containing multiple texts used for the explore text panel.
 #' @export
-explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, lang = NULL) {
+explore_context <- function(region, select_id, scale, switch_DA, zoom_levels,
+                            shown_scale = NULL, lang = NULL) {
   # Grab the region dictionary
   regions_dictionary <- get_from_globalenv("regions_dictionary")
   region_df <- regions_dictionary[regions_dictionary$region == region, ]
@@ -32,7 +39,7 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, la
     to_compare <- cc_t(region_df$to_compare, lang = lang)
 
     # Return as a sentence
-    return(list(p_start = to_compare, treated_scale = scale))
+    return(list(p_start = to_compare, treated_scale = scale, select_id = NA))
   }
 
   # If there is no selection, return the region text only
@@ -41,9 +48,11 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, la
   }
 
   # Grab the right scale
+  scale_grab_chr_for <- if (!is.null(shown_scale)) shown_scale else scale
+
   scales_dictionary <- get_from_globalenv("scales_dictionary")
   scale_df <- scales_dictionary[
-    is_scale_in(scales_dictionary$scale, scale = scale, vectorized = TRUE),
+    is_scale_in(scales_dictionary$scale, scale = scale_grab_chr_for, vectorized = TRUE),
   ]
 
   # Normal retrieval when the `df` is not part of the scales to treat as
@@ -51,14 +60,17 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels, la
   if (!switch_DA) {
     # Get the place heading and glue it
     dat <- grab_row_from_bslike(
-      scale = scale, select_id = select_id,
+      scale = scale_grab_chr_for, select_id = select_id,
       cols = c("name", "name_2")
     )
+    # the selection is not found in the database
+    if (nrow(dat) == 0) return(region_only_return(region_df))
+
     name <- dat$name
     name_2 <- dat$name_2
     if (is.na(name_2)) {
       name_2 <- fill_name_2(
-        ID_scale = select_id, scale = scale,
+        ID_scale = select_id, scale = scale_grab_chr_for,
         top_scale = names(zoom_levels)[[1]]
       )
     }
@@ -341,19 +353,63 @@ explore_text_select_val.pct <- function(var, select_id, data, scale, col = "var_
 #' @export
 explore_text_select_val.ind <- function(var, data, select_id, col = "var_left",
                                         time, lang, schemas = NULL, ...) {
+  explore_text_select_val_ind(var = var, data = data, select_id = select_id,
+                              col = col, time = time, lang = lang, schemas = schemas,
+                              ...)
+}
+
+#' Generate values for the given `ind` variable and selection
+#'
+#' @param var <`character`> The variable code of the variable for which the
+#' values need to be generated. Usually one element of the output of
+#' \code{\link{vars_build}}.
+#' @param select_id <`character`> The ID of the selected zone.
+#' @param data <`data.frame`> A data frame containing the variables and
+#' observations. The output of \code{\link{data_get}}.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right` or
+#' `var_left_1` in delta.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' @param lang <`character`> Language the ranking character should be translated
+#' to. Defaults to NULL for no translation.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions. Defaults to NULL
+#' for normal operations.
+#' @param ... Additional arguments passed to the dispatched function.
+#'
+#' @return The resulting values
+#' @export
+explore_text_select_val_ind <- function(var, data, select_id, col = "var_left",
+                                        time, lang, schemas = NULL, val = NULL, ...) {
+  UseMethod("explore_text_select_val_ind", var)
+}
+
+#' @describeIn explore_text_select_val_ind Method for `scalar`
+#' @export
+explore_text_select_val_ind.scalar <- function(var, data, select_id, col = "var_left",
+                                               time, lang, schemas = NULL, val = NULL, ...) {
+
   # Create empty vector
   out <- c()
 
   # Throw error if the selected ID is not in the data.
-  if (!select_id %in% data$ID) {
+  if (is.null(val) & !select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
-  rcol <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
-  brk_col <- sprintf("%s_q5", rcol)
+  rank <- if (is.null(val)) {
+    rcol <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
+    brk_col <- sprintf("%s_q5", rcol)
 
-  # Get the group in which falls the selection
-  rank <- data[[brk_col]][data$ID == select_id]
+    # Get the group in which falls the selection
+    rank <- data[[brk_col]][data$ID == select_id]
+  } else {
+    findInterval(val, attr(data, "breaks_var_left"))
+  }
 
   # Grab the rank name for the rank
   rank_names <- var_get_info(var = var, what = "rank_name")[[1]]
@@ -362,10 +418,45 @@ explore_text_select_val.ind <- function(var, data, select_id, col = "var_left",
   # Lower letters
   out$val <- tolower(cc_t(out$val, lang = lang))
 
-  out$num <- data[[rcol]][data$ID == select_id]
+  out$num <- if (!is.null(val)) val else data[[rcol]][data$ID == select_id]
 
   # Return
   return(out)
+
+}
+
+#' @describeIn explore_text_select_val_ind Method for `ordinal`
+#' @export
+explore_text_select_val_ind.ordinal <- function(var, data, select_id, col = "var_left",
+                                                time, lang, schemas = NULL, val = NULL, ...) {
+
+  # Create empty vector
+  out <- c()
+
+  # Throw error if the selected ID is not in the data.
+  if (is.null(val) & !select_id %in% data$ID) {
+    stop(sprintf("`%s` is not in the data.", select_id))
+  }
+
+  rank <- if (!is.null(val)) val else {
+    rcol <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
+
+    # Get the group in which falls the selection
+    data[[rcol]][data$ID == select_id]
+  }
+
+  # Grab the rank name for the rank
+  rank_names <- var_get_info(var = var, what = "rank_name")[[1]]
+  out$val <- rank_names[rank]
+
+  # Lower letters
+  out$val <- tolower(cc_t(out$val, lang = lang))
+
+  out$num <- rank
+
+  # Return
+  return(out)
+
 }
 
 #' @describeIn explore_text_select_val Default method
@@ -417,6 +508,10 @@ explore_text_select_val.default <- function(var, data, select_id, col = "var_lef
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param larger <`logical`> Should we write 'larger than' or 'higher than' ?
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions. Defaults to NULL
+#' for normal operations.
 #'
 #' @return A named list with two elements:
 #' \itemize{
@@ -434,9 +529,9 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
                                               col = "var_left",
                                               ranks_override = NULL,
                                               lang = NULL, time_col, schemas = NULL,
-                                              larger = FALSE) {
+                                              larger = FALSE, val = NULL) {
   # Throw error if the selected ID is not in the data.
-  if (!select_id %in% data$ID) {
+  if (is.null(val) & !select_id %in% data$ID) {
     stop(sprintf("`%s` is not in the data.", select_id))
   }
 
@@ -444,8 +539,13 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
   # In the case of `delta`, the value to look at will be the variation (no years)
   if (length(rcol) == 2) rcol <- col
 
+  # If val is supplied. In the case two values are supplied, it's a delta.
+  current_val <- if (!is.null(val)) {
+    if (length(val) == 2) (val[2] - val[1]) / val[1] else val
+  } else data[[rcol]][data$ID == select_id]
+
   # The value is higher than X of other observations
-  higher_than <- data[[rcol]][data$ID == select_id] > data[[rcol]]
+  higher_than <- current_val > data[[rcol]]
   higher_than <- mean(higher_than, na.rm = TRUE)
 
   if (is.na(higher_than)) {
@@ -648,15 +748,38 @@ explore_text_color <- function(x, meaning) {
 #' translates the variable. Defaults to NULL.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions.
 #'
 #' @return If there is NAs in the selection, returns a string that starts with
 #' 'p_start' from the 'context' object and includes a message indicating that
 #' the information for 'var_left' or 'var_right' is not available. Returns NULL
 #' otherwise.
-explore_text_check_na <- function(context, data, select_id, vars, time, lang = NULL, schemas = NULL) {
+explore_text_check_na <- function(context, data, select_id, vars, time,
+                                  lang = NULL, schemas = NULL, val = NULL) {
   # If there are no selection, returns NULL
   if (is.na(select_id)) {
     return(NULL)
+  }
+
+  # Construct the NA output text
+  na_text <- \(var, var_left) {
+    exp <- var_get_info(
+      var = var, what = "explanation",
+      translate = TRUE, lang = lang, schemas_col = schemas[[if (var_left) "var_left" else "var_right"]]
+    )
+    out <- sprintf(cc_t("we currently don't have information regarding %s",
+                        lang = lang
+    ), exp)
+    sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
+  }
+
+  # If there is a selection, and the value is already supplied
+  if (!is.null(val)) {
+    if (!any(sapply(val, is.na))) return(NULL)
+
+    return(na_text(var = vars$var_left, var_left = TRUE))
   }
 
   # Construct the vl and vr columns. If in delta mode, we need to grab the
@@ -672,6 +795,7 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
     }
 
     val <- data[[col]][data$ID == select_id]
+    if (length(val) == 0) stop(sprintf("`%s` is not in the data.", select_id))
 
     if (!is.na(val)) {
       return(NULL)
@@ -680,14 +804,7 @@ explore_text_check_na <- function(context, data, select_id, vars, time, lang = N
     var_left <- grepl("var_left", col)
     var <- if (var_left) vars$var_left else vars$var_right
 
-    exp <- var_get_info(
-      var = var, what = "explanation",
-      translate = TRUE, lang = lang, schemas_col = schemas[[if (var_left) "var_left" else "var_right"]]
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    out <- sprintf("<p>%s, %s.", s_sentence(context$p_start), out)
+    out <- na_text(var, var_left)
 
     return(out)
   })

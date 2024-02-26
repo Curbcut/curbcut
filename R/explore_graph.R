@@ -95,9 +95,11 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
   plot <-
     data_inrange |>
     ggplot2::ggplot(ggplot2::aes(!!ggplot2::sym(rcol))) +
-    ggplot2::geom_histogram(ggplot2::aes(fill = ggplot2::after_stat(x)),
-      bins = bin_number
+    ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(..count.. / sum(..count..)),
+                                         fill = ggplot2::after_stat(x)),
+                            bins = bin_number
     ) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
     ggplot2::binned_scale(
       aesthetics = "fill",
       scale_name = "stepsn",
@@ -271,10 +273,13 @@ explore_graph.delta_ind <- function(vars, select_id, scale, data, time, schemas,
 }
 
 #' @rdname explore_graph
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions.
 #' @export
 explore_graph.delta <- function(vars, select_id, scale, data, time, schemas,
                                 scales_as_DA = c("building", "street"), lang = NULL,
-                                font_family = "acidgrotesk-book", ...) {
+                                font_family = "acidgrotesk-book", val = NULL, ...) {
   # Appease R CMD check
   var_left_1 <- var_left_2 <- group <- NULL
 
@@ -348,14 +353,19 @@ explore_graph.delta <- function(vars, select_id, scale, data, time, schemas,
     shared_info$labs +
     shared_info$theme_default
 
-  # Add selection
-  if (!is.na(shared_info$select_id)) {
-    val <- data[data$ID == shared_info$select_id, ]
-    if (!any(is.na(val))) {
+  if (!is.na(shared_info$select_id) | !is.null(val)) {
+    dat <- if (!is.null(val)) {
+      dat <- data.frame(matrix(ncol = 2, nrow = 1))
+      names(dat) <- c(xcol, ycol)
+      dat[1, xcol] <- val[1]
+      dat[1, ycol] <- val[2]
+      dat
+    } else data[data$ID == shared_info$select_id, ]
+    if (!any(is.na(dat))) {
       plot <-
         plot +
         ggplot2::geom_point(
-          data = val, shape = 21,
+          data = dat, shape = 21,
           colour = "white", fill = "black", size = 4
         )
     }
@@ -417,7 +427,7 @@ explore_graph.delta_bivar <- function(vars, select_id, scale, data, time, schema
       geom = "line", se = FALSE, method = "loess", span = 1,
       formula = y ~ x, alpha = opac_line
     ) +
-    ggplot2::coord_cartesian(ylim = c(min(data_in_range[[vl_col]]), max(data_in_range[[vl_col]]))) +
+    ggplot2::coord_cartesian(ylim = c(min(data$var_left), max(data$var_left))) +
     ggplot2::scale_colour_manual(values = stats::setNames(
       clr_df$fill, clr_df$group
     )) +

@@ -3,7 +3,7 @@ test_that("explore_context works", {
     region = "CMA", select_id = NA,
     scale = "CSD", switch_DA = FALSE
   )
-  expect_equal(names(actual), c("p_start", "treated_scale"))
+  expect_equal(names(actual), c("p_start", "treated_scale", "select_id"))
   expect_equal(class(unlist(actual)), "character")
 
   # All IDs gives the corresponding list
@@ -123,7 +123,8 @@ test_that("explore_text_selection_comparison works", {
     time = time,
     schemas = NULL
   )
-  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
+  expect_true(all(c("higher_lower", "higher_lower_than", "rank_chr", "higher_lower_than_num"
+  ) %in% names(actual)))
 
 
   vars <- vars_build("housing_tenant", scale = scale, time = 2021)
@@ -137,7 +138,8 @@ test_that("explore_text_selection_comparison works", {
     time = time,
     schemas = NULL
   )
-  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
+  expect_true(all(c("higher_lower", "higher_lower_than", "rank_chr", "higher_lower_than_num"
+  ) %in% names(actual)))
 
   vars <- vars_build("alp", scale = scale, time = 2021)
   time <- vars$time
@@ -150,5 +152,6 @@ test_that("explore_text_selection_comparison works", {
     time = time,
     schemas = NULL
   )
-  expect_true(all(c("higher_than", "rank_chr", "higher_than_num") %in% names(actual)))
+  expect_true(all(c("higher_lower", "higher_lower_than", "rank_chr", "higher_lower_than_num"
+  ) %in% names(actual)))
 })
