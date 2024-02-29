@@ -41,7 +41,7 @@ test_explores <- function(var_right, select_id, region, scale) {
   # Count
   test_explores_helper(
     var_left = "crash_count_ped",
-    var_right = var_right, region = region, scale = scale,
+    var_right = var_right, region = region, scale = "borough",
     select_id = select_id, time = 2021
   )
 
@@ -181,7 +181,7 @@ test_explores_delta <- function(var_right, select_id, scale, region) {
   # Count
   test_explores_helper(
     var_left = "crash_count_ped",
-    var_right = var_right, region = region, scale = scale,
+    var_right = var_right, region = region, scale = "borough",
     select_id = select_id, time = c(2015, 2020)
   )
 

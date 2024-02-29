@@ -91,7 +91,6 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time, sche
     ggplot2::scale_y_continuous(labels = scales::percent) +
     ggplot2::binned_scale(
       aesthetics = "fill",
-      scale_name = "stepsn",
       palette = clr,
       breaks = vals
     ) +

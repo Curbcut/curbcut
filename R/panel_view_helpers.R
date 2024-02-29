@@ -112,7 +112,8 @@ table_view_prep_table <- function(vars, data, scale, zoom_levels, time, schemas 
     first_cols <- c("ID", "Scale")
     rest_cols <- names(pretty_dat)[!names(pretty_dat) %in% first_cols]
     pretty_dat <- pretty_dat[, c(first_cols, rest_cols)]
-  } else {
+    # Don't translate if it's grids
+  } else if (!all(grepl("\\d*-m", pretty_dat$Scale))) {
     pretty_dat$Scale <- sapply(pretty_dat$Scale, cc_t, lang = lang)
   }
 

@@ -77,69 +77,56 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
       shinyjs::hide(id = "tutorial")
     })
 
-    # # Bring the user to the place explorer when there is a selection and that
-    # # selection is in `data`
-    # shiny::observe({
-    #   pe_docs <- get_from_globalenv("pe_docs")
-    #   pe_main_card_data <- get_from_globalenv("pe_main_card_data")
-    #   # When to show the place portrait button?
-    #   show <- (\(x) {
-    #     if (is.na(r[[id]]$select_id())) {
-    #       return(FALSE)
-    #     }
-    #     if (!r[[id]]$select_id() %in% data()$ID) {
-    #       return(FALSE)
-    #     }
-    #     if (!r[[id]]$df() %in% pe_main_card_data$avail_df$df) {
-    #       return(FALSE)
-    #     }
-    #     # Is the region 'pickable', meaning there could be a place explorer
-    #     # for the region
-    #     regions_dictionary <- get_from_globalenv("regions_dictionary")
-    #     regions_dictionary$pickable[regions_dictionary$region == region()]
-    #   })()
-    #
-    #   shinyjs::toggle(
-    #     id = "panel_selection",
-    #     condition = show,
-    #     anim = TRUE, animType = "fade"
-    #   )
-    # })
+    # Bring the user to the place explorer when there is a selection and that
+    # selection is in `data`
+    shiny::observe({
+      pe_docs <- get_from_globalenv("pe_docs")
+      pe_main_card_data <- get_from_globalenv("pe_main_card_data")
+      # When to show the place portrait button?
+      show <- sprintf("www/place_explorer/%s_%s_%s_%s.html", region(), scale(),
+                      r[[id]]$select_id(), r$lang()) %in% pe_docs
 
-    # # If the 'Portrait' button is clicked, show the portrait and invite to
-    # # the place explorer
-    # shiny::observeEvent(input$panel_selection, {
-    #   # Get the place explorer HTML document
-    #   pe_src <- place_explorer_html_links(
-    #     temp_folder = temp_folder,
-    #     region = region(),
-    #     df = r[[id]]$df(),
-    #     select_id = r[[id]]$select_id(),
-    #     lang = r$lang()
-    #   )$src
-    #
-    #   # Popup the modal
-    #   shiny::showModal(shiny::modalDialog(
-    #     # Hack the namespace of the button so that it's detectable from within
-    #     # this module (nested in another page, so double ns)
-    #     action_button(
-    #       classes = c("floating-bar-btn", "visit-place-ex"),
-    #       id = shiny::NS(id, shiny::NS(id, "go_pe")),
-    #       icon = "search",
-    #       text_class = "floating-panel-text",
-    #       text = cc_t("Visit the place explorer", lang = r$lang())
-    #     ),
-    #     shiny::tags$iframe(
-    #       style = "width:100%;height:calc(100vh - 260px)",
-    #       title = "place_ex",
-    #       src = pe_src,
-    #       frameborder = 0
-    #     ),
-    #     footer = shiny::modalButton(cc_t(lang = r$lang(), "Close")),
-    #     size = "xl",
-    #     easyClose = TRUE
-    #   ))
-    # })
+      shinyjs::toggle(
+        id = "panel_selection",
+        condition = show,
+        anim = TRUE, animType = "fade"
+      )
+    })
+
+    # If the 'Portrait' button is clicked, show the portrait and invite to
+    # the place explorer
+    shiny::observeEvent(input$panel_selection, {
+      # Get the place explorer HTML document
+      pe_src <- place_explorer_html_links(
+        temp_folder = temp_folder,
+        region = region(),
+        scale = scale(),
+        select_id = r[[id]]$select_id(),
+        lang = r$lang()
+      )$src
+
+      # Popup the modal
+      shiny::showModal(shiny::modalDialog(
+        # Hack the namespace of the button so that it's detectable from within
+        # this module (nested in another page, so double ns)
+        action_button(
+          classes = c("floating-bar-btn", "visit-place-ex"),
+          id = shiny::NS(id, shiny::NS(id, "go_pe")),
+          icon = "search",
+          text_class = "floating-panel-text",
+          text = cc_t("Visit the place explorer", lang = r$lang())
+        ),
+        shiny::tags$iframe(
+          style = "width:100%;height:calc(100vh - 260px)",
+          title = "place_ex",
+          src = pe_src,
+          frameborder = 0
+        ),
+        footer = shiny::modalButton(cc_t(lang = r$lang(), "Close")),
+        size = "xl",
+        easyClose = TRUE
+      ))
+    })
 
     # If the user click on the 'visit the place explorer' button from the modal
     shiny::observeEvent(input$go_pe, {
@@ -254,7 +241,7 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
       # Recalculate every time the button is pressed
       input$panel_data
       datatable_styled()
-    })
+    }, server = TRUE)
 
     # If there is a selection in the table, update the selection
     shiny::observeEvent(input$data_table_rows_selected,

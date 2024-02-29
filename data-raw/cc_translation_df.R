@@ -89,6 +89,11 @@ cc_translation_df <-
     en = "Themes",
     fr = "Th\u00e8mes"
   ) |>
+  tibble::add_row(
+    en = "Undo",
+    fr = "R\u00e9tablir"
+  ) |>
+
   # Geography widget --------------------------------------------------------
 
   tibble::add_row(

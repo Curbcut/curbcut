@@ -664,7 +664,6 @@ bill44_server <- function(id, r) {
       coords = r[[id]]$coords,
       zoom = r[[id]]$zoom,
       vars = r[[id]]$vars,
-      # NDS: data_colours is going to need to be updated to work with `time`
       data_colours = data_colours,
       stories = stories
     )

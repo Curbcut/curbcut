@@ -498,7 +498,6 @@ grab_DA_ID_from_bslike <- function(scale, select_id) {
   dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
-  # NDS: Rework this with new building sql db.
   if (is.null(dat)) {
     db_df <- sprintf("%s_conn", scale)
     call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", scale, select_id)
@@ -539,7 +538,6 @@ grab_row_from_bslike <- function(scale, select_id, cols = "*") {
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   if (is.null(dat)) {
-    # NDS: this needs to work for buildings. single table in the DB?
     db_df <- sprintf("%s_conn", scale)
     cols <- paste0(cols, collapse = ", ")
     call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, scale, select_id)

@@ -162,13 +162,13 @@ test_that("data_get.bivar_ldelta_rq3 works", {
   # Extracting scale and time from var_left and building vars
   vars <- vars_build(
     var_left = "crash_count_ped", var_right = "alp",
-    scale = "CSD", time = c(2015, 2017)
+    scale = "borough", time = c(2015, 2017)
   )
   time <- vars$time
   vars <- vars$vars
 
   # Getting data with the updated structure
-  output <- data_get(vars = vars, region = "CMA", scale = "CSD", time = time)
+  output <- data_get(vars = vars, region = "CMA", scale = "borough", time = time)
 
   # Testing if output has more than 15 rows
   expect_equal(nrow(output) > 15, TRUE)
