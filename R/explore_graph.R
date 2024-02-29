@@ -50,7 +50,7 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
                              scales_as_DA = c("building", "street"), lang = NULL,
                              font_family = "acidgrotesk-book", ...) {
   # Appease R CMD check
-  var_left <- x <- NULL
+  var_left <- x <- ..count.. <- NULL
 
   # Grab the shared info between the graphs
   shared_info <- explore_graph_info(

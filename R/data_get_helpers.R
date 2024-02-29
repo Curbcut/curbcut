@@ -324,13 +324,26 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
   # Are breaks hardcoded in the variables table? Output that.
   variables <- get_from_globalenv("variables")
   brks <- variables$breaks_q5[variables$var_code == var][[1]]
-  breaks <- if (!is.null(brks)) brks else {
-    if (q3_q5 == "q3" | quintiles) {
+
+  breaks <-   # Determine the appropriate break points based on given conditions
+  if (q3_q5 == "q3") {
+    # If q3_q5 is q3, always find breaks for quintiles
+    find_breaks_quintiles(dist = data_vec, q3_q5 = q3_q5)
+  } else {
+    # For cases when q3_q5 is not q3
+    if (!is.null(brks)) {
+      # Use brks if it's not NULL
+      brks
+    } else if (quintiles) {
+      # Find breaks for quintiles if quintiles is TRUE
       find_breaks_quintiles(dist = data_vec, q3_q5 = q3_q5)
     } else {
+      # Default case: find breaks based on q5 method
       find_breaks_q5(min_val = min(data_vec), max_val = max(data_vec))
     }
   }
+
+
 
   # Rework breaks just for assembling (we want to include ALL observations)
   assemble_breaks <- breaks

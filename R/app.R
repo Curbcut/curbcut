@@ -106,8 +106,11 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' and the creation of the pages UI.
 #'
 #' @param site_name <`character`>¨Name of the site with the city, e.g. `Curbcut Montréal`.
-#' @param city_two_words <`character`> Two words of the city. It will take place
-#' as the big heading. If `Metro Vancouver`, we will read "Explore Metro Vancouver".
+#' @param h1_first_line <`character`> A list, with language, of what will be on
+#' the first line of the H1 header. EXPLORE THE `X` REGION. ex.
+#' `list(en = "MONTREAL", fr = "RÉGION DE")`
+#' @param h1_second_line <`character`> A list, with language, of what will be on
+#' the second line of the H1 header. EXPLORE THE MONTREAL `X`, ex.
 #' @param web_description <`character`> The description of the website for metadata.
 #' e.g. `"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."`
 #' @param web_title <`character`> The title of the website for metadata.
@@ -138,7 +141,7 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
-ui <- function(site_name, city_two_words, web_description, web_title, placeholder_video_src,
+ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics = NULL, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE,
                show_cities = TRUE) {
@@ -193,11 +196,12 @@ ui <- function(site_name, city_two_words, web_description, web_title, placeholde
           title = shiny::actionLink("title", "Curbcut"),
           shiny::tabPanel(cc_t("Home"),
                           home_UI("home",
-                                  city_two_words = city_two_words,
                                   placeholder_video_src = placeholder_video_src,
                                   video_src = video_src,
                                   lang_init = lang_init,
-                                  show_cities = show_cities
+                                  show_cities = show_cities,
+                                  h1_first_line = h1_first_line,
+                                  h1_second_line = h1_second_line
                           ),
             value = "home"
           )

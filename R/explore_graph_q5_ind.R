@@ -43,7 +43,7 @@ explore_graph_q5_ind.scalar <- function(vars, select_id, scale, data, time, sche
                                         font_family = "acidgrotesk-book",
                                         val = NULL, ...) {
   # Appease R CMD check
-  var_left <- x <- NULL
+  var_left <- x <- ..count.. <- NULL
 
   # Grab the shared info between the graphs
   shared_info <- explore_graph_info(

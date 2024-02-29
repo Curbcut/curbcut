@@ -6,7 +6,8 @@
 \usage{
 ui(
   site_name,
-  city_two_words,
+  h1_first_line,
+  h1_second_line,
   web_description,
   web_title,
   placeholder_video_src,
@@ -24,8 +25,12 @@ ui(
 \arguments{
 \item{site_name}{<\code{character}>¨Name of the site with the city, e.g. \verb{Curbcut Montréal}.}
 
-\item{city_two_words}{<\code{character}> Two words of the city. It will take place
-as the big heading. If \verb{Metro Vancouver}, we will read "Explore Metro Vancouver".}
+\item{h1_first_line}{<\code{character}> A list, with language, of what will be on
+the first line of the H1 header. EXPLORE THE \code{X} REGION. ex.
+\code{list(en = "MONTREAL", fr = "RÉGION DE")}}
+
+\item{h1_second_line}{<\code{character}> A list, with language, of what will be on
+the second line of the H1 header. EXPLORE THE MONTREAL \code{X}, ex.}
 
 \item{web_description}{<\code{character}> The description of the website for metadata.
 e.g. \code{"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."}}
