@@ -183,7 +183,7 @@ stories_server <- function(id, r) {
       selected = shiny::reactive(unlist(themes()))
     )
 
-    shiny::observeEvent(themes_c(), {
+    shiny::observe({
       in_theme <-
         stories$ID[which(
           sapply(sapply(stories$themes, `%in%`, themes_c()), sum) > 0
