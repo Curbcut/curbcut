@@ -4,14 +4,23 @@
 \alias{explore_text_check_na}
 \title{Checks if data is NA for a given selection}
 \usage{
-explore_text_check_na(context, data, select_id, vars, lang = NULL)
+explore_text_check_na(
+  context,
+  data,
+  select_id,
+  vars,
+  time,
+  lang = NULL,
+  schemas = NULL,
+  val = NULL
+)
 }
 \arguments{
 \item{context}{<\code{list}> list that should include 'p_start' which is used as
 the start of the output sentence. The output of \code{\link{explore_context}}}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The output of \code{\link{data_get}}.}
+observations. The output of \code{\link{data_get}}.}
 
 \item{select_id}{<\code{character}> the current selected ID, usually
 \code{r[[id]]$select_id()}. If there is a selection (select_id is not NA), the
@@ -20,8 +29,18 @@ name of the selected polygon will appear.}
 \item{vars}{<\code{character}> A list containing the variable names for which the
 text needs to be generated. Usually the output of \code{\link{vars_build}}.}
 
+\item{time}{<\verb{list of numeric vector}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions.}
 }
 \value{
 If there is NAs in the selection, returns a string that starts with

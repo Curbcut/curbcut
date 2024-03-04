@@ -13,29 +13,22 @@ zoom_get <- function(zoom) floor(zoom * 2) / 2
 #' Generate zoom string based on given zoom level and region name
 #'
 #' Given a named numeric vector of zoom levels, a numeric value representing the current
-#' zoom level, and a character string representing the name of the region, this
-#' function returns a string representing the zoom level and region name,
-#' separated by an underscore. The zoom level is determined by finding the
-#' highest value in the zoom levels vector that is less than or equal to the
-#' current zoom level.
+#' zoom level, this function returns a string representing the zoom level
+#' The zoom level is determined by finding the highest value in the zoom levels
+#' vector that is less than or equal to the current zoom level.
 #'
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
-#' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually one of the output of \code{\link{zoom_get_levels}}.
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #'
 #' @return A character string representing the zoom level and region name,
 #' separated by an underscore
 #' @export
-zoom_get_string <- function(zoom, zoom_levels, region) {
+zoom_get_string <- function(zoom, zoom_levels) {
   zoom_levels <- sort(zoom_levels)
   out <- names(zoom_levels)[zoom >= zoom_levels]
   out <- out[length(out)]
-  out <- paste(region, out, sep = "_")
   return(out)
 }
 
@@ -45,18 +38,15 @@ zoom_get_string <- function(zoom, zoom_levels, region) {
 #' corresponding slider title ("Borough/City" , "Census tract", "Dissemination area")
 #' in the same order in which it was fed.
 #'
-#' @param dfs <`character vector`> A character vector of scales codes
+#' @param scales <`character vector`> A character vector of scales codes
 #' @param lang <`character`> String indicating the language to translate the
 #' slider titles to. Defaults to `NULL`, which is no translation.
 #'
 #' @return A character vector of slider titles.
 #' @export
-zoom_get_name <- function(dfs, lang = NULL) {
+zoom_get_name <- function(scales, lang = NULL) {
   # Get the scales dictionary
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-
-  # Extract only the scale, remove the region
-  scales <- gsub(".*_", "", dfs)
 
   # Error check
   if (sum(!scales %in% scales_dictionary$scale) > 0) {
@@ -89,10 +79,8 @@ zoom_get_name <- function(dfs, lang = NULL) {
 #' corresponding slider titles ("Borough/City" , "Census tract", "Dissemination area")
 #'
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param lang <`character`> String indicating the language to translate the
 #' slider titles to. Defaults to `NULL`, which is no translation.
 #'
@@ -150,57 +138,4 @@ zoom_get_code <- function(scales_name, lang = NULL) {
   match_idx <- match(translated, scales_dictionary$slider_title)
   # Return the subset scale code in desired order
   return(scales_dictionary$scale[match_idx])
-}
-
-#' Get map zoom levels for a given module and region
-#'
-#' This function retrieves the map zoom levels for a given module and region.
-#' It retrieves the list of possible regions for the module and lets the
-#' user provide a suffix to the zoom level to determine if there are
-#' additional or fewer levels beyond or under the desired level. If the specified region
-#' is not part of the available regions for the module, the function selects the
-#' first region in the list of possible regions as they are ordered in priority.
-#'
-#' @param id <`character`> The id of the module to retrieve the zoom levels for,
-#' e.g. `alp`.
-#' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually one of the output of \code{\link{zoom_get_levels}}.
-#' @param suffix_zoom_levels <`character`> A suffix to the zoom level to determine
-#' if there are additional or fewer levels beyond or under the desired level. If
-#' the levels should stop at `CT`, then `max_CT` would be a valid `suffix_zoom_levels`.
-#' The zoom level needs to live as a `map_zoom_levels_x` in the global environment,
-#' e.g. `map_zoom_levels_city_max_CT`.
-#'
-#' @return A list containing the zoom levels for the specified region and the
-#' region itself.
-#' @export
-zoom_get_levels <- function(id, region, suffix_zoom_levels = NA) {
-  # Get the modules df
-  modules <- get_from_globalenv("modules")
-
-  # Error check
-  if (!id %in% modules$id) {
-    stop(glue::glue_safe("`{id}` is not a valid `id` in the `modules` dataframe."))
-  }
-
-  # Grab the possible regions for the module
-  possible_regions <- modules$regions[modules$id == id][[1]]
-
-  # Declare a 'get map zoom level' function, and append to it the
-  # `suffix_zoom_levels`, which lets the user decide if there's more to the
-  # zoom level. Some modules can have a limit at CT and don't go to DA, meaning
-  # the zoom level they are looking for might end with 'max_CT'.
-  get_mzl <- \(reg) {
-    out <- paste0("map_zoom_levels_", reg)
-    if (!is.na(suffix_zoom_levels)) out <- sprintf("%s_%s", out, suffix_zoom_levels)
-    return(get_from_globalenv(out))
-  }
-
-  # If the wanted region is not part of the available regions for the module,
-  # grab the first in the list of possible regions as they are ordered in
-  # priority
-  region <- if (region %in% possible_regions) region else possible_regions[1]
-
-  # Return both the region and the `map_zoom_levels_x`
-  return(list(zoom_levels = get_mzl(region), region = region))
 }

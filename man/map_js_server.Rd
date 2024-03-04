@@ -11,6 +11,7 @@ map_js_server(
   tile,
   coords,
   zoom,
+  vars = r[[id]]$vars,
   stories = NULL,
   stories_min_zoom = 13,
   select_id = shiny::reactive(NA),
@@ -20,7 +21,7 @@ map_js_server(
   pickable = shiny::reactive(TRUE),
   fill_fun = shiny::reactive(cc.map::map_choropleth_fill_fun),
   fill_fun_args = shiny::reactive(list(df = data_colours(), get_col =
-    names(data_colours())[1], fallback = "#B3B3BB"))
+    names(data_colours())[1], fallback = "transparent"))
 )
 
 map_js_UI(id)
@@ -42,6 +43,10 @@ of the map. Bookmark can have an input on it. Usually \code{r[[id]]$coords}.}
 
 \item{zoom}{<\verb{reactive numeric}> The current zoom level of the map, also
 the zoom at which the map will initiate. Usually \code{r[[id]]$zoom}}
+
+\item{vars}{<\verb{named list}> Named list with a class. Object built using the
+\code{\link{vars_build}} function. The class of the vars object is
+used to determine how to grab de data and output it.}
 
 \item{stories}{<\code{data.frame}> Stories data.frame if they are to be shown
 on the map. Defaults to NULL for not showing them.}

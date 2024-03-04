@@ -35,15 +35,37 @@ sidebar_server <- function(id, r) {
       cc.landing::update_title_box(
         session = session,
         inputId = "title_box",
-        configuration = list(
-          # lang = r$lang(),
-          show = "true" # ,
-          # title_text_title = cc_t(page$title_text_title, lang = r$lang()),
-          # title_text_main = cc_t(page$title_text_main, lang = r$lang()),
-          # title_text_extra = cc_t(page$title_text_extra, lang = r$lang())
-        )
+        configuration = list(show = "true")
       )
     })
+
+    # First visit, open the title text
+    first_visit_titletext <- shiny::reactive(cookie_retrieve(
+      input = r$server_session()$input,
+      name = shiny::NS(id, "titletext")
+    ))
+
+    shiny::observeEvent(first_visit_titletext(), {
+
+      # If it's not NULL, return
+      if (!is.null(first_visit_titletext())) return(NULL)
+
+      # show the box
+      shinyjs::delay(1000, {
+        cc.landing::update_title_box(
+          session = session,
+          inputId = "title_box",
+          configuration = list(show = "true")
+        )
+      })
+
+      # Set the cookie so that it doesn't open next time
+      cookie_set(
+        session = r$server_session(),
+        name = shiny::NS(id, "titletext"),
+        value = TRUE
+      )
+    }, once = TRUE, ignoreNULL = FALSE)
 
     shiny::observeEvent(r$lang(), {
       cc.landing::update_title_box(

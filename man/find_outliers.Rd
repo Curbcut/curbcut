@@ -5,12 +5,26 @@
 \alias{remove_outliers_df}
 \title{Find and remove outliers in specified columns of a data frame.}
 \usage{
-find_outliers(x)
+find_outliers(
+  x,
+  lower_bracket = 0.02,
+  higher_bracket = 0.98,
+  iqr_multiplier = 1.5
+)
 
 remove_outliers_df(df, cols)
 }
 \arguments{
 \item{x}{<\code{numeric}> A numeric vector for which to find outliers.}
+
+\item{lower_bracket}{<\code{numeric}> The lower percentile to use for the
+IQR calculation. Defaults to 0.02.}
+
+\item{higher_bracket}{<\code{numeric}> The higher percentile to use for the
+IQR calculation. Defaults to 0.98.}
+
+\item{iqr_multiplier}{<\code{numeric}> Multiplier for the IQR to determine
+outlier thresholds. Defaults to 1.5.}
 
 \item{df}{<\code{data.frame}> A data frame from which to remove outliers.}
 

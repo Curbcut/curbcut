@@ -11,16 +11,17 @@
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> The scale under study. The output of
+#' \code{\link{update_scale}}.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
 #' @param region <`character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}.
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
+#' @param time <`reactive numeric vector`> Vector of time values. One of the
+#' outpuit of the \code{\link{vars_build}} function.
 #' @param poi <`reactive`> (Optional) Point of interests. Default is NULL.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
@@ -28,25 +29,22 @@
 #'
 #' @return A Shiny module server function for the DYK module.
 #' @export
-dyk_server <- function(id, r, vars, df, select_id, region, zoom_levels,
-                       poi = shiny::reactive(NULL),
+dyk_server <- function(id, r, vars, scale, select_id, region, zoom_levels,
+                       time, poi = shiny::reactive(NULL),
                        scales_as_DA = shiny::reactive(c("building", "street"))) {
-
   # Error checking
   stopifnot(shiny::is.reactive(vars))
-  stopifnot(shiny::is.reactive(df))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(poi))
   stopifnot(shiny::is.reactive(region))
   stopifnot(shiny::is.reactive(zoom_levels))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     # Get the DYKs
     dyk <- shiny::reactive(dyk_get(
-      id = id, vars = vars(), df = df(), select_id = select_id(), poi = poi(),
-      region = region(), zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
-      lang = r$lang()
+      id = id, vars = vars(), scale = scale(), select_id = select_id(),
+      time = time(), poi = poi(), region = region(), zoom_levels = zoom_levels(),
+      scales_as_DA = scales_as_DA(), lang = r$lang()
     ))
 
     # Hide the panel if there are no DYK

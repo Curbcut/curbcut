@@ -4,10 +4,11 @@
 #' @param var_left <`reactive character`> Character string of the selected
 #' variable, e.g. `alp_2016` or `c("housing_tenant_2006", "housing_tenant_2016")`.
 #' @param var_right <`reactive character`> Character string of the selected
-#' compared variable, e.g. `housing_value_2016`. Defaults to what no compared
+#' compared variable, e.g. `housing_value`. Defaults to what no compared
 #' variable is represented by (" ").
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scale <`character`> Scale under study. The output of
+#' \code{\link{update_scale}}.
+#' @param time <`numeric vector`> The direct output of the `time` widget.
 #' @param scales_as_DA <`character vector`> A character vector of `scales` that
 #' should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -17,60 +18,78 @@
 #' `bivar`, ...). Defaults to TRUE.
 #' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
 #' from the global environment using \code{\link{get_from_globalenv}}.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return A named list containing both `var_left` and `var_right` variables with
 #' a class attached.
 #'
 #' @export
-vars_build <- function(var_left, var_right = " ", df,
+vars_build <- function(var_left, var_right = " ", scale, time,
                        scales_as_DA = c("building", "street"),
                        check_choropleth = TRUE,
-                       variables = get_from_globalenv("variables")) {
-  # If the `var` displays twice the same year
-  var_left <- unique(var_left)
-  var_right <- unique(var_right)
+                       variables = get_from_globalenv("variables"),
+                       data_path = get_data_path()) {
 
   # Switch scales to DA if necessary
-  df <- treat_to_DA(scales_as_DA, df)
+  scale <- treat_to_DA(scales_as_DA, scale)
+
+  # Is everything valid? Return NULL if it's invalid.
+  if (var_right != " ") {
+    if (!is_data_present_in_scale(var = var_right, scale = scale)) {
+      return(NULL)
+    }
+  }
+
+  # Unique time
+  time <- unique(time)
+
+  # Use var_closest_year() to add the `time` to var_left and var_right
+  vl <- var_closest_year(var_left, time)
+  if (!is.list(vl)) vl <- list(var = vl)
+  vr <- var_closest_year(var_right, time)
+  if (!is.list(vr)) vr <- list(var = vr)
 
   # Add var left and right measurement variable as classes
-  var_left_m <- var_get_info(var_left[[1]], "var_measurement",
+  var_left_m <- var_get_info(var_left, "var_measurement",
     variables = variables
   )[[1]]
-  var_left_m <- var_left_m$measurement[var_left_m$df == df]
-  class(var_left) <- c(var_left_m, class(var_left))
-  if (var_right[[1]] != " ") {
-    var_right_m <- var_get_info(var_right[[1]], "var_measurement",
+  # var_left_m <- var_left_m$measurement[var_left_m$df == df]
+  var_left_m <- var_left_m$measurement[var_left_m$scale == scale]
+  class(vl$var) <- c(if (length(var_left_m) > 0 && !is.na(var_left_m)) var_left_m, class(var_left))
+
+  if (var_right != " ") {
+    var_right_m <- var_get_info(var_right, "var_measurement",
       variables = variables
     )[[1]]
-    var_right_m <- var_right_m$measurement[var_right_m$df == df]
-    class(var_right) <- c(var_right_m, class(var_right))
+    var_right_m <- var_right_m$measurement[var_right_m$scale == scale]
+    class(vr$var) <- c(if (length(var_right_m) > 0 && !is.na(var_right_m)) var_right_m, class(var_right))
   } else {
     var_right_m <- " "
   }
 
   # Add var left and right types as classes
-  class(var_left) <- c(
-    unlist(var_get_info(var_left[[1]], "type", variables = variables)),
-    class(var_left)
+  class(vl$var) <- c(
+    unlist(var_get_info(var_left, "type", variables = variables)),
+    class(vl$var)
   )
-  if (var_right[[1]] != " ") {
-    class(var_right) <- c(
-      unlist(var_get_info(var_right[[1]], "type", variables = variables)),
-      class(var_right)
+  if (var_right != " ") {
+    class(vr$var) <- c(
+      unlist(var_get_info(var_right, "type", variables = variables)),
+      class(vr$var)
     )
   }
 
   # Grab the class
   z <- (\(x) {
     # General cases
-    if (is_scale_df("raster", df)) {
+    if (is_scale_in("raster", scale)) {
       return("q100")
     }
-    if (is_scale_df(c("heatmap", "point"), df)) {
+    if (is_scale_in(c("heatmap", "point"), scale)) {
       return("point")
     }
-    if (is_scale_df("qual", var_left[1])) {
+    if (is_scale_in("qual", var_left)) {
       return("qual")
     }
 
@@ -78,48 +97,43 @@ vars_build <- function(var_left, var_right = " ", df,
     if (check_choropleth) {
       choropleths <- get_from_globalenv("all_choropleths")
 
-      if (!is_scale_df(choropleths, df)) {
-        return(df)
+      if (!is_scale_in(choropleths, scale)) {
+        return(scale)
       }
     }
 
-    # Impossible cases
-    if (length(var_left) == 2 && var_left[1] == var_left[2]) {
-      return("NA")
-    }
-
-    # Normal choropleth possible classes
-    if (length(var_right) == 2 && var_right[1] == var_right[2]) {
-      return("bivar_ldelta_rq3")
-    }
-    if (length(var_left) == 2 && length(unique(var_right)) == 1 &&
-      var_right[1] != " ") {
-      return("bivar_ldelta_rq3")
-    }
-    if (length(var_left) == 1 && var_right[1] == " ") {
-      if ("ind" %in% class(var_left)) {
-        return(c("q5_ind", "q5"))
+    # bivariate
+    if (all(vr != " ")) {
+      # 2 time
+      if (length(time) == 2) {
+        # single possible right value
+        if (length(vr$closest_year) == 1) {
+          return("bivar_ldelta_rq3")
+        }
+        # propertly delta_bivar (bivar, 2 time, 2 possible valid time)
+        return("delta_bivar")
       }
-      return("q5")
-    }
-    if (length(var_left) == 1 && length(var_right) == 1 && var_right != " ") {
-      if ("ind" %in% class(var_left)) {
+
+      # bivar, one time
+      if ("ind" %in% class(vl$var)) {
         return(c("bivar_ind", "bivar"))
       }
       return("bivar")
     }
-    if (length(var_left) == 2 && length(var_right) == 2) {
-      return("delta_bivar")
-    }
-    if (length(var_left) == 2 && var_right[1] == " ") {
-      if ("ind" %in% class(var_left)) {
+
+    # single variable, two time
+    if (length(time) == 2) {
+      if ("ind" %in% class(vl$var)) {
         return(c("delta_ind", "delta"))
       }
       return("delta")
     }
 
-    # Return `df` if nothing found
-    return(df)
+    # Single variable, 1 time
+    if ("ind" %in% class(vl$var)) {
+      return(c("q5_ind", "q5"))
+    }
+    return("q5")
   })()
 
   # Add the measurement variable as a class to the main output, in order.
@@ -130,8 +144,54 @@ vars_build <- function(var_left, var_right = " ", df,
 
   out_class <- c(z, current_measurement_var[meas])
 
-  # Return
-  return(structure(list(var_left = var_left, var_right = var_right),
+  # Output vars and time
+  vars <- structure(
+    list(
+      var_left = vl[["var"]],
+      var_right = if (all(vr != " ")) vr[["var"]] else " "
+    ),
     class = out_class
-  ))
+  )
+  time <- list(var_left = vl[["closest_year"]])
+  if (all(vr != " ")) time$var_right <- vr[["closest_year"]]
+
+  # # Add the data storage type to vars
+  # class(vars$var_left) <- c(class(vars$var_left),
+  #                           get_data_storage(scale, vars$var_left, data_path))
+  # if (var_right != " ") {
+  #   class(vars$var_right) <- c(class(vars$var_right),
+  #                              get_data_storage(scale, vars$var_right, data_path))
+  # }
+
+
+  # Return
+  return(list(vars = vars, time = time))
 }
+
+# get_data_storage <- function(scale, var, data_path) {
+#
+#   # File path, as qs
+#   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
+#   # If it exists, return `qs`
+#   if (file.exists(path)) return("qs")
+#
+#   # Grab the right connection
+#   con <- get_from_globalenv(sprintf("%s_conn", scale), stop_if_missing = FALSE)
+#   if (is.null(con)) {
+#     stop(glue::glue_safe(
+#       "Could not read data from `{path}`. ",
+#       "Please check that the file exists and is readable."
+#     ))
+#   }
+#
+#   # Search in the sqlite_master if the table exists
+#   tbl_sql <- DBI::dbGetQuery(con,
+#                              sprintf(paste0("SELECT name FROM sqlite_master WHERE ",
+#                                             "type='table' AND name='%s'"), var))[1,]
+#   if (!is.na(tbl_sql)) return("sqlite")
+#
+#   stop(glue::glue_safe(
+#     "Could not read data from `{path}`, nor from a `{scale}.sqlite`. ",
+#     "Please check that the file exists and is readable."
+#   ))
+# }

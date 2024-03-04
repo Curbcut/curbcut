@@ -41,10 +41,16 @@ slider_text_server <- function(id, r, slider_text_id = "slt",
 
     # Update selected if it changes
     shiny::observe({
-      shinyWidgets::updateSliderTextInput(
-        session = session,
-        inputId = slider_text_id,
-        selected = selected()
+      if (is.null(selected())) return(NULL)
+      if (!selected() %in% choices()) return(NULL)
+
+      shinyjs::delay(
+        750,
+        shinyWidgets::updateSliderTextInput(
+          session = session,
+          inputId = slider_text_id,
+          selected = selected()
+        )
       )
     })
 

@@ -14,6 +14,7 @@ picker_UI(
   selected = NULL,
   open_left = TRUE,
   identifier = NULL,
+  live_search = FALSE,
   ...
 )
 }
@@ -47,6 +48,8 @@ Compare dropdown should open right, and this can be changed.}
 \item{identifier}{<\code{character}> Unique identifier that will be used by
 \code{\link{highlight_dropdown}} to change the background color of options.
 Defaults to NULL to not set any.}
+
+\item{live_search}{<\code{logical}> Argument sent to \code{\link[shinyWidgets]{pickerOptions}}.}
 
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}}
 }

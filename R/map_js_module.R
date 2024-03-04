@@ -15,6 +15,9 @@
 #' @param select_id <`reactive character`> The ID of the selected polygon.
 #' @param zoom <`reactive numeric`> The current zoom level of the map, also
 #' the zoom at which the map will initiate. Usually `r[[id]]$zoom`
+#' @param vars <`named list`> Named list with a class. Object built using the
+#' \code{\link{vars_build}} function. The class of the vars object is
+#' used to determine how to grab de data and output it.
 #' @param coords <`reactive numeric vector`> The current central map location
 #' of the map. Bookmark can have an input on it. Usually `r[[id]]$coords`.
 #' @param data_colours <`reactive data.frame`> The output of
@@ -37,7 +40,7 @@
 #' the current position and zoom level.
 #'
 #' @export
-map_js_server <- function(id, r, tile, coords, zoom,
+map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
                           stories = NULL, stories_min_zoom = 13,
                           select_id = shiny::reactive(NA),
                           data_colours = shiny::reactive(data.frame()),
@@ -48,13 +51,12 @@ map_js_server <- function(id, r, tile, coords, zoom,
                           fill_fun_args = shiny::reactive(list(
                             df = data_colours(),
                             get_col = names(data_colours())[1],
-                            fallback = "#B3B3BB"
+                            fallback = "transparent"
                           ))) {
   stopifnot(shiny::is.reactive(tile))
   stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
-
     tileset_prefix <- get_from_globalenv("tileset_prefix")
 
     # Make complete sure the map is loaded: Check every x ms if the map is
@@ -63,7 +65,7 @@ map_js_server <- function(id, r, tile, coords, zoom,
     counter <- shiny::reactiveVal(0)
     shouldContinue <- shiny::reactiveVal(TRUE)
 
-    # Create observer
+    # Follow if map exists
     shiny::observe({
       # Check if observer should continue running
       if (!isTRUE(shiny::isolate(shouldContinue()))) {
@@ -86,6 +88,9 @@ map_js_server <- function(id, r, tile, coords, zoom,
 
       # Invalidate this observer after 500ms
       shiny::invalidateLater(500, session)
+    })
+    shiny::observeEvent(input$mapboxDivExists, {
+      if (input$mapboxDivExists) r[[id]]$map_exists(input$mapboxDivExists)
     })
 
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
@@ -117,20 +122,23 @@ map_js_server <- function(id, r, tile, coords, zoom,
     })
 
     # Whenever the tileset changes, load it with the according data_colours.
-    shiny::observeEvent(tileset_trigger(), {
-      cc.map::map_choropleth(
-        session = session,
-        map_ID = "map",
-        tileset = tileset_trigger(),
-        fill_colour = data_colours(),
-        select_id = select_id(),
-        fill_fun = fill_fun(),
-        fill_fun_args = fill_fun_args(),
-        pickable = pickable(),
-        outline_width = outline_width(),
-        outline_color = outline_color()
-      )
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(tileset_trigger(),
+                        {
+                          cc.map::map_choropleth(
+                            session = session,
+                            map_ID = "map",
+                            tileset = tileset_trigger(),
+                            fill_colour = data_colours(),
+                            select_id = select_id(),
+                            fill_fun = fill_fun(),
+                            fill_fun_args = fill_fun_args(),
+                            pickable = pickable(),
+                            outline_width = outline_width(),
+                            outline_color = outline_color()
+                          )
+                        },
+                        ignoreNULL = TRUE
+    )
 
     # Only update the fill_colour when data_colours change
     shiny::observe({
@@ -148,6 +156,33 @@ map_js_server <- function(id, r, tile, coords, zoom,
       cc.map::map_update_lang(session, map_ID = "map", lang = r$lang())
     })
 
+    # Add points for access module
+    is_access <- shiny::eventReactive(vars(), {
+      var <- vars()$var_left
+      if (grepl("^access_", var)) {
+        # Remove the mode, send it
+        return(gsub(paste0("_foot|_bicycle|_car|_transit_opwe|_transit_pwe|",
+                           "_transit_nwd|_transit_nwe|_transit_opwd|_transit_pwd"),
+                    "", var))
+      } else NULL
+    }, ignoreNULL = TRUE)
+    shiny::observeEvent(is_access(), {
+
+      colours_dfs <- colours_get()
+      colours <- colours_dfs$left_5$fill[1:5]
+      colours[1] <- sprintf("%s00", colours[1])
+      colours <- sapply(colours, hex_to_rgb_or_rgba, USE.NAMES = FALSE)
+
+      cc.map::map_heatmap(
+        session = session,
+        map_ID = "map",
+        tileset = is_access(),
+        pickable = FALSE,
+        colours = colours
+      )
+
+    }, ignoreNULL = TRUE)
+
     # Grab the viewstate (lat, lon, zoom)
     viewstate <- curbcut::get_viewstate("map")
 
@@ -160,7 +195,9 @@ map_js_server <- function(id, r, tile, coords, zoom,
         shinyjs::delay(3000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
         shinyjs::delay(5000, cc.map::map_choropleth_redraw(session = session, map_ID = "map"))
       }
-    }, ignoreNULL = TRUE)
+    },
+    ignoreNULL = TRUE
+    )
 
     # Return
     return(viewstate)

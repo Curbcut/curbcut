@@ -21,7 +21,7 @@ settings_advanced <- function(r = r, input = input, show_lang_button = FALSE) {
     id <- "settings"
 
     shiny::showModal(shiny::modalDialog(
-      if (show_lang_button)
+      if (show_lang_button) {
         shiny::radioButtons(
           inputId = "language_change",
           label = cc_t(lang = r$lang(), "Change language", force_span = TRUE),
@@ -29,7 +29,8 @@ settings_advanced <- function(r = r, input = input, show_lang_button = FALSE) {
           selected = r$lang(),
           choiceNames = c("English", "Fran\u00e7ais"),
           choiceValues = c("en", "fr")
-        ),
+        )
+      },
       if (show_lang_button) shiny::hr(),
       # Change the region
       adv_opt_region(id = id, region = r$region(), lang = r$lang()),

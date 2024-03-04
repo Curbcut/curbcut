@@ -5,18 +5,19 @@
 \title{Prepare Text Helper for Panel View}
 \usage{
 panel_view_prepare_text_helper(
-  df,
+  scale,
   var,
   dat,
   title,
   explanation,
   title_color = "#73AE80",
+  time_col,
+  schemas_col = NULL,
   lang = NULL
 )
 }
 \arguments{
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}.}
+\item{scale}{<\code{character}>}
 
 \item{var}{<\code{character}> A character representing the variable name in the
 dataset (e.g. 'housing_tenant') with the right class (pct, dollar, ind, ...).}
@@ -32,6 +33,13 @@ the variable. A piece of the \code{variables} table.}
 
 \item{title_color}{<\code{character}> The color code for the title. Default is
 #73AE80' for the left variable's green.}
+
+\item{time_col}{<\code{vector}> Vector of dates. Usually \code{r[[id]]$time()}, with
+\code{var_left} or\code{var_right} subset.}
+
+\item{schemas_col}{<\verb{named list}> One subset of the current schema information.
+The additional widget values that have an impact on which data column to pick.
+Usually \code{r[[id]]$schema()}, with \code{var_left} or\code{var_right} subset.}
 
 \item{lang}{<\code{character}> The language to use for translating variable names.
 Defaults to NULL for no translation}

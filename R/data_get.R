@@ -37,29 +37,34 @@ data_get_sql <- function(var, df, select = "*") {
   ))
 }
 
-#' Retrieve data from a QS file based on variable and df
+#' Retrieve data from a QS file based on variable and scale
 #'
-#' This function takes in a variable code and the df to retrieve data from a QS
-#' file. The function constructs the file path based on the input, then reads
+#' This function takes in a variable code and the scale to retrieve data from a
+#' QS file. The function constructs the file path based on the input, then reads
 #' the data using the qs package's \code{\link[qs]{qread}} function.
 #'
-#' @param var <`character`> A string specifying the name of the table to retrieve
-#' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
-#' @param df <`character`> A string specifying the name of the database to retrieve
-#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
+#' @param var <`character`> A string specifying the name of the table to
+#' retrieve data from. Single variable = single table. e.g. `housing_tenant`
+#' @param scale <`character`> A string specifying the scale at which to retrieve
+#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #'
 #' @return A data.frame object with the selected data from the specified table.
-data_get_qs <- function(var, df, data_path = "data/") {
-  # Switch _ to / , as _ is the separation between the region and the scale.
-  df_path <- gsub("_", "/", df)
-
+data_get_qs <- function(var, scale, data_path = get_data_path()) {
   # Construct the file path
-  path <- sprintf("%s%s/%s.qs", data_path, df_path, var)
+  path <- sprintf("%s%s/%s.qs", data_path, scale, var)
+
+  # The data exists?
+  file.exists(path)
 
   # Read the data
-  qs::qread(path)
+  tryCatch(qs::qread(path), error = function(e) {
+    stop(glue::glue_safe(
+      "Could not read data from `{path}`. ",
+      "Please check that the file exists and is readable."
+    ))
+  })
 }
 
 #' Calculate the percentage change between two variables over two years
@@ -67,11 +72,13 @@ data_get_qs <- function(var, df, data_path = "data/") {
 #' This function takes two variables representing the same quantity measured two
 #' years apart and calculates the percentage change between the two values.
 #'
-#' @param var_two_years <`character vector`> A character vector of length 2,
-#' where each element is the name of a variable to compare,
-#' e.g. `c("housing_tenant_2006", "housing_tenant_2016")`
-#' @param df <`character`> A string specifying the name of the database to retrieve
-#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
+#' @param vars <`character vector`> A var_code. The variable to get data for.
+#' @param time <`character vector`> A character vector of length 2. The
+#' two years for which the delta should be calculated.
+#' @param scale <`character`> A string specifying the scale at which to retrieve
+#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
+#' @param vl_vr <`character`> Which of var_left or var_right is this delta supposed
+#' to be for. Defaults to var_left.
 #' @param data_path <`character`> A string representing the path to the directory
 #' containing the QS files. Default is "data/".
 #'
@@ -79,154 +86,222 @@ data_get_qs <- function(var, df, data_path = "data/") {
 #' `ID` is the ID column from the original data, `var_1` and `var_2` are the
 #' values of the two variables being compared, and `var` is the percentage
 #' change between the two variables.
-data_get_delta <- function(var_two_years, df, data_path = "data/") {
-  # Retrieve
-  data <- lapply(var_two_years, \(x) data_get_qs(x, df, data_path = data_path)[1:2])
-  names(data[[1]])[2] <- "var_1"
-  data[[1]]$var_2 <- data[[2]][[2]]
-  data <- data[[1]]
+data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
+                           data_path = get_data_path()) {
+  # Grab the correct var/time
+  var <- vars[[vl_vr]]
+  time_col <- time[[vl_vr]]
 
-  # Calculate the value
-  data$var <- (data$var_2 - data$var_1) / data$var_1
-  data$var <- replace(data$var, is.na(data$var), NA)
-  data$var <- replace(data$var, is.infinite(data$var), NA)
+  # Retrieve
+  data <- data_get_qs(var, scale, data_path = data_path)
+
+  # Calculate breaks for the right columns
+  cols <- match_schema_to_col(data = data, time = time_col, col = var, schemas = NULL)
+  keep_cols <- c("ID", cols, attr(data, "breaks_var")) # keep the breaks_var and use it to calculate breaks
+  data <- data[unique(keep_cols)]
+
+  # Append breaks
+  data <- data_append_breaks(
+    var = var,
+    data = data,
+    q3_q5 = "q5",
+    rename_col = vl_vr
+  )
+  data <- data$data
+
+  # Keep columns of the two years
+  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr, schemas = NULL)
+  data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
+
+  # Calculate the relative difference
+  result <- (data[[3]] - data[[2]]) / data[[2]]
+  # Identify positions where data[[3]] is equal to data[[2]] and neither are NAs
+  equal_non_na <- !is.na(data[[3]]) & !is.na(data[[2]]) & data[[3]] == data[[2]]
+  # Set result to 0 where conditions are met
+  result[equal_non_na] <- 0
+
+  # Replace NaNs and infinite values with NA
+  data[[vl_vr]] <- result
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.na(data[[vl_vr]]), NA)
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.infinite(data[[vl_vr]]), NA)
 
   # Return
   return(data)
 }
 
-#' Get data from the SQLite database
+#' Get data
 #'
-#' This function retrieves data from an SQLite database using the appropriate
-#' method based on the class of the input vars object. vars should be a named
-#' list with a class, built using the \code{\link{vars_build}} function.
-#' Depending on the class of vars, different methods will be used to retrieve
-#' and process the data.
+#' This function retrieves data from QS files on disk or an SQLite database
+#' using the appropriate method based on the class of the input vars object.
+#' vars should be a named list with a class, built using the
+#' \code{\link{vars_build}} function. Depending on the class of vars, different
+#' methods will be used to retrieve and process the data.
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine how to grab de data and output it.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> The scale of the data to be retrieved, e.g. `CSD`.
+#' The output of \code{\link{update_scale}}.
+#' @param region <`character vector`> A vector of IDs with which to filter the
+#' retrieved data for a specific region, probably retrieved from
+#' `regions_dictionary$scales`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#'
+#' that should be handled as a "DA" scale, e.g. `building` and `street`. By
+#' default, their colour will be the one of their DA.
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
-#' @return A dataframe containing the data according to the class of `vars`
-#' along with a `group` column for map colouring.
+#' @return A dataframe containing the data according to the class of `vars`,
+#' with an ID column, one column per year of data, and one `group` column per
+#' year of data.
 #' @export
-data_get <- function(vars, df, scales_as_DA = c("building", "street"),
-                     data_path = "data/", ...) {
+data_get <- function(vars, scale, region,
+                     scales_as_DA = c("building", "street"),
+                     data_path = get_data_path(), ...) {
   UseMethod("data_get", vars)
 }
 
-#' Get data from the SQLite database for a `q5` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the data fresh out of the sqlite db, with an
-#' added `group` column for map colouring.
+#' @describeIn data_get The method for q5.
 #' @export
-data_get.q5 <- function(vars, df, scales_as_DA = c("building", "street"),
-                        data_path = "data/", ...) {
+data_get.q5 <- function(vars, scale, region = NULL,
+                        scales_as_DA = c("building", "street"),
+                        data_path = get_data_path(), ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df, data_path = data_path)
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  # Get data
+  data <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
 
-  # Add the `group` for the map colouring
-  data$group <- data$var_left_q5
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
 
-  # Return
-  return(data)
+  # Append breaks
+  data <- data_append_breaks(
+    var = vars$var_left,
+    data = data,
+    q3_q5 = "q5",
+    rename_col = "var_left"
+  )
+
+  # Return output
+  return(data$data)
 }
 
-#' Get data from the SQLite database for a `bivar` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the two variables fresh out of the sqlite db,
-#' binded in the same dataframe with an added `group` column for map colouring.
+#' @describeIn data_get The method for bivar.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @export
-data_get.bivar <- function(vars, df, scales_as_DA = c("building", "street"),
-                           data_path = "data/", ...) {
+data_get.bivar <- function(vars, scale, region,
+                           scales_as_DA = c("building", "street"),
+                           data_path = get_data_path(), schemas, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Get var_left and rename
-  data <- data_get_qs(vars$var_left, df, data_path = data_path)
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  # Get var_left and var_right data
+  vl <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
 
-  # Get var_right and rename
-  vr <- data_get_qs(vars$var_right, df, data_path = data_path)
-  names(vr) <- c("ID", "var_right", "var_right_q3", "var_right_q5")
-
-  # Error check before binding
-  if (!identical(data$ID, vr$ID)) {
-    stop(glue::glue_safe(
-      "The `ID` vector from the `{var_left}` table is not ",
-      "identical to the `ID` vector in the `{var_right}` table in ",
-      "the sqlite `{df}` connection. Tables can't be binded."
-    ))
+  # If data isn't present, throw an empty tibble
+  if (!is_data_present_in_scale(var = vars$var_right, scale = scale)) {
+    return(tibble::tibble())
   }
-  data <- cbind(data, vr[, -1])
+  vr <- data_get_qs(vars$var_right, scale = scale, data_path = data_path)
 
-  # Add the `group` for the map colouring
-  data$group <- paste(data$var_left_q3, data$var_right_q3, sep = " - ")
+  # Append breaks
+  all_data <- mapply(
+    \(var, data, rename_col) {
+      data_append_breaks(
+        var = var, data = data, q3_q5 = "q3",
+        rename_col = rename_col
+      )
+    }, c(vars$var_left, vars$var_right),
+    list(vl, vr),
+    c("var_left", "var_right"),
+    SIMPLIFY = FALSE
+  )
+
+  # Grab all the time of the var_left (which are going to be the possible
+  # value if `time`, as time usually follows the left variable)
+  time_regex <- unique(all_data[[1]]$attr$schema_var_left$time)
+  possible_vl_times <- grep(time_regex, names(all_data[[1]]$data), value = TRUE)
+  possible_vl_times <- s_extract(time_regex, possible_vl_times)
+  possible_vl_times <- unique(possible_vl_times)
+  possible_vl_times <- gsub("_", "", possible_vl_times)
+
+  # Possible other vl_schemas
+  other_vl_schemas <- all_data[[1]]$attr$schema_var_left
+  other_vl_schemas <- other_vl_schemas[names(other_vl_schemas) != "time"]
+  if (length(other_vl_schemas) > 0) {
+    # possible_other_schemas <- NULL
+    # for (i in names(other_vl_schemas)) {
+    sch_rege <- "_\\d{1,2}_" # other_vl_schemas[[i]]
+    possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
+    possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
+    possible_other_schemas <- gsub("_", "", possible_other_schemas)
+    # }
+  }
+
+  # Keep left and right breaks
+  breaks_vl <- attr(all_data[[1]]$data, "breaks_var_left")
+  breaks_vr <- attr(all_data[[2]]$data, "breaks_var_right")
+
+  # Merge
+  data <- merge(all_data[[1]]$data, all_data[[2]]$data, by = "ID", all = TRUE)
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
+
+  # Re-add breaks
+  attr(data, "breaks_var_left") <- breaks_vl
+  attr(data, "breaks_var_right") <- breaks_vr
+
+  # Re-add the attributes
+  for (i in names(all_data[[1]]$attr)) {
+    attr(data, i) <- all_data[[1]]$attr[[i]]
+  }
+  for (i in names(all_data[[2]]$attr)) {
+    attr(data, i) <- all_data[[2]]$attr[[i]]
+  }
+
+  # Make the group columns, with the years (group_2016, group_2021, ...)
+  # If there are possible_other_schemas:
+  if (length(other_vl_schemas) > 0) {
+    for (i in possible_vl_times) {
+      for (s in possible_other_schemas) {
+        vr_year <- var_closest_year(vars$var_right, i)$closest_year
+        out <- paste(data[[sprintf("var_left_%s_%s_q3", s, i)]],
+          data[[sprintf("var_right_%s_q3", vr_year)]],
+          sep = " - "
+        )
+        data[[sprintf("group_%s_%s", s, i)]] <- out
+      }
+    }
+  } else {
+    for (i in possible_vl_times) {
+      vr_year <- var_closest_year(vars$var_right, i)$closest_year
+      out <- paste(data[[sprintf("var_left_%s_q3", i)]],
+        data[[sprintf("var_right_%s_q3", vr_year)]],
+        sep = " - "
+      )
+      data[[sprintf("group_%s", i)]] <- out
+    }
+  }
 
   # Return
   return(data)
 }
 
-#' Get data from the SQLite database for a `delta` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of the same variable. `q5` is calculated on the spot with and doubled
-#' to the `group` column for map colouring.
+#' @describeIn data_get The method for delta.
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @export
-data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
-                           data_path = "data/", ...) {
-  data_get_delta_fun(vars = vars, df = df, scales_as_DA = scales_as_DA,
-                     data_path = data_path, ...)
+data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                           data_path = get_data_path(), time, ...) {
+  data_get_delta_fun(
+    vars = vars, scale = scale, region = region,
+    scales_as_DA = scales_as_DA, data_path = data_path,
+    time = time, ...
+  )
 }
 
 #' @title Inner function to get data based on the type of `vars`
@@ -236,45 +311,52 @@ data_get.delta <- function(vars, df, scales_as_DA = c("building", "street"),
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> The scale at which the user is on.
+#' @param region <`character vector`> A vector of IDs with which to filter the
+#' retrieved data for a specific region, probably retrieved from
+#' `regions_dictionary$scales`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
+#' @param time <`named list`> Object built using the \code{\link{vars_build}}
+#' function. It contains the time for both var_left and var_right variables.
 #' @param data_path <`character`> A string representing the path to the directory
 #' containing the QS files. Default is "data/".
 #' @param ... Additional arguments passed to methods.
 #'
 #' @seealso \code{\link{data_get.delta}}
-data_get_delta_fun <- function(vars, df,
-                               scales_as_DA = c("building", "street"),
-                               data_path = "data/", ...) {
+data_get_delta_fun <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                               data_path = get_data_path(), time, ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 
-#' @title Retrieve `delta` data for scalar variables
-#'
-#' @description This function retrieves data for scalar variables
-#' and performs additional operations for map coloring.
-#'
-#' @inheritParams data_get_delta_fun
-#'
-#' @seealso \code{\link{data_get.delta}}
-data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "street"),
-                                      data_path = "data/", ...) {
+#' @describeIn data_get_delta_fun The method for scalar variables.
+data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                      data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Retrieve
+  # Get data
   data <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
-    data_path = data_path
+    vars = vars, time = time,
+    scale = scale, data_path = data_path
   )
-  names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
+
+  # Is delta ONLY positive or ONLY negative? Inform which color scale to use
+  vec <- data$var_left
+  vec <- vec[!is.na(vec)]
+  current <- "normal"
+  if (all(vec >= 0)) current <- "positive" else if (all(vec <= 0)) current <- "negative"
+  class(data) <- c(current, class(data))
 
   # Grab the breaks in the data
-  breaks <- breaks_delta(vars = vars, df = df, character = FALSE, data = data)
+  breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
+
+  # Add the breaks attribute
+  attr(data, "breaks_var_left") <- breaks
 
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
@@ -289,30 +371,37 @@ data_get_delta_fun.scalar <- function(vars, df, scales_as_DA = c("building", "st
   return(data)
 }
 
-#' @title Retrieve `delta` data for ordinal variables
-#'
-#' @description This function retrieves data for ordinal variables
-#' and performs additional operations for map coloring.
-#'
-#' @inheritParams data_get_delta_fun
-#'
-#' @seealso \code{\link{data_get.delta}}
-data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "street"),
-                                       data_path = "data/", ...) {
+#' @describeIn data_get_delta_fun The method for ordinal variables.
+data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                       data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
-  # Retrieve
+  # Get data
   data <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
-    data_path = data_path
+    vars = vars, time = time,
+    scale = scale, data_path = data_path
   )
-  names(data) <- c("ID", "var_left_1", "var_left_2", "var_left")
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
+
+  # Is delta ONLY positive or ONLY negative? Inform which color scale to use
+  vec <- data$var_left
+  vec <- vec[!is.na(vec)]
+  current <- "normal"
+  if (all(vec >= 0)) current <- "positive" else if (all(vec <= 0)) current <- "negative"
+  class(data) <- c(current, class(data))
+
+  # Grab the breaks in the data
+  breaks <- breaks_delta(vars = vars, scale = scale, character = FALSE, data = data)
+
+  # Add the breaks attribute
+  attr(data, "breaks_var_left") <- breaks
 
   # var_left_q5 will go off of bins change. 0 bin change vs 1 bin change vs multiple
   # bin changes.
-  var_left_binchange <- data$var_left_2 - data$var_left_1
-
+  var_left_binchange <- data[[3]] - data[[2]]
 
   # Add the `group` for the map colouring
   data$var_left_q5 <- 5
@@ -327,41 +416,42 @@ data_get_delta_fun.ordinal <- function(vars, df, scales_as_DA = c("building", "s
   return(data)
 }
 
-#' Get data from the SQLite database for a `delta_bivar` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of two variables. `q3`s are calculated on the spot along with the
-#' `group` column for the map colouring.
+#' @describeIn data_get The method for bivar.
 #' @export
-data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"),
-                                 data_path = "data/", ...) {
+data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                 data_path = get_data_path(), time, ...) {
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
   # Retrieve
   data_vl <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
-    data_path = data_path
+    vars = vars, time = time, vl_vr = "var_left",
+    scale = scale, data_path = data_path
   )
-  names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vr <- data_get_delta(
-    var_two_years = vars$var_right, df = df,
-    data_path = data_path
+    vars = vars, time = time, vl_vr = "var_right",
+    scale = scale, data_path = data_path
   )[-1]
-  names(data_vr) <- c("var_right_1", "var_right_2", "var_right")
+
+  # Prepare for merge, keep attributes
+  prev_attr_vl <- attributes(data_vl)
+  prev_attr_vl <- prev_attr_vl[!names(prev_attr_vl) %in% c("names", "row.names", "class")]
+  prev_attr_vr <- attributes(data_vr)
+  prev_attr_vr <- prev_attr_vr[!names(prev_attr_vr) %in% c("names", "row.names", "class")]
+
+  # Merge
   data <- cbind(data_vl, data_vr)
+
+  # Keep the previous attributes
+  for (i in names(prev_attr_vl)) {
+    attr(data, i) <- prev_attr_vl[[i]]
+  }
+  for (i in names(prev_attr_vr)) {
+    attr(data, i) <- prev_attr_vr[[i]]
+  }
+
+  # Filter to region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # Add the `group` for the map colouring
   data$var_left_q3 <- ntile(data$var_left, 3)
@@ -372,85 +462,123 @@ data_get.delta_bivar <- function(vars, df, scales_as_DA = c("building", "street"
   return(data)
 }
 
-#' Get data from the SQLite database for a `bivar_ldelta_rq3` class
-#'
-#' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to methods.
-#'
-#' @return A dataframe containing the percentage change between two
-#' years of one variable with the static one year value of another variable.
-#' `q3`for the percent change value is  calculated on the spot and used
-#' to regroup with the `q3` column of the second value to create the `group`
-#' column for map colouring.
+#' @describeIn data_get The method for bivar_ldelta_rq3.
 #' @export
-data_get.bivar_ldelta_rq3 <- function(vars, df, scales_as_DA = c("building", "street"),
-                                      data_path = "data/", ...) {
-  # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
-
-  # Retrieve var_left and add a `q3 column`
-  data_vl <- data_get_delta(
-    var_two_years = vars$var_left, df = df,
-    data_path = data_path
+data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("building", "street"),
+                                      data_path = get_data_path(), time, ...) {
+  # Reconstruct vars for delta
+  vl_vars <- vars_build(var_left = vars$var_left, scale = scale, time = time$var_left)
+  vl_time <- vl_vars$time
+  vl_vars <- vl_vars$vars
+  data_vl <- data_get(vl_vars,
+    scale = scale, time = vl_time, region = region,
+    scales_as_DA = scales_as_DA
   )
-  names(data_vl) <- c("ID", "var_left_1", "var_left_2", "var_left")
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
-  # Normal retrieval for var_right (single value)
-  data_vr <- data_get_qs(vars$var_right, df, data_path = data_path)[2:3]
-  names(data_vr) <- c("var_right", "var_right_q3")
+  # Reconstruct vars for q3
+  vr_vars <- vars_build(var_left = vars$var_right, scale = scale, time = time$var_right)
+  vr_time <- vr_vars$time
+  vr_vars <- vr_vars$vars
+  data_vr <- data_get(vr_vars,
+    scale = scale, time = vr_time, region = region,
+    scales_as_DA = scales_as_DA
+  )
+  cv <- match_schema_to_col(data_vr, time = vr_time, schemas = NULL)
+  data_vr <- data_vr[cv]
+  names(data_vr) <- gsub("var_left", "var_right", names(data_vr))
+  data_vr$var_right_q3 <- ntile(data_vr[[1]], 3)
+
+  # Prepare for merge, keep attributes
+  prev_attr_vl <- attributes(data_vl)
+  prev_attr_vl <- prev_attr_vl[!names(prev_attr_vl) %in% c("names", "row.names", "class")]
+  prev_attr_vr <- attributes(data_vr)
+  prev_attr_vr <- prev_attr_vr[!names(prev_attr_vr) %in% c("names", "row.names", "class")]
+  names(prev_attr_vr) <- gsub("var_left", "var_right", names(prev_attr_vr))
 
   # Bind vl and vr
   data <- cbind(data_vl, data_vr)
 
+  # Keep the previous attributes
+  for (i in names(prev_attr_vl)) {
+    attr(data, i) <- prev_attr_vl[[i]]
+  }
+  for (i in names(prev_attr_vr)) {
+    attr(data, i) <- prev_attr_vr[[i]]
+  }
+
   # Create the `group` column for map colouring
-  data$group <- paste(data$var_left_q3, "-", data$var_right_q3)
+  data$group <- sprintf("%s - %s", data$var_left_q3, data$var_right_q3)
 
   # Return
   return(data)
 }
 
-#' Default data method
+#' Filter data by region
 #'
-#' This is the default data method, which simply returns the table taken out
-#' from the sql database. It extracts the first element of `vars` as the `var`
-#' argument for the  \code{\link{data_get_qs}} call. It directly outputs the
-#' output.
+#' Filters a given data frame by the region and scale specified. The function
+#' grabs a global variable \code{regions_dictionary} to identify the IDs
+#' associated with the given region and scale.
 #'
-#' @param vars <`named list`> A list object with an unknown class. For this `default`
-#' method, no need for vars to have a class. It will extract the first element of
-#' `vars` as the `var` argument for the  \code{\link{data_get_qs}} call.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param scales_as_DA <`character vector`> A character vector of `scales`
-#' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
-#' their colour will be the one of their DA.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#' @param ... Additional arguments passed to other functions.
+#' @param data <`data.frame`> Data.frame containing the data to be filtered.
+#' It must have an \code{ID} column that matches the IDs in \code{regions_dictionary}.
+#' @param scale <`character`> The scale at which to filter the data (e.g., 'CSD', 'CT').
+#' @param region <`character`> The code of the region for filtering (e.g., 'CMA').
 #'
-#' @return A data.frame containing the raw sql table for the first element of `vars`.
+#' @return Returns a filtered data frame containing only the rows corresponding
+#' to the specified region and scale.
 #' @export
-data_get.default <- function(vars, df, scales_as_DA = c("building", "street"),
-                             data_path = "data/", ...) {
+filter_region <- function(data, scale, region) {
+  # If no region supplied, return all
+  if (is.null(region)) {
+    return(data)
+  }
+
+  # Get the regions dictionary to grab the vector of IDs with which to filter
+  # the retrieved data
+  regions_dictionary <- get_from_globalenv("regions_dictionary")
+
+  # Vector of IDs for the current region and scale
+  scales <- regions_dictionary$scales[regions_dictionary$region == region][[1]]
+  id_reg <- scales[[scale]]
+  data <- data[data$ID %in% id_reg, ]
+
+  # Return filtered data
+  return(data)
+}
+
+#' @describeIn data_get The default method.
+#' @param vr_vl <`character`> Is the parent data coming from the var_left
+#' or var_right? How should it be renamed.
+#' @export
+data_get.default <- function(vars, scale, region = NULL,
+                             scales_as_DA = c("building", "street"),
+                             data_path = get_data_path(), vr_vl, ...) {
+  # Check if `vars` has been entered without being subset from `vars_build()`
+  if (all(c("vars", "time") %in% names(vars))) {
+    stop("`vars` is invalid. Subset `$vars` from the output of `vars_build()`.")
+  }
+
   # Treat certain scales as DA
-  df <- treat_to_DA(scales_as_DA = scales_as_DA, df = df)
+  scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+
+  # Grab var and modify if necessary
+  var <- vars[[1]]
+  if (var == "population") var <- "c_population"
+  if (var == "households") var <- "private_households"
 
   # Default method retrieves the data of the first element of `vars`
-  data <- data_get_qs(var = vars[[1]], df = df, data_path = data_path)
+  data <- if (var == "area") {
+    get_from_globalenv(scale)[c("ID", "area")]
+  } else {
+    data_get_qs(var = var, scale = scale, data_path = data_path)
+  }
+
+  # Filter by region
+  data <- filter_region(data = data, scale = scale, region = region)
 
   # To keep it constant, rename with var_left
-  names(data) <- c("ID", "var_left", "var_left_q3", "var_left_q5")
+  names(data) <- gsub(var, vr_vl, names(data))
 
   # Return
   return(data)

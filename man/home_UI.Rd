@@ -4,10 +4,25 @@
 \alias{home_UI}
 \title{Create the home user interface}
 \usage{
-home_UI(id = "home", placeholder_video_src, video_src, lang_init = "en")
+home_UI(
+  id = "home",
+  h1_first_line,
+  h1_second_line,
+  placeholder_video_src,
+  video_src,
+  lang_init = "en",
+  show_cities = TRUE
+)
 }
 \arguments{
 \item{id}{<\code{character}> A unique identifier for the home UI. Normally \code{home}.}
+
+\item{h1_first_line}{<\code{character}> A list, with language, of what will be on
+the first line of the H1 header. EXPLORE THE \code{X} REGION. ex.
+\code{list(en = "MONTREAL", fr = "RÉGION DE")}}
+
+\item{h1_second_line}{<\code{character}> A list, with language, of what will be on
+the second line of the H1 header. EXPLORE THE MONTREAL \code{X}, ex.}
 
 \item{placeholder_video_src}{<\code{character}> External link to a publicly available
 mp4 video. The video will be used as the placeholder, until the user click on
@@ -20,6 +35,9 @@ intro video. e.g. \code{list(en = "https://s3.amazonaws.com/curbcut.public.resou
 
 \item{lang_init}{<\code{character}> Language which should be used to initiate the
 app.}
+
+\item{show_cities}{<\code{logical}> Should we be showing the list of Curbcut Cities
+in the footer? Defaults to TRUE.}
 }
 \value{
 A Shiny UI object for the home page.

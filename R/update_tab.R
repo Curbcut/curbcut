@@ -12,7 +12,6 @@
 #' @return Updates the tabset panel in the Curbcut app to reflect the specified tab.
 #' @export
 update_tab <- function(session, inputId = "cc_page", selected) {
-
   # Update the query string to blank
   shiny::updateQueryString(session = session, queryString = "")
 

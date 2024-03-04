@@ -5,22 +5,26 @@
 #'
 #' @param vars <`named list`> Named list with a class. Object built using the
 #' \code{\link{vars_build}} function.
-#' @param time <`numeric vector`> Vector of time values to use for
-#' appending a time to the variables picked.
 #' @param data <`data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
+#' @param time <`numeric named list`> Vector of time values to use for
+#' appending a time to the variables picked.
+#' @param widget_time <`numeric vector`> Raw time values coming out from the
+#' time widget. It will be used to match with `time`, and if it doesn't fit,
+#' will informe the warning.
 #' @param more_text <`character`> Optional additional text to be added to the
-#' warning message. Default is shiny::reactive(NULL).
+#' warning message. Default is NULL.
 #' @param lang <`character`> The language to be used for the warning messages.
 #' Defaults to NULL for no translation
 #'
 #' @return A string containing the warning message in HTML format.
-warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
+warnuser_get <- function(vars, data, time, widget_time, more_text = NULL, lang = NULL) {
+  # Initiate the list
   out <- list()
 
   # Unique years
-  left_year <- var_get_time(vars$var_left) |> unique()
-  right_year <- var_get_time(vars$var_right) |> unique()
+  left_year <- time$var_left
+  right_year <- time$var_right
 
   # Vars title
   var_left_title <- var_get_title(
@@ -50,39 +54,59 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
 
   # Year displayed != year chosen -------------------------------------------
 
-  if (time[[1]] != "") {
-    length_mismatch <- length(time) == 2 & length(left_year) == 1
-
-    # Year displayed LEFT
-    if (length(left_year) == 1 & !length_mismatch) {
-      if (left_year != unique(time)) {
-        out <- c(
-          out,
-          list(cc_t(
-            lang = lang,
-            "Displayed data for <b>{var_left_title}</b> is for the ",
-            "closest available year <b>({left_year})</b>."
-          ))
-        )
-      }
+  year_mismatch_left <- (\(x) {
+    # If time is named, the selected time can only be valid
+    if (!is.null(names(time))) {
+      return(NULL)
+    }
+    if (!all(widget_time != "")) {
+      return(NULL)
+    }
+    if (length(widget_time) == 2 & length(left_year) == 1) {
+      return(NULL)
+    }
+    if (length(left_year) != 1) {
+      return(NULL)
+    }
+    if (left_year == unique(widget_time)) {
+      return(NULL)
     }
 
-    # Year displayed RIGHT
-    if (length(right_year) == 1 & !length_mismatch) {
-      if (vars$var_right != " ") {
-        if (all(right_year != unique(time))) {
-          out <- c(
-            out,
-            list(cc_t(
-              lang = lang,
-              "Displayed data for <b>{var_right_title}</b> is for the ",
-              "closest available year <b>({right_year})</b>."
-            ))
-          )
-        }
-      }
+    # If all the previous passed
+    list(cc_t(
+      lang = lang,
+      "Displayed data for <b>{var_left_title}</b> is for the ",
+      "closest available year <b>({left_year})</b>."
+    ))
+  })()
+  if (!is.null(year_mismatch_left)) out <- c(out, year_mismatch_left)
+
+  year_mismatch_right <- (\(x) {
+    # If time is named, the selected time can only be valid
+    if (!is.null(names(time))) {
+      return(NULL)
     }
-  }
+    if (!all(widget_time != "")) {
+      return(NULL)
+    }
+    if (length(widget_time) == 2 & length(right_year) == 1) {
+      return(NULL)
+    }
+    if (length(right_year) != 1) {
+      return(NULL)
+    }
+    if (right_year == unique(widget_time)) {
+      return(NULL)
+    }
+
+    # If all the previous passed
+    list(cc_t(
+      lang = lang,
+      "Displayed data for <b>{var_right_title}</b> is for the ",
+      "closest available year <b>({right_year})</b>."
+    ))
+  })()
+  if (!is.null(year_mismatch_right)) out <- c(out, year_mismatch_right)
 
 
   # More condition for more disclaimers -------------------------------------
@@ -95,7 +119,7 @@ warnuser_get <- function(vars, data, time, more_text, lang = NULL) {
   # Make it an HTML paragraph -----------------------------------------------
 
   out <- lapply(out, \(x) {
-    sprintf("<p style='font-size:12px; font-style:italic;'>%s", x)
+    sprintf("<p class='sus-sidebar-widget-warning-text'>%s", x)
   })
   out <- paste0(out, collapse = "")
 

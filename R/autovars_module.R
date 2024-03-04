@@ -15,11 +15,20 @@
 #' title of the main dropdown selector.
 #' @param default_year <`numeric`> An optional numeric value specifying the default
 #' year for time widgets. If not provided, these widgets will not be initialized.
+#' @param time_div_label <`reactive character`> The label of the time div. Defaults
+#' to `Time`.
+#' @param time_div_icon <`reactive character`> Material ion name for the time
+#' selection UI, defaults to "date_range".
+#' @param compare_label <`reactive character`> The label of the compare checkbox.
+#' Defaults to `Compare dates`.
 #'
 #' @return A reactive list with the final variable ('var') and the selected
 #' time ('time').
 #' @export
-autovars_server <- function(id, r, main_dropdown_title, default_year) {
+autovars_server <- function(id, r, main_dropdown_title, default_year,
+                            time_div_label = shiny::reactive("Time"),
+                            time_div_icon = shiny::reactive("date_range"),
+                            compare_label = shiny::reactive("Compare dates")) {
   shiny::moduleServer(id, function(input, output, session) {
     # Global preparation ------------------------------------------------------
 
@@ -34,9 +43,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Some widgets must be placed in the advanced controls
     page <- page_get(id)
     adv <- unlist(page$add_advanced_controls)
+    schemas <- names(page$additional_schemas[[1]])
 
     default_var <- autovars_placeholder_var(id = id)
     out_var <- shiny::reactiveVal(default_var)
+
+    # Make a reactiveVal to keep IDs of schema widgets
+    schema_reactive <- shiny::reactiveVal(NULL)
 
     advanced_div_selector <- html_ns("indicators_label-advanced_controls_div")
 
@@ -52,57 +65,14 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         # selector = html_ns("autovars"),
         # where = "beforeEnd",
         # place after the compare panel
-        selector = html_ns("compare_widgets"),
+        selector = html_ns("compare_panel"),
         where = "afterEnd",
         ui = {
           if (!is.null(default_year)) {
-            min_ <- common_widgets()$time |> min()
-            max_ <- common_widgets()$time |> max()
-            step_ <- unique(diff(common_widgets()$time))[1]
-            double_value_ <- common_widgets()$time[ceiling(length(common_widgets()$time) / 2)]
-            double_value_ <- c(double_value_, max_)
-            length_ <- common_widgets()$time |> length()
-            # If there are less than 10 options, slim sliders
-            ys_classes <- if (length_ < 10) "year-slider-slim" else "year-slider"
-
-            shiny::tagList(
-              shiny::div(
-                id = widget_ns("year_sliders"),
-                class = ys_classes,
-                shiny::hr(id = widget_ns("above_year_hr")),
-                shiny::div(
-                  class = "shiny-split-layout sidebar-section-title",
-                  shiny::div(
-                    style = "width: 9%",
-                    icon_material_title("date_range")
-                  ),
-                  shiny::div(
-                    style = "width: 24%",
-                    shiny::tags$span(
-                      id = shiny::NS(id, "year_label"),
-                      cc_t("Time", force_span = TRUE)
-                    )
-                  ),
-                  shiny::div(
-                    style = "width: 64%; margin:0px !important; text-align: right;",
-                    checkbox_UI(
-                      id = widget_ns(id),
-                      label = cc_t("Compare dates", force_span = TRUE),
-                      value = FALSE
-                    )
-                  )
-                ),
-                slider_UI(
-                  id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
-                  step = step_, label = NULL
-                ),
-                shinyjs::hidden(slider_UI(
-                  id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
-                  step = step_, label = NULL,
-                  value = double_value_
-                ))
-              )
-            )
+            autovars_time_ui(id = id,
+                             times = common_widgets()$time,
+                             widget_ns = widget_ns,
+                             time_div_label(), time_div_icon(), compare_label())
           }
         }
       )
@@ -130,17 +100,35 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                 # Keep the order!
                 l <- which(names(raw_wdgs) == n)
 
+                maybe_schema <- tolower(n)
+                maybe_schema <- gsub(" ", "", maybe_schema)
+
+                ## ADD HERE, FLAG THE ID OF WHAT WILL BE SCHEMA???????
+
                 if ("slider_text" %in% class(w)) {
                   selected <- w[[default_selection[[n]]]]
+                  w_id <- sprintf("st%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccpicker_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
 
                   slider_text_UI(
                     id = widget_ns(id),
-                    slider_text_id = sprintf("st%s", l),
+                    slider_text_id = w_id,
                     choices = w,
                     selected = selected,
                     label = cc_t(n, force_span = TRUE)
                   )
                 } else if ("slider" %in% class(w)) {
+                  w_id <- sprintf("s%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccslider_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
+
                   vals <- unlist(w)
                   vals <- as.numeric(vals)
                   min_ <- min(vals)
@@ -148,9 +136,20 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                   step_ <- unique(diff(vals))[1]
                   selected <- default_selection[[n]]
 
+                  if (length(selected) > 1) {
+                    # Special case for accss
+                    if (all(vals == which(1:60 %% 5 == 0))) {
+                      selected <- 20
+                    } else {
+                      selected <- vals[{
+                        (length(vals)) / 2
+                      } |> floor()]
+                    }
+                  }
+
                   slider_UI(
                     id = widget_ns(id),
-                    slider_id = sprintf("s%s", l),
+                    slider_id = w_id,
                     step = step_,
                     min = min_,
                     max = max_,
@@ -158,13 +157,20 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                     label = cc_t(n, force_span = TRUE)
                   )
                 } else {
+                  w_id <- sprintf("p%s", l)
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccslidertext_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
+
                   names(w) <- w
                   names(w) <- sapply(names(w), cc_t, lang = r$lang())
                   selected <- default_selection[[n]]
 
                   picker_UI(
                     id = widget_ns(id),
-                    picker_id = sprintf("p%s", l),
+                    picker_id = w_id,
                     var_list = w,
                     label = cc_t(n, force_span = TRUE),
                     selected = selected
@@ -202,8 +208,12 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       }
     })
     # Grab the time values
-    slider_uni <- slider_server(id = id, slider_id = "slu")
-    slider_bi <- slider_server(id = id, slider_id = "slb")
+    # If numeric time
+    slider_uni_num <- slider_server(id = id, slider_id = "slu")
+    slider_bi_num <- slider_server(id = id, slider_id = "slb")
+    # If character time
+    slider_uni_text <- slider_text_server(id = id, slider_text_id = "slu")
+    slider_bi_text <- slider_text_server(id = id, slider_text_id = "slb")
     slider_switch <- checkbox_server(
       id = id, r = r,
       label = shiny::reactive("Compare dates")
@@ -211,8 +221,13 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     # Enable or disable first and second slider
     shiny::observeEvent(slider_switch(), {
       single_year <- length(common_widgets()$time) == 1
+      # Slider numeric
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
+      # Slider text
+      shinyjs::toggle(shiny::NS(id, "ccslidertext_slu"), condition = !slider_switch() & !single_year)
+      shinyjs::toggle(shiny::NS(id, "ccslidertext_slb"), condition = slider_switch() & !single_year)
+      # Checkbox
       shinyjs::toggle(shiny::NS(id, "cccheckbox_cbx"), condition = !single_year)
 
       # Hide the whole div if there's only one year of data
@@ -239,7 +254,25 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       if (is.null(slider_switch())) {
         return(default_year)
       }
-      if (slider_switch()) slider_bi() else slider_uni()
+
+      # Which type of slider?
+      times <- common_widgets()$time
+      slider_type <- if (is.null(names(times))) "slider" else "slider_text"
+
+      # If it's a numeric slider
+      if (slider_type == "slider") {
+        tm <- if (slider_switch()) slider_bi_num() else slider_uni_num()
+      }
+
+      # If it's a character slider
+      if (slider_type == "slider_text") {
+        # The selected time must be the 'real' value (the one selected by the
+        # user), not the pretty front-facing one (the name of the dates vector).
+        slider_val <- if (slider_switch()) slider_bi_text() else slider_uni_text()
+        tm <- times[which(names(times) %in% slider_val)]
+      }
+
+      return(tm)
     })
 
     # Grab the common widgets' value
@@ -300,11 +333,11 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               if (is.null(names(w))) {
                 names(w) <- w
               }
-              names(w) <- sapply(names(w), cc_t, lang = r$lang())
+              names(w) <- sapply(names(w), cc_t, lang = shiny::isolate(r$lang()))
               w
             }
           } else {
-            w <- cc_t(w, lang = r$lang())
+            w <- shiny::isolate(cc_t(w, lang = r$lang()))
           }
 
           # Default selection
@@ -322,7 +355,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
               picker_id = "mnd",
               var_list = w,
               selected = default_selection,
-              label = if (is.null(main_dropdown_title)) NULL else cc_t(main_dropdown_title, force_span = TRUE)
+              label = if (is.null(main_dropdown_title)) NULL else cc_t_span(main_dropdown_title)
             )
           ))
         }
@@ -333,16 +366,28 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
     mnd_list <- autovars_groupnames(id = id)
     # If it's a list already formated using `dropdown_make(), use it as is. If
     # not, format it for the picker updates.
-    mnd_list <- if (is.list(mnd_list)) {
-      mnd_list
-    } else {
-      mnd_list <- list(mnd_list)
-      names(mnd_list) <- main_dropdown_title
-      mnd_list
-    }
+    mnd_list <- (\(x) {
+      if (is.list(mnd_list)) {
+        mnd_list
+      } else {
+        mnd_list_list <- list(mnd_list)
+        # picker server can ONLY take a list. The list must be named. In the case
+        # there is to be no label on the dropdown, return mnd_list as a list of
+        # all the choices. If not, name the dropdown according to main_drop_title.
+        if (!is.null(main_dropdown_title)) {
+          if (is.na(main_dropdown_title)) return(sapply(mnd_list, list))
+          names(mnd_list_list) <- main_dropdown_title
+        }
+        mnd_list_list
+      }
+    })()
+
     mnd <- picker_server(
       id = id, r = r, picker_id = "mnd",
-      var_list = shiny::reactive(mnd_list)
+      var_list = shiny::reactive(mnd_list),
+      # Use `time` from little `r` to inform if options of the dropdown should
+      # be greyed out.
+      time = r[[id]]$time
     )
 
     # Detect the variables that are under the main dropdown value. Only update them
@@ -412,6 +457,17 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
                   names(w) <- w
                   names(w) <- sapply(names(w), cc_t, lang = r$lang())
                   selected <- default_selection[[n]]
+                  w_id <- sprintf("p%s", l)
+
+                  # Flag if it's part of schema
+                  maybe_schema <- tolower(n)
+                  maybe_schema <- gsub(" ", "", maybe_schema)
+
+                  if (maybe_schema %in% schemas) {
+                    cur <- shiny::isolate(schema_reactive())
+                    full_id <- sprintf("ccpicker_%s", w_id)
+                    schema_reactive(c(cur, stats::setNames(full_id, maybe_schema)))
+                  }
 
                   picker_UI(
                     id = widget_ns(id),
@@ -449,7 +505,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
         val <- input[[shiny::NS(id, slider_id)]]
         if (!is.null(val)) picker_vals[[i]] <- val
       }
-      for (i in seq_along(common_widgets()$widgets)) {
+      for (i in seq_len(length_all)) {
         slider_text_id <- sprintf("ccslidertext_st%s", i)
         val <- input[[shiny::NS(id, slider_text_id)]]
         if (!is.null(val)) picker_vals[[i]] <- val
@@ -467,25 +523,49 @@ autovars_server <- function(id, r, main_dropdown_title, default_year) {
       out_var(z[[1]])
     })
 
-    # If there is a `time` value, attach it to the variable
-    final_var <- shiny::reactive({
-      if (is.null(time())) {
-        return(out_var())
+    # Update the schemas!
+    shiny::observe({
+      # if (is.null(schemas)) {
+      #   return(NULL)
+      # }
+      # if (is.null(schema_reactive())) {
+      #   return(NULL)
+      # }
+
+      final_schemas <- page$additional_schemas[[1]]
+      for (i in names(schema_reactive())) {
+        input_name <- schema_reactive()[[i]]
+        input_val <- input[[shiny::NS(id, input_name)]]
+        if (is.null(input_val)) next
+        final_schemas[[i]] <- input_val
       }
-      picker_return_var(input = out_var(), time = time())
+      # if (is.null(final_schemas)) {
+      #   return(NULL)
+      # }
+
+      # Grab the 'real' time (the one the user will see) so it can accurately
+      # inform the schema,
+      final_schemas <- c(final_schemas, list(time = time()))
+      final_schemas <- list(var_left = final_schemas)
+
+      update_rv(
+        id = id, r = r, rv_name = "schemas",
+        new_val = shiny::reactive(final_schemas)
+      )
     })
 
-    return(shiny::reactive(list(var = final_var(), time = time())))
+    return(shiny::reactive(list(var = out_var(), time = time())))
   })
 }
 
 #' @describeIn autovars_server Create the UI for the autovars module
+#' @param ... UIs to be inserted in the advanced controls div.
 #' @export
-autovars_UI <- function(id) {
+autovars_UI <- function(id, ...) {
   shiny::tagList(
     shiny::div(
       id = shiny::NS(id, "autovars"),
-      label_indicators_UI(id = shiny::NS(id, "indicators_label")),
+      label_indicators_UI(id = shiny::NS(id, "indicators_label"), ...),
     )
   )
 }

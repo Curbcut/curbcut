@@ -9,22 +9,30 @@
 #' Usually equivalent of `r$region()`.
 #' @param select_id <`character`> A string indicating the ID of the currently
 #' selected region (if any). Usually `r[[id]]$select_id()`
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
+#' observations. The output of \code{\link{data_get}}.
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param scales_as_DA <`character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By
 #' default, their info will be the one of their DA.
 #' @param lang <`character`> A string indicating the language in which to
 #' translates the variable. Defaults to NULL. Usually is `r$lang()`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
 #' @param ... Additional arguments passed to the dispatched function.
 #'
 #' @return The resulting text.
 #' @export
-explore_text <- function(vars, region, select_id, df, data, scales_as_DA,
-                         lang, ...) {
+explore_text <- function(vars, region, select_id, scale, time, data,
+                         schemas, zoom_levels,
+                         scales_as_DA = c("building", "street"),
+                         lang = NULL, ...) {
   UseMethod("explore_text", vars)
 }
 
@@ -32,21 +40,35 @@ explore_text <- function(vars, region, select_id, df, data, scales_as_DA,
 # Q5 ----------------------------------------------------------------------
 
 #' @rdname explore_text
+#' @param shown_scale <`character`> While the `scale` argument is the scale
+#' for which to calculate regional values, `shown_scale` is the scale which
+#' would fit the `select_id`. In use for raster data, where we show region values
+#' for the highest resolution possible, but we still want to allow user to select
+#' grid cells of lower resolutions. `shown_scale` will only be used to grab the
+#' address of the grid cell. Defaults to NULL for normal operations.
+#' @param val <`numeric`> If the value is not part of `data`. It happens on raster
+#' data where we show region values for the highest resolution possible, but we still
+#' want to allow user to select grid cells of lower resolutions. Defaults to NULL
+#' for normal operations.
 #' @export
-explore_text.q5 <- function(vars, region, select_id, df, data,
+explore_text.q5 <- function(vars, region, select_id, scale, time, data,
+                            schemas, zoom_levels,
                             scales_as_DA = c("building", "street"),
-                            lang = NULL, ...) {
-  # Detect if we should switch the scale for DAs in the case the `df` is part
+                            lang = NULL, shown_scale = NULL, val = NULL, ...) {
+  # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, scale)
 
-  # Adjust the selected ID in the case where the selection is not in `data`
-  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  # Adjust the selected ID in the case where the selection is not in `data`,
+  # except if there is a value supplied, meaning
+  if (is.null(shown_scale) & is.null(val)) {
+    if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  }
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, df = df,
-    switch_DA = switch_DA, lang = lang
+    region = region, select_id = select_id, scale = scale, shown_scale = shown_scale,
+    zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
   # The context might have used a scale in the `scales_as_DA` argument, and
@@ -57,7 +79,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    time = time, lang = lang, schemas = schemas,
+    val = val
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -67,7 +90,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   value_string <- explore_text_values_q5(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, lang = lang
+    scale = context$treated_scale, lang = lang,
+    time = time, schemas = schemas, val = val
   )
 
   # Put it all together
@@ -84,7 +108,9 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     # Get the information on how the selection compares
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
-      select_id = select_id, lang = lang
+      select_id = select_id, lang = lang,
+      time_col = time$var_left, schemas = schemas,
+      val = val
     )
 
     # Make the first sentence of the paragraph
@@ -96,7 +122,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
     # Grab the explanation and capitalize the first letter
     exp <- var_get_info(vars$var_left,
       what = "explanation", translate = TRUE,
-      lang = lang
+      lang = lang, schemas_col = schemas$var_left
     ) |>
       s_sentence()
 
@@ -106,8 +132,8 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
 
     # Plug the right elements for the final sentence
     second_step <- sprintf(
-      cc_t("%s %s is higher than in %s of other %s %s", lang = lang), exp,
-      context$p_start, relat$higher_than, context$scale_plur,
+      curbcut::cc_t("%s %s is %s than in %s of other %s %s", lang = lang), exp,
+      context$p_start, relat$higher_lower, relat$higher_lower_than, context$scale_plur,
       context$to_compare_short
     )
 
@@ -116,7 +142,7 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   }
 
   # Append date
-  date <- var_get_time(vars$var_left)
+  date <- time$var_left
   if (!is.na(date)) {
     out <- sprintf(cc_t("%s <i>(Data from %s.)</i>", lang = lang), out, date)
   }
@@ -125,615 +151,19 @@ explore_text.q5 <- function(vars, region, select_id, df, data,
   return(out)
 }
 
-#' Generate text for the given variables and region - q5 version
-#'
-#' This function generates text for the given variables and region using the
-#' Q5 version. It dispatches to the appropriate text-generating function based on
-#' the variable type and returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param ... Additional arguments passed to the dispatched function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5 <- function(var, region, ...) {
-  UseMethod("explore_text_values_q5", var)
-}
-
-#' Generate text for the given variables and region - q5 version using percentage
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and percentage. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.pct <- function(var, region, data, df, select_id,
-                                       col = "var_left", lang, ...) {
-  # Grab the parent variable
-  parent_string <- explore_text_parent_title(var, lang = lang)
-
-  # Grab the q5 explanation
-  exp <- var_get_info(
-    var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
-  )
-
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    data = data,
-    df = df,
-    select_id = select_id,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(var = var, what = "explanation", translate = TRUE, lang = lang)
-    out <- sprintf(cc_t("we currently don't have information regarding %s", lang = lang), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # Make the region values as characters
-  pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-  count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
-
-  # Build the return
-  out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - q5 version using count
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and count. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.count <- function(var, region, data, df, select_id,
-                                         col = "var_left", lang, ...) {
-  # Grab the parent variable
-  parent_string <- explore_text_parent_title(var, lang = lang)
-
-  # Grab the q5 explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang)
-
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    data = data,
-    df = df,
-    select_id = select_id,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # Make the region values as characters
-  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-
-  # Build the return
-  out <- sprintf("%s %s %s", count_string, parent_string, exp)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - q5 version using dollar
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and dollar. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.dollar <- function(var, region, data, select_id,
-                                          col = "var_left", lang, ...) {
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    data = data,
-    select_id = select_id,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  dollar_string <- convert_unit.dollar(x = region_values$val, compact = FALSE)
-
-  # Grab the explanation
-  exp <- var_get_info(var = var, what = "exp_q5", translate = TRUE, lang = lang)
-
-  # Build the return
-  out <- sprintf("%s %s", exp, dollar_string)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - Q5 version using indices
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and indices. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.ind <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
-  # Grab the parent variable
-  parent_string <- explore_text_parent_title(var, lang = lang)
-
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    select_id = select_id,
-    data = data,
-    df = df,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # If there is no selection
-  if (is.na(select_id)) {
-    # Construct the region values
-    pct_string <- convert_unit.pct(x = region_values$val, decimal = 1)
-    count_string <- convert_unit(x = region_values$count, precise_round = FALSE)
-
-    # Grab the explanation
-    exp_q5 <- var_get_info(
-      var = var, what = "exp_q5", translate = TRUE,
-      lang = lang
-    )
-
-    # Sub the placeholder for the two last brackets
-    breaks <- var_get_info(var = var, what = "breaks_q5")[[1]]
-    breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
-    two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
-    two_last_ranks <- tolower(two_last_ranks)
-    # If the two last brackets is recognized as the default, write a particular string
-    exp <- {
-      gsub("_X_", sprintf(
-        cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
-        two_last_ranks[[2]]
-      ), exp_q5)
-    }
-
-    # Build the return
-    out <- sprintf("%s %s (%s) %s", count_string, parent_string, pct_string, exp)
-
-    # Return
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # If there is a selection
-  exp <- var_get_info(
-    var = var, what = "explanation", translate = TRUE,
-    lang = lang
-  )
-
-  # Build the return
-  out <- sprintf(cc_t("%s is %s", lang = lang), exp, region_values$val)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - Q5 version using avg
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and avg. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.avg <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
-  # Grab the parent variable
-  parent_string <- explore_text_parent_title(var)
-
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    select_id = select_id,
-    data = data,
-    df = df,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # If there is no selection
-  if (is.na(select_id)) {
-    # Construct the region values
-    count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-
-    # Grab the explanation
-    exp_q5 <- var_get_info(
-      var = var, what = "exp_q5", translate = TRUE,
-      lang = lang
-    )
-
-    # If the two last brackets is recognized as the default, write a particular string
-    out <- gsub("_X_", count_string, exp_q5)
-
-    # Return
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # If there is a selection
-  exp_q5 <- var_get_info(
-    var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
-  )
-
-  # Build the return
-  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-  out <- gsub("_X_", count_string, exp_q5)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - Q5 version using sqkm
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and avg. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.sqkm <- function(var, region, select_id, data, df,
-                                        col = "var_left", lang, ...) {
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    data = data,
-    select_id = select_id,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-
-  # Grab the explanation
-  exp_q5 <- var_get_info(
-    var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
-  )
-
-  # If the two last brackets is recognized as the default, write a particular string
-  out <- gsub("_X_", count_string, exp_q5)
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
-#' Generate text for the given variables and region - Q5 version using per1k
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and avg. It returns the resulting text. It is mirroring the `sqkm`
-#' method.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.per1k <- function(var, region, select_id, data, df,
-                                         col = "var_left", lang = lang, ...) {
-  explore_text_values_q5.sqkm(
-    var = var, region = region, select_id = select_id,
-    data = data, df = df, col = col, lang = lang, ...
-  )
-}
-
-#' Generate text for the given variables and region - Q5 version using ppo
-#'
-#' This function generates text for the given variables and region using the
-#' q5 version and avg. It returns the resulting text.
-#'
-#' @param var <`character`> The variable name for which the text needs to be
-#' generated. Usually `vars$var_left`
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param data <`data.frame`> The output of \code{\link{data_get}}.
-#' @param df <`character`>The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param select_id <`character`> the current selected ID, usually
-#' `r[[id]]$select_id()`.
-#' @param col <`character`> Which column of `data` should be selected to grab the
-#' value information. Defaults to `var_left`, but could also be `var_right` or
-#' `var_left_1` in delta.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL. Usually is `r$lang()`.
-#' @param ... Additional arguments passed to the function.
-#'
-#' @return The resulting text.
-#' @export
-explore_text_values_q5.ppo <- function(var, region, select_id, data, df,
-                                       col = "var_left", lang, ...) {
-  # Grab the region values
-  region_values <- explore_text_region_val_df(
-    var = var,
-    region = region,
-    data = data,
-    select_id = select_id,
-    col = col,
-    lang = lang
-  )
-
-  # NA message
-  if (is.na(region_values$val)) {
-    exp <- var_get_info(
-      var = var, what = "explanation", translate = TRUE,
-      lang = lang
-    )
-    out <- sprintf(cc_t("we currently don't have information regarding %s",
-      lang = lang
-    ), exp)
-    return(list(
-      text = out,
-      na = TRUE
-    ))
-  }
-
-  # Construct the region values
-  count_string <- convert_unit(x = region_values$val, decimal = 1, precise_round = FALSE)
-
-  # Grab the explanation
-  exp_q5 <- var_get_info(
-    var = var, what = "exp_q5", translate = TRUE,
-    lang = lang
-  )
-
-  # If the two last brackets is recognized as the default, write a particular string
-  out <- cc_t(sprintf("there are %s people for every %s", count_string, exp_q5),
-    lang = lang
-  )
-
-  # Return
-  return(list(
-    text = out,
-    na = FALSE
-  ))
-}
-
 
 # BIVAR -------------------------------------------------------------------
 
 #' @rdname explore_text
 #' @export
-explore_text.bivar <- function(vars, region, select_id, df, data,
+explore_text.bivar <- function(vars, region, select_id, scale, time, data,
+                               schemas, zoom_levels,
                                scales_as_DA = c("building", "street"),
                                lang = NULL, ...) {
   # Append date function helper
   append_date <- \(out) {
-    date_1 <- var_get_time(vars$var_left)
-    date_2 <- var_get_time(vars$var_right)
+    date_1 <- time$var_left
+    date_2 <- time$var_right
     date <- if (is.na(date_1) & is.na(date_2)) {
       NA
     } else if (is.na(date_1) & !is.na(date_2)) {
@@ -761,17 +191,17 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     gsub("</ul></span> ", "</ul></span><p>...", out)
   }
 
-  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, scale)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, df = df,
-    switch_DA = switch_DA, lang = lang
+    region = region, select_id = select_id, scale = scale,
+    zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
   # The context might have used a scale in the `scales_as_DA` argument, and
@@ -782,7 +212,7 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    time = time, lang = lang, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -793,16 +223,17 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
     # Grab the value string
     value_string_left <- explore_text_values_q5(
       var = vars$var_left, region = region,
-      select_id = select_id, data = data,
-      df = context$treated_df, lang = lang
+      select_id = select_id, data = data, time = time,
+      scale = context$treated_scale, lang = lang,
+      col = "var_left", schemas = schemas
     )
 
     # Grab the value string
     value_string_right <- explore_text_values_q5(
       var = vars$var_right, region = region,
       select_id = select_id, data = data,
-      df = context$treated_df,
-      col = "var_right", lang = lang
+      scale = context$treated_scale, time = time,
+      col = "var_right", lang = lang, schemas = schemas
     )
 
     # Add the coloring
@@ -842,11 +273,16 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
         var = var, data = data,
         select_id = select_id,
         col = col,
-        lang = lang
+        lang = lang,
+        time_col = time[[col]],
+        schemas = schemas
       )
 
       # Grab the explanation
-      exp <- var_get_info(var, what = "explanation", translate = TRUE, lang = lang)
+      exp <- var_get_info(var,
+        what = "explanation", translate = TRUE, lang = lang,
+        schemas_col = schemas[[col]]
+      )
       # If there are bullet points, change the explanation to something more generic
       if (grepl("</ul>", exp)) {
         out <- if (col == "var_left") {
@@ -870,8 +306,8 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
         exp
       }
       first_step <- sprintf(
-        cc_t("%s is higher than in %s of other %s", lang = lang), first_step_1,
-        relat$higher_than, context$scale_plur
+        cc_t("%s is %s than in %s of other %s", lang = lang), first_step_1,
+        relat$higher_lower, relat$higher_lower_than, context$scale_plur
       )
 
       # Make the second step of the sentence
@@ -881,13 +317,14 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
       )
 
       return(list(
-        higher_than = relat$higher_than_num,
+        higher_lower = relat$higher_lower,
+        higher_lower_than = relat$higher_lower_than_num,
         text = sprintf("%s, %s", first_step, second_step)
       ))
     })
 
     # Is the rank similar or different
-    percs <- sapply(compare_texts, `[[`, "higher_than")
+    percs <- sapply(compare_texts, `[[`, "higher_lower_than")
     percs_distance <- abs(percs[[1]] - percs[[2]])
     connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
     connector <- cc_t(connector, lang = lang)
@@ -903,24 +340,26 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
 
   # Scales
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_vec <- is_scale_in(scales_dictionary$scale, scale, vectorized = TRUE)
   scale_plur <- cc_t(scales_dictionary$plur[scale_vec], lang = lang)
 
   # Correlation
-  relation <- explore_text_bivar_correlation(vars, data, lang = lang)
+  relation <- explore_text_bivar_correlation(
+    vars = vars, data = data, time = time, lang = lang, schemas = schemas
+  )
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {
     # Explanations
     left_exp <- var_get_info(vars$var_left,
       what = "explanation",
-      translate = TRUE, lang = lang
+      translate = TRUE, lang = lang, schemas_col = schemas$var_left
     ) |>
       explore_text_color(meaning = "left")
 
     right_exp <- var_get_info(vars$var_right,
       what = "explanation",
-      translate = TRUE, lang = lang
+      translate = TRUE, lang = lang, schemas_col = schemas$var_right
     ) |>
       explore_text_color(meaning = "right")
 
@@ -949,12 +388,12 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
   # Explanations
   left_exp <- var_get_info(vars$var_left,
     what = "explanation_nodet",
-    translate = TRUE, lang = lang
+    translate = TRUE, lang = lang, schemas_col = schemas$var_left
   ) |>
     explore_text_color(meaning = "left")
   right_exp <- var_get_info(vars$var_right,
     what = "explanation_nodet",
-    translate = TRUE, lang = lang
+    translate = TRUE, lang = lang, schemas_col = schemas$var_right
   ) |>
     explore_text_color(meaning = "right")
 
@@ -996,175 +435,29 @@ explore_text.bivar <- function(vars, region, select_id, df, data,
   return(append_date(out))
 }
 
-#' Function for exploring bivariate correlation between two variables
-#'
-#' This function calculates bivariate correlation between two variables and
-#' returns a list containing the correlation coefficient, a boolean indicating
-#' whether the correlation is positive or negative, a text string describing the
-#' strength and direction of the correlation, and a text string describing the
-#' relationship between the variables.
-#'
-#' @param vars <`character`> A list containing the variable names for which the
-#' text needs to be generated. Usually the output of \code{\link{vars_build}}.
-#' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The output of \code{\link{data_get}}.
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL.
-#'
-#' @return A list containing the correlation coefficient, a boolean indicating
-#' whether the correlation is positive or negative, a text string describing
-#' the strength and direction of the correlation, and a text string describing
-#' the relationship between the variables.
-explore_text_bivar_correlation <- function(vars, data, lang = NULL) {
-  # Get correlation and method string
-  corr <- explore_text_bivar_correlation_helper(
-    vars = vars,
-    data = data,
-    lang = lang
-  )
-
-  # Is the correlation positive
-  positive <- corr$corr > 0
-  positive_string <- if (positive) "positive" else "negative"
-  positive_string <- cc_t(positive_string, lang = lang)
-
-  # Correlation strings
-  absolute <- abs(corr$corr)
-  # Flag the correlation as NOT strong to start with.
-  strong <- FALSE
-  # Flag the correlation as inexistant to start with
-  no_correlation <- FALSE
-
-  if (absolute > 0.7) {
-    relation_text <- cc_t("almost always have", lang = lang)
-    strength <- cc_t("strong", lang = lang)
-    strong <- TRUE
-
-    corr_strength <- sprintf(
-      cc_t("%s %s correlation", lang = lang), strength,
-      positive_string
-    )
-  } else if (absolute > 0.3) {
-    relation_text <- cc_t("tend to have", lang = lang)
-    strength <- cc_t("moderate", lang = lang)
-
-    corr_strength <- sprintf(
-      cc_t("%s %s correlation", lang = lang), strength,
-      positive_string
-    )
-  } else if (absolute > 0.1) {
-    relation_text <- cc_t("often have _X_, although with many exceptions",
-      lang = lang
-    )
-    strength <- cc_t("weak", lang = lang)
-
-    corr_strength <- sprintf(
-      cc_t("%s %s correlation", lang = lang), strength,
-      positive_string
-    )
-  } else {
-    relation_text <- cc_t("effectively no relationship", lang = lang)
-    strength <- cc_t("effectively no correlation", lang = lang)
-    no_correlation <- TRUE
-
-    corr_strength <- strength
-  }
-
-  return(list(
-    corr = corr$corr_string,
-    strong = strong,
-    positive = positive,
-    no_correlation = no_correlation,
-    relation_text = relation_text,
-    corr_strength = corr_strength
-  ))
-}
-
-#' Helper function for generating adjective to describe bivariate relationship
-#' between text variables
-#'
-#' This function generates a text string containing an adjective to describe the
-#' bivariate relationship between two variables based on whether the relationship
-#' is positive or negative.
-#'
-#' @param var <`character`> The variable code for which the text needs to be
-#' generated. `vars$var_left` or `vars$var_right`
-#' @param left <`logical>` Whether the `var` supplied is the var_left
-#' or the `var_right`. If `var_left`, TRUE.
-#' @param positive <`logical`> Whether the bivariate relationship is positive
-#' or negative. One of the output of
-#' \code{\link{explore_text_bivar_correlation}}.
-#' @param style <`logical`> Whether the output should have text styling (e.g.
-#' <b>).
-#' @param lang <`character`> A string indicating the language in which to
-#' translates the variable. Defaults to NULL.
-#' @param ... Additional arguments to be passed to methods.
-#'
-#' @return A text string containing an adjective to describe the bivariate
-#' relationship.
-#' @export
-explore_text_bivar_adjective <- function(var, left, positive, style = TRUE,
-                                         lang = NULL, ...) {
-  UseMethod("explore_text_bivar_adjective", var)
-}
-
-#' @rdname explore_text_bivar_adjective
-#' @export
-explore_text_bivar_adjective.dollar <- function(var, left, positive,
-                                                style = TRUE, lang = NULL, ...) {
-  string <- (\(x) {
-    if (left) {
-      return(cc_t("higher", lang = lang))
-    }
-    if (positive) {
-      return(cc_t("higher", lang = lang))
-    }
-    return(cc_t("lower", lang = lang))
-  })()
-
-  start <- ifelse(style, "<b>%s</b>", "%s")
-
-  return(sprintf(start, string))
-}
-
-#' @rdname explore_text_bivar_adjective
-#' @export
-explore_text_bivar_adjective.default <- function(var, left, positive,
-                                                 style = TRUE, lang = NULL, ...) {
-  string <- (\(x) {
-    if (left) {
-      return(cc_t("a higher", lang = lang))
-    }
-    if (positive) {
-      return(cc_t("a higher", lang = lang))
-    }
-    return(cc_t("a lower", lang = lang))
-  })()
-
-  start <- ifelse(style, "<b>%s</b>", "%s")
-
-  return(sprintf(start, string))
-}
-
 
 # DELTA -------------------------------------------------------------------
 
 #' @rdname explore_text
 #' @export
-explore_text.delta <- function(vars, region, select_id, df, data,
+explore_text.delta <- function(vars, region, select_id, scale, time, data,
+                               schemas, zoom_levels,
                                scales_as_DA = c("building", "street"),
-                               lang = NULL, ...) {
-  # Detect if we should switch the scale for DAs in the case the `df` is part
+                               lang = NULL, shown_scale = NULL, val = NULL, ...) {
+  # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, scale)
 
-  # Adjust the selected ID in the case where the selection is not in `data`
-  if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  # Adjust the selected ID in the case where the selection is not in `data`,
+  # except if there is a value supplied, meaning
+  if (is.null(shown_scale) & is.null(val)) {
+    if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+  }
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, df = df,
-    switch_DA = switch_DA, lang = lang
+    region = region, select_id = select_id, scale = scale, shown_scale = shown_scale,
+    zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
   # The context might have used a scale in the `scales_as_DA` argument, and
@@ -1175,7 +468,8 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    lang = lang, time = time, schemas = schemas,
+    val = val
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -1185,7 +479,9 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   exp_vals <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "left", lang = lang
+    scale = context$treated_scale,
+    left_right = "left", lang = lang,
+    time = time, schemas = schemas, val = val
   )
 
   # Get the necessary information for the second paragraph
@@ -1221,7 +517,7 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   }
   exp_nodet <- var_get_info(vars$var_left,
     what = "explanation_nodet", translate = TRUE,
-    lang = lang
+    lang = lang, schemas_col = schemas$var_left
   )
   # If the explanation is a bullet point, switch to something more generic
   if (grepl("</ul>", exp_nodet)) {
@@ -1237,7 +533,11 @@ explore_text.delta <- function(vars, region, select_id, df, data,
       "just about average", "unusually large",
       "exceptionally large"
     ),
-    lang = lang
+    lang = lang,
+    time_col = time$var_left,
+    schemas = schemas,
+    larger = TRUE,
+    val = val
   )
 
   # If `ind` and data remained the same, we add 'slight' decrease/increase
@@ -1259,11 +559,11 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   second_part <-
     sprintf(
       cc_t(paste0(
-        "The change in %s %s between %s and %s is larger than in %s of ",
+        "The change in %s %s between %s and %s is %s than in %s of ",
         "other %s between the same years."
       ), lang = lang),
-      exp_nodet, context$p_start, exp_vals$times[1],
-      exp_vals$times[2], relat$higher_than, context$scale_plur
+      exp_nodet, context$p_start, exp_vals$times[1], exp_vals$times[2],
+      relat$higher_lower, relat$higher_lower_than, context$scale_plur
     )
 
   out <- sprintf("%s<p>%s %s", out, first_part, second_part)
@@ -1274,400 +574,26 @@ explore_text.delta <- function(vars, region, select_id, df, data,
   return(out)
 }
 
-#' Explore text `delta` explanation and values for
-#'
-#' This function delivers the delta text and values of a given variable when
-#' compared between two yeas. It dispatches to specific methods depending on the
-#' structure of the variable.
-#'
-#' @param var <`character`> The variable code for which the text and values need
-#' to be generated. Usually `vars$var_left`.
-#' @param region <`character`> Character string specifying the name of the region.
-#' Usually equivalent of `r$region()`.
-#' @param select_id A string indicating the ID of the currently selected region
-#' (if any). Usually `r[[id]]$select_id()`
-#' @param left_right <`character`> Is it a left or right variable? Possible
-#' options are "left" or "right".
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
-#' @param data <`data.frame`> A data frame containing the variables and
-#' observations to be compared. The data frame must have columns named var_left
-#' and ID. The output of \code{\link{data_get}}.
-#' @param ... Additional arguments passed to the dispatched method.
-#'
-#' @return A list with the following elements:
-#' \item{exp}{A character string describing the explanation of the variable}
-#' \item{region_vals}{A numeric vector containing the variable values in the
-#' current region and time period.}
-#' \item{region_vals_strings}{A character vector with the same length as
-#' \code{region_vals}, containing the variable values formatted according
-#' to the class of `var`}
-explore_text_delta_exp <- function(var, region, select_id, left_right = "left",
-                                   df, data, ...) {
-  UseMethod("explore_text_delta_exp", var)
-}
-
-#' @rdname explore_text_delta_exp
-#' @param lang <`character`> Language for translation.
-#' @export
-explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "left",
-                                       df, data, lang, ...) {
-  # If there is no selection
-  if (is.na(select_id)) {
-    # Grab the parent variable
-    parent <- var_get_info(var = var[[1]], what = "parent_vec")
-    parent <- cc_t(parent, lang = lang)
-
-    # Grab the explanation
-    exp_q5 <- var_get_info(
-      var = var[[1]], what = "exp_q5", translate = TRUE,
-      lang = lang
-    )
-
-    # Sub the placeholder for the two last brackets
-    breaks <- var_get_info(var = var[[1]], what = "breaks_q5")[[1]]
-    breaks <- breaks[grepl(paste0("^", region, "_"), breaks$df), ]
-    two_last_ranks <- breaks$rank_name[breaks$rank > 3][1:2]
-    two_last_ranks <- sapply(two_last_ranks, cc_t, lang = lang)
-    two_last_ranks <- tolower(two_last_ranks)
-    # If the two last brackets is recognized as the default, write a particular string
-    exp <- {
-      gsub("_X_", sprintf(
-        cc_t("'%s' to '%s'", lang = lang), two_last_ranks[[1]],
-        two_last_ranks[[2]]
-      ), exp_q5)
-    }
-
-    # Grab the region values
-    times <- var_get_time(var)
-    region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
-    region_vals <- region_vals[region_vals$region == region, ]
-    region_vals <- region_vals$val[region_vals$year %in% times]
-    region_vals_strings <- convert_unit.pct(var,
-      x = region_vals,
-      decimal = 1
-    )
-
-    # Return
-    return(list(
-      exp = sprintf(cc_t("the percentage of %s that %s", lang = lang), parent, exp),
-      region_vals = region_vals,
-      region_vals_strings = region_vals_strings,
-      times = times
-    ))
-  }
-
-  # If there is a selection
-  exp <- var_get_info(
-    var = var[[1]], what = "explanation", translate = TRUE,
-    lang = lang
-  )
-  if (grepl("</ul>", exp)) {
-    out <- if (left_right == "left") {
-      "the first value"
-    } else {
-      "the second value"
-    }
-    exp <- cc_t(out, lang = lang)
-  }
-  times <- var_get_time(var)
-
-  # Grab both value strings
-  rank_chr_before <- explore_text_selection_comparison(
-    var = var[1],
-    data = data,
-    select_id = select_id,
-    col = "var_left_1",
-    lang = lang
-  )$rank_chr
-
-  rank_chr_after <- explore_text_selection_comparison(
-    var = var[2],
-    data = data,
-    select_id = select_id,
-    col = "var_left_2",
-    lang = lang
-  )$rank_chr
-
-  # Did it remain in the same category, or it moved?
-  remained <- rank_chr_before == rank_chr_after
-
-  # Grab the region values
-  region_vals <-
-    lapply(var, \(x) explore_text_region_val_df(
-      var = structure(x, class = class(var)),
-      region = region,
-      select_id = select_id,
-      data = data,
-      df = df,
-      col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var)),
-      lang = lang
-    )$num) |> unlist()
-  # Newest value must be first, like for the no-selection values
-  region_vals <- rev(region_vals)
-
-  # Return
-  return(list(
-    exp = exp,
-    region_vals = region_vals,
-    region_vals_strings = c(rank_chr_before, rank_chr_after),
-    remained = remained,
-    times = times
-  ))
-}
-
-#' @rdname explore_text_delta_exp
-#' @export
-explore_text_delta_exp.default <- function(var, region, select_id,
-                                           left_right = "left", df, data,
-                                           lang, ...) {
-  # Grab the explanation
-  exp <- var_get_info(var[[1]],
-    what = "explanation", translate = TRUE,
-    lang = lang
-  )
-  if (grepl("</ul>", exp)) {
-    out <- if (left_right == "left") {
-      "the first value"
-    } else {
-      "the second value"
-    }
-    exp <- cc_t(out, lang = lang)
-  }
-
-  # Grab the region values
-  times <- var_get_time(var)
-  if (is.na(select_id)) {
-    region_vals <- var_get_info(var[[1]], what = "region_values")[[1]]
-    region_vals <- region_vals[region_vals$region == region, ]
-    region_vals <- region_vals$val[region_vals$year %in% times]
-  } else {
-    # Grab the region values
-    region_values <-
-      lapply(var, \(x) explore_text_region_val_df(
-        var = structure(x, class = class(var)),
-        region = region,
-        select_id = select_id,
-        data = data,
-        df = df,
-        col = sprintf("%s_%s", sprintf("var_%s", left_right), which(x == var)),
-        lang = lang
-      ))
-    region_vals <- sapply(region_values, `[[`, "val")
-    # Newest value must be first, like for the no-selection values
-    region_vals <- rev(region_vals)
-  }
-
-  region_vals_strings <- convert_unit(var, x = region_vals, decimal = 1, precise_round = FALSE)
-
-  # Return
-  return(list(
-    exp = exp,
-    region_vals = region_vals,
-    region_vals_strings = region_vals_strings,
-    times = times
-  ))
-}
-
-#' Generate Text for the first paragraph of Delta
-#'
-#' This function generates text for the first paragraph of delta of a given variable,
-#' comparing values at two different points in time.
-#'
-#' @param var <`character`> The variable code for which the text and values need
-#' to be generated. Usually `vars$var_left`.
-#' @param context <`list`> The output of \code{\link{explore_context}}
-#' @param exp_vals <`list`> The output of \code{\link{explore_text_delta_exp}}
-#' @param lang <`character`> Language specifying the language of the generated text.
-#' Either `fr` or `en`. Defaults to NULL for no translation.
-#' @param change_string <`list`> The output of \code{\link{explore_text_delta_change}}
-#' @param ... Additional arguments passed to the methods.
-#'
-#' @return A character string containing the generated text.
-#' @export
-explore_text_delta_first_p <- function(var, context, exp_vals, lang = NULL, change_string, ...) {
-  UseMethod("explore_text_delta_first_p", var)
-}
-
-#' @rdname explore_text_delta_first_p
-#' @param select_id A string indicating the ID of the currently selected region
-#' (if any). Usually `r[[id]]$select_id()`
-#' @export
-explore_text_delta_first_p.ind <- function(var, context, exp_vals, lang,
-                                           change_string, select_id, ...) {
-  if (is.na(select_id)) {
-    return(explore_text_delta_first_p.default(var, context, exp_vals, lang, change_string))
-  }
-
-  # If there is a selectio
-  # Craft the paragraphs
-  out <- if (exp_vals$remained) {
-    sprintf(
-      cc_t("%s, %s has remained %s between %s and %s.", lang = lang),
-      s_sentence(context$p_start), exp_vals$exp,
-      unique(exp_vals$region_vals_strings),
-      exp_vals$times[1], exp_vals$times[2]
-    )
-  } else {
-    sprintf(
-      cc_t("%s, %s changed from %s in %s to %s in %s.", lang = lang),
-      s_sentence(context$p_start), exp_vals$exp,
-      exp_vals$region_vals_strings[1], exp_vals$times[1],
-      exp_vals$region_vals_strings[2], exp_vals$times[2]
-    )
-  }
-
-  # Return
-  return(out)
-}
-
-#' @rdname explore_text_delta_first_p
-#' @export
-explore_text_delta_first_p.default <- function(var, context, exp_vals, lang, change_string, ...) {
-  # Did it increase or decrease? put in color
-  inc_dec <- if (change_string$pct_change > 0) {
-    cc_t("increased", lang = lang) |>
-      explore_text_color(meaning = "increase")
-  } else {
-    cc_t("decreased", lang = lang) |>
-      explore_text_color(meaning = "decrease")
-  }
-
-  # Separate the explanation of the second part to switch it if there are
-  # bullet points
-  s_explanation <- s_sentence(exp_vals$exp)
-  if (grepl("</ul>$", s_explanation)) {
-    s_explanation <- cc_t("This number", lang = lang)
-  }
-
-  # Craft the paragraphs
-  first_part <- sprintf(
-    cc_t("%s, %s changed from %s in %s to %s in %s.", lang = lang),
-    s_sentence(context$p_start), exp_vals$exp,
-    exp_vals$region_vals_strings[2], exp_vals$times[1],
-    exp_vals$region_vals_strings[1], exp_vals$times[2]
-  )
-  second_part <- sprintf(
-    cc_t("%s has %s by %s between these years.", lang = lang),
-    s_explanation, inc_dec, change_string$text
-  )
-
-  # Bind
-  out <- sprintf("<p>%s<p>%s", first_part, second_part)
-
-  # Return
-  return(out)
-}
-
-#' Explore Text Delta Change
-#'
-#' This function calculates and formats the text for delta change in variables,
-#' either in percentage or dollar units, and returns a formatted string.
-#'
-#' @param var <`character`> The variable code for which the text and values need
-#' to be generated. Usually `vars$var_left`.
-#' @param exp_vals <`list`> A list of values, the output of
-#' \code{\link{explore_text_delta_exp}}
-#' @param ... Additional arguments passed to the method functions.
-#'
-#' @return A character string with the formatted delta change text.
-#' @export
-explore_text_delta_change <- function(var, exp_vals, ...) {
-  UseMethod("explore_text_delta_change", var)
-}
-
-#' @rdname explore_text_delta_change
-#' @param lang <`character`> Active language. Defaults to NULL for no translation
-#' @export
-explore_text_delta_change.pct <- function(var, exp_vals, lang = NULL, ...) {
-  # Calculate the absolute and variation changes
-  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2]) * 100
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
-
-  # Get the percentage change as percentage points
-  abs_change_string <- convert_unit(x = abs_change)
-
-  # Increased/decreased by z x.
-  this_x <- convert_unit(x = pct_change + 1)
-
-  out <- sprintf(cc_t("%s percentage points (%sx)", lang = lang), abs_change_string, this_x)
-
-  return(list(
-    pct_change = pct_change,
-    text = out
-  ))
-}
-
-#' @rdname explore_text_delta_change
-#' @export
-explore_text_delta_change.dollar <- function(var, exp_vals, ...) {
-  # Calculate the absolute and variation changes
-  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
-
-  # Get the absolute change as dollar
-  abs_change_string <- convert_unit.dollar(x = abs_change)
-
-  # Get the percentage change as percentage points
-  pct_change_string <- convert_unit.pct(x = pct_change, decimal = 1)
-
-  out <- sprintf("%s (%s)", abs_change_string, pct_change_string)
-
-  return(list(
-    pct_change = pct_change,
-    text = out
-  ))
-}
-
-#' @rdname explore_text_delta_change
-#' @param lang <`character`> Active language. Defaults to NULL for no translation
-#' @export
-explore_text_delta_change.ind <- function(var, exp_vals, lang, ...) {
-  explore_text_delta_change.pct(var, exp_vals, lang = lang)
-}
-
-#' @rdname explore_text_delta_change
-#' @export
-explore_text_delta_change.default <- function(var, exp_vals, ...) {
-  # Calculate the absolute and variation changes
-  abs_change <- abs(exp_vals$region_vals[1] - exp_vals$region_vals[2])
-  pct_change <- (exp_vals$region_vals[1] - exp_vals$region_vals[2]) / exp_vals$region_vals[2]
-
-  # Get the percentage change as percentage points
-  abs_change_string <- convert_unit(var, x = abs_change)
-
-  # Pretty pct change
-  pretty_pct_change <- convert_unit.pct(x = pct_change, decimal = 1)
-
-  out <- sprintf("%s (%s)", abs_change_string, pretty_pct_change)
-
-  return(list(
-    pct_change = pct_change,
-    text = out
-  ))
-}
-
-
 
 # DELTA BIVAR -------------------------------------------------------------
 
 #' @rdname explore_text
 #' @export
-explore_text.delta_bivar <- function(vars, region, select_id, df, data,
+explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
+                                     schemas, zoom_levels,
                                      scales_as_DA = c("building", "street"),
                                      lang = NULL, ...) {
-  # Detect if we should switch the scale for DAs in the case the `df` is part
+  # Detect if we should switch the scale for DAs in the case the `scale` is part
   # of the `scales_as_DA` argument.
-  switch_DA <- is_scale_df(scales_as_DA, df)
+  switch_DA <- is_scale_in(scales_as_DA, scale)
 
   # Adjust the selected ID in the case where the selection is not in `data`
   if (!switch_DA && !select_id %in% data$ID) select_id <- NA
 
   # Grab the shared info
   context <- explore_context(
-    region = region, select_id = select_id, df = df,
-    switch_DA = switch_DA, lang = lang
+    region = region, select_id = select_id, scale = scale,
+    zoom_levels = zoom_levels, switch_DA = switch_DA, lang = lang
   )
 
   # The context might have used a scale in the `scales_as_DA` argument, and
@@ -1678,7 +604,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    lang = lang
+    lang = lang, time = time, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -1688,12 +614,14 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
   exp_vals_left <- explore_text_delta_exp(
     var = vars$var_left, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "left", lang = lang
+    scale = context$treated_scale, left_right = "left",
+    lang = lang, time = time, schemas = schemas
   )
   exp_vals_right <- explore_text_delta_exp(
     var = vars$var_right, region = region,
     select_id = select_id, data = data,
-    df = context$treated_df, left_right = "right", lang = lang
+    scale = context$treated_scale, left_right = "right",
+    lang = lang, time = time, schemas = schemas
   )
 
   # If there is a selection, return a completely different text
@@ -1731,7 +659,10 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
         "a just about average change", "an unusually large change",
         "an exceptionally large change"
       ),
-      lang = lang
+      time_col = time$var_left,
+      lang = lang,
+      schemas = schemas,
+      larger = TRUE
     )
     # Get the information on how the selection compares
     relat_right <- explore_text_selection_comparison(
@@ -1743,32 +674,36 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
         "a just about average change", "an unusually large change",
         "an exceptionally large change"
       ),
-      lang = lang
+      time_col = time$var_right,
+      lang = lang,
+      schemas = schemas,
+      larger = TRUE
     )
 
     # Is the rank similar or different
-    percs_distance <- abs(relat_left$higher_than_num - relat_right$higher_than_num)
+    percs_distance <- abs(relat_left$higher_lower_than_num - relat_right$higher_lower_than_num)
     connector <- if (percs_distance > 0.2) "By contrast" else "Similarly"
     connector <- cc_t(connector, lang = lang)
 
     # Craft the left side of the second paragraph
     first_s <-
       sprintf(
-        cc_t("The change in %s %s from %s to %s is larger than %s ",
+        cc_t("The change in %s %s from %s to %s is %s than %s ",
           "other %s, which is %s for %s.",
           lang = lang
         ),
         exp_vals_left$exp, context$name, exp_vals_left$times[1],
-        exp_vals_left$times[2], relat_left$higher_than, context$scale_plur,
+        exp_vals_left$times[2], relat_left$higher_lower, relat_left$higher_lower_than,
+        context$scale_plur,
         relat_left$rank_chr, context$to_compare_determ
       )
     second_s <-
       sprintf(
-        cc_t("%s, the change in %s between the same years is larger ",
+        cc_t("%s, the change in %s between the same years is %s ",
           "than %s of other %s, which is %s for %s.",
           lang = lang
         ),
-        connector, exp_vals_right$exp, relat_right$higher_than,
+        connector, exp_vals_right$exp, relat_right$higher_lower, relat_right$higher_lower_than,
         context$scale_plur, relat_right$rank_chr, context$to_compare_determ
       )
 
@@ -1788,11 +723,13 @@ explore_text.delta_bivar <- function(vars, region, select_id, df, data,
 
   # Grab the scale definition
   scales_dictionary <- get_from_globalenv("scales_dictionary")
-  scale_vec <- is_scale_df(scales_dictionary$scale, df, vectorized = TRUE)
+  scale_vec <- is_scale_in(scales_dictionary$scale, scale, vectorized = TRUE)
   scale_plur <- cc_t(scales_dictionary$plur[scale_vec], lang = lang)
 
   # Correlation
-  relation <- explore_text_bivar_correlation(vars, data, lang = lang)
+  relation <- explore_text_bivar_correlation(
+    vars = vars, data = data, time = time, lang = lang
+  )
 
   # If there is no correlation, the text is slightly different
   if (relation$no_correlation) {
@@ -1918,7 +855,7 @@ explore_text_delta_bivar_adjective <- function(var, left, positive, lang = NULL,
 
 #' @rdname explore_text_delta_bivar_adjective
 #' @export
-explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang,
+explore_text_delta_bivar_adjective.default <- function(var, left, positive, lang = NULL,
                                                        ...) {
   string <- (\(x) {
     if (left) {

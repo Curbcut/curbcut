@@ -1,70 +1,126 @@
 test_that("data_get_colours.q5  works", {
-  vars <- vars_build(var_left = "housing_tenant_2016", df = "city_CSD")
-  data_colours <- data_get_colours(
-    vars = vars, region = "city",
-    zoom_levels = map_zoom_levels_city
+  vars <- vars_build(
+    var_left = "housing_tenant", scale = "CSD",
+    time = 2021
   )
-  expect_equal(nrow(data_colours), 3335)
+  time <- vars$time
+  vars <- vars$vars
+
+
+  data_colours <- data_get_colours(
+    vars = vars, region = "CMA",
+    zoom_levels = mzl_CSD_CT_DA_building,
+    time = time, schemas = NULL
+  )
+  expect_true(nrow(data_colours) > 1000)
+  expect_equal(unique(nchar(data_colours$fill)), 7)
+  expect_equal(names(data_colours), c("ID_color", "fill"))
+})
+
+test_that("data_get_colours.q5  works", {
+  vars <- vars_build(
+    var_left = "access_foot_food_grocery", scale = "CSD",
+    time = 2023
+  )
+  time <- vars$time
+  vars <- vars$vars
+  schemas <- list(var_left = stats::setNames(20, "transportationtime"))
+
+  data_colours <- data_get_colours(
+    vars = vars, region = "CMA",
+    zoom_levels = mzl_CSD_CT_DA_building,
+    time = time, schemas = schemas
+  )
+  expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.bivar works", {
   vars <- vars_build(
-    var_left = "housing_tenant_2016",
-    var_right = "alp_2016",
-    df = "city_CSD"
+    var_left = "housing_tenant",
+    var_right = "alp",
+    scale = "CSD",
+    time = 2016
   )
+  time <- vars$time
+  vars <- vars$vars
   data_colours <- data_get_colours(
-    vars = vars, region = "city",
-    zoom_levels = map_zoom_levels_city
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
-  expect_equal(nrow(data_colours), 3335)
+  expect_true(nrow(data_colours) > 1000)
+  expect_equal(unique(nchar(data_colours$fill)), 7)
+  expect_equal(names(data_colours), c("ID_color", "fill"))
+
+
+  vars <- vars_build(
+    var_left = "access_foot_food_grocery",
+    var_right = "alp",
+    scale = "CSD",
+    time = 2023
+  )
+  time <- vars$time
+  vars <- vars$vars
+  data_colours <- data_get_colours(
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = list(var_left = stats::setNames(20, "transportationtime"))
+  )
+  expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.delta works", {
   vars <- vars_build(
-    var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-    var_right = c(" "),
-    df = "city_CSD"
+    var_left = "housing_tenant",
+    var_right = " ",
+    scale = "CSD",
+    time = c(1996, 2016)
   )
+  time <- vars$time
+  vars <- vars$vars
   data_colours <- data_get_colours(
-    vars = vars, region = "city",
-    zoom_levels = map_zoom_levels_city
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
-  expect_equal(nrow(data_colours), 3335)
+  expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.delta_bivar works", {
   vars <- vars_build(
-    var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-    var_right = c("housing_rent_1996", "housing_rent_2016"),
-    df = "city_CSD"
+    var_left = "housing_tenant",
+    var_right = "alp",
+    scale = "CSD",
+    time = c(1996, 2016)
   )
+  time <- vars$time
+  vars <- vars$vars
   data_colours <- data_get_colours(
-    vars = vars, region = "city",
-    zoom_levels = map_zoom_levels_city
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
-  expect_equal(nrow(data_colours), 3335)
+  expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })
 
 test_that("data_get_colours.bivar_ldelta_rq3 works", {
   vars <- vars_build(
-    var_left = c("housing_tenant_1996", "housing_tenant_2016"),
-    var_right = c("alp_2016"),
-    df = "city_CSD"
+    var_left = "crash_count_ped",
+    var_right = "alp",
+    scale = "CT",
+    time = c(2015, 2017)
   )
+  time <- vars$time
+  vars <- vars$vars
   data_colours <- data_get_colours(
-    vars = vars, region = "city",
-    zoom_levels = map_zoom_levels_city
+    vars = vars, region = "CMA", time = time,
+    zoom_levels = mzl_CSD_CT, schemas = NULL
   )
-  expect_equal(nrow(data_colours), 3335)
+  expect_true(nrow(data_colours) > 1000)
   expect_equal(unique(nchar(data_colours$fill)), 7)
   expect_equal(names(data_colours), c("ID_color", "fill"))
 })

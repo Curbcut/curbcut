@@ -4,7 +4,7 @@
 \alias{update_zoom_string}
 \title{Update the saved zoom string for a given region based on a current zoom level}
 \usage{
-update_zoom_string(rv_zoom_string, zoom, zoom_levels, region)
+update_zoom_string(rv_zoom_string, zoom, zoom_levels)
 }
 \arguments{
 \item{rv_zoom_string}{<\code{character}> A character string representing a previously
@@ -13,13 +13,8 @@ saved zoom level for a given region}
 \item{zoom}{<\code{numeric}> A numeric value representing the current zoom level}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
-
-\item{region}{<\code{character}> The region to retrieve the zoom levels for,
-usually one of the output of \code{\link{zoom_get_levels}}.}
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 }
 \value{
 A character string representing the updated zoom level for the given region

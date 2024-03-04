@@ -19,18 +19,21 @@ theme_dropdown_server <- function(id, r) {
       session = session
     ))
 
-    shiny::observeEvent(page_click(), {
-      update_tab(session = r$server_session(), selected = page_click())
-    }, ignoreNULL = TRUE)
+    shiny::observeEvent(page_click(),
+      {
+        update_tab(session = r$server_session(), selected = page_click())
+      },
+      ignoreNULL = TRUE
+    )
 
     # If language changes, update the pages list
     shiny::observeEvent(r$lang(), {
       cc.landing::update_theme_drop_lang(
         session = session,
         inputId = shiny::NS(id, "theme_drop"),
-        lang = r$lang())
+        lang = r$lang()
+      )
     })
-
   })
 }
 
@@ -50,7 +53,7 @@ theme_dropdown_UI <- function(id) {
   translation_df <- get0("translation_df")
   pages <- modules[c("id", "theme", "nav_title")]
 
-  translation_df <-  if (is.null(translation_df)) {
+  translation_df <- if (is.null(translation_df)) {
     tibble::tibble(en = c(pages$theme, pages$nav_title), fr = c(pages$theme, pages$nav_title))
   } else {
     translation_df[translation_df$en %in% c(pages$theme, pages$nav_title), ]

@@ -7,9 +7,12 @@
 data_get_colours_helper(
   vars,
   region,
+  time,
   zoom_levels,
   colours_table,
+  schemas = NULL,
   scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
   ...
 )
 }
@@ -19,22 +22,29 @@ data_get_colours_helper(
 
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available
-in the \code{regions_dictionary}. Usually one of the output of \code{\link{zoom_get_levels}}.}
+in the \code{regions_dictionary}. Usually one of the output of \code{\link{geography_server}}.}
+
+\item{time}{<\code{numeric}> The \code{time} at which data is displayed. A subset of the list
+\code{time}. Only the numeric vector.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{colours_table}{<\code{character}> Fromn which colour table should the colour
 be matched to the \code{group} column of the retrieved data. For \code{q5} class would be
 \code{left_5}, for \code{bivar} class would be \code{bivar}, etc. One of the names of the
 \code{colours_dfs} list present in the global environment.}
 
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
 }

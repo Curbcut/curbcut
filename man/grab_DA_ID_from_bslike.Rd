@@ -4,11 +4,11 @@
 \alias{grab_DA_ID_from_bslike}
 \title{Grab DA_ID from a building-street-like dataframe (large!)}
 \usage{
-grab_DA_ID_from_bslike(df, select_id)
+grab_DA_ID_from_bslike(scale, select_id)
 }
 \arguments{
-\item{df}{<\code{character}>  A string, the name of the dataframe in which to look
-for DA_ID. The dataframe should be in the global environment, and if it isn't,
+\item{scale}{<\code{character}> A string, the name of the dataframe in which to look
+for row. The dataframe should be in the global environment, and if it isn't,
 there must be an established sqlite connection to it.}
 
 \item{select_id}{<\code{character}> A value representing the ID that needs to be
@@ -22,7 +22,7 @@ environment, the function fetches DA_ID from the connected database.
 }
 \description{
 This function fetches the DA_ID matching with the selected ID from a given
-dataframe \code{df} based on a provided \code{select_id}. It can also fetch the DA_ID
+dataframe \code{scale} based on a provided \code{select_id}. It can also fetch the DA_ID
 from a connected database when the \code{df} is not found in the global environment
 but is identified as a scales_as_DA'. In such cases, it uses the established
 connection and fetches the DA_ID via a SQL query.

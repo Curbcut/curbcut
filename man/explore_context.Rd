@@ -4,7 +4,15 @@
 \alias{explore_context}
 \title{Get region text info}
 \usage{
-explore_context(region, select_id, df, switch_DA, lang = NULL)
+explore_context(
+  region,
+  select_id,
+  scale,
+  switch_DA,
+  zoom_levels,
+  shown_scale = NULL,
+  lang = NULL
+)
 }
 \arguments{
 \item{region}{<\code{character}> String specifying the code of the region to
@@ -14,12 +22,22 @@ retrieve, e.g. \code{CMA}. Usually equivalent of \code{r$region()}.}
 \code{r[[id]]$select_id()}. If there is a selection (select_id is not NA), the
 name of the selected polygon will appear.}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{switch_DA}{<\code{logical}> Is the \code{df} part of the scales that should be
 switched as DAs instead.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
+
+\item{shown_scale}{<\code{character}> While the \code{scale} argument is the scale
+for which to calculate regional values, \code{shown_scale} is the scale which
+would fit the \code{select_id}. In use for raster data, where we show region values
+for the highest resolution possible, but we still want to allow user to select
+grid cells of lower resolutions. \code{shown_scale} will only be used to grab the
+address of the grid cell. Defaults to NULL for normal operations.}
 
 \item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
 for no translation.}

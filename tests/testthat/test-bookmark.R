@@ -76,13 +76,14 @@ test_that("bookmark_widget_helper returns the right info using bookmark codes", 
 
 test_that("bookmark_widget_helper returns the right info using bookmark shorts", {
   wgt <- "pifir:2"
+  expected_val <- variables$var_code[2]
   result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
     list(
       cbox = list(), s_text = list(), picker = list(c(
         "ccpicker_fir",
-        "housing_rent"
+        expected_val
       )),
       slider = list()
     )
@@ -125,6 +126,8 @@ test_that("bookmark_widget_helper returns the right info using bookmark shorts",
 
 test_that("bookmark_widget_helper can process everything together", {
   wgt <- "pifir:2;pifir:something_else;sxabc:test;cheso:F;cb:F;zc:T;zs:CT;pv:1;lcp:1"
+  pifir <- variables$var_code[2]
+  pv <- variables$var_code[1]
   result <- bookmark_widget_helper(id = "housing", wgt)
   expect_equal(
     result,
@@ -136,7 +139,7 @@ test_that("bookmark_widget_helper can process everything together", {
         "zoom_slider-ccslidertext_slt",
         "Census tract"
       ), c("ccslidertext_abc", "test")), picker = list(
-        c("ccpicker_var", "housing_tenant"), c("ccpicker_fir", "housing_rent"), c("ccpicker_fir", "something_else")
+        c("ccpicker_var", pv), c("ccpicker_fir", pifir), c("ccpicker_fir", "something_else")
       ),
       slider = list()
     )

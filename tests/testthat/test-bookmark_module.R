@@ -17,7 +17,6 @@ test_that("bookmark_build_url works", {
 
   url <- bookmark_build_url(
     id = "alp",
-    region = "CMA",
     widgets = widgets,
     lang = "fr",
     map_viewstate = list(
@@ -27,7 +26,7 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=alp&reg=1&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&lng=fr&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   widgets <- list(
     `compare-ccpicker_var` = " ",
@@ -36,7 +35,6 @@ test_that("bookmark_build_url works", {
   )
   url <- bookmark_build_url(
     id = "alp",
-    region = "CMA",
     widgets = widgets,
     lang = NULL,
     map_viewstate = list(
@@ -46,11 +44,10 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=alp&reg=1&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&wgt=cp: ;zs:CT;zc:T&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
     id = "alp",
-    region = "CMA",
     widgets = NULL,
     lang = NULL,
     map_viewstate = list(
@@ -60,17 +57,16 @@ test_that("bookmark_build_url works", {
     ),
     select_id = "123456"
   )
-  expect_equal(url, "/?tb=alp&reg=1&zm=10.5&crds=40.02;70.01&sid=123456")
+  expect_equal(url, "/?tb=alp&zm=10.5&crds=40.02;70.01&sid=123456")
 
   url <- bookmark_build_url(
     id = "something",
-    region = "CMA",
     widgets = NULL,
     lang = NULL,
     map_viewstate = NULL,
     select_id = NULL
   )
-  expect_equal(url, "/?tb=something&reg=1")
+  expect_equal(url, "/?tb=something")
 
 
 
@@ -81,7 +77,6 @@ test_that("bookmark_build_url works", {
   )
   expect_error(bookmark_build_url(
     id = "something",
-    region = "CMA",
     widgets = widgets,
     lang = "fr",
     map_viewstate = NULL,

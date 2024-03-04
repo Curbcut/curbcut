@@ -9,26 +9,79 @@
 \alias{panel_view_prepare_text.default}
 \title{Prepare the panel view text for the given variables.}
 \usage{
-panel_view_prepare_text(vars, df, dat, lang = NULL, ...)
+panel_view_prepare_text(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{q5}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{q5}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{delta}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{bivar}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{bivar}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{delta_bivar}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{delta_bivar}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 
-\method{panel_view_prepare_text}{default}(vars, df, dat, lang = NULL, ...)
+\method{panel_view_prepare_text}{default}(
+  vars,
+  scale,
+  dat,
+  time,
+  schemas = NULL,
+  lang = NULL,
+  ...
+)
 }
 \arguments{
 \item{vars}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}.}
+\item{scale}{<\code{character}> Current scale, e.g. \code{"DA"}.}
 
 \item{dat}{<\code{data.frame}> The data frame containing the columns under analysis}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{lang}{<\code{character}> The language to use for translating the texts.
 Defaults to NULL for no translation}
@@ -43,3 +96,16 @@ This function returns a panel view text including title and description for
 given variables, considering the minimum, maximum, mean, and standard deviation
 of the data points in the input dataset.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{panel_view_prepare_text(q5)}: The method for q5.
+
+\item \code{panel_view_prepare_text(delta)}: The method for delta.
+
+\item \code{panel_view_prepare_text(bivar)}: The method for bivar.
+
+\item \code{panel_view_prepare_text(delta_bivar)}: The method for delta_bivar.
+
+\item \code{panel_view_prepare_text(default)}: The default method.
+
+}}

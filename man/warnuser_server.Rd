@@ -5,7 +5,15 @@
 \alias{warnuser_UI}
 \title{Warn User Module}
 \usage{
-warnuser_server(id, r, vars, time, data, more_text = shiny::reactive(NULL))
+warnuser_server(
+  id,
+  r,
+  vars,
+  time,
+  widget_time,
+  data,
+  more_text = shiny::reactive(NULL)
+)
 
 warnuser_UI(id)
 }
@@ -16,11 +24,15 @@ e.g. \code{alp}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
-\item{vars}{<\verb{named list}> Named list with a class. Object built using the
+\item{vars}{<\verb{reactive named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}
 
-\item{time}{<\verb{reactive numeric vector}> Vector of time values to use for
-appending a time to the variables picked.}
+\item{time}{<\verb{ reactivenamed list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
+
+\item{widget_time}{<\verb{reactive numeric vector}> Raw time values coming out from the
+time widget. It will be used to match with \code{time}, and if it doesn't fit,
+will informe the warning.}
 
 \item{data}{<\verb{reactive data.frame}> Data frame containing all the scale and
 the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}

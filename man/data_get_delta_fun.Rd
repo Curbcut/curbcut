@@ -2,13 +2,37 @@
 % Please edit documentation in R/data_get.R
 \name{data_get_delta_fun}
 \alias{data_get_delta_fun}
+\alias{data_get_delta_fun.scalar}
+\alias{data_get_delta_fun.ordinal}
 \title{Inner function to get data based on the type of \code{vars}}
 \usage{
 data_get_delta_fun(
   vars,
-  df,
+  scale,
+  region,
   scales_as_DA = c("building", "street"),
-  data_path = "data/",
+  data_path = get_data_path(),
+  time,
+  ...
+)
+
+\method{data_get_delta_fun}{scalar}(
+  vars,
+  scale,
+  region,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  time,
+  ...
+)
+
+\method{data_get_delta_fun}{ordinal}(
+  vars,
+  scale,
+  region,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  time,
   ...
 )
 }
@@ -16,9 +40,11 @@ data_get_delta_fun(
 \item{vars}{<\verb{named list}> Named list with a class. Object built using the
 \code{\link{vars_build}} function.}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> The scale at which the user is on.}
+
+\item{region}{<\verb{character vector}> A vector of IDs with which to filter the
+retrieved data for a specific region, probably retrieved from
+\code{regions_dictionary$scales}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
@@ -27,12 +53,22 @@ their colour will be the one of their DA.}
 \item{data_path}{<\code{character}> A string representing the path to the directory
 containing the QS files. Default is "data/".}
 
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
+
 \item{...}{Additional arguments passed to methods.}
 }
 \description{
 This function dispatches the data retrieval based on the class
 of the \code{vars} object.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{data_get_delta_fun(scalar)}: The method for scalar variables.
+
+\item \code{data_get_delta_fun(ordinal)}: The method for ordinal variables.
+
+}}
 \seealso{
 \code{\link{data_get.delta}}
 }

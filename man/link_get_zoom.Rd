@@ -4,12 +4,12 @@
 \alias{link_get_zoom}
 \title{Retrieve the Appropriate Zoom Level}
 \usage{
-link_get_zoom(zoom_levels, df)
+link_get_zoom(zoom_levels, scale)
 }
 \arguments{
 \item{zoom_levels}{<\verb{named vector}> A named vector of potential zoom levels.}
 
-\item{df}{<\code{character}> df used for scale matching.}
+\item{scale}{<\code{character}> scale used for scale matching.}
 }
 \value{
 Returns the appropriate zoom level.

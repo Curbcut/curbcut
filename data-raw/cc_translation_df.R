@@ -30,6 +30,10 @@ cc_translation_df <-
     fr = "Comparez"
   ) |>
   tibble::add_row(
+    en = "Comparison is unavailable at the <b>%s</b> scale.",
+    fr = "La comparaison n'est pas possible \u00e0 l'\u00e9chelle <b>%s</b>."
+  ) |>
+  tibble::add_row(
     en = "[LEARN MORE]",
     fr = "[EN SAVOIR PLUS]"
   ) |>
@@ -84,6 +88,53 @@ cc_translation_df <-
   tibble::add_row(
     en = "Themes",
     fr = "Th\u00e8mes"
+  ) |>
+  tibble::add_row(
+    en = "Undo",
+    fr = "R\u00e9tablir"
+  ) |>
+
+  # Geography widget --------------------------------------------------------
+
+  tibble::add_row(
+    en = "Geography",
+    fr = "G\u00e9ographie"
+  ) |>
+  tibble::add_row(
+    en = "Region",
+    fr = "R\u00e9gion"
+  ) |>
+  tibble::add_row(
+    en = "Main scale",
+    fr = "\u00C9chelle principale"
+  ) |>
+  tibble::add_row(
+    en = paste0(
+      "Changing the region to <b>%s</b> required changing the ",
+      "main scale to <b>%s</b>."
+    ),
+    fr = paste0(
+      "Le passage de la r\u00e9gion \u00E0 <b>%s</b> a n\u00e9cessit\u00e9 ",
+      "le passage de l'\u00e9chelle principale \u00E0 <b>%s</b>."
+    )
+  ) |>
+  tibble::add_row(
+    en = paste0(
+      "Changing the main scale to <b>%s</b> required changing the ",
+      "region to <b>%s</b>."
+    ),
+    fr = paste0(
+      "Le passage de l'\u00e9chelle principale \u00E0 <b>%s</b> a ",
+      "n\u00e9cessit\u00e9 le passage de la r\u00e9gion \u00E0 <b>%s</b>."
+    )
+  ) |>
+  tibble::add_row(
+    en = paste0(
+      "residents"
+    ),
+    fr = paste0(
+      "r\u00e9sidents"
+    )
   ) |>
   # Legend ------------------------------------------------------------------
 
@@ -420,8 +471,8 @@ cc_translation_df <-
     fr = "C'est %s pour %s"
   ) |>
   tibble::add_row(
-    en = "%s %s is higher than in %s of other %s %s",
-    fr = "%s %s est plus \u00e9lev\u00e9 que dans %s des autres %s %s"
+    en = "%s %s is %s than in %s of other %s %s",
+    fr = "%s %s est %s que dans %s des autres %s %s"
   ) |>
   tibble::add_row(
     en = "%s <i>(Data from %s.)</i>",
@@ -566,8 +617,8 @@ cc_translation_df <-
     fr = "%s<p>%s, %s et %s."
   ) |>
   tibble::add_row(
-    en = "%s is higher than in %s of other %s",
-    fr = "%s est plus \u00e9lev\u00e9 que dans %s des autres %s"
+    en = "%s is %s than in %s of other %s",
+    fr = "%s est %s que dans %s des autres %s"
   ) |>
   tibble::add_row(
     en = "which is %s for %s",
@@ -681,8 +732,8 @@ cc_translation_df <-
     fr = "%s %s est %s pour %s."
   ) |>
   tibble::add_row(
-    en = "The change in %s %s between %s and %s is larger than in %s of other %s between the same years.",
-    fr = "La variation de la/du %s %s entre %s et %s est plus \u00e9lev\u00e9 que dans %s des autres %s entre les m\u00eames ann\u00e9es."
+    en = "The change in %s %s between %s and %s is %s than in %s of other %s between the same years.",
+    fr = "La variation de la/du %s %s entre %s et %s est %s que dans %s des autres %s entre les m\u00eames ann\u00e9es."
   ) |>
   # Delta bivar -------------------------------------------------------------
 
@@ -747,16 +798,24 @@ cc_translation_df <-
     fr = "un changement exceptionnellement fort"
   ) |>
   tibble::add_row(
-    en = "The change in %s %s from %s to %s is larger than %s other %s, which is %s for %s.",
-    fr = "Le changement dans %s %s de %s \u00e0 %s est plus \u00e9lev\u00e9 que dans %s des autres %s, ce qui est %s pour %s."
+    en = "The change in %s %s from %s to %s is %s than %s other %s, which is %s for %s.",
+    fr = "Le changement dans %s %s de %s \u00e0 %s est %s que dans %s des autres %s, ce qui est %s pour %s."
   ) |>
   tibble::add_row(
-    en = "%s, the change in %s between the same years is larger than %s of other %s, which is %s for %s.",
-    fr = "%s, le changement dans %s entre ces deux m\u00eames ann\u00e9es est plus \u00e9lev\u00e9s que %s des autres %s, ce qui est %s pour %s."
+    en = "%s, the change in %s between the same years is %s than %s of other %s, which is %s for %s.",
+    fr = "%s, le changement dans %s entre ces deux m\u00eames ann\u00e9es est %s que %s des autres %s, ce qui est %s pour %s."
   ) |>
   tibble::add_row(
     en = "larger change",
     fr = "une variation plus \u00e9lev\u00e9e"
+  ) |>
+  tibble::add_row(
+    en = "larger",
+    fr = "plus important"
+  ) |>
+  tibble::add_row(
+    en = "smaller",
+    fr = "moins important"
   ) |>
   tibble::add_row(
     en = "smaller change",
@@ -948,7 +1007,7 @@ cc_translation_df <-
     fr = "Explorer"
   ) |>
   tibble::add_row(
-    en = "Demopgrahics",
+    en = "Demographics",
     fr = "D\u00e9mographie"
   ) |>
   tibble::add_row(

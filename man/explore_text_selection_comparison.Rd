@@ -10,7 +10,11 @@ explore_text_selection_comparison(
   select_id,
   col = "var_left",
   ranks_override = NULL,
-  lang = NULL
+  lang = NULL,
+  time_col,
+  schemas = NULL,
+  larger = FALSE,
+  val = NULL
 )
 }
 \arguments{
@@ -18,7 +22,7 @@ explore_text_selection_comparison(
 variable will be compared across observations.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The data frame must have columns named var_left
+observations. The data frame must have columns named var_left
 and ID. The output of \code{\link{data_get}}.}
 
 \item{select_id}{<\code{character}> The ID of the selected zone for which to
@@ -36,6 +40,18 @@ matter.}
 
 \item{lang}{<\code{character}> Language the ranking character should be translated
 to. Defaults to NULL for no translation.}
+
+\item{time_col}{<\code{numeric}> Time at which to show the data.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{larger}{<\code{logical}> Should we write 'larger than' or 'higher than' ?}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions. Defaults to NULL
+for normal operations.}
 }
 \value{
 A named list with two elements:

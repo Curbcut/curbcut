@@ -11,17 +11,21 @@ explore_server(
   data,
   vars,
   region,
-  df,
+  scale,
   select_id,
+  time,
+  schemas,
+  zoom_levels,
   scales_as_DA = shiny::reactive(c("building", "street")),
   graph_fun = shiny::reactive(explore_graph),
-  graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), df = df(),
-    select_id = select_id(), region = region(), scales_as_DA = scales_as_DA(), lang =
-    r$lang())),
+  graph_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
+    time = time(), select_id = select_id(), region = region(), scales_as_DA =
+    scales_as_DA(), lang = r$lang(), schemas = schemas())),
   table_fun = shiny::reactive(explore_text),
-  table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), select_id =
-    select_id(), region = region(), scales_as_DA = scales_as_DA(), df = df(), lang =
-    r$lang()))
+  table_args = shiny::reactive(list(r = r, data = data(), vars = vars(), scale = scale(),
+    time = time(), select_id = select_id(), region = region(), zoom_levels =
+    zoom_levels(), scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas())),
+  ...
 )
 
 explore_UI(id)
@@ -40,15 +44,25 @@ the \code{var_left} and \code{var_right}. The output of \code{\link{data_get}}.}
 using the \code{\link{vars_build}} function. The class of the vars object is
 used to determine which type of legend to draw.}
 
-\item{region}{<\verb{reactive character}> A string or numeric value representing the
+\item{region}{<\verb{reactive character}> A string or character value representing the
 selected region.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
-\item{select_id}{<\verb{reactive character}> the current selected ID, usually
+\item{select_id}{<\verb{reactive character}> The current selected ID, usually
 \code{r[[id]]$select_id()}.}
+
+\item{time}{<\verb{reactive numeric vector}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+Usually \code{r[[id]]$time}.}
+
+\item{schemas}{<\verb{reactive named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
@@ -83,6 +97,11 @@ passed to the info table function, you can provide a different reactive
 expression for this argument. The reactive expression should evaluate to a
 list of arguments to be passed to the info table function, including any
 additional arguments required by your custom table function.}
+
+\item{...}{Additional arguments which are added to both \code{graph_args} and
+\code{table_args} for further customization. For instance, \code{val = shiny::reactive(0.5)}
+could be used to pass the value of the selected feature, rather than
+grabbing if from the \code{data} argument as usual.}
 }
 \value{
 The explore Shiny UI and server module functions

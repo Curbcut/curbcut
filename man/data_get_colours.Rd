@@ -13,56 +13,77 @@
 data_get_colours(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{q5}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{bivar}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{delta}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{delta_bivar}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{bivar_ldelta_rq3}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 
 \method{data_get_colours}{default}(
   vars,
   region,
+  time,
   zoom_levels,
   scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
   ...
 )
 }
@@ -72,17 +93,26 @@ data_get_colours(
 
 \item{region}{<\code{character}> Region for which to get the \code{map_zoom_levels} and
 retrieve all the according colours of all the IDs. One of the regions available
-in the \code{regions_dictionary}. Usually one of the output of \code{\link{zoom_get_levels}}.}
+in the \code{regions_dictionary}. Usually one of the output of \code{\link{geography_server}}.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}. It needs to be \code{numeric} as the function
 will sort them to make sure the lower zoom level is first, and the highest
 is last (so it makes sense on an auto-scale).}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
 should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 
 \item{...}{Additional arguments passed to methods.}
 }
@@ -96,6 +126,21 @@ the \code{group} column in the data with the colors in the correct \code{colours
 data frame. The resulting data frame contains only the \code{ID} and \code{fill}
 columns, to use in an \code{cc.map::map_choropleth_fill_fun}-like scale function.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{data_get_colours(q5)}: The method for q5.
+
+\item \code{data_get_colours(bivar)}: The method for bivar.
+
+\item \code{data_get_colours(delta)}: The method for delta.
+
+\item \code{data_get_colours(delta_bivar)}: The method for delta_bivar.
+
+\item \code{data_get_colours(bivar_ldelta_rq3)}: The method for bivar_ldelta_rq3.
+
+\item \code{data_get_colours(default)}: The default method.
+
+}}
 \seealso{
 \code{\link{data_get_colours}}
 

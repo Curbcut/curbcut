@@ -2,25 +2,25 @@
 % Please edit documentation in R/data_get.R
 \name{data_get_qs}
 \alias{data_get_qs}
-\title{Retrieve data from a QS file based on variable and df}
+\title{Retrieve data from a QS file based on variable and scale}
 \usage{
-data_get_qs(var, df, data_path = "data/")
+data_get_qs(var, scale, data_path = get_data_path())
 }
 \arguments{
-\item{var}{<\code{character}> A string specifying the name of the table to retrieve
-data from. Single variable (year) = single table. e.g. \code{housing_tenant_2016}}
+\item{var}{<\code{character}> A string specifying the name of the table to
+retrieve data from. Single variable = single table. e.g. \code{housing_tenant}}
 
-\item{df}{<\code{character}> A string specifying the name of the database to retrieve
-data from. Combination of the region and the scale, e.g. \code{CMA_DA}.}
+\item{scale}{<\code{character}> A string specifying the scale at which to retrieve
+data, corresponding to a path on disk, e.g. \code{DA} or \code{CSD}.}
 
-\item{data_path}{<\code{character}> A string representing the path to the directory
-containing the QS files. Default is "data/".}
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 }
 \value{
 A data.frame object with the selected data from the specified table.
 }
 \description{
-This function takes in a variable code and the df to retrieve data from a QS
-file. The function constructs the file path based on the input, then reads
+This function takes in a variable code and the scale to retrieve data from a
+QS file. The function constructs the file path based on the input, then reads
 the data using the qs package's \code{\link[qs]{qread}} function.
 }

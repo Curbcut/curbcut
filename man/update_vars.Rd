@@ -5,7 +5,7 @@
 \title{Update the vars reactive value in a given reactive list r based on changes
 in var_left and var_right}
 \usage{
-update_vars(id, r, var_left, var_right)
+update_vars(id, r, var_left, var_right, widget_time)
 }
 \arguments{
 \item{id}{<\code{character}> The id of the element in the reactive list r where
@@ -20,7 +20,10 @@ selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' "housing_tenant_2016").}
 
 \item{var_right}{<\verb{reactive character}> A reactive character string of the
-selected compared variable, e.g. housing_value_2016.}
+selected compared variable, e.g. \code{housing_value}.}
+
+\item{widget_time}{<\verb{reactive vector}> The time selected by the user on the
+time widget. Length 1 (single year) or 2 (compare years).}
 }
 \value{
 An observer that updates the vars reactive value \code{r[[id]]$vars}

@@ -32,7 +32,6 @@ r_init <- function(server_session,
                    map_zoom = get_from_globalenv("map_zoom"),
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
-
   regions_dictionary <- get_from_globalenv("regions_dictionary")
 
   # Initate
@@ -50,7 +49,6 @@ r_init <- function(server_session,
   # Loop over all modules to add the rest of the needed reactives
   modules <- get_from_globalenv("modules")
 
-
   for (i in modules$id) {
     reg <- modules$regions[modules$id == i]
     reg <- unlist(reg)[1]
@@ -63,43 +61,54 @@ r_init <- function(server_session,
         zoom = shiny::reactiveVal(zoom_get(map_zoom)),
         coords = shiny::reactiveVal(map_loc),
         poi = shiny::reactiveVal(NULL),
+        map_exists = shiny::reactiveVal(FALSE),
+        vars = shiny::reactiveVal(NULL),
         ...
       )
     } else {
       # Grab the first zoom level to be the default `df`
-      first_mzl <- get_from_globalenv(paste0("map_zoom_levels_", reg))[1]
-      first_mzl <- names(first_mzl)
-      df <- paste(reg, first_mzl, sep = "_")
-      # Grab a variable part of the module for the var_left placeholder
-      modules <- get_from_globalenv("modules")
-      default_var <- modules$default_var[modules$id == i]
+      page <- modules[modules$id == i, ]
+      default_var <- page$default_var
+      avail_scale_combinations <- page$avail_scale_combinations[[1]]
+      mzl <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
+      scale <- names(mzl)[1]
       # If there are var_left in the `modules`
       if (!is.na(default_var)) {
-        variables <- get_from_globalenv("variables")
-        time <- modules$dates[modules$id == i][[1]]
+        time <- page$dates[[1]]
+        region <- page$regions[[1]][1]
         if (!is.null(time)) {
           time <- max(time)
           default_var_yr <- sprintf("%s_%s", default_var, time)
         }
-
+        vars <- vars_build(default_var, scale = scale, time = time)
+        time <- vars$time
+        vars <- vars$vars
+        schemas <- page$additional_schemas[[1]]
 
         r[[i]] <- shiny::reactiveValues(
-          vars = shiny::reactiveVal(vars_build(default_var_yr, df = df)),
+          vars = shiny::reactiveVal(vars),
           var_left_force = shiny::reactiveVal(default_var),
+          time = shiny::reactiveVal(time),
+          schemas = shiny::reactiveVal(list(var_left = schemas)),
           select_id = shiny::reactiveVal(NA),
-          df = shiny::reactiveVal(df),
+          region = shiny::reactiveVal(region),
+          zoom_levels = shiny::reactiveVal(mzl),
+          scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),
           poi = shiny::reactiveVal(NULL),
+          map_exists = shiny::reactiveVal(FALSE),
           ...
         )
       } else {
         r[[i]] <- shiny::reactiveValues(
           select_id = shiny::reactiveVal(NA),
-          df = shiny::reactiveVal(df),
+          scale = shiny::reactiveVal(scale),
           zoom = shiny::reactiveVal(zoom_get(map_zoom)),
           coords = shiny::reactiveVal(map_loc),
           poi = shiny::reactiveVal(NULL),
+          map_exists = shiny::reactiveVal(FALSE),
+          vars = shiny::reactiveVal(NULL),
           ...
         )
       }

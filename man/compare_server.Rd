@@ -10,7 +10,8 @@ compare_server(
   r,
   var_list,
   time = shiny::reactive(NULL),
-  show_panel = shiny::reactive(TRUE)
+  show_panel = shiny::reactive(TRUE),
+  scales_as_DA = shiny::reactive(c("building", "street"))
 )
 
 compare_UI(id, var_list)
@@ -31,6 +32,10 @@ same length as this argument.}
 
 \item{show_panel}{<\verb{reactive logical}> Controls whether the comparison panel
 should be shown.}
+
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
+should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
+their colour will be the one of their DA.}
 }
 \value{
 A Shiny module server function that provides the logic for

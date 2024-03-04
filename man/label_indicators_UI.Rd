@@ -2,22 +2,33 @@
 % Please edit documentation in R/label_indicators.R
 \name{label_indicators_UI}
 \alias{label_indicators_UI}
-\title{Advanced Controls - UI}
+\title{Create a UI Element with Advanced Controls}
 \usage{
-label_indicators_UI(id, label = cc_t("Advanced controls"), ...)
+label_indicators_UI(
+  id,
+  label = cc_t("Advanced controls"),
+  main_UIs = list(),
+  adv_UIs = list()
+)
 }
 \arguments{
-\item{id}{<\code{character}> The ID of the page in which the legend will appear,
-e.g. \code{alp}. NOT A MODULE, NO NAMESPACING.}
+\item{id}{<\code{character}> A unique identifier for the UI element.}
 
-\item{label}{<\code{character}> Label for the checkbox. Defaults to \code{cc_t("Advanced controls")}}
+\item{label}{<\code{character}> Label for the checkbox that toggles the display of
+advanced controls. Default is 'Advanced controls'.}
 
-\item{...}{<\code{args}> UIs to be inserted in the advanced controls div.}
+\item{main_UIs}{<\code{list}> A list of additional arguments for the main
+indicator label div. Default is an empty list.}
+
+\item{adv_UIs}{<\code{list}> A list of additional arguments for the advanced
+controls div. Default is an empty list.}
 }
 \value{
-A Shiny UI definition
+A \code{shiny::tagList} object containing the UI elements.
 }
 \description{
-This function creates the user interface for the advanced controls module.
-It is designed to be used in tandem with the advanced_controls_server function.
+This function creates a Shiny UI element with a section for common widgets and
+a hidden section for advanced controls. The advanced section can be toggled
+with a checkbox. Additional arguments can be passed to customize both the
+main label and the advanced controls sections.
 }

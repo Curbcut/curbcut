@@ -17,18 +17,22 @@ explore_graph_labels <- function(vars, lang = NULL, ...) {
 }
 
 #' @rdname explore_graph_labels
+#' @param time <`named list`> A named list with the time variables.
 #' @export
-explore_graph_labels.delta <- function(vars, lang = NULL, ...) {
-  # For the delta, use the bivar legend function as the delta legend label only
-  # uses the x axis
-  legend_labels.bivar(vars = list(
-    var_left = vars$var_left[2],
-    var_right = vars$var_left[1]
-  ), lang = lang)[[1]]
+explore_graph_labels.delta <- function(vars, lang = NULL, time, ...) {
+  title <- var_get_title(
+    var = vars$var_left, short_treshold = 16,
+    translate = TRUE, lang = lang
+  )
+
+  title_y <- paste0(title, " (", time$var_left[2], ")")
+  title_x <- paste0(title, " (", time$var_left[1], ")")
+
+  return(ggplot2::labs(x = title_x, y = title_y))
 }
 
 #' @rdname explore_graph_labels
 #' @export
-explore_graph_labels.default <- function(vars, lang = NULL, ...) {
-  legend_labels(vars = vars, lang = lang)[[1]]
+explore_graph_labels.default <- function(vars, lang = NULL, time, ...) {
+  legend_labels(vars = vars, lang = lang, time = time, ...)[[1]]
 }

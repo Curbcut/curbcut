@@ -6,6 +6,8 @@
 \usage{
 ui(
   site_name,
+  h1_first_line,
+  h1_second_line,
   web_description,
   web_title,
   placeholder_video_src,
@@ -16,11 +18,19 @@ ui(
   share_jpg,
   apple_touch_icon,
   lang_init = "en",
-  show_lang_button = FALSE
+  show_lang_button = FALSE,
+  show_cities = TRUE
 )
 }
 \arguments{
 \item{site_name}{<\code{character}>¨Name of the site with the city, e.g. \verb{Curbcut Montréal}.}
+
+\item{h1_first_line}{<\code{character}> A list, with language, of what will be on
+the first line of the H1 header. EXPLORE THE \code{X} REGION. ex.
+\code{list(en = "MONTREAL", fr = "RÉGION DE")}}
+
+\item{h1_second_line}{<\code{character}> A list, with language, of what will be on
+the second line of the H1 header. EXPLORE THE MONTREAL \code{X}, ex.}
 
 \item{web_description}{<\code{character}> The description of the website for metadata.
 e.g. \code{"Curbcut est une plateforme d'exploration approfondie, dynamique et intuitive de la durabilité urbaine."}}
@@ -57,6 +67,9 @@ app. Defaults to english.}
 
 \item{show_lang_button}{<\code{logical}> Should there be a language button? Defaults
 to FALSE (only english).}
+
+\item{show_cities}{<\code{logical}> Should we be showing the list of Curbcut Cities
+in the footer? Defaults to TRUE.}
 }
 \value{
 A Shiny UI object that includes all elements of the Curbcut application interface.

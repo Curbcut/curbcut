@@ -8,16 +8,33 @@
 \alias{explore_text.delta_bivar}
 \title{Generate Explore text for the given variables and region}
 \usage{
-explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
+explore_text(
+  vars,
+  region,
+  select_id,
+  scale,
+  time,
+  data,
+  schemas,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  lang = NULL,
+  ...
+)
 
 \method{explore_text}{q5}(
   vars,
   region,
   select_id,
-  df,
+  scale,
+  time,
   data,
+  schemas,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
+  shown_scale = NULL,
+  val = NULL,
   ...
 )
 
@@ -25,8 +42,11 @@ explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
   vars,
   region,
   select_id,
-  df,
+  scale,
+  time,
   data,
+  schemas,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -36,10 +56,15 @@ explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
   vars,
   region,
   select_id,
-  df,
+  scale,
+  time,
   data,
+  schemas,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
+  shown_scale = NULL,
+  val = NULL,
   ...
 )
 
@@ -47,8 +72,11 @@ explore_text(vars, region, select_id, df, data, scales_as_DA, lang, ...)
   vars,
   region,
   select_id,
-  df,
+  scale,
+  time,
   data,
+  schemas,
+  zoom_levels,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   ...
@@ -64,12 +92,21 @@ Usually equivalent of \code{r$region()}.}
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
 selected region (if any). Usually \code{r[[id]]$select_id()}}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The output of \code{\link{data_get}}.}
+observations. The output of \code{\link{data_get}}.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By
@@ -79,6 +116,18 @@ default, their info will be the one of their DA.}
 translates the variable. Defaults to NULL. Usually is \code{r$lang()}.}
 
 \item{...}{Additional arguments passed to the dispatched function.}
+
+\item{shown_scale}{<\code{character}> While the \code{scale} argument is the scale
+for which to calculate regional values, \code{shown_scale} is the scale which
+would fit the \code{select_id}. In use for raster data, where we show region values
+for the highest resolution possible, but we still want to allow user to select
+grid cells of lower resolutions. \code{shown_scale} will only be used to grab the
+address of the grid cell. Defaults to NULL for normal operations.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions. Defaults to NULL
+for normal operations.}
 }
 \value{
 The resulting text.

@@ -9,18 +9,14 @@
 #' saved zoom level for a given region
 #' @param zoom <`numeric`> A numeric value representing the current zoom level
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
-#' @param region <`character`> The region to retrieve the zoom levels for,
-#' usually one of the output of \code{\link{zoom_get_levels}}.
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #'
 #' @return A character string representing the updated zoom level for the given region
-update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels, region) {
+update_zoom_string <- function(rv_zoom_string, zoom, zoom_levels) {
   # Get the zoom string that would fit in the zoom level
   new <- zoom_get_string(
-    zoom = zoom, region = region,
+    zoom = zoom,
     zoom_levels = zoom_levels
   )
 
@@ -200,13 +196,13 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
     shiny::observeEvent(new_ID(), {
       # If the same ID has been selected twice, return NA. If not, return the
       # newly selected ID
-        out <- update_select_id_helper(
-          new_ID = new_ID(),
-          select_id = r[[id]]$select_id()
-        )
+      out <- update_select_id_helper(
+        new_ID = new_ID(),
+        select_id = r[[id]]$select_id()
+      )
 
-        # Save the new selected ID in the reactive.
-        r[[id]]$select_id(out)
+      # Save the new selected ID in the reactive.
+      r[[id]]$select_id(out)
     })
 
     # Update selected ID if there are default selections (from the advanced options,
@@ -225,6 +221,19 @@ update_select_id <- function(id, r, data = shiny::reactive(NULL),
 
       # Save the new selected ID in the reactive.
       r[[id]]$select_id(out)
+
+      # With it, update the map (This does not come from a click on the map!)
+      if (!is.na(out)) {
+        cc.map::map_choropleth_update_selection(
+          session = r$server_session(),
+          map_ID = ns_doubled(
+            page_id = id,
+            element = "map"
+          ),
+          select_id = out
+        )
+      }
+
     })
   })
 }
@@ -282,7 +291,7 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 
 #' Get or update the `df` rv output
 #'
-#' The \code{update_df} function returns the zoom string if the tile is on auto-scale,
+#' The \code{update_scale} function returns the zoom string if the tile is on auto-scale,
 #' otherwise it returns the tile.
 #'
 #' @param tile <`character`> a character string indicating the tile, the output
@@ -294,13 +303,14 @@ update_select_id_from_default <- function(data, default_select_ids, select_id) {
 #' looking at. The combination of the region and the scale, e.g. `CMA_CSD`
 #'
 #' @export
-update_df <- function(tile, zoom_string) {
-  # If on auto-scale, simply return the zoom_string
-  if (grepl("auto_zoom", tile)) {
+update_scale <- function(tile, zoom_string) {
+  # If on auto-scale (when tile contains an underscore declaring it's a combination
+  # of scales), simply return the zoom_string
+  if (grepl("_", tile)) {
     return(zoom_string)
   }
 
-  # Outside of auto_zoom, return the tile
+  # Outside of autozoom, return the tile
   return(tile)
 }
 
@@ -321,26 +331,26 @@ update_df <- function(tile, zoom_string) {
 #' selected variable, e.g. alp_2016 or c("housing_tenant_2006",
 #' #' "housing_tenant_2016").
 #' @param var_right <`reactive character`> A reactive character string of the
-#' selected compared variable, e.g. housing_value_2016.
+#' selected compared variable, e.g. `housing_value`.
+#' @param widget_time <`reactive vector`> The time selected by the user on the
+#' time widget. Length 1 (single year) or 2 (compare years).
 #'
 #' @return An observer that updates the vars reactive value `r[[id]]$vars`
 #' whenever var_left, var_right and or df changes.
 #' @export
-update_vars <- function(id, r, var_left, var_right) {
-  shiny::observe({
-    vr <- curbcut::vars_build(
+update_vars <- function(id, r, var_left, var_right, widget_time) {
+  vr <- shiny::reactive({
+    vars_build(
       var_left = var_left(),
       var_right = var_right(),
-      df = r[[id]]$df()
+      scale = r[[id]]$scale(),
+      time = widget_time()
     )
-
-    # If the new built variable is the same as before, don't do anything
-    if (identical(vr, r[[id]]$vars())) {
-      return()
-    } else {
-      r[[id]]$vars(vr)
-    }
   })
+
+  # Update vars and time only if they actually change
+  update_rv(id, r, rv_name = "vars", new_val = shiny::reactive(vr()$vars))
+  update_rv(id, r, rv_name = "time", new_val = shiny::reactive(vr()$time))
 }
 
 #' Update a reactive value object
@@ -356,24 +366,108 @@ update_vars <- function(id, r, var_left, var_right) {
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param rv_name <`character`> A character string specifying the name of the
 #' reactive value to create and update.
-#' @param default_val <`vector`> A vector of length one. This parameter is used
-#' to initialize the rv.
 #' @param new_val <`reactive`> A reactive expression returning the new value to
 #' assign to the rv. If the new value is the same as the current one, the function
 #' does nothing.
+#' @param default_val <`vector`> A vector of length one. This parameter is used
+#' to initialize the rv. Defaults to NULL for variables already initialized.
 #'
 #' @return
 #' This function does not return a value. It updates the reactive value in place.
 #' The updated value can be accessed using the rv object and the rv_name parameter.
 #' If the new value is the same as the current one, the function does nothing and
 #' returns NULL.
-update_map_rv <- function(id, r, rv_name, default_val, new_val) {
-  r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+#' @export
+update_rv <- function(id, r, rv_name, new_val, default_val = NULL) {
+  if (!is.null(default_val)) {
+    r[[id]][[rv_name]] <- shiny::reactiveVal(default_val)
+  }
 
-  shiny::observe({
-    if (identical(new_val(), shiny::isolate(r[[id]][[rv_name]]()))) {
+  shiny::observeEvent(new_val(), {
+    if (identical(new_val(), r[[id]][[rv_name]]())) {
       return(NULL)
     }
     r[[id]][[rv_name]](new_val())
+  }, ignoreNULL = TRUE)
+}
+
+#' Update the page's `region` reactive value in the reactive list `r`
+#'
+#' This function observes changes in `new_region` and updates the `region`
+#' reactive value within the reactive list `r` identified by the given `id`.
+#' The update is triggered only if `new_region` is different from the current
+#' `region` value stored in `r[[id]]`.
+#'
+#' @param id <`character`> The ID of the element in the reactive list `r` where
+#' the `region` reactive value is stored.
+#' @param r <`reactive list`> A reactive list where the element identified by
+#' `id` contains a named list with a `region` reactive value. The output
+#' of \code{\link{r_init}}.
+#' @param new_region <`reactive`> A reactive expression that returns the new
+#' value for the `region`. The first output of the \code{\link{geography_server}}
+#' function.
+#'
+#' @return An observer that updates the `region` reactive value in `r[[id]]`
+#' whenever `new_region` changes.
+#' @export
+update_region <- function(id, r, new_region) {
+  update_rv(id, r, "region", new_val = new_region)
+}
+
+#' Update the page's `zoom_levels` reactive value in the reactive list `r`
+#'
+#' This function observes changes in `new_zl` and updates the `zoom_levels`
+#' reactive value within the reactive list `r` identified by the given `id`.
+#' The update is triggered only if `new_zl` is different from the current
+#' `zoom_levels` value stored in `r[[id]]`.
+#'
+#' @param id <`character`> The ID of the element in the reactive list `r` where
+#' the `region` reactive value is stored.
+#' @param r <`reactive list`> A reactive list where the element identified by
+#' `id` contains a named list with a `zoom_levels` reactive value. The output
+#' of \code{\link{r_init}}.
+#' @param new_zl <`reactive`> A reactive expression that returns the new
+#' value for the `zoom_levels`. The second output of the \code{\link{geography_server}}
+#' function.
+#'
+#' @return An observer that updates the `zoom_levels` reactive value in `r[[id]]`
+#' whenever `new_zl` changes.
+#' @export
+update_zoom_levels <- function(id, r, new_zl) {
+  update_rv(id, r, "zoom_levels", new_val = new_zl)
+}
+
+#' Track Previous Reactive Values
+#'
+#' This function tracks and stores previous and current values of a reactive
+#' expression. It returns an eventReactive object that holds the previous value.
+#'
+#' @param reactive_expr <`reactive expression`> The reactive expression to track.
+#'
+#' @return <`eventReactive`> An eventReactive object containing the previous value.
+#' @export
+track_previous_reactive <- function(reactive_expr) {
+  # Create reactiveValues to store current and previous values
+  value_tracker <- shiny::reactiveValues()
+
+  # Observe changes in reactive_expr and update value_tracker
+  shiny::observeEvent(reactive_expr(), {
+    # Do not update the values if they are the same
+    if (!is.null(value_tracker$current_value)) {
+      if (reactive_expr() == value_tracker$current_value) {
+        return(NULL)
+      }
+    }
+
+    value_tracker$prev_value <- value_tracker$current_value
+    value_tracker$current_value <- reactive_expr()
   })
+
+  # Create eventReactive to keep track of previous values
+  previous_value_reactive <- shiny::eventReactive(reactive_expr(), {
+    value_tracker$prev_value
+  })
+
+  # Return the eventReactive containing previous value
+  return(previous_value_reactive)
 }

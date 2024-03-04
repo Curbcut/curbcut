@@ -2,13 +2,40 @@
 % Please edit documentation in R/legend_render.R
 \name{legend_render_delta}
 \alias{legend_render_delta}
+\alias{legend_render_delta.scalar}
+\alias{legend_render_delta.ordinal}
 \title{Internal function for dispatching \code{legend_render_delta}.}
 \usage{
 legend_render_delta(
   vars,
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
-  df,
+  scale,
+  data,
+  time,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render_delta}{scalar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  time,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render_delta}{ordinal}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  lang = NULL,
+  time,
   ...
 )
 }
@@ -20,19 +47,36 @@ output of \code{\link{vars_build}}.}
 the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> Scale under study. The output of
+\code{\link{update_scale}}.}
+
+\item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
+
+\item{lang}{<\code{character}> Language in use. \code{en} or \code{fr}. Defaults to NULL.}
 
 \item{...}{Additional arguments passed to other functions.}
 }
 \value{
 A ggplot object that represents the \code{delta} legend.
+
+A ggplot object representing the \code{delta} legend for scalar data.
+
+A ggplot object representing the \code{delta} legend for ordinal data.
 }
 \description{
 Internal function for dispatching \code{legend_render_delta}.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{legend_render_delta(scalar)}: scalar method
+
+\item \code{legend_render_delta(ordinal)}: ordinal method
+
+}}

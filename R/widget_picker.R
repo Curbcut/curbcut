@@ -24,6 +24,9 @@
 #' @param time <`reactive numeric vector`> Vector of time values to use for
 #' appending a time to the variables picked. The returned vector will be the
 #' same length as this argument.
+#' @param selected <`reactive character`> The value for which to update the picker.
+#' @param subtext <`reactive character`> Additional text for every option. Will
+#' be added to choicesOpt in \code{\link[shinyWidgets]{updatePickerInput}}.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}
 #'
 #' @return A reactive expression that returns the selected variable with `time`
@@ -31,7 +34,9 @@
 #' @seealso \code{\link{picker_UI}}
 #' @export
 picker_server <- function(id, r, picker_id = "var", var_list,
-                          time = shiny::reactive(NULL), # identifier = NULL,
+                          time = shiny::reactive(NULL), selected = shiny::reactive(NULL),
+                          subtext = shiny::reactive(NULL),
+                          # identifier = NULL,
                           ...) {
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(var_list))
@@ -57,7 +62,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     multi_year <- shiny::reactiveVal(FALSE)
     # Make sure we don't create unwanted reactivity that triggers the reset
     # of the dropdown.
-    shiny::observeEvent(time(), multi_year(length(time()) > 1))
+    shiny::observeEvent(time(), multi_year(length(time()[[1]]) > 1))
     disable <- shiny::reactive(picker_multi_year_disable(
       var_list = var_list(),
       disable = multi_year()
@@ -68,22 +73,50 @@ picker_server <- function(id, r, picker_id = "var", var_list,
       sapply(disable(), ifelse, "color: rgba(119, 119, 119, 0.5);", "")
     })
 
+    # Record current value to keep it as current value when other things change
+    current_value <- shiny::reactive(input[[picker_id]])
+
     # Update dropdown menu if there are disabled choices
     shiny::observe({
+      current_val <- shiny::isolate(current_value())
+
+      # If the selected variable is to be disabled, reset the dropdown
+      disabled_options <- unlist(var_list_t())[disable()]
+      anything_disabled <- length(disabled_options) > 0
+      if (anything_disabled) {
+        if (current_val %in% disabled_options) {
+          current_val <- NULL
+        }
+      }
+
       shinyWidgets::updatePickerInput(
         session = session,
         inputId = picker_id,
         choices = var_list_t(),
+        selected = current_val,
         choicesOpt = c(
           if (!is.null(hovers())) hovers(),
           list(
             disabled = disable(),
-            style = disable_style()
+            style = disable_style(),
+            subtext = subtext()
           )
         ),
         ...
       )
     })
+
+    # Update the selected variable if it changes
+    shiny::observeEvent(selected(),
+      {
+        shinyWidgets::updatePickerInput(
+          session = session,
+          inputId = picker_id,
+          selected = selected()
+        )
+      },
+      ignoreNULL = TRUE
+    )
 
     # # # If the dropdown is a compare, highlight differently the background
     # # # of the options that have a strong correlation
@@ -99,10 +132,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
     # })
 
     # Append the `time`
-    var <- shiny::reactive(picker_return_var(
-      input = input[[picker_id]],
-      time = time()
-    ))
+    var <- shiny::reactive(input[[picker_id]])
 
     # Return the picked variable as a reactive
     return(var)
@@ -136,6 +166,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @param identifier <`character`> Unique identifier that will be used by
 #' \code{\link{highlight_dropdown}} to change the background color of options.
 #' Defaults to NULL to not set any.
+#' @param live_search <`logical`> Argument sent to \code{\link[shinyWidgets]{pickerOptions}}.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{pickerInput}}
 #'
 #' @return A `div` container containing a \code{\link[shinyWidgets]{pickerInput}}
@@ -144,7 +175,7 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 #' @export
 picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
                       width = "100%", div_style = NULL, selected = NULL,
-                      open_left = TRUE, identifier = NULL, ...) {
+                      open_left = TRUE, identifier = NULL, live_search = FALSE, ...) {
   # Verify if the widget ID will interfere with bookmark
   picker_id <- widget_id_verif(widget_id = picker_id)
 
@@ -183,6 +214,7 @@ picker_UI <- function(id, picker_id = "var", var_list, label = NULL,
         dropdownAlignRight = !open_left,
         container = "body",
         identifier = identifier,
+        liveSearch = live_search
       ),
       ...
     )

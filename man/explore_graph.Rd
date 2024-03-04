@@ -14,8 +14,10 @@
 explore_graph(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -25,8 +27,10 @@ explore_graph(
 \method{explore_graph}{q5_ind}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -36,8 +40,10 @@ explore_graph(
 \method{explore_graph}{q5}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -47,8 +53,10 @@ explore_graph(
 \method{explore_graph}{bivar}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -58,8 +66,10 @@ explore_graph(
 \method{explore_graph}{delta_ind}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -69,19 +79,24 @@ explore_graph(
 \method{explore_graph}{delta}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
+  val = NULL,
   ...
 )
 
 \method{explore_graph}{delta_bivar}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -91,8 +106,10 @@ explore_graph(
 \method{explore_graph}{bivar_ind}(
   vars,
   select_id,
-  df,
+  scale,
   data,
+  time,
+  schemas,
   scales_as_DA = c("building", "street"),
   lang = NULL,
   font_family = "acidgrotesk-book",
@@ -106,12 +123,17 @@ output of \code{\link{vars_build}}.}
 \item{select_id}{<\code{character}> A string indicating the ID of the currently
 selected region (if any). Usually \code{r[[id]]$select_id()}}
 
-\item{df}{<\code{character}> The combination of the region under study and the
-scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{data}{<\code{data.frame}> A data frame containing the variables and
-observations to be compared. The output of \code{\link{data_get}}.}
+observations. The output of \code{\link{data_get}}.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
 \item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
@@ -124,6 +146,10 @@ translate variable titles to.}
 plot, default is "acidgrotesk-book".}
 
 \item{...}{Additional arguments passed to the specific method.}
+
+\item{val}{<\code{numeric}> If the value is not part of \code{data}. It happens on raster
+data where we show region values for the highest resolution possible, but we still
+want to allow user to select grid cells of lower resolutions.}
 }
 \value{
 A ggplot2 object representing the plot.

@@ -18,7 +18,7 @@ label_indicators <- function(id) {
     ),
     shiny::div(
       style = "width: 88%",
-      cc_t("Indicator")
+      cc_t_span("Indicator")
     )
   )
 }
@@ -99,10 +99,18 @@ autovars_common_widgets <- function(id) {
     var_list <- var_list$var_code
   }
 
-  # Time?
+  # Unique time, keep names if there are
   time <- unlist(variables$dates[variables$var_code %in% var_list])
-  time <- unique(time)
-  time <- as.numeric(time)
+  unique_time <- unique(time)
+  names(unique_time) <- names(time)[match(unique_time, time)]
+  time <- unique_time
+  # If at least one is already numeric, then convert all to numeric. This
+  # prevents from switching a slider text time slider to go numeric and ignore
+  # such as "000" to convert it to 0.
+  if (is.null(names(time))) {
+    time <- as.numeric(time)
+  }
+
   # What happens when there is no time?
 
   # Other widgets
@@ -110,7 +118,9 @@ autovars_common_widgets <- function(id) {
   # Fish for other widgets only when `tb` is a list
   if (is.list(tb)) {
     groups <- variables$group_diff[variables$var_code %in% var_list]
-    wdg_names <- names(unlist(groups)) |> unique()
+    wdg_names <- lapply(groups, names) |>
+      unlist() |>
+      unique()
 
     widgets <- sapply(wdg_names, \(x) {
       # All entries that need this widget
@@ -200,8 +210,7 @@ autovars_widgets <- function(id, group_name, common_vals) {
               return(unlist(same_feat_val) == f_lvl)
             }
             # IF THERE ARE LEVELS, THEN THE OUTPUT IS NUMERIC (USING THE LEVEL)
-
-            unlist(same_feat_val) == common_vals[cv]
+            common_vals[cv] %in% unlist(same_feat_val)
           })
 
           # If ALL the values are the same
@@ -211,7 +220,6 @@ autovars_widgets <- function(id, group_name, common_vals) {
         # Filter in only the observations sharing the values of the common values
         groups <- groups[share_common_values_index]
       }
-      groups <- unlist(groups)
 
       # Return no additional widgets if groups has a length of zero
       if (length(groups) == 0) {
@@ -219,7 +227,8 @@ autovars_widgets <- function(id, group_name, common_vals) {
       }
 
       # Filter out groups that are already part of the common widgets
-      groups <- groups[!names(groups) %in% names(common_vals)]
+      groups <- lapply(groups, \(gr) gr[!names(gr) %in% names(common_vals)])
+      groups <- unlist(groups)
 
       widgets <- sapply(unique(names(groups)), \(n) {
         options <- unique(unname(groups[names(groups) == n]))
@@ -288,7 +297,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
     sapply(groups, \(x) {
       v <- x[[i]]
       if (!is.null(attr(v, "levels"))) v <- attr(v, "levels")[[v]]
-      return(v == val)
+      return(val %in% v)
     })
   }, picker_vals, seq_along(picker_vals))
   if (length(ordered_val_fit) == 0) {
@@ -298,7 +307,7 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(sum_fits) == 0) {
     return(previous_var)
   }
-  out <- var_codes[which(sum_fits == max(sum_fits))]
+  out <- var_codes[which.max(sum_fits)]
 
   # Return()
   return(out)
@@ -322,4 +331,105 @@ autovars_placeholder_var <- function(id) {
 
   # Return it
   return(default_var)
+}
+
+#' Create UI for time variable selection
+#'
+#' This function creates a user interface element for selecting time variables.
+#' It allows for the creation of either a slider or
+#' a slider with text, depending on the structure of the time data provided.
+#'
+#' @param id <`character`> The namespace ID of the page.
+#' @param times <`vector`> Vector of times (Usually common_widgets$time())
+#' @param widget_ns <`function`> A function for namespacing widget IDs.
+#' @param time_div_label <`character`> A function that returns the label for the
+#' time division.
+#' @param time_div_icon <`character`> Material ion name for the time selection UI, defaults
+#' to "date_range".
+#' @param compare_label <`character`> Label of the checkbox used to compare dates
+#'
+#' @return <`shiny.tagList`> A tag list containing the UI elements for the
+#' time variable selection.
+#' @export
+autovars_time_ui <- function(id, times, widget_ns,
+                             time_div_label = "Time",
+                             time_div_icon = "date_range",
+                             compare_label = "Compare dates") {
+
+  # Is it named? If so, slider text must be used.
+  slider_type <- if (is.null(names(times))) "slider" else "slider_text"
+
+  if (slider_type == "slider") {
+    min_ <- times |> min()
+    max_ <- times |> max()
+    step_ <- unique(diff(times))[1]
+    double_value_ <- times[ceiling(length(times) / 2)]
+    double_value_ <- c(double_value_, max_)
+    length_ <- times |> length()
+    # If there are less than 10 options, slim sliders
+    ys_classes <- if (length_ < 10) "year-slider-slim" else "year-slider"
+
+    sliders <- shiny::tagList(
+      slider_UI(
+        id = widget_ns(id), slider_id = "slu", min = min_, max = max_,
+        step = step_, label = NULL
+      ),
+      shinyjs::hidden(slider_UI(
+        id = widget_ns(id), slider_id = "slb", min = min_, max = max_,
+        step = step_, label = NULL,
+        value = double_value_
+      )
+      )
+    )
+  }
+
+  if (slider_type == "slider_text") {
+    dates_names <- names(times)
+
+    sliders <- shiny::tagList(
+      slider_text_UI(
+        id = widget_ns(id), slider_text_id = "slu", label = NULL,
+        choices = dates_names, selected = dates_names[1]
+      ),
+      shinyjs::hidden(slider_text_UI(
+        id = widget_ns(id), slider_text_id = "slb", label = NULL,
+        choices = dates_names, selected = dates_names[1:2]
+      ))
+    )
+  }
+
+  full_out <- shiny::tagList(
+    shiny::div(
+      id = widget_ns("year_sliders"),
+      # class = ys_classes,
+      shiny::hr(id = widget_ns("above_year_hr")),
+      shiny::div(
+        class = "shiny-split-layout sidebar-section-title",
+        shiny::div(
+          style = "width: 9%",
+          icon_material_title(time_div_icon)
+        ),
+        shiny::div(
+          style = "width: 24%",
+          shiny::tags$span(
+            id = shiny::NS(id, "year_label"),
+            cc_t(time_div_label, force_span = TRUE)
+          )
+        ),
+        shiny::div(
+          id = widget_ns("compare_dates"),
+          style = "width: 64%; margin:0px !important; text-align: right;",
+          checkbox_UI(
+            id = widget_ns(id),
+            label = cc_t(compare_label, force_span = TRUE),
+            value = FALSE
+          )
+        )
+      ),
+      sliders
+    )
+  )
+
+  return(full_out)
+
 }

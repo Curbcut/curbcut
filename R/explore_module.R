@@ -20,15 +20,22 @@
 #' @param vars <`reactive named list`> Named list with a class. Object built
 #' using the \code{\link{vars_build}} function. The class of the vars object is
 #' used to determine which type of legend to draw.
-#' @param df <`reactive character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
-#' @param region <`reactive character`> A string or numeric value representing the
+#' @param region <`reactive character`> A string or character value representing the
 #' selected region.
-#' @param select_id <`reactive character`> the current selected ID, usually
+#' @param select_id <`reactive character`> The current selected ID, usually
 #' `r[[id]]$select_id()`.
+#' @param time <`reactive numeric vector`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' Usually `r[[id]]$time`.
+#' @param schemas <`reactive named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
 #' @param scales_as_DA <`reactive character vector`> A character vector of `scales`
 #' that should be handled as a "DA" scale, e.g. `building` and `street`. By default,
 #' their colour will be the one of their DA.
@@ -58,28 +65,35 @@
 #' expression for this argument. The reactive expression should evaluate to a
 #' list of arguments to be passed to the explore graph function, including any
 #' additional arguments required by your custom graph function.
+#' @param ... Additional arguments which are added to both `graph_args` and
+#' `table_args` for further customization. For instance, `val = shiny::reactive(0.5)`
+#' could be used to pass the value of the selected feature, rather than
+#' grabbing if from the `data` argument as usual.
 #'
 #' @return The explore Shiny UI and server module functions
 #' @export
-explore_server <- function(id, r, data, vars, region, df, select_id,
+explore_server <- function(id, r, data, vars, region, scale, select_id, time,
+                           schemas, zoom_levels,
                            scales_as_DA = shiny::reactive(c("building", "street")),
                            graph_fun = shiny::reactive(explore_graph),
                            graph_args = shiny::reactive(list(
-                             r = r, data = data(), vars = vars(), df = df(),
-                             select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), lang = r$lang()
+                             r = r, data = data(), vars = vars(), scale = scale(),
+                             time = time(), select_id = select_id(), region = region(),
+                             scales_as_DA = scales_as_DA(), lang = r$lang(), schemas = schemas()
                            )),
                            table_fun = shiny::reactive(explore_text),
                            table_args = shiny::reactive(list(
-                             r = r, data = data(), vars = vars(),
-                             select_id = select_id(), region = region(),
-                             scales_as_DA = scales_as_DA(), df = df(),
-                             lang = r$lang()
-                           ))) {
+                             r = r, data = data(), vars = vars(), scale = scale(),
+                             time = time(), select_id = select_id(), region = region(),
+                             zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
+                             lang = r$lang(), schemas = schemas()
+                           )), ...) {
   stopifnot(shiny::is.reactive(data))
   stopifnot(shiny::is.reactive(vars))
   stopifnot(shiny::is.reactive(region))
-  stopifnot(shiny::is.reactive(df))
+  stopifnot(shiny::is.reactive(scale))
+  stopifnot(shiny::is.reactive(time))
+  stopifnot(shiny::is.reactive(zoom_levels))
   stopifnot(shiny::is.reactive(select_id))
   stopifnot(shiny::is.reactive(scales_as_DA))
   stopifnot(shiny::is.reactive(graph_fun))
@@ -88,10 +102,27 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
   stopifnot(shiny::is.reactive(table_args))
 
   shiny::moduleServer(id, function(input, output, session) {
+
+    # Use ... to capture additional reactive arguments
+    dots <- list(...)
+
+    # Define reactive expressions for graph_args and table_args
+    graph_args_with_dots <- shiny::reactive({
+      argsList <- graph_args()
+      # Merge predefined args with evaluated ... args
+      c(argsList, safeEvaluate(dots))
+    })
+
+    table_args_with_dots <- shiny::reactive({
+      argsList <- table_args()
+      # Merge predefined args with evaluated ... args
+      c(argsList, safeEvaluate(dots))
+    })
+
     # Make info table. If fails, returns NULL
     table_out <- shiny::reactive(
       tryCatch(
-        do.call(table_fun(), table_args()),
+        do.call(table_fun(), table_args_with_dots()),
         error = function(e) {
           print(e)
           return(NULL)
@@ -105,7 +136,7 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     # Make graph
     graph_out <- shiny::reactive(
       tryCatch(
-        do.call(graph_fun(), graph_args()),
+        do.call(graph_fun(), graph_args_with_dots()),
         error = function(e) {
           print(e)
           return(NULL)
@@ -124,15 +155,16 @@ explore_server <- function(id, r, data, vars, region, df, select_id,
     })
 
     # Clear selection on button click
-    shiny::observeEvent(input$clear_selection, {
-      r[[id]]$select_id(NA)
-      cc.map::map_choropleth_update_selection(
-        session = session,
-        map_ID = "map",
-        select_id = NA
-      )
-    },
-    ignoreInit = TRUE
+    shiny::observeEvent(input$clear_selection,
+      {
+        r[[id]]$select_id(NA)
+        cc.map::map_choropleth_update_selection(
+          session = session,
+          map_ID = "map",
+          select_id = NA
+        )
+      },
+      ignoreInit = TRUE
     )
   })
 }
@@ -149,7 +181,7 @@ explore_UI <- function(id) {
         shiny::fluidRow(
           shiny::column(
             width = 7,
-            shiny::h4(icon_material_title("location_on"), cc_t("Explore"))
+            shiny::h4(icon_material_title("location_on"), cc_t_span("Explore"))
           )
         )
       ),

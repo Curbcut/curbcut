@@ -9,9 +9,10 @@ zoom_server(
   id,
   r = r,
   zoom_string,
+  region,
   zoom_levels,
-  suffix_zoom_levels = NA,
-  no_autozoom = shiny::reactive(FALSE)
+  no_autozoom = shiny::reactive(FALSE),
+  hide_if_one_zoom_level = shiny::reactive(FALSE)
 )
 
 zoom_UI(id, zoom_levels)
@@ -26,19 +27,22 @@ pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 \item{zoom_string}{<\verb{reactive character}> A reactive object representing the
 current zoom level, e.g. \code{CSD}.}
 
-\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
+\item{region}{<\verb{reactive character}> A string or character value representing the
+selected region. Usually \code{r[[id]]$region}.}
 
-\item{suffix_zoom_levels}{<\code{character}> Suffix that should be appended at the
-end of an auto-scale. If the maximum zoom possible is CT and we previously created
-such a tileset, we could have the suffix_zoom_levels \code{max_CT}, which would
-be appended at the end of the auto-scale tile name. Defaults to NA for none.}
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}, becoming \code{r[[id]]$zoom_levels} It needs to be
+\code{numeric} as the function will sort them to make sure the lower zoom level is
+first, and the highest is last (so it makes sense on an auto-scale).}
 
 \item{no_autozoom}{<\verb{reactive logical}> Whether the output tile() reactive
 should include autozooms or not.}
+
+\item{hide_if_one_zoom_level}{<\verb{reactive logical}> If there is only one
+zoom level available, should the zoom slider be hidden? Careful, as setting
+it will have a \code{\link[shinyjs]{toggle}} around the zoom div and create
+some inconsistencies with other potential shinyjs hide/show functions.}
 }
 \value{
 A reactive object representing the current tile that should be

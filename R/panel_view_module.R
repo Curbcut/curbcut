@@ -10,18 +10,23 @@
 #' e.g. `alp`.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
-#' @param region <`character`> Character string specifying the name of the region.
+#' @param region <`reactive character`> Character string specifying the name of the region.
 #' Usually equivalent of `r$region()`.
+#' @param scale <`reactive character`> Current scale. The output of
+#' \code{\link{update_scale}}.
 #' @param vars <`named list`> Named list with a class. Object built using the
-#' \code{\link{vars_build}} function. The class of the vars object is
+#' \code{\link{vars_build}} function, `vars` subset.. The class of the vars object is
 #' used to determine which type of legend to draw.
 #' @param data <`reactive data.frame`> Data frame containing all the scale and
 #' the `var_left` and `var_right`. The output of \code{\link{data_get}}.
 #' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
-#' levels. Usually one of the `map_zoom_levels_x`, or the output of
-#' \code{\link{zoom_get_levels}}. It needs to be `numeric` as the function
-#' will sort them to make sure the lower zoom level is first, and the highest
-#' is last (so it makes sense on an auto-scale).
+#' levels. Usually one of the `mzl_*`, or the output of
+#' \code{\link{geography_server}}.
+#' @param time <`reactive named list`> Named list of the time for both left and
+#' right variables. The second output of \code{\link{vars_build}}. Usually
+#' should be `r[[id]]$time()`.
+#' @param schemas <`reactive named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @param temp_folder <`character`> The temporary folder of the app. By default
 #' will grab the `temp_folder` object as it's already supposed to have been assigned
 #' in the `global.R` file
@@ -31,7 +36,8 @@
 #'
 #' @return Panel view module
 #' @export
-panel_view_server <- function(id, r, region, vars, data, zoom_levels,
+panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, time,
+                              schemas,
                               temp_folder = get_from_globalenv("temp_folder"),
                               scales_as_DA = shiny::reactive(c("building", "street"))) {
   stopifnot(shiny::is.reactive(data))
@@ -42,10 +48,10 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
 
   shiny::moduleServer(id, function(input, output, session) {
     # Switch scales to DA if necessary
-    treated_df <-
+    treated_scale <-
       shiny::reactive(treat_to_DA(
         scales_as_DA = scales_as_DA(),
-        df = r[[id]]$df()
+        scale = scale()
       ))
 
     # Show the map when the right button is clicked
@@ -77,21 +83,8 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       pe_docs <- get_from_globalenv("pe_docs")
       pe_main_card_data <- get_from_globalenv("pe_main_card_data")
       # When to show the place portrait button?
-      show <- (\(x) {
-        if (is.na(r[[id]]$select_id())) {
-          return(FALSE)
-        }
-        if (!r[[id]]$select_id() %in% data()$ID) {
-          return(FALSE)
-        }
-        if (!r[[id]]$df() %in% pe_main_card_data$avail_df$df) {
-          return(FALSE)
-        }
-        # Is the region 'pickable', meaning there could be a place explorer
-        # for the region
-        regions_dictionary <- get_from_globalenv("regions_dictionary")
-        regions_dictionary$pickable[regions_dictionary$region == region()]
-      })()
+      show <- sprintf("www/place_explorer/%s_%s_%s_%s.html", region(), scale(),
+                      r[[id]]$select_id(), r$lang()) %in% pe_docs
 
       shinyjs::toggle(
         id = "panel_selection",
@@ -107,7 +100,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       pe_src <- place_explorer_html_links(
         temp_folder = temp_folder,
         region = region(),
-        df = r[[id]]$df(),
+        scale = scale(),
         select_id = r[[id]]$select_id(),
         lang = r$lang()
       )$src
@@ -165,9 +158,11 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       dat <- table_view_prep_table(
         vars = vars(),
         data = data(),
-        df = treated_df(),
+        scale = treated_scale(),
         zoom_levels = zoom_levels(),
-        lang = r$lang()
+        lang = r$lang(),
+        time = time(),
+        schemas = schemas()
       )
 
       # Return
@@ -179,7 +174,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       modules <- get_from_globalenv("modules")
       # Spatial organization of data
       scale <-
-        tolower(curbcut::cc_t(lang = r$lang(), zoom_get_name(r[[id]]$df())))
+        tolower(curbcut::cc_t(lang = r$lang(), zoom_get_name(scale())))
       scale <- sprintf(
         cc_t("The spatial organization of the data is the %s scale.",
           lang = r$lang()
@@ -246,7 +241,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
       # Recalculate every time the button is pressed
       input$panel_data
       datatable_styled()
-    })
+    }, server = TRUE)
 
     # If there is a selection in the table, update the selection
     shiny::observeEvent(input$data_table_rows_selected,
@@ -261,7 +256,7 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
         r[[id]]$select_id(new_id)
 
         # If there is a selection, update the central coordinates of the map
-        df_data <- grab_df_from_bslike(df = treated_df())
+        df_data <- grab_df_from_bslike(scale = treated_scale())
         # Skip the zoom update if the 'centroid' is not in the df
         if (!"centroid" %in% names(df_data)) {
           return(NULL)
@@ -307,8 +302,9 @@ panel_view_server <- function(id, r, region, vars, data, zoom_levels,
               shiny::incProgress(0.4)
 
               # Prepare data by attaching geometries
-              require(sf)
-              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_df()))
+              requireNamespace("sf", quietly = TRUE)
+              geo <- qs::qread(sprintf("data/geometry_export/%s.qs", treated_scale()))
+              geo <- geo["ID"]
               data <- merge(datas()$data, geo, by = "ID")
               data <- sf::st_as_sf(data)
 

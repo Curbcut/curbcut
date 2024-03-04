@@ -10,7 +10,8 @@ var_get_info(
   translate = FALSE,
   lang = NULL,
   check_year = TRUE,
-  variables = get_from_globalenv("variables")
+  variables = get_from_globalenv("variables"),
+  schemas_col = NULL
 )
 }
 \arguments{
@@ -31,6 +32,10 @@ variable's info? Defaults to TRUE}
 
 \item{variables}{<\code{data.frame}> The \code{variables} df. Defaults to grabbing it
 from the global environment using \code{\link{get_from_globalenv}}.}
+
+\item{schemas_col}{<\verb{named list}> One subset of the current schema information.
+The additional widget values that have an impact on which data column to pick.
+Usually \code{r[[id]]$schema()}, with \code{var_left} or\code{var_right} subset.}
 }
 \value{
 The requested information about the variable, with optional translation

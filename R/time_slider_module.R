@@ -55,15 +55,44 @@ time_slider_UI <- function(id, min, max, step, double_value) {
   if (length(double_value) != 2) {
     stop("length of `double_value` must be 2.")
   }
-  shiny::tagList(
+
+  length <- (max - min) / step
+  ys_classes <- if (length < 10) "year-slider-slim" else "year-slider"
+
+  shiny::div(
+    id = shiny::NS(id, "year_sliders"),
+    class = ys_classes,
+    shiny::hr(id = shiny::NS(id, "above_year_hr")),
+    shiny::div(
+      class = "shiny-split-layout sidebar-section-title",
+      shiny::div(
+        style = "width: 9%",
+        icon_material_title("date_range")
+      ),
+      shiny::div(
+        style = "width: 24%",
+        shiny::tags$span(
+          id = shiny::NS(id, "year_label"),
+          cc_t("Time", force_span = TRUE)
+        )
+      ),
+      shiny::div(
+        id = shiny::NS(id, "compare_dates"),
+        style = "width: 64%; margin:0px !important; text-align: right;",
+        checkbox_UI(
+          id = shiny::NS(id, id),
+          label = cc_t("Compare dates", force_span = TRUE),
+          value = FALSE
+        )
+      )
+    ),
     slider_UI(
       id = shiny::NS(id, id), slider_id = "slu", min = min, max = max,
-      step = step, label = cc_t("Select a year")
+      step = step, label = NULL
     ),
-    slider_UI(
+    shinyjs::hidden(slider_UI(
       id = shiny::NS(id, id), slider_id = "slb", min = min, max = max,
-      step = step, label = cc_t("Select two years"), value = double_value
-    ),
-    checkbox_UI(id = shiny::NS(id, id), label = cc_t("Compare dates"), value = FALSE)
+      step = step, label = NULL, value = double_value
+    ))
   )
 }

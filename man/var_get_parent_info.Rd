@@ -10,7 +10,8 @@ var_get_parent_info(
   what = "explanation",
   translate = FALSE,
   lang = NULL,
-  check_year = TRUE
+  check_year = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ information using the \code{\link{cc_t}} function. Defaults to \code{FALSE}.}
 
 \item{check_year}{<\code{logical}> Should the year be removed from \code{var} to grab
 variable's info? Defaults to TRUE}
+
+\item{...}{Any additional arguments to pass to \code{\link{var_get_info}}}
 }
 \value{
 The requested information about the parent variable, with optional

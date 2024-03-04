@@ -139,25 +139,21 @@ ntile <- function(x, n) {
 
 #' Test if x scale is under study
 #'
-#' @param scales <`character vector`> All scales to test if it is part of `df`.
-#' @param df <`character`> The combination of the region under study
-#' and the scale at which the user is on, e.g. `CMA_CSD`.
+#' @param scales <`character vector`> All scales to test if `scale` is in them..
+#' @param scale <`character`> Scale at which the user is on.
 #' @param vectorized <`logical`> Should all elements of `scales` be evaluated
 #' and return a logical vector the same length of `scales`?
 #'
 #' @return Returns TRUE or FALSE
 #' @export
-#'
-#' @examples
-#' is_scale_df(scales = c("CSD", "CT", "DA"), df = "CMA_DA") # TRUE
-#' is_scale_df(scales = c("CSD", "CT"), df = "CMA_DA") # FALSE
-is_scale_df <- function(scales, df, vectorized = FALSE) {
+is_scale_in <- function(scales, scale, vectorized = FALSE) {
+  if (!is.character(scale)) stop("`scale` cannot be empty.")
+
   if (!vectorized) {
-    scls <- paste0(scales, "$", collapse = "|")
-    return(grepl(scls, df))
+    return(scale %in% scales)
   }
 
-  sapply(paste0(scales, "$"), grepl, df, USE.NAMES = FALSE)
+  scales == scale
 }
 
 #' Extract substrings from a character vector that matches a regular
@@ -254,20 +250,19 @@ colours_get <- function() {
 #'
 #' @param scales_as_DA <`character vector`> dfs to check if they should be
 #' treated like a DA scale
-#' @param df <`character`> The `df` to check if it is a DA scale
-#'
+#' @param scale <`character`> The `scale` to check if it is a DA scale
 #' @return If the current `df` is part of the scales that should be treated
 #' as a DA, thye function appends "_DA" to the `df` string instead of the
 #' current scale, and returns the new name. If not, the original `df` is returned.
 #' @export
-treat_to_DA <- function(scales_as_DA, df) {
+treat_to_DA <- function(scales_as_DA, scale) {
   if (length(scales_as_DA) == 0) {
-    return(df)
+    return(scale)
   }
-  if (is_scale_df(scales_as_DA, df)) {
-    return(paste0(s_extract(".*(?=_)", df), "_DA"))
+  if (is_scale_in(scales_as_DA, scale)) {
+    return("DA")
   }
-  return(df)
+  return(scale)
 }
 
 #' Get object from global environment
@@ -278,12 +273,15 @@ treat_to_DA <- function(scales_as_DA, df) {
 #'
 #' @param x <`character`> The name of the object to retrieve from the global
 #' environment.
+#' @param stop_if_missing <`logical`> Should it trigger an error if the object
+#' is missing?
 #'
 #' @return The requested object from the global environment.
 #' @export
-get_from_globalenv <- function(x) {
+get_from_globalenv <- function(x, stop_if_missing = TRUE) {
   out <- get0(x, envir = .GlobalEnv)
-  if (is.null(out)) {
+
+  if (stop_if_missing & is.null(out)) {
     stop(glue::glue_safe("`{x}` object not found in the global environment."))
   }
   return(out)
@@ -321,48 +319,6 @@ get_dist <- function(x, y) {
     cos(lat_2_r) * sin(delta_lon / 2) * sin(delta_lon / 2)
   c_dist <- 2 * atan2(sqrt(a_dist), sqrt(1 - a_dist))
   6371e3 * c_dist
-}
-
-#' Generate a Mapbox Tile JSON
-#'
-#' Given a Mapbox username, tileset prefix, and tile name, this function
-#' generates a Mapbox Tile JSON using \code{\link[rdeck]{tile_json}}. If the
-#' specified tile is not found, a warning message is displayed and NULL is
-#' returned. This prevents the app from crashing.
-#'
-#' @param mapbox_username <`character`> string representing the Mapbox username.
-#' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
-#' correspond to the Curbcut city, e.g. `mtl`.
-#' @param tile <`character`> The tile name to be fetched.
-#' @param return_error <`logical`> Print the error if the tileset isn't found.
-#'
-#' @return A JSON list if succesfull. If missing tile, returns NULL preventing
-#' the app from crashing. If the tile is missing and it's a _building tile,
-#' grab the first region of the regions_dictionary and show buildings for those.
-#'
-#' @export
-tilejson <- function(mapbox_username, tileset_prefix, tile, return_error = FALSE) {
-  # urltools is necessary for tile_json use
-  requireNamespace("urltools", quietly = TRUE)
-  tile_link <- paste0(mapbox_username, ".", tileset_prefix, "_", tile)
-  out <- tryCatch(
-    suppressWarnings(rdeck::tile_json(tile_link)),
-    error = function(e) {
-      if (curbcut::is_scale_df("building", tile)) {
-        regions_dictionary <- get_from_globalenv("regions_dictionary")
-        base_building_tile <-
-          sprintf(
-            "%s.%s_%s_building", mapbox_username, tileset_prefix,
-            regions_dictionary$region[1]
-          )
-        rdeck::tile_json(base_building_tile)
-      } else {
-        if (return_error) print(e)
-        return(NULL)
-      }
-    }
-  )
-  return(out)
 }
 
 #' Verify widget ID validity
@@ -435,6 +391,12 @@ is_numeric <- function(x) {
 #' of a data frame, preserving the original row indices.
 #'
 #' @param x <`numeric`> A numeric vector for which to find outliers.
+#' @param lower_bracket <`numeric`> The lower percentile to use for the
+#' IQR calculation. Defaults to 0.02.
+#' @param higher_bracket <`numeric`> The higher percentile to use for the
+#' IQR calculation. Defaults to 0.98.
+#' @param iqr_multiplier <`numeric`> Multiplier for the IQR to determine
+#' outlier thresholds. Defaults to 1.5.
 #'
 #' @return For find_outliers(): A vector of indices of the outliers in x.
 #' For remove_outliers_df(): A data frame with outliers removed from specified
@@ -448,10 +410,10 @@ is_numeric <- function(x) {
 #' remove_outliers_df(df, cols = "a")
 #'
 #' @export
-find_outliers <- function(x) {
-  q1 <- stats::quantile(x, 0.02, na.rm = TRUE)
-  q3 <- stats::quantile(x, 0.98, na.rm = TRUE)
-  iqr <- (q3 - q1) * 1.5
+find_outliers <- function(x, lower_bracket = 0.02, higher_bracket = 0.98, iqr_multiplier = 1.5) {
+  q1 <- stats::quantile(x, lower_bracket, na.rm = TRUE)
+  q3 <- stats::quantile(x, higher_bracket, na.rm = TRUE)
+  iqr <- (q3 - q1) * iqr_multiplier
   which(x < q1 - iqr | x > q3 + iqr)
 }
 
@@ -476,16 +438,54 @@ remove_outliers_df <- function(df, cols) {
   return(out)
 }
 
+#' Calculate Weighted Mean
+#'
+#' This function computes the weighted mean of a numeric vector, with the option
+#' to remove NA values on both x and w. The calculation is based on weights provided.
+#'
+#' @param x <`numeric vector`> A numeric vector for which the weighted mean is
+#' to be computed.
+#' @param w <`numeric vector`> A numeric vector of weights, where each weight
+#' corresponds to the elements in `x`. The length of `w` should match the
+#' ength of `x`.
+#' @param ... Additional arguments passed to `stats::weighted.mean`.
+#' @param na.rm <`logical`> A logical value indicating whether NA values in `x`
+#' and `w` should be stripped before the computation proceeds. Defaults to
+#' `FALSE`.
+#'
+#' @return A numeric value representing the weighted mean of the elements in `x`.
+#'
+#' @examples
+#' x <- c(1, 2, 3, 4, NA)
+#' w <- c(1, 2, 3, 4, 5)
+#' weighted_mean(x, w) # NA due to NA in `x`
+#' weighted_mean(x, w, na.rm = TRUE) # weighted mean excluding NA
+#'
+#' @export
+weighted_mean <- function(x, w, ..., na.rm = FALSE) {
+  # Check if the lengths of x and w are equal
+  if (length(x) != length(w)) {
+    stop("Lengths of 'x' and 'w' must be equal.")
+  }
+
+  if (na.rm) {
+    keep <- !is.na(x) & !is.na(w)
+    w <- w[keep]
+    x <- x[keep]
+  }
+  stats::weighted.mean(x, w, ..., na.rm = na.rm)
+}
+
 #' Grab DA_ID from a building-street-like dataframe (large!)
 #'
 #' This function fetches the DA_ID matching with the selected ID from a given
-#' dataframe `df` based on a provided `select_id`. It can also fetch the DA_ID
+#' dataframe `scale` based on a provided `select_id`. It can also fetch the DA_ID
 #' from a connected database when the `df` is not found in the global environment
 #' but is identified as a scales_as_DA'. In such cases, it uses the established
 #' connection and fetches the DA_ID via a SQL query.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
-#' for DA_ID. The dataframe should be in the global environment, and if it isn't,
+#' @param scale <`character`> A string, the name of the dataframe in which to look
+#' for row. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #' @param select_id <`character`> A value representing the ID that needs to be
 #' selected in order to fetch the corresponding DA_ID.
@@ -494,16 +494,18 @@ remove_outliers_df <- function(df, cols) {
 #' `select_id` is found in the `df` in the global environment, the corresponding
 #' DA_ID is returned. If `df` is a 'scales_as_DA' and not in the global
 #' environment, the function fetches DA_ID from the connected database.
-grab_DA_ID_from_bslike <- function(df, select_id) {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_DA_ID_from_bslike <- function(scale, select_id) {
+  dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   if (is.null(dat)) {
-    scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
-    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", df, select_id)
+    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", scale, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
     out <- unname(unlist(out))
+    # If length is zero, it means the selection was for another scale before,
+    # and the user zoomed on building. Return as if it's NA.
+    if (length(out) == 0) out <- NA
   } else {
     out <- dat$DA_ID[dat$ID == select_id]
   }
@@ -514,12 +516,12 @@ grab_DA_ID_from_bslike <- function(df, select_id) {
 #' Grab row from a building-street-like dataframe (large!)
 #'
 #' This function fetches the row matching with the selected ID from a given
-#' dataframe `df` based on a provided `select_id`. It can also fetch the row
+#' dataframe `scale` based on a provided `select_id`. It can also fetch the row
 #' from a connected database when the `df` is not found in the global environment
 #' but is identified as a scales_as_DA'. In such cases, it uses the established
 #' connection and fetches the row via a SQL query.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' @param scale <`character`> A string, the name of the dataframe in which to look
 #' for row. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #' @param select_id <`character`> A value representing the ID that needs to be
@@ -531,15 +533,14 @@ grab_DA_ID_from_bslike <- function(df, select_id) {
 #' `select_id` is found in the `df` in the global environment, the corresponding
 #' row is returned. If `df` is a 'scales_as_DA' and not in the global
 #' environment, the function fetches row from the connected database.
-grab_row_from_bslike <- function(df, select_id, cols = "*") {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_row_from_bslike <- function(scale, select_id, cols = "*") {
+  dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   if (is.null(dat)) {
-    scale <- gsub(".*_", "", df)
     db_df <- sprintf("%s_conn", scale)
     cols <- paste0(cols, collapse = ", ")
-    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, df, select_id)
+    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, scale, select_id)
     out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
   } else {
     out <- dat[dat$ID == select_id, ]
@@ -554,24 +555,23 @@ grab_row_from_bslike <- function(df, select_id, cols = "*") {
 #' the full dataframe from a connected database when the `df` is not found in the
 #' global environment.
 #'
-#' @param df <`character`>  A string, the name of the dataframe in which to look
+#' @param scale <`character`>  A string, the name of the dataframe in which to look
 #' for full dataframe. The dataframe should be in the global environment, and if it isn't,
 #' there must be an established sqlite connection to it.
 #'
-#' @return The full datraframe corresponding to the given `df`. If
-#' `select_id` is found in the `df` in the global environment, the corresponding
-#' table is returned. If `df` is not in the global
+#' @return The full datraframe corresponding to the given `scale`. If
+#' `select_id` is found in the `scale` in the global environment, the corresponding
+#' table is returned. If `scale` is not in the global
 #' environment, the function fetches the dataframe from the connected database.
-grab_df_from_bslike <- function(df) {
-  dat <- get0(df, envir = .GlobalEnv)
+grab_df_from_bslike <- function(scale) {
+  dat <- get0(scale, envir = .GlobalEnv)
   if (!is.null(dat)) {
     return(dat)
   }
 
   # If not in the global environment
-  scale <- gsub(".*_", "", df)
   db_df <- sprintf("%s_conn", scale)
-  call <- sprintf("SELECT * FROM %s", df)
+  call <- sprintf("SELECT * FROM %s", scale)
   out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
 
   return(out)
@@ -668,4 +668,369 @@ hex_to_rgb_or_rgba <- function(hex) {
   } else {
     stop("Invalid HEX code length. Must be HEX6 or HEX8.")
   }
+}
+
+#' Match schema list to right column in `data`
+#'
+#' This function identifies the column in a `data` (output of \code{\link{data_get}})
+#' that matches a given schema named list. It is designed to be used in situations where
+#' the schema for the data frame can be dynamic. For example, if the schema is
+#' based on the time of the data, this function can be used to identify the
+#' column in the data frame that corresponds to the given time.
+#'
+#' @param data <`data.frame`> A data frame containing the data. The output of
+#' output of \code{\link{data_get}}.
+#' @param time <`numeric named list`> The `time` at which data is displayed.
+#' A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.
+#' Can also be a simple numeric.
+#' @param col <`character`> Which column should be extracted? `var_left` or `var_right`.
+#' @param data_schema <`named list`> A list containing the schema information, specifically the
+#' 'time' attribute. Typically obtained, and defaulted, as an attribute to
+#' `data` (output of \code{\link{data_get}}).
+#' @param schemas <`named list`> Current schema information. The additional widget
+#' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
+#' Can be NULL if there are none (ex. taking a parent variable, no schemas).
+#' @param closest_time <`logical`> Should the closest time be used if the exact
+#' time is not found? Default is `FALSE`.
+#'
+#' @return Returns the name of the variable that corresponds to the given
+#' schema as a character string.
+#' @export
+match_schema_to_col <- function(data, time, col = "var_left",
+                                data_schema = attr(data, sprintf("schema_%s", col)),
+                                schemas, closest_time = FALSE) {
+  # Default data_get method does not return schema_*
+  if (is.null(data_schema)) {
+    if (!is.null(attr(data, "schema"))) {
+      data_schema <- attr(data, "schema")
+    } else {
+      # If schema is not supplied (so it's not a `default` method), but we want
+      # another column, ex. `group`.
+      data_schema <- attr(data, "schema_var_left")["time"]
+    }
+  }
+
+  # If time is supplied as a list, subset. If not, use the numeric
+  time_col <-
+    if (is.list(time)) {
+      # If `col` can be subset from the `time` list, grab it. If not, defaults
+      # to taking var_left.
+      if (col %in% names(time)) time[[col]] else time$var_left
+    } else {
+      time
+    }
+
+  # Get the possible variables that hold the schema
+  pv <- grep(data_schema$time, names(data), value = TRUE)
+  pv <- grep(col, pv, value = TRUE)
+
+  # Extract available time
+  avail_time <- s_extract(data_schema$time, pv) |> unique()
+  avail_time <- gsub("_", "", avail_time)
+
+  # Which var out of those correspond to the right time
+  var <- pv[avail_time %in% time_col]
+
+  if (closest_time) {
+    if (length(var) == 0) {
+      # Get the closest years
+      avail_time <- as.numeric(avail_time)
+      time_col <- as.numeric(time_col)
+      closest_t <- which.min(abs(avail_time - time_col))
+      var <- pv[closest_t]
+    }
+  }
+
+  # Subset from schemas the col schema
+  sch <- schemas[[col]]
+  # If time is part of the schema, it's already been treated. Forget it.
+  sch <- sch[names(sch) != "time"]
+  # If time was the only `sch`
+  if (length(sch) == 0) return(var)
+
+  for (i in names(sch)) {
+    regex <- data_schema[[i]]
+
+    # Extract possibilities
+    avail <- s_extract(regex, var) |> unique()
+    avail <- gsub("_", "", avail)
+
+    # Which var out of those correspond to the current schema value
+    var <- var[which(avail %in% sch[[i]])]
+  }
+
+  # Return the var as a character
+  return(var)
+}
+
+#' Match schema list to a specific column (`col`) in `data` based on `vl_vr` parameter
+#'
+#' This function extends the functionality of `match_schema_to_col` by adding support
+#' for dynamic selection of schema based on the `vl_vr` parameter. It identifies the
+#' column in a `data` frame that matches a given schema, considering whether to use
+#' the `var_left` or `var_right` schema. This is useful in scenarios where the column
+#' itself to select is not `var_left` nor `var_right`, but for example `group`.
+#'
+#' @param data <`data.frame`> A data frame containing the data.
+#' @param time <`numeric named list`> A named list specifying the time at which
+#' data is displayed. The names should correspond to `var_left` and `var_right`
+#' @param col <`character`> The specific column to be extracted, e.g. `group`.
+#' @param vl_vr <`character`> Determines which schema to use: 'var_left' or 'var_right'.
+#' @param data_schema <`named list`> The schema information for the data, typically
+#' an attribute of the data frame. Defaults to taking the attributes of data (of vl_vr).
+#' @param schemas <`named list`> Current schema information, which can impact the
+#' choice of data column. If `NULL`, no additional schemas are considered.
+#'
+#' @return The name of the variable corresponding to the given schema and `vl_vr`
+#' selection as a character string.
+#' @export
+match_schema_to_z_col <- function(data, time, col, vl_vr,
+                                  data_schema = attr(data, sprintf("schema_%s", vl_vr)),
+                                  schemas) {
+  if (!is.null(schemas)) {
+    group_schema <- schemas
+    names(group_schema) <- gsub(vl_vr, col, names(group_schema))
+  } else {
+    group_schema <- NULL
+  }
+
+  match_schema_to_col(
+    data = data, time = time[[vl_vr]], col = col,
+    data_schema = data_schema,
+    schemas = group_schema
+  )
+}
+
+#' Get the data path for Curbcut
+#'
+#' This function retrieves the data path for testing purposes. It looks for the
+#' environment variable `CURBCUT_DATA` and should return a path to a Curbcut
+#' data folder if it exists. If the environment variable is not set, which is
+#' what happened in production, it returns "data/" as a fallback.
+#'
+#' @return A character string representing the path where data is stored.
+#' @export
+get_data_path <- function() {
+  # Are you in the `curbcut` repo developping?
+  cc_repo <- grepl("(/curbcut$)|(/curbcut/tests/testthat$)|(curbcut.Rcheck/tests/testthat)", getwd())
+
+  # If not, return data/ as default
+  if (!cc_repo) {
+    return("data/")
+  }
+
+  # Retrieve the value of the CURBCUT_DATA environment variable
+  data_path <- Sys.getenv("CURBCUT_DATA")
+
+  # Check if the environment variable is empty
+  if (data_path == "") {
+    return("data/")
+  }
+
+  # Return the data path
+  return(data_path)
+}
+
+#' Get name_2 based on biven ID scale, scale, and top scale
+#'
+#' This function retrieves the name from a top scale table and attaches
+#' it to a scale table based on given ID scales. It uses efficient
+#' matching instead of the slower merge operation.
+#'
+#' @param ID_scale <`character vector`> A vector of IDs from the scale table
+#' to keep.
+#' @param scale <`character`> The name of the scale table in the global environment.
+#' @param top_scale <`character`> The name of the top scale table in the global
+#' environment (from which the column `name` will be used as the output).
+#'
+#' @return A character vector of names in the order of 'ID_scale'.
+#' @export
+fill_name_2 <- function(ID_scale, scale, top_scale) {
+  # Get the top scale table
+  ts <- get_from_globalenv(top_scale)[c("ID", "name")]
+
+  # Get the scale table and subset necessary scale
+  ts_id <- sprintf("%s_ID", top_scale)
+  sc <- get0(scale)
+  if (is.null(sc)) return(rep(NA, length(ID_scale)))
+  sc <- sc[c("ID", ts_id)]
+  sc <- sc[sc$ID %in% ID_scale, ]
+
+  # Keep, in order, the ID to grab name_2 for
+  sc <- sc[match(ID_scale, sc$ID), ]
+  # If the scale spans over multiple top scales, grab the FIRST ID to show and
+  # assign a character vector rather than the list.
+  sc[[ts_id]][lengths(sc[[ts_id]]) > 1] <-
+    lapply(sc[[ts_id]][lengths(sc[[ts_id]]) > 1], `[[`, 1)
+  sc[[ts_id]] <- unlist(sc[[ts_id]])
+
+  # This will act like a left join, similar to all.x = TRUE in merge()
+  matching_indices <- match(sc[[ts_id]], ts$ID)
+
+  # Make sure that the resultant NA values (if any) are converted into appropriate values
+  # (fill in the length, like all.x = TRUE in merge() would do)
+  name <- ifelse(is.na(matching_indices), NA, ts$name[matching_indices])
+
+  # Return the name_2 to use as a character vector, in order of ID_scale
+  return(name)
+}
+
+#' Filter Rows Based on a Column Value Range
+#'
+#' This function filters the rows of a table where a specified column's values
+#' fall within a given range.
+#'
+#' @param data <`dataframe`> The table to be filtered.
+#' @param col <`character`> The name of the column to filter on.
+#' @param range <`numeric vector`> A vector indicating the lower and upper
+#' range to filter the column by.
+#' @param select_id <`character`> Selection. Defaults to NA. If there is an ID
+#' specified, the range will be tweaked to make sure it keeps select_id in the
+#' range.
+#'
+#' @return <`data.table`> A data.table containing only rows where the specified
+#' column's values are within the given range. If a select_id is supplied, the
+#' range is tweak to make sure to include the selection. The new range is then
+#' output as an attribute (`range_{col}`)
+filter_inrange <- function(data, col, range, select_id = NA) {
+  lower <- range[1]
+  upper <- range[length(range)]
+
+  # Remove missing values
+  dat <- data[!is.na(data[[col]]), ]
+
+  # If selection, tweak range to keep ID in range
+  if (!is.na(select_id)) {
+    # Get the ID value
+    id_val <- dat[[col]][dat$ID == select_id]
+
+    if (length(id_val) == 0) {
+      attr(data, sprintf("updated_range_%s", col)) <- FALSE
+      return(data)
+    }
+
+    # If the ID value is not in the range, tweak the range
+    if (id_val < lower) lower <- id_val
+    if (id_val > upper) upper <- id_val
+  }
+
+  # Which data is in range
+  out_ind <- data.table::inrange(dat[[col]], lower, upper)
+
+  # Filter data
+  out <- dat[out_ind, ]
+
+  # Add a range as attribute
+  attr(out, sprintf("updated_range_%s", col)) <-
+    !identical(range[c(1, length(range))], c(lower, upper))
+
+  return(out)
+}
+
+#' Check if data is present in specified scale
+#'
+#' This function checks if a particular variable is present within a specified scale.
+#' It first retrieves a list of files associated with the scale. If the list is not
+#' available, it is assumed the variable is not present. Otherwise, it checks if
+#' the specified variable exists in the list of scale files.
+#'
+#' @param scale <`character`> The name of the scale for which the data presence
+#' is to be checked. It is expected to correspond to a variable containing a list
+#' of file names.
+#' @param var <`character`> The variable name to check for in the scale's file list.
+#'
+#' @return <`logical`> Returns `TRUE` if the variable is found in the scale's file list,
+#' otherwise returns `FALSE`.
+is_data_present_in_scale <- function(var, scale) {
+
+  # Grab all the files available for that scale
+  scale_files <- get0(sprintf("%s_files", scale))
+
+  # If there is no vector available listing the files, consider the variable
+  # is not present. (It is most likely in a SQLite database)
+  if (is.null(scale_files)) {
+    return(FALSE)
+  }
+
+  # If the `var` is not in the vector of files
+  if (!var %in% scale_files) {
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
+
+#' Convert time value to character representation
+#'
+#' This function takes a variable and a time value, and returns the character
+#' representation of the time value if it is named in the variables table. If the
+#' `dates` column of the variable in the `variables` table is not a named vector,
+#' it returns the time value itself.
+#'
+#' @param var <`character vector`> String representing the code of the variable
+#' to retrieve information for.
+#' @param time_val <`numeric`> The time value to be checked.
+#'
+#' @return <`character`> Returns the name of the 'time_val' if its corresponding var in
+#' the `dates` column in the variables table is named. If  not named, returns 'time_val' itself.
+#' @export
+time_chr <- function(var, time_val) {
+  dates <- var_get_info(var, what = "dates")[[1]]
+  if (is.null(names(dates))) return(time_val)
+
+  # If dates is named, return the character
+  value <- names(dates)[which(dates == time_val)]
+
+  return(value)
+}
+
+#' Determine Delta Colors Based on Data Class
+#'
+#' This function selects the appropriate color set from a predefined set of
+#' colors (`colours_dfs`) based on the class of the input data. It supports
+#' three classes: 'normal', 'negative', and 'positive'. Depending on the class
+#' of the data, it returns a corresponding set of delta colors.
+#'
+#' @param data <`ANY`> The data object for which the color set needs to be
+#' determined. The function checks for specific classes ('normal', 'negative',
+#' 'positive') in the data object to decide which color set to return.
+#'
+#' @return A color set from `colours_dfs`. If the class of `data` is 'normal',
+#' `colours_dfs$delta` is returned. If the class is 'negative',
+#' `colours_dfs$delta_neg` is returned. If the class is 'positive',
+#' `colours_dfs$delta_pos` is returned. The return type is dependent on the
+#' structure of `colours_dfs`.
+delta_which_colors <- function(data) {
+  colours_dfs <- colours_get()
+
+  if ("normal" %in% class(data)) return(colours_dfs$delta)
+  if ("negative" %in% class(data)) return(colours_dfs$delta_neg)
+  if ("positive" %in% class(data)) return(colours_dfs$delta_pos)
+}
+
+#' Safely evaluate reactive and non-reactive arguments
+#'
+#' This function iterates over a list of arguments and evaluates them. If an
+#' argument is a reactive expression, it is evaluated to obtain its current
+#' value. Non-reactive arguments are returned as is.
+#'
+#' @param argList <`list`> A list containing both reactive and non-reactive
+#' arguments. Reactive arguments are expected to be Shiny reactive expressions
+#' that need to be evaluated to obtain their current values. Non-reactive
+#' arguments are any other values or objects that do not require evaluation.
+#'
+#' @return A list of the same length as `argList`, where each element is the
+#' evaluated value of the corresponding argument in `argList`. Reactive
+#' expressions are evaluated to their current value, and non-reactive arguments
+#' are returned unchanged.
+safeEvaluate <- function(argList) {
+
+  lapply(argList, function(arg) {
+    if (shiny::is.reactive(arg)) {
+      return(arg())
+    } else {
+      return(arg)
+    }
+  })
+
 }

@@ -4,19 +4,14 @@
 \alias{zoom_get_string}
 \title{Generate zoom string based on given zoom level and region name}
 \usage{
-zoom_get_string(zoom, zoom_levels, region)
+zoom_get_string(zoom, zoom_levels)
 }
 \arguments{
 \item{zoom}{<\code{numeric}> A numeric value representing the current zoom level}
 
 \item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
-levels. Usually one of the \code{map_zoom_levels_x}, or the output of
-\code{\link{zoom_get_levels}}. It needs to be \code{numeric} as the function
-will sort them to make sure the lower zoom level is first, and the highest
-is last (so it makes sense on an auto-scale).}
-
-\item{region}{<\code{character}> The region to retrieve the zoom levels for,
-usually one of the output of \code{\link{zoom_get_levels}}.}
+levels. Usually one of the \verb{mzl_*}, or the output of
+\code{\link{geography_server}}.}
 }
 \value{
 A character string representing the zoom level and region name,
@@ -24,9 +19,7 @@ separated by an underscore
 }
 \description{
 Given a named numeric vector of zoom levels, a numeric value representing the current
-zoom level, and a character string representing the name of the region, this
-function returns a string representing the zoom level and region name,
-separated by an underscore. The zoom level is determined by finding the
-highest value in the zoom levels vector that is less than or equal to the
-current zoom level.
+zoom level, this function returns a string representing the zoom level
+The zoom level is determined by finding the highest value in the zoom levels
+vector that is less than or equal to the current zoom level.
 }

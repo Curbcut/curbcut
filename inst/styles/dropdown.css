@@ -172,3 +172,19 @@
 	bottom: 35px;
 	position: relative;
 }
+
+.bs-searchbox .form-control {
+	font-size: 12px;
+	height: 30px;
+}
+
+.bootstrap-select .dropdown-menu li small {
+	padding-left: 0px;
+	display: block;
+	white-space: pre-line;
+	color: #999999;
+}
+
+.bootstrap-select .dropdown-menu li.active small {
+	color: #999999 !important;
+}

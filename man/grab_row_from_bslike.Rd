@@ -4,10 +4,10 @@
 \alias{grab_row_from_bslike}
 \title{Grab row from a building-street-like dataframe (large!)}
 \usage{
-grab_row_from_bslike(df, select_id, cols = "*")
+grab_row_from_bslike(scale, select_id, cols = "*")
 }
 \arguments{
-\item{df}{<\code{character}>  A string, the name of the dataframe in which to look
+\item{scale}{<\code{character}> A string, the name of the dataframe in which to look
 for row. The dataframe should be in the global environment, and if it isn't,
 there must be an established sqlite connection to it.}
 
@@ -25,7 +25,7 @@ environment, the function fetches row from the connected database.
 }
 \description{
 This function fetches the row matching with the selected ID from a given
-dataframe \code{df} based on a provided \code{select_id}. It can also fetch the row
+dataframe \code{scale} based on a provided \code{select_id}. It can also fetch the row
 from a connected database when the \code{df} is not found in the global environment
 but is identified as a scales_as_DA'. In such cases, it uses the established
 connection and fetches the row via a SQL query.

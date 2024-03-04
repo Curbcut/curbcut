@@ -6,11 +6,13 @@
 #' @param var <`character`> The variable with its type as a class, either "pct",
 #' "dollar" or "ind", or any other type for the default scale.
 #' @param x_y <`character`> x or y axis?
+#' @param limits <`numeric`> The x or y axis limits. Usually one of the breaks
+#' attributes coming from from `data`. Defaults to NULL for them to be automatic.
 #' @param ... Additional arguments passed to specific methods.
 #'
 #' @return A list containing ggplot2 x and y-axis scale functions.
 #' @export
-explore_graph_scale <- function(var, x_y, ...) {
+explore_graph_scale <- function(var, x_y, limits = NULL, ...) {
   stopifnot(x_y %in% c("x", "y"))
   UseMethod("explore_graph_scale", var)
 }
@@ -18,9 +20,13 @@ explore_graph_scale <- function(var, x_y, ...) {
 #' @describeIn explore_graph_scale The method for percentage values. Applies a
 #' percentage scale to the x-axis.
 #' @export
-explore_graph_scale.pct <- function(var, x_y, ...) {
+explore_graph_scale.pct <- function(var, x_y, limits = NULL, ...) {
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
-  list(do.call(eval(parse(text = scale)), list(labels = scales::percent)))
+  range <- if (is.null(limits)) NULL else range(limits)
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scales::percent,
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for dollar values. Applies a
@@ -29,7 +35,7 @@ explore_graph_scale.pct <- function(var, x_y, ...) {
 #' @param data_vals A numeric vector containing data values, required only for the
 #' "dollar" method.
 #' @export
-explore_graph_scale.dollar <- function(var, x_y, data_vals, ...) {
+explore_graph_scale.dollar <- function(var, x_y, limits = NULL, data_vals, ...) {
   # Get the minimum number of significant digit
   min_dig <- min_sig_digits(data_vals)
 
@@ -46,32 +52,38 @@ explore_graph_scale.dollar <- function(var, x_y, data_vals, ...) {
 
   # Return the ggplot2 scale
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
-  list(do.call(eval(parse(text = scale)), list(labels = scl)))
+  range <- if (is.null(limits)) NULL else range(limits)
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scl,
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for degrees Celsius values.
 #' Applies a degrees Celsius scale to the x-axis.
 #' @export
-explore_graph_scale.degree <- function(var, x_y, ...) {
+explore_graph_scale.degree <- function(var, x_y, limits = NULL, ...) {
   # Create the scale function
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
 
   # Return the ggplot2 scale with custom labels
-  list(do.call(eval(parse(text = scale)), list(labels = function(x) paste0(x, "\u00B0C"))))
+  range <- if (is.null(limits)) NULL else range(limits)
+  list(do.call(eval(parse(text = scale)), list(
+    labels = function(x) paste0(x, "\u00B0C"),
+    limits = range
+  )))
 }
 
 #' @describeIn explore_graph_scale The method for ordinal values.
 #' @param lang <`character` Which language should the label be translated to.
 #' Defaults to NULL for no translation.
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param scale <`character`> Current scale, e.g. `"CSD"`.
 #' @param data_vals A numeric vector containing data values, required only for the
 #' "dollar" method.
 #' @export
-explore_graph_scale.ind <- function(var, x_y, df, data_vals, lang = NULL, ...) {
+explore_graph_scale.ind <- function(var, x_y, limits = NULL, scale, data_vals, lang = NULL, ...) {
   explore_graph_scale_ind(
-    var = var, x_y = x_y, df = df,
+    var = var, x_y = x_y, limits = limits, scale = scale,
     data_vals = data_vals, lang = lang, ...
   )
 }
@@ -79,9 +91,13 @@ explore_graph_scale.ind <- function(var, x_y, df, data_vals, lang = NULL, ...) {
 #' @describeIn explore_graph_scale The default method for unspecified variable
 #' types. Applies a comma scale to the x-axis.
 #' @export
-explore_graph_scale.default <- function(var, x_y, ...) {
+explore_graph_scale.default <- function(var, x_y, limits = NULL, ...) {
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
-  list(do.call(eval(parse(text = scale)), list(labels = scales::comma)))
+  range <- if (is.null(limits)) NULL else range(limits)
+  list(do.call(eval(parse(text = scale)), list(
+    labels = scales::comma,
+    limits = range
+  )))
 }
 
 #' Explore Graph Scale Indice
@@ -93,30 +109,31 @@ explore_graph_scale.default <- function(var, x_y, ...) {
 #' @param var <`character`> The variable with its type as a class, either "scale",
 #' "ordinal".
 #' @param x_y <`character`> x or y axis?
+#' @param scale <`character`> Current scale, e.g. `"CSD"`.
 #' @param lang <`character` Which language should the label be translated to.
 #' Defaults to NULL for no translation.
-#' @param df <`character`> The combination of the region under study and the
-#' scale at which the user is on, e.g. `CMA_CSD`. The output of
-#' \code{\link{update_df}}.
+#' @param limits <`numeric`> The x or y axis limits. Usually one of the breaks
+#' attributes coming from from `data`.
 #' @param ... Additional arguments passed to the underlying ggplot2 functions.
 #'
 #' @return A list containing the ggplot2 scale object generated by the specialized
 #' method.
-explore_graph_scale_ind <- function(var, x_y, df, lang = NULL, ...) {
+explore_graph_scale_ind <- function(var, x_y, scale, limits, lang = NULL, ...) {
   UseMethod("explore_graph_scale_ind", var)
 }
 
 #' @describeIn explore_graph_scale_ind scalar method for index values
-#' @param data_vals <`numeric vector`> containing data values
+#' @param data_vals <`numeric vector`> Data values
 #' @export
-explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals, ...) {
+explore_graph_scale_ind.scalar <- function(var, x_y, scale, limits, lang = NULL,
+                                           data_vals, ...) {
   # Grab the min and max breaks and switch them to numeric. TKTK NOT ON `IND`
   # outliers <- find_outliers(data_vals)
   # if (length(outliers) > 0) data_vals <- data_vals[-outliers]
   breaks <- c(min(data_vals, na.rm = TRUE), max(data_vals, na.rm = TRUE))
 
   # Get the labels, same as the legends
-  labels <- legend_breaks.q5_ind(var, df = df, lang = lang)
+  labels <- legend_breaks.q5_ind(var, scale = scale, lang = lang)
   labels <- labels[!sapply(labels, is.null)]
   labels <- unlist(labels)
 
@@ -126,22 +143,28 @@ explore_graph_scale_ind.scalar <- function(var, x_y, df, lang = NULL, data_vals,
 
   # Return the scale as a list
   scale <- sprintf("ggplot2::scale_%s_continuous", x_y)
+  range <- if (is.null(limits)) NULL else range(limits)
   list(do.call(eval(parse(text = scale)), list(
     labels = labels,
-    breaks = breaks
+    breaks = breaks,
+    limits = range
   )))
 }
 
 #' @describeIn explore_graph_scale_ind ordinal method for index values
+#' @param breaks <`vector`> Current breaks
+#' @param biv <`character`> Is it for bivariate graph? BOXPLOT
 #' @export
-explore_graph_scale_ind.ordinal <- function(var, x_y, df, lang = NULL, ...) {
-  breaks <- var_get_breaks(var, df = df)
-  labels <- c(NA_character_, legend_breaks.q5_ind(var, df = df, lang = lang))
-  names(labels) <- as.character(breaks)
+explore_graph_scale_ind.ordinal <- function(var, x_y, scale, limits = NULL,
+                                            lang = NULL, breaks, biv = FALSE, ...) {
+  labels <- legend_breaks.q5_ind(var, scale = scale, lang = lang)
+  if (!biv) labels <- c(NA_character_, labels)
+  if (!biv) names(labels) <- as.character(breaks)
 
   scale <- sprintf("ggplot2::scale_%s_discrete", x_y)
+  range <- if (is.null(limits)) NULL else range(limits)
   list(do.call(eval(parse(text = scale)), list(
-    labels = labels,
-    breaks = breaks
+    labels = unname(labels),
+    breaks = if (biv) 1:5 else breaks
   )))
 }

@@ -9,7 +9,12 @@ explore_text_region_val_df(
   region,
   select_id,
   col = "var_left",
+  scale,
+  data,
   lang = NULL,
+  time,
+  schemas = NULL,
+  data_path = get_data_path(),
   ...
 )
 }
@@ -27,16 +32,24 @@ Usually equivalent of \code{r$region()}.}
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
 
+\item{scale}{<\verb{reactive character}> Current scale. The output of
+\code{\link{update_scale}}.}
+
+\item{data}{<\code{data.frame}> The output of \code{\link{data_get}}.}
+
 \item{lang}{<\code{character}> Active language. "en" or "fr". Defaults to NULL
 for no translation.}
 
-\item{...}{Additional arguments for the \code{\link{explore_text_select_val}}
-function: \itemize{
-\item{data <\code{data.frame}>}{The output of \code{\link{data_get}}.}
-\item{df <\code{character}>}{The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
-}}
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
+
+\item{...}{Additional arguments for the \code{\link{explore_text_select_val}}}
 }
 \value{
 The resulting data frame after subsetting or list when there is a

@@ -9,11 +9,38 @@
 \usage{
 explore_text_select_val(var, ...)
 
-\method{explore_text_select_val}{pct}(var, select_id, data, df, col = "var_left", ...)
+\method{explore_text_select_val}{pct}(
+  var,
+  select_id,
+  data,
+  scale,
+  col = "var_left",
+  time,
+  schemas = NULL,
+  data_path,
+  ...
+)
 
-\method{explore_text_select_val}{ind}(var, data, df, select_id, col = "var_left", lang, ...)
+\method{explore_text_select_val}{ind}(
+  var,
+  data,
+  select_id,
+  col = "var_left",
+  time,
+  lang,
+  schemas = NULL,
+  ...
+)
 
-\method{explore_text_select_val}{default}(var, data, df, select_id, col = "var_left", ...)
+\method{explore_text_select_val}{default}(
+  var,
+  data,
+  select_id,
+  col = "var_left",
+  time,
+  schemas = NULL,
+  ...
+)
 }
 \arguments{
 \item{var}{<\code{character}> The variable code of the variable for which the
@@ -22,18 +49,26 @@ values need to be generated. Usually one element of the output of
 
 \item{...}{Additional arguments passed to the dispatched function.}
 
-\item{select_id}{<\code{character}> the current selected ID, usually
-\code{r[[id]]$select_id()}.}
+\item{select_id}{<\code{character}> The ID of the selected zone.}
 
-\item{data}{<\code{data.frame}>The output of \code{\link{data_get}}.}
+\item{data}{<\code{data.frame}> A data frame containing the variables and
+observations. The output of \code{\link{data_get}}.}
 
-\item{df}{<\code{character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{time}{<\verb{numeric named list}> The \code{time} at which data is displayed.
+A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{schemas}{<\verb{named list}> Current schema information. The additional widget
+values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
+
+\item{data_path}{<\code{character}> A string representing the path to the
+directory containing the QS files. Default is "data/".}
 
 \item{lang}{<\code{character}> Active language. \code{"en"} or \code{"fr"}}
 }
@@ -45,3 +80,12 @@ This function dispatches to the appropriate value-generating function based on
 the variable type and returns the resulting values. It is only used when
 there is a selection, and replaces the value of \code{\link{explore_text_region_val_df}}
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{explore_text_select_val(pct)}: Method for pct
+
+\item \code{explore_text_select_val(ind)}: Method for \code{ind}
+
+\item \code{explore_text_select_val(default)}: Default method
+
+}}

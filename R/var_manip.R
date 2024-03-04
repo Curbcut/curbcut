@@ -53,13 +53,16 @@ var_remove_time <- function(var) {
 #' variable's info? Defaults to TRUE
 #' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
 #' from the global environment using \code{\link{get_from_globalenv}}.
-#'
+#' @param schemas_col <`named list`> One subset of the current schema information.
+#' The additional widget values that have an impact on which data column to pick.
+#' Usually `r[[id]]$schema()`, with `var_left` or`var_right` subset.
 #' @return The requested information about the variable, with optional translation
 #' using the \code{\link{cc_t}} function.
 #' @export
 var_get_info <- function(var, what = "var_title", translate = FALSE,
                          lang = NULL, check_year = TRUE,
-                         variables = get_from_globalenv("variables")) {
+                         variables = get_from_globalenv("variables"),
+                         schemas_col = NULL) {
   if (!what %in% names(variables)) {
     stop(glue::glue_safe("`{what}` is not a column of the `variables` table."))
   }
@@ -92,6 +95,31 @@ var_get_info <- function(var, what = "var_title", translate = FALSE,
 
   out <- variables[[what]][subset_vector]
   if (translate) out <- cc_t(out, lang = lang)
+
+  # If schema isn't NULL, see if it needs to be switched in explanations.
+  # And is there anything to replace?
+  if (!is.null(schemas_col) & grepl("__.*__", out)) {
+    if (grepl("explanation|explanation_nodet|exp_q5", what)) {
+      for (sch in names(schemas_col)) {
+        value <-  schemas_col[[sch]]
+
+        # Special case if time needs to be seen as character
+        if (sch == "time") {
+          value <- time_chr(var, value)
+        }
+
+        scm <- sprintf("__%s__", sch)
+
+        # Determine the number of occurrences to replace
+        num_replacements <- min(length(value), gregexpr(scm, out)[[1]] |> length())
+
+        # Loop through each occurrence and replace with corresponding value
+        for (i in 1:num_replacements) {
+          out <- sub(scm, value[i], out, fixed = TRUE)
+        }
+      }
+    }
+  }
 
   return(out)
 }
@@ -135,68 +163,6 @@ var_get_title <- function(var, short_treshold = NULL,
   }
 
   return(title)
-}
-
-#' Get pretty or raw variable breaks
-#'
-#' This function returns the breaks for a given variable, region, scale and date
-#' for q3 (directly extracted from `var`) as either raw or pretty. Raw breaks are
-#' always given in the base unit of the variable. Pretty breaks are returned in an
-#' appropriate format for display using \code{\link{convert_unit}}, i.e.,
-#' with the appropriate unit prefix and separator depending on their magnitude.
-#' The pretty formatting is optional, and the function defaults to returning pretty
-#' breaks.
-#'
-#' @param var <`character`> String representing the code of the variable
-#' to retrieve the breaks for.
-#' @param df <`character`> Indicates the combination of the region and scale
-#' of interest, e.g. `"CMA_DA"`
-#' @param q3_q5 <`character`> String indicating whether to return Q3 or Q5 breaks.
-#' Defaults to "q5".
-#' @param break_col <`character`> Which column in the breaks_qx column of the
-#' `variables` table should the break be taken from. Defaults to `var` which
-#' is the numeric breaks for any numeric variable. Other possibility is
-#' `var_name` or `var_name_short` for qualitative variables.
-#' @param pretty <`logical`> Indicates whether to return pretty-formatted breaks
-#' using the \code{\link{convert_unit}} function. Defaults to `TRUE`.
-#' @param compact <`logical`> Indicates whether to compact the number representation
-#' of breaks. Only applies when pretty is `TRUE`. Defaults to `TRUE`.
-#' @param lang <`character`> String indicating the language to translate the
-#' breaks to. Defaults to `NULL`, which is no translation.
-#'
-#' @return A vector of breaks for the specified variable, region, and scale.
-#' If pretty is TRUE, the breaks are returned as characters and formatted in an
-#' appropriate format for display.
-#'
-#' @export
-var_get_breaks <- function(var, df, q3_q5 = "q5", break_col = "var",
-                           pretty = TRUE, compact = TRUE, lang = NULL) {
-  # Grab the breaks
-  breaks <- var_get_info(var = var, what = paste0("breaks_", q3_q5))[[1]]
-  breaks <-
-    if (q3_q5 == "q5") {
-      breaks[[break_col]][breaks$df == df]
-    } else if (q3_q5 == "q3") {
-      date <- var_get_time(var)
-      if (is.na(date)) {
-        breaks[[break_col]][breaks$df == df]
-      } else {
-        breaks[[break_col]][breaks$df == df & breaks$date == date]
-      }
-    }
-
-  # Translate if necessary
-  if (is.character(breaks) && !is.null(lang)) {
-    breaks <- sapply(breaks, cc_t, lang = lang, USE.NAMES = FALSE)
-  }
-
-  # Get pretty breaks
-  if (pretty & break_col == "var") {
-    breaks <- convert_unit(var = var, x = breaks, compact = compact)
-  }
-
-  # Return
-  return(breaks)
 }
 
 #' Returns the row number of a given variable in the `variables` table.
@@ -247,17 +213,80 @@ var_row_index <- function(var) {
 #' `translate` is TRUE. If not specified, the function will not attempt to translate.
 #' @param check_year <`logical`> Should the year be removed from `var` to grab
 #' variable's info? Defaults to TRUE
+#' @param ... Any additional arguments to pass to \code{\link{var_get_info}}
 #'
 #' @return The requested information about the parent variable, with optional
 #' translation using the \code{\link{cc_t}} function.
 #' @export
 var_get_parent_info <- function(var, what = "explanation", translate = FALSE,
-                                lang = NULL, check_year = TRUE) {
+                                lang = NULL, check_year = TRUE, ...) {
   parent <- var_get_info(var, what = "parent_vec")
   parent_info <- var_get_info(parent,
     what = what, translate = translate,
-    lang = lang, check_year = check_year
+    lang = lang, check_year = check_year, ...
   )
 
   return(parent_info)
+}
+
+#' Return variable based on time and input
+#'
+#' This function returns a variable code based on the given \code{time} and
+#' \code{input}. If \code{time} is \code{NULL}, it returns the \code{input} as
+#' is. If \code{input} is an empty string (" "), it returns an empty string.
+#' Otherwise, it finds the closest year in which the variable is available, and
+#' attaches it to the variable code.
+#'
+#' @param input <`character`> A character string representing the variable code.
+#' @param time <`numeric`> A numeric value indicating the time in years for
+#' which the variable is needed. If \code{NULL}, the function returns the
+#' \code{input} as is.
+#' @param variables <`data.frame`> The `variables` df. Defaults to grabbing it
+#' from the global environment using \code{\link{get_from_globalenv}}.
+#'
+#' @return A character string representing the variable code with the closest
+#' year attached, or the original \code{input} if \code{time} is \code{NULL} or
+#' \code{input} is an empty string.
+#'
+#' @details The function uses the \code{\link{var_get_info}} function to obtain the
+#' dates at which the variable is available, and then finds the closest year to
+#' the given \code{time} value.
+var_closest_year <- function(input, time, variables = get_from_globalenv("variables")) {
+  # If `time` is NULL, return the input
+  if (is.null(time)) {
+    return(input)
+  }
+
+  # If input isn't in `variables` returns input
+  if (!input %in% variables$var_code) {
+    return(input)
+  }
+
+  # Grab the dates at which the variable is available
+  dates <- var_get_info(input, what = "dates")[[1]]
+  dates <- stats::setNames(dates, names(dates))
+
+  # If no dates, return the input
+  if (all(is.na(dates))) {
+    return(input)
+  }
+
+  # Get the closest years
+  closest_year <- if (is.numeric(time)) {
+    dates <- as.numeric(dates)
+    sapply(time, \(x) dates[which.min(abs(dates - x))],
+           USE.NAMES = FALSE
+    )
+  } else if (all(time %in% dates)) {
+    dates[dates %in% time]
+  } else {
+    # If it's character and it doesn't fit in dates, return the latest year
+    max(as.numeric(dates))
+  }
+
+  unique_cy <- unique(closest_year)
+  names(unique_cy) <- names(closest_year)[match(unique_cy, closest_year)]
+
+  # Return the var
+  return(list(var = input, closest_year = unique_cy))
 }

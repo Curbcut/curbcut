@@ -2,15 +2,103 @@
 % Please edit documentation in R/legend_render.R
 \name{legend_render}
 \alias{legend_render}
+\alias{legend_render.q5}
+\alias{legend_render.q5_ind}
+\alias{legend_render.qual}
+\alias{legend_render.bivar}
+\alias{legend_render.delta}
+\alias{legend_render.q100}
+\alias{legend_render.delta_bivar}
+\alias{legend_render.bivar_ldelta_rq3}
+\alias{legend_render.default}
 \title{Generic legend render function for Curbcut legends}
 \usage{
 legend_render(
   vars,
   font_family = "acidgrotesk-book",
   scales_as_DA = c("building", "street"),
-  df,
+  scale,
   ...
 )
+
+\method{legend_render}{q5}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  ...
+)
+
+\method{legend_render}{q5_ind}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  ...
+)
+
+\method{legend_render}{qual}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render}{bivar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{delta}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  time,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{q100}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  ...
+)
+
+\method{legend_render}{delta_bivar}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  time,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{bivar_ldelta_rq3}(
+  vars,
+  font_family = "acidgrotesk-book",
+  scales_as_DA = c("building", "street"),
+  scale,
+  data,
+  time,
+  lang = NULL,
+  ...
+)
+
+\method{legend_render}{default}(vars, ...)
 }
 \arguments{
 \item{vars}{<\verb{named list}> A list object with a pre-determined class. The
@@ -20,15 +108,22 @@ output of \code{\link{vars_build}}.}
 the legend (breaks, axis titles, ...). Defaults to \code{acidgrotesk-book}. To use
 the default font family og ggplot2, use \code{NULL}.}
 
-\item{scales_as_DA}{<\verb{reactive character vector}> A character vector of \code{scales}
+\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales}
 that should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
 their colour will be the one of their DA.}
 
-\item{df}{<\verb{reactive character}> The combination of the region under study
-and the scale at which the user is on, e.g. \code{CMA_CSD}. The output of
-\code{\link{update_df}}.}
+\item{scale}{<\code{character}> Scale under study. The output of
+\code{\link{update_scale}}.}
 
 \item{...}{Arguments to be passed to the methods, e.g. optionally \code{lang}}
+
+\item{data}{<\code{data.frame}> The current data. The output of \code{\link{data_get}}.}
+
+\item{lang}{<\code{character}> String indicating the language to translate the
+breaks to. Defaults to \code{NULL}, which is no translation.}
+
+\item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
+function. It contains the time for both var_left and var_right variables.}
 }
 \value{
 It returns a ggplot object
@@ -38,3 +133,24 @@ It returns a ggplot object
 Curbcut map pages. The function invokes particular methods which depend on
 the class of the \code{vars} argument.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{legend_render(q5)}: q5 method
+
+\item \code{legend_render(q5_ind)}: q5_ind method
+
+\item \code{legend_render(qual)}: qual method
+
+\item \code{legend_render(bivar)}: bivar method
+
+\item \code{legend_render(delta)}: delta method
+
+\item \code{legend_render(q100)}: q100 method
+
+\item \code{legend_render(delta_bivar)}: delta_bivar method
+
+\item \code{legend_render(bivar_ldelta_rq3)}: bivar_ldelta_rq3 method
+
+\item \code{legend_render(default)}: default method
+
+}}

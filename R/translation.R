@@ -198,7 +198,7 @@ cc_t_span <- function(..., .envir = parent.frame()) {
 
   return_warning <- function(x) {
     warning("No translation text found for `", x, "`.",
-            call. = FALSE
+      call. = FALSE
     )
     cc_glue(x)
   }
