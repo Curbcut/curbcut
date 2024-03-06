@@ -3,6 +3,8 @@
 #' This function is used to create a "heartbeat" that keeps the Curbcut app
 #' running in the background even if the user is not interacting with it.
 #'
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param input <`input`> A reactive input object that contains all of the input
 #' values from the user interface. As this function will be placed in `server.R`
 #' in the \code{\link[shiny]{shinyServer}} function, this will usually be

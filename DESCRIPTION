@@ -25,7 +25,8 @@ Imports:
     rintrojs,
     zip,
     data.table,
-    RSQLite
+    RPostgres,
+    pool
 Remotes:
     Curbcut/cc.map,
     Curbcut/cc.landing

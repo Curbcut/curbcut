@@ -1,42 +1,3 @@
-#' Retrieve data from a SQLite database table using SQL syntax
-#'
-#' This function retrieves data from a SQLite database table using SQL syntax.
-#' It requires an established connection to the database, which should be stored
-#' in the global environment with a specific naming convention: combination of
-#' the region, the scale, and `_conn`, e.g. "CMA_DA_conn" would be a valid
-#' SQLite connection.
-#'
-#' @param var <`character`> A string specifying the name of the table to retrieve
-#' data from. Single variable (year) = single table. e.g. `housing_tenant_2016`
-#' @param df <`character`> A string specifying the name of the database to retrieve
-#' data from. Combination of the region and the scale, e.g. `CMA_DA`.
-#' @param select A character vector specifying the names of the columns to
-#' select from the table. Default is "*", which means all columns will be
-#' selected. If select does not contain the "ID" column, it will be added to the query.
-#'
-#' @return A data.frame object with the selected data from the specified table.
-data_get_sql <- function(var, df, select = "*") {
-  if (select != "*") {
-    if (!"ID" %in% select) select <- c("ID", select)
-    select <- paste0(select, collapse = ", ")
-  }
-
-  # Grab connection from the .GlobalEnv
-  conn <- paste0(df, "_conn")
-  if (is.null(get0(conn, envir = .GlobalEnv))) {
-    stop(glue::glue_safe(
-      "Connection to the sqlite database `{conn}` does not ",
-      "exist in the global environment."
-    ))
-  }
-
-  # Get from the sqlite connection
-  do.call(DBI::dbGetQuery, list(
-    as.name(conn),
-    glue::glue_safe("SELECT {select} FROM {var} ORDER BY ID")
-  ))
-}
-
 #' Retrieve data from a QS file based on variable and scale
 #'
 #' This function takes in a variable code and the scale to retrieve data from a
@@ -270,8 +231,8 @@ data_get.bivar <- function(vars, scale, region,
       for (s in possible_other_schemas) {
         vr_year <- var_closest_year(vars$var_right, i)$closest_year
         out <- paste(data[[sprintf("var_left_%s_%s_q3", s, i)]],
-          data[[sprintf("var_right_%s_q3", vr_year)]],
-          sep = " - "
+                     data[[sprintf("var_right_%s_q3", vr_year)]],
+                     sep = " - "
         )
         data[[sprintf("group_%s_%s", s, i)]] <- out
       }
@@ -280,8 +241,8 @@ data_get.bivar <- function(vars, scale, region,
     for (i in possible_vl_times) {
       vr_year <- var_closest_year(vars$var_right, i)$closest_year
       out <- paste(data[[sprintf("var_left_%s_q3", i)]],
-        data[[sprintf("var_right_%s_q3", vr_year)]],
-        sep = " - "
+                   data[[sprintf("var_right_%s_q3", vr_year)]],
+                   sep = " - "
       )
       data[[sprintf("group_%s", i)]] <- out
     }
@@ -471,8 +432,8 @@ data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("bui
   vl_time <- vl_vars$time
   vl_vars <- vl_vars$vars
   data_vl <- data_get(vl_vars,
-    scale = scale, time = vl_time, region = region,
-    scales_as_DA = scales_as_DA
+                      scale = scale, time = vl_time, region = region,
+                      scales_as_DA = scales_as_DA
   )
   data_vl$var_left_q3 <- ntile(data_vl$var_left, 3)
 
@@ -481,8 +442,8 @@ data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("bui
   vr_time <- vr_vars$time
   vr_vars <- vr_vars$vars
   data_vr <- data_get(vr_vars,
-    scale = scale, time = vr_time, region = region,
-    scales_as_DA = scales_as_DA
+                      scale = scale, time = vr_time, region = region,
+                      scales_as_DA = scales_as_DA
   )
   cv <- match_schema_to_col(data_vr, time = vr_time, schemas = NULL)
   data_vr <- data_vr[cv]

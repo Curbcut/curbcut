@@ -4,7 +4,7 @@
 \alias{heartbeat}
 \title{Heartbeat Function}
 \usage{
-heartbeat(input)
+heartbeat(r, input)
 }
 \arguments{
 \item{input}{<\code{input}> A reactive input object that contains all of the input

@@ -30,7 +30,8 @@ will be assigned. Default is 1, referring to the global environment.}
 
 \item{stories_page}{<\code{character}> Name of the stories page. Example: "Montréal stories"}
 
-\item{inst_prefix}{<\code{character}> Prefix for tilesets. Example: "mtl"}
+\item{inst_prefix}{<\code{character}> Prefix for the instance, used for both database
+schema and tileset prefixes. Example: "mtl"}
 
 \item{mapbox_username}{<\code{character}> Mapbox username. Example: "curbcut"}
 

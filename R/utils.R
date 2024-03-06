@@ -29,10 +29,10 @@ ordinal_form <- function(lang, x, en_first = "first") {
   # French
   if (lang == "fr") {
     return(switch(as.character(x),
-      "1" = "premier",
-      "2" = "deuxi\u00e8me",
-      "3" = "troisi\u00e8me",
-      paste0(as.character(x), "i\u00e8me")
+                  "1" = "premier",
+                  "2" = "deuxi\u00e8me",
+                  "3" = "troisi\u00e8me",
+                  paste0(as.character(x), "i\u00e8me")
     ))
   }
 
@@ -42,26 +42,26 @@ ordinal_form <- function(lang, x, en_first = "first") {
       form <- "th "
     } else {
       form <- switch(as.character(x %% 10),
-        "1" = "st",
-        "2" = "nd",
-        "3" = "rd",
-        "th"
+                     "1" = "st",
+                     "2" = "nd",
+                     "3" = "rd",
+                     "th"
       )
     }
     paste0(x, form)
   } else {
     switch(as.character(x),
-      "1" = en_first,
-      "2" = "second",
-      "3" = "third",
-      "4" = "fourth",
-      "5" = "fifth",
-      "6" = "sixth",
-      "7" = "seventh",
-      "8" = "eighth",
-      "9" = "ninth",
-      "10" = "tenth",
-      paste0(as.character(x), "th")
+           "1" = en_first,
+           "2" = "second",
+           "3" = "third",
+           "4" = "fourth",
+           "5" = "fifth",
+           "6" = "sixth",
+           "7" = "seventh",
+           "8" = "eighth",
+           "9" = "ninth",
+           "10" = "tenth",
+           paste0(as.character(x), "th")
     )
   }
 }
@@ -129,9 +129,9 @@ ntile <- function(x, n) {
     smaller_size <- as.integer(floor(size))
     larger_threshold <- larger_size * n_larger
     bins <- ifelse(x <= larger_threshold,
-      (x + (larger_size - 1L)) / larger_size,
-      (x + (-larger_threshold + smaller_size - 1L)) /
-        smaller_size + n_larger
+                   (x + (larger_size - 1L)) / larger_size,
+                   (x + (-larger_threshold + smaller_size - 1L)) /
+                     smaller_size + n_larger
     )
     as.integer(floor(bins))
   }
@@ -499,10 +499,9 @@ grab_DA_ID_from_bslike <- function(scale, select_id) {
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   if (is.null(dat)) {
-    db_df <- sprintf("%s_conn", scale)
-    call <- sprintf("SELECT DA_ID FROM %s WHERE ID = '%s'", scale, select_id)
-    out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
+    out <- db_get(select = "DA_ID", from = scale, where = list(ID = select_id))
     out <- unname(unlist(out))
+
     # If length is zero, it means the selection was for another scale before,
     # and the user zoomed on building. Return as if it's NA.
     if (length(out) == 0) out <- NA
@@ -537,13 +536,10 @@ grab_row_from_bslike <- function(scale, select_id, cols = "*") {
   dat <- get0(scale, envir = .GlobalEnv)
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
-  if (is.null(dat)) {
-    db_df <- sprintf("%s_conn", scale)
-    cols <- paste0(cols, collapse = ", ")
-    call <- sprintf("SELECT %s FROM %s WHERE ID = '%s'", cols, scale, select_id)
-    out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
+  out <- if (is.null(dat)) {
+    db_get(select = cols, from = scale, where = list(ID = select_id))
   } else {
-    out <- dat[dat$ID == select_id, ]
+    dat[dat$ID == select_id, ]
   }
 
   return(out)
@@ -570,9 +566,7 @@ grab_df_from_bslike <- function(scale) {
   }
 
   # If not in the global environment
-  db_df <- sprintf("%s_conn", scale)
-  call <- sprintf("SELECT * FROM %s", scale)
-  out <- do.call(DBI::dbGetQuery, list(as.name(db_df), call))
+  out <- db_get(select = "*", from = scale)
 
   return(out)
 }

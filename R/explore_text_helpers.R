@@ -110,8 +110,8 @@ explore_context <- function(region, select_id, scale, switch_DA, zoom_levels,
 
     # Switch the scale
     scale_df <- scales_dictionary[is_scale_in(scales_dictionary$scale,
-      treated_scale,
-      vectorized = TRUE
+                                              treated_scale,
+                                              vectorized = TRUE
     ), ]
   }
 
@@ -260,8 +260,8 @@ explore_get_parent_data <- function(var, select_id, scale, col = "var_left",
   # place explorer generation.)
   parent_data <- tryCatch(
     data_get(parent_string,
-      scale = scale, vr_vl = col,
-      data_path = data_path
+             scale = scale, vr_vl = col,
+             data_path = data_path
     ),
     error = function(e) {
       data <- get_from_globalenv(scale)

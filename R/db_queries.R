@@ -7,7 +7,7 @@
 #' @param what <`function`> The database operation to perform. This should be
 #' a function capable of accepting a database connection and additional arguments.
 #' Usually a DBI function, like `DBI::dbGetQuery`.
-#' @param args <`list`> Additional arguments to pass to the what} function along
+#' @param args <`list`> Additional arguments to pass to the `what` function along
 #' with the connection.
 #'
 #' @return Returns the output of the database operation.
@@ -18,7 +18,11 @@ db_operation <- function(what, args) {
   conn <- pool::poolCheckout(db_pool)
 
   # Apply the query
-  out <- do.call(what, c(conn, args))
+  out <- tryCatch(do.call(what, c(conn, args)),
+                  error = function(e) {
+                    pool::poolReturn(conn)
+                    stop(e$message)
+                  })
 
   # Return the connection to the pool of connections
   pool::poolReturn(conn)
@@ -59,7 +63,11 @@ db_get_helper <- function(call) {
 db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst_prefix")) {
 
   # Convert select vector into a comma-separated string of quoted column names
-  cols <- paste0('"', select, '"', collapse = ", ")
+  cols <- if (length(select) == 1 && select[1] == "*") {
+    "*"
+  } else {
+    paste0('"', select, '"', collapse = ", ")
+  }
 
   # Start building the SQL query
   call <- sprintf("SELECT %s FROM %s.%s", cols, schema, from)
