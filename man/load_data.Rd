@@ -10,7 +10,7 @@ load_data(
   site_name,
   site_url,
   stories_page,
-  tileset_prefix,
+  inst_prefix,
   mapbox_username,
   default_random_address,
   map_zoom,
@@ -30,7 +30,7 @@ will be assigned. Default is 1, referring to the global environment.}
 
 \item{stories_page}{<\code{character}> Name of the stories page. Example: "Montréal stories"}
 
-\item{tileset_prefix}{<\code{character}> Prefix for tilesets. Example: "mtl"}
+\item{inst_prefix}{<\code{character}> Prefix for tilesets. Example: "mtl"}
 
 \item{mapbox_username}{<\code{character}> Mapbox username. Example: "curbcut"}
 

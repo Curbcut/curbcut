@@ -57,7 +57,7 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
   stopifnot(shiny::is.reactive(data_colours))
 
   shiny::moduleServer(id, function(input, output, session) {
-    tileset_prefix <- get_from_globalenv("tileset_prefix")
+    inst_prefix <- get_from_globalenv("inst_prefix")
 
     # Make complete sure the map is loaded: Check every x ms if the map is
     # loaded, and in the case it's not loaded, load it!
@@ -95,7 +95,7 @@ map_js_server <- function(id, r, tile, coords, zoom, vars = r[[id]]$vars,
 
     # Form the tileset with stability. Do not get it to trigger the cc.map::map_choropleth
     # if it hasn't changed.
-    tileset <- shiny::reactive(sprintf("%s_%s", tileset_prefix, tile()))
+    tileset <- shiny::reactive(sprintf("%s_%s", inst_prefix, tile()))
     tileset_trigger <- shiny::reactiveVal(NULL)
     shiny::observeEvent(tileset(), {
       if (is.null(tileset_trigger())) {

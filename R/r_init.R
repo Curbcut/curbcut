@@ -37,6 +37,7 @@ r_init <- function(server_session,
   # Initate
   r <- shiny::reactiveValues(
     server_session = shiny::reactiveVal(server_session),
+    db_conn = shiny::reactiveVal(aws_connect()),
     lang = shiny::reactiveVal(lang_init),
     region = shiny::reactiveVal(regions_dictionary$region[1]),
     default_select_ids = shiny::reactiveVal(NULL),

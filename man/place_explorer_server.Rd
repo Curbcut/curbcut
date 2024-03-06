@@ -12,7 +12,7 @@ place_explorer_server(
   map_zoom = get_from_globalenv("map_zoom"),
   map_loc = get_from_globalenv("map_loc"),
   mapbox_username = get_from_globalenv("mapbox_username"),
-  tileset_prefix = get_from_globalenv("tileset_prefix"),
+  inst_prefix = get_from_globalenv("inst_prefix"),
   map_base_style = get_from_globalenv("map_base_style"),
   temp_folder = get_from_globalenv("temp_folder")
 )
@@ -39,9 +39,9 @@ this value is retrieved from the \code{map_loc} variable in the global environme
 \item{mapbox_username}{<\code{character}> Mapbox account username. Defaults to
 grabbing the \code{mapbox_username} object from the global environment.}
 
-\item{tileset_prefix}{<\code{character}> Prefix attached to every tileset. Should
+\item{inst_prefix}{<\code{character}> Prefix attached to every tileset. Should
 correspond to the Curbcut city, e.g. \code{mtl}. Defaults to grabbing the
-\code{tileset_prefix} object from the global environment.}
+\code{inst_prefix} object from the global environment.}
 
 \item{map_base_style}{<\code{character}> The mapbox basemap style url.
 See https://docs.mapbox.com/api/maps/#mapbox-styles}

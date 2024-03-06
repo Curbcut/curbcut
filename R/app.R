@@ -42,6 +42,7 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
 
     ## Heartbeat function to keep app alive --------------------------------------
     heartbeat(input)
+
   })
 }
 

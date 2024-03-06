@@ -13,7 +13,8 @@
 #' @param site_name <`character`> Name of the site. Example: "Curbcut Montréal"
 #' @param site_url <`character`> URL of the site. Example: "https://montreal.curbcut.ca"
 #' @param stories_page <`character`> Name of the stories page. Example: "Montréal stories"
-#' @param tileset_prefix <`character`> Prefix for tilesets. Example: "mtl"
+#' @param inst_prefix <`character`> Prefix for the instance, used for both database
+#' schema and tileset prefixes. Example: "mtl"
 #' @param mapbox_username <`character`> Mapbox username. Example: "curbcut"
 #' @param default_random_address <`character`> Default address placeholder for
 #' location lock. Example: "845 Sherbrooke Ouest, Montréal, Quebec"
@@ -25,7 +26,7 @@
 #' @export
 load_data <- function(data_folder = "data", pos = 1,
                       site_name, site_url, stories_page,
-                      tileset_prefix, mapbox_username,
+                      inst_prefix, mapbox_username,
                       default_random_address, map_zoom, map_loc) {
   # Load all .qs and .qsm files that are in the root of the data folder
   data_files <- list.files(data_folder, full.names = TRUE)
@@ -78,9 +79,16 @@ load_data <- function(data_folder = "data", pos = 1,
   assign("site_name", site_name, envir = as.environment(pos))
   assign("site_url", site_url, envir = as.environment(pos))
   assign("stories_page", stories_page, envir = as.environment(pos))
-  assign("tileset_prefix", tileset_prefix, envir = as.environment(pos))
+  assign("inst_prefix", inst_prefix, envir = as.environment(pos))
   assign("mapbox_username", mapbox_username, envir = as.environment(pos))
   assign("default_random_address", default_random_address, envir = as.environment(pos))
   assign("map_zoom", map_zoom, envir = as.environment(pos))
   assign("map_loc", map_loc, envir = as.environment(pos))
+
+  # Creation of the pooled database connections, and the exit
+  db_pool <- aws_pool()
+  assign("db_pool", db_pool, envir = as.environment(pos))
+  do.call(shiny::onStop, args = list(\() pool::poolClose(db_pool)),
+          envir = as.environment(pos))
+
 }

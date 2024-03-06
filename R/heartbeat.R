@@ -23,7 +23,7 @@
 #' the usual Shiny timeout. This prevents the app from running indefinitely if
 #' the user forgets to close it.
 #' @export
-heartbeat <- function(input) {
+heartbeat <- function(r, input) {
   # Update the reactive every time an input changes
   timeout_start <- shiny::eventReactive(
     shiny::reactiveValuesToList(input),
@@ -35,6 +35,6 @@ heartbeat <- function(input) {
   # stop and the app can disconnect with usual Shiny timeout.
   shiny::observe({
     rerun <- timeout_start() + 28800 > Sys.time()
-    if (rerun) shiny::invalidateLater(10000)
+    if (rerun) shiny::invalidateLater(10000, session = r$server_session())
   })
 }

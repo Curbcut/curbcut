@@ -801,6 +801,15 @@ match_schema_to_z_col <- function(data, time, col, vl_vr,
   )
 }
 
+#' Are we currently in production environment?
+#'
+#' @return A boolean telling if we are or not in a production environment
+#' @export
+in_prod <- function() {
+  !grepl("(/curbcut$)|(/curbcut/tests/testthat$)|(curbcut.Rcheck/tests/testthat)",
+         getwd())
+}
+
 #' Get the data path for Curbcut
 #'
 #' This function retrieves the data path for testing purposes. It looks for the
@@ -812,7 +821,7 @@ match_schema_to_z_col <- function(data, time, col, vl_vr,
 #' @export
 get_data_path <- function() {
   # Are you in the `curbcut` repo developping?
-  cc_repo <- grepl("(/curbcut$)|(/curbcut/tests/testthat$)|(curbcut.Rcheck/tests/testthat)", getwd())
+  cc_repo <- !in_prod()
 
   # If not, return data/ as default
   if (!cc_repo) {
