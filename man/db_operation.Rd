@@ -10,6 +10,9 @@ db_operation(what, args)
 \item{what}{<\code{function}> The database operation to perform. This should be
 a function capable of accepting a database connection and additional arguments.
 Usually a DBI function, like \code{DBI::dbGetQuery}.}
+
+\item{args}{<\code{list}> Additional arguments to pass to the \code{what} function along
+with the connection.}
 }
 \value{
 Returns the output of the database operation.

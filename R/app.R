@@ -41,7 +41,13 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
     settings_advanced(r = r, input = input, show_lang_button)
 
     ## Heartbeat function to keep app alive --------------------------------------
-    heartbeat(input)
+    heartbeat(r = r, input = input)
+
+    ## Ping the DB and print time of execution -----------------------------------
+    shiny::observe({
+      print(bench::mark(db_get_helper("SELECT 1;"))$median)
+      shiny::invalidateLater(20000)
+    })
 
   })
 }

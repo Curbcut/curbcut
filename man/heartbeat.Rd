@@ -7,6 +7,9 @@
 heartbeat(r, input)
 }
 \arguments{
+\item{r}{<\code{reactiveValues}> The reactive values shared between modules and
+pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
+
 \item{input}{<\code{input}> A reactive input object that contains all of the input
 values from the user interface. As this function will be placed in \code{server.R}
 in the \code{\link[shiny]{shinyServer}} function, this will usually be

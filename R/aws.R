@@ -60,7 +60,15 @@ aws_get_rootcert <- function() {
 
   # When in production, the certificate must be in this Docker directory
   if (prod) {
-    root_cert_path <- '/etc/ssl/certs/global-bundle.pem'
+
+    root_cert_path <- if (Sys.info()["sysname"] == "Windows") {
+      "etc/ssl/certs/global-bundle.pem" # Adjusted for Windows
+    } else {
+      "/etc/ssl/certs/global-bundle.pem" # Unix-like path. The first
+      # / is necessary for the docker image, as it's the absolute path from the root
+      # of the filesystem, where the bundle has been copied.
+    }
+
     if (!file.exists(root_cert_path)) {
       stop("SSL root certificate not found at ", root_cert_path, call. = FALSE)
     }
@@ -221,7 +229,7 @@ aws_pool <- function() {
       user = Sys.getenv("CURBCUT_PROD_DB_USER"),
       sslmode = 'verify-full',
       sslrootcert = aws_get_rootcert(),
-      minSize = 5,
+      minSize = if (in_prod()) 5 else 1,
       maxSize = Inf,
       idleTimeout = 60*10, # When created, the pool will initialize minSize
       # connections, and keeps them around until they’re requested. If all the

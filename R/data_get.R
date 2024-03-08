@@ -502,6 +502,12 @@ filter_region <- function(data, scale, region) {
   # Vector of IDs for the current region and scale
   scales <- regions_dictionary$scales[regions_dictionary$region == region][[1]]
   id_reg <- scales[[scale]]
+
+  if (is.null(id_reg)) {
+    stop(sprintf("Scale `%s` is not in the regions_dictionary for region `%s`",
+                 scale, region))
+  }
+
   data <- data[data$ID %in% id_reg, ]
 
   # Return filtered data

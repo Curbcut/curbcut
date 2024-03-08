@@ -2,9 +2,8 @@
 #'
 #' This function reads `.qs` and `.qsm` files located in the root of the data
 #' folder specified by the `data_folder` argument. Additionally, it establishes
-#' connections to `.sqlite` databases present in the data folder. Finally, it
-#' sets default Mapbox configurations and assigns other necessary variables to
-#' the global environment.
+#' connections to postgres database. Finally, it sets default Mapbox
+#' configurations and assigns other necessary variables to the global environment.
 #'
 #' @param data_folder <`character`> Specifies the folder containing the data
 #' files and databases to be loaded. Default is "data".
@@ -41,16 +40,6 @@ load_data <- function(data_folder = "data", pos = 1,
       assign(object_name, qs::qread(x), envir = as.environment(pos))
     }
   ))
-
-  # Connect to the dbs
-  dbs <- list.files(data_folder, full.names = TRUE, recursive = FALSE)
-  dbs <- subset(dbs, grepl(".sqlite$", dbs))
-
-  lapply(dbs, \(x) {
-    connection_name <- paste0(s_extract("(?<=data/).*?(?=\\.)", x), "_conn")
-    assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
-  }) |> invisible()
-
 
   # Map defaults
   map_token <- paste0(
