@@ -45,8 +45,24 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
 
     ## Ping the DB and print time of execution -----------------------------------
     shiny::observe({
-      print(bench::mark(db_get_helper("SELECT 1;"))$median)
-      shiny::invalidateLater(20000)
+
+      # Invalidate this observer every 20 seconds (20000 milliseconds)
+      shiny::invalidateLater(20000, session = getDefaultReactiveDomain())
+
+      # Capture start time
+      start_time <- Sys.time()
+
+      # Execute the database query
+      result <- db_get_helper("SELECT 1;")
+
+      # Capture end time
+      end_time <- Sys.time()
+
+      # Calculate execution time
+      execution_time <- end_time - start_time
+
+      # Print the execution time
+      print(paste0("DB execution time (seconds): ", execution_time))
     })
 
   })
