@@ -243,7 +243,10 @@ aws_pool <- function() {
       validateQuery = "SELECT 1"
     )
   }, error = function(e) {
-    stop("Failed to connect to the database: ", e$message, call. = FALSE)
+    stop(sprintf(paste0("Failed to connect to the database. Are the system's ",
+                        "environment AWS SECRET variable correctly the ones of ",
+                        "the user `%s`??: %s"),
+                 Sys.getenv("CURBCUT_PROD_DB_USER"), e$message), call. = FALSE)
   })
 
   return(conn)
