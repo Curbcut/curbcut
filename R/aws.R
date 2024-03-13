@@ -55,11 +55,11 @@ aws_generate_rds_auth_token <- function() {
 #' @return A character string with the path to the SSL root certificate.
 aws_get_rootcert <- function() {
 
-  # Are we in production?
-  prod <- in_prod()
+  # Are we in the Docker container?
+  in_docker <- Sys.getenv("RUNNING_IN_DOCKER")
 
   # When in production, the certificate must be in this Docker directory
-  if (prod) {
+  if (in_docker != "") {
 
     root_cert_path <- if (Sys.info()["sysname"] == "Windows") {
       "etc/ssl/certs/global-bundle.pem" # Adjusted for Windows
