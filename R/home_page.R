@@ -13,7 +13,7 @@
 home_server <- function(id = "home", r) {
   shiny::moduleServer(id, function(input, output, session) {
     discover_cards <- get_from_globalenv("discover_cards")
-    news_cards <- get_from_globalenv("news_cards")
+    news_cards <- get_from_globalenv("news_cards", stop_if_missing = FALSE)
     modules <- get_from_globalenv("modules")
 
     # Detect page clicks on other pages and update the active page accordingly
@@ -234,7 +234,7 @@ home_UI <- function(id = "home", h1_first_line, h1_second_line, placeholder_vide
     h1_second_line = h1_second_line,
     pages = pages,
     c_city_svg = get_from_globalenv("c_city_svg"),
-    news_cards = get_from_globalenv("news_cards"),
+    news_cards = get_from_globalenv("news_cards", stop_if_missing = FALSE),
     discover_cards = final_sample,
     team_cards = get_from_globalenv("team_cards"),
     contributors = get_from_globalenv("contributors"),
