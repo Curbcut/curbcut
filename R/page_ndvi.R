@@ -248,7 +248,7 @@ map_scale_fill_ndvi <- function(vars, time) {
     # Update the `r[[id]]$vars` reactive
     update_vars(
       id = id, r = r, var_left = var_left,
-      var_right = var_right, widget_time = widget_time
+      var_right = var_right, scale = r[[id]]$scale, widget_time = widget_time
     )
 
     # Sidebar
