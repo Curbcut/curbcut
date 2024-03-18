@@ -3,6 +3,8 @@
 #' This function is used to create a "heartbeat" that keeps the Curbcut app
 #' running in the background even if the user is not interacting with it.
 #'
+#' @param r <`reactiveValues`> The reactive values shared between modules and
+#' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param input <`input`> A reactive input object that contains all of the input
 #' values from the user interface. As this function will be placed in `server.R`
 #' in the \code{\link[shiny]{shinyServer}} function, this will usually be
@@ -23,7 +25,7 @@
 #' the usual Shiny timeout. This prevents the app from running indefinitely if
 #' the user forgets to close it.
 #' @export
-heartbeat <- function(input) {
+heartbeat <- function(r, input) {
   # Update the reactive every time an input changes
   timeout_start <- shiny::eventReactive(
     shiny::reactiveValuesToList(input),
@@ -35,6 +37,6 @@ heartbeat <- function(input) {
   # stop and the app can disconnect with usual Shiny timeout.
   shiny::observe({
     rerun <- timeout_start() + 28800 > Sys.time()
-    if (rerun) shiny::invalidateLater(10000)
+    if (rerun) shiny::invalidateLater(10000, session = r$server_session())
   })
 }

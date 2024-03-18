@@ -10,7 +10,7 @@ load_data(
   site_name,
   site_url,
   stories_page,
-  tileset_prefix,
+  inst_prefix,
   mapbox_username,
   default_random_address,
   map_zoom,
@@ -30,7 +30,8 @@ will be assigned. Default is 1, referring to the global environment.}
 
 \item{stories_page}{<\code{character}> Name of the stories page. Example: "Montréal stories"}
 
-\item{tileset_prefix}{<\code{character}> Prefix for tilesets. Example: "mtl"}
+\item{inst_prefix}{<\code{character}> Prefix for the instance, used for both database
+schema and tileset prefixes. Example: "mtl"}
 
 \item{mapbox_username}{<\code{character}> Mapbox username. Example: "curbcut"}
 
@@ -49,7 +50,6 @@ SQLite connections are established.
 \description{
 This function reads \code{.qs} and \code{.qsm} files located in the root of the data
 folder specified by the \code{data_folder} argument. Additionally, it establishes
-connections to \code{.sqlite} databases present in the data folder. Finally, it
-sets default Mapbox configurations and assigns other necessary variables to
-the global environment.
+connections to postgres database. Finally, it sets default Mapbox
+configurations and assigns other necessary variables to the global environment.
 }

@@ -90,7 +90,7 @@ zoning_server <- function(id, r) {
     map_loc <- sc$centroid[which.max(sc$population)][[1]]
     map_zoom <- 12
     map_base_style <- get_from_globalenv("map_base_style")
-    tileset_prefix <- get_from_globalenv("tileset_prefix")
+    inst_prefix <- get_from_globalenv("inst_prefix")
 
     zoning_lots <- get_from_globalenv("zoning_lots")
     zones <- get_from_globalenv("zones")
@@ -433,7 +433,7 @@ zoning_server <- function(id, r) {
         latitude = map_loc[2],
         zoom = map_zoom,
         map_style_id = map_base_style,
-        tileset_prefix = tileset_prefix,
+        inst_prefix = inst_prefix,
         stories = NULL,
         stories_min_zoom = 13
       )

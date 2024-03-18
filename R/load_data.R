@@ -2,9 +2,8 @@
 #'
 #' This function reads `.qs` and `.qsm` files located in the root of the data
 #' folder specified by the `data_folder` argument. Additionally, it establishes
-#' connections to `.sqlite` databases present in the data folder. Finally, it
-#' sets default Mapbox configurations and assigns other necessary variables to
-#' the global environment.
+#' connections to postgres database. Finally, it sets default Mapbox
+#' configurations and assigns other necessary variables to the global environment.
 #'
 #' @param data_folder <`character`> Specifies the folder containing the data
 #' files and databases to be loaded. Default is "data".
@@ -13,7 +12,8 @@
 #' @param site_name <`character`> Name of the site. Example: "Curbcut Montréal"
 #' @param site_url <`character`> URL of the site. Example: "https://montreal.curbcut.ca"
 #' @param stories_page <`character`> Name of the stories page. Example: "Montréal stories"
-#' @param tileset_prefix <`character`> Prefix for tilesets. Example: "mtl"
+#' @param inst_prefix <`character`> Prefix for the instance, used for both database
+#' schema and tileset prefixes. Example: "mtl"
 #' @param mapbox_username <`character`> Mapbox username. Example: "curbcut"
 #' @param default_random_address <`character`> Default address placeholder for
 #' location lock. Example: "845 Sherbrooke Ouest, Montréal, Quebec"
@@ -25,7 +25,7 @@
 #' @export
 load_data <- function(data_folder = "data", pos = 1,
                       site_name, site_url, stories_page,
-                      tileset_prefix, mapbox_username,
+                      inst_prefix, mapbox_username,
                       default_random_address, map_zoom, map_loc) {
   # Load all .qs and .qsm files that are in the root of the data folder
   data_files <- list.files(data_folder, full.names = TRUE)
@@ -40,16 +40,6 @@ load_data <- function(data_folder = "data", pos = 1,
       assign(object_name, qs::qread(x), envir = as.environment(pos))
     }
   ))
-
-  # Connect to the dbs
-  dbs <- list.files(data_folder, full.names = TRUE, recursive = FALSE)
-  dbs <- subset(dbs, grepl(".sqlite$", dbs))
-
-  lapply(dbs, \(x) {
-    connection_name <- paste0(s_extract("(?<=data/).*?(?=\\.)", x), "_conn")
-    assign(connection_name, DBI::dbConnect(RSQLite::SQLite(), x), envir = as.environment(pos))
-  }) |> invisible()
-
 
   # Map defaults
   map_token <- paste0(
@@ -78,9 +68,16 @@ load_data <- function(data_folder = "data", pos = 1,
   assign("site_name", site_name, envir = as.environment(pos))
   assign("site_url", site_url, envir = as.environment(pos))
   assign("stories_page", stories_page, envir = as.environment(pos))
-  assign("tileset_prefix", tileset_prefix, envir = as.environment(pos))
+  assign("inst_prefix", inst_prefix, envir = as.environment(pos))
   assign("mapbox_username", mapbox_username, envir = as.environment(pos))
   assign("default_random_address", default_random_address, envir = as.environment(pos))
   assign("map_zoom", map_zoom, envir = as.environment(pos))
   assign("map_loc", map_loc, envir = as.environment(pos))
+
+  # Creation of the pooled database connections, and the exit
+  db_pool <- aws_pool()
+  assign("db_pool", db_pool, envir = as.environment(pos))
+  do.call(shiny::onStop, args = list(\() pool::poolClose(db_pool)),
+          envir = as.environment(pos))
+
 }

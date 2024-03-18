@@ -84,7 +84,7 @@ test_setup <- function(pos = 1, folder = get_data_path()) {
     site_name = "Curbcut Montreal",
     site_url = "https://montreal.curbcut.ca",
     stories_page = "Montreal stories",
-    tileset_prefix = "mtl",
+    inst_prefix = "mtl",
     mapbox_username = "curbcut",
     default_random_address = "845 Sherbrooke Ouest, Montreal, Quebec",
     map_zoom = 9.9,

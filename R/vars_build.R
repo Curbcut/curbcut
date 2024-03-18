@@ -155,43 +155,6 @@ vars_build <- function(var_left, var_right = " ", scale, time,
   time <- list(var_left = vl[["closest_year"]])
   if (all(vr != " ")) time$var_right <- vr[["closest_year"]]
 
-  # # Add the data storage type to vars
-  # class(vars$var_left) <- c(class(vars$var_left),
-  #                           get_data_storage(scale, vars$var_left, data_path))
-  # if (var_right != " ") {
-  #   class(vars$var_right) <- c(class(vars$var_right),
-  #                              get_data_storage(scale, vars$var_right, data_path))
-  # }
-
-
   # Return
   return(list(vars = vars, time = time))
 }
-
-# get_data_storage <- function(scale, var, data_path) {
-#
-#   # File path, as qs
-#   path <- sprintf("%s%s/%s.qs", data_path, scale, var)
-#   # If it exists, return `qs`
-#   if (file.exists(path)) return("qs")
-#
-#   # Grab the right connection
-#   con <- get_from_globalenv(sprintf("%s_conn", scale), stop_if_missing = FALSE)
-#   if (is.null(con)) {
-#     stop(glue::glue_safe(
-#       "Could not read data from `{path}`. ",
-#       "Please check that the file exists and is readable."
-#     ))
-#   }
-#
-#   # Search in the sqlite_master if the table exists
-#   tbl_sql <- DBI::dbGetQuery(con,
-#                              sprintf(paste0("SELECT name FROM sqlite_master WHERE ",
-#                                             "type='table' AND name='%s'"), var))[1,]
-#   if (!is.na(tbl_sql)) return("sqlite")
-#
-#   stop(glue::glue_safe(
-#     "Could not read data from `{path}`, nor from a `{scale}.sqlite`. ",
-#     "Please check that the file exists and is readable."
-#   ))
-# }

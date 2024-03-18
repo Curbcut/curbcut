@@ -99,7 +99,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
 
       map_zoom <- get_from_globalenv("map_zoom")
       map_loc <- get_from_globalenv("map_loc")
-      tileset_prefix <- get_from_globalenv("tileset_prefix")
+      inst_prefix <- get_from_globalenv("inst_prefix")
       map_token <- get_from_globalenv("map_token")
       map_base_style <- get_from_globalenv("map_base_style")
       mapbox_username <- get_from_globalenv("mapbox_username")
@@ -114,7 +114,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
           latitude = map_loc[["lon"]],
           zoom = map_zoom,
           map_style_id = map_base_style,
-          tileset_prefix = tileset_prefix,
+          inst_prefix = inst_prefix,
           stories = stories,
           stories_min_zoom = 13
         )
@@ -224,7 +224,7 @@ create_ui_server_mods <- function(modules, pos = 1) {
       # Update the `r[[id]]$vars` reactive
       update_vars(
         id = id, r = r, var_left = var_left,
-        var_right = var_right, widget_time = widget_time
+        var_right = var_right, scale = r[[id]]$scale, widget_time = widget_time
       )
 
       # Sidebar

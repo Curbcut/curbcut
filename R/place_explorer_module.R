@@ -18,9 +18,9 @@
 #' this value is retrieved from the \code{map_loc} variable in the global environment.
 #' @param mapbox_username <`character`> Mapbox account username. Defaults to
 #' grabbing the `mapbox_username` object from the global environment.
-#' @param tileset_prefix <`character`> Prefix attached to every tileset. Should
+#' @param inst_prefix <`character`> Prefix attached to every tileset. Should
 #' correspond to the Curbcut city, e.g. `mtl`. Defaults to grabbing the
-#' `tileset_prefix` object from the global environment.
+#' `inst_prefix` object from the global environment.
 #' @param map_base_style <`character`> The mapbox basemap style url.
 #' See https://docs.mapbox.com/api/maps/#mapbox-styles
 #' @param temp_folder <`character`> The temporary folder of the app. By default
@@ -35,7 +35,7 @@ place_explorer_server <- function(id, r,
                                   map_zoom = get_from_globalenv("map_zoom"),
                                   map_loc = get_from_globalenv("map_loc"),
                                   mapbox_username = get_from_globalenv("mapbox_username"),
-                                  tileset_prefix = get_from_globalenv("tileset_prefix"),
+                                  inst_prefix = get_from_globalenv("inst_prefix"),
                                   map_base_style = get_from_globalenv("map_base_style"),
                                   temp_folder = get_from_globalenv("temp_folder")) {
   shiny::moduleServer(id, function(input, output, session) {
@@ -66,7 +66,7 @@ place_explorer_server <- function(id, r,
         latitude = map_loc[2],
         zoom = map_zoom,
         map_style_id = map_base_style,
-        tileset_prefix = tileset_prefix,
+        inst_prefix = inst_prefix,
         stories = NULL
       )
     })

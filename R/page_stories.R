@@ -21,7 +21,7 @@ stories_server <- function(id, r) {
     map_loc <- get_from_globalenv("map_loc")
     map_zoom <- get_from_globalenv("map_zoom")
     map_base_style <- get_from_globalenv("map_base_style")
-    tileset_prefix <- get_from_globalenv("tileset_prefix")
+    inst_prefix <- get_from_globalenv("inst_prefix")
 
     # Sidebar
     sidebar_server(id = id, r = r)
@@ -36,7 +36,7 @@ stories_server <- function(id, r) {
         latitude = map_loc[2],
         zoom = map_zoom,
         map_style_id = map_base_style,
-        tileset_prefix = tileset_prefix,
+        inst_prefix = inst_prefix,
         stories = stories,
         stories_min_zoom = 2
       )
