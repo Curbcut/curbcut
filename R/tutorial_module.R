@@ -67,7 +67,7 @@ tutorial_server <- function(id, r, skip_elements = shiny::reactive(NULL)) {
           ))
         }
       },
-      ignoreNULL = FALSE
+      ignoreNULL = FALSE, once = TRUE
     )
 
     shinyjs::onclick(
