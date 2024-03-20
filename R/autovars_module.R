@@ -525,12 +525,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year,
 
     # Update the schemas!
     shiny::observe({
-      # if (is.null(schemas)) {
-      #   return(NULL)
-      # }
-      # if (is.null(schema_reactive())) {
-      #   return(NULL)
-      # }
 
       final_schemas <- page$additional_schemas[[1]]
       for (i in names(schema_reactive())) {
@@ -539,9 +533,6 @@ autovars_server <- function(id, r, main_dropdown_title, default_year,
         if (is.null(input_val)) next
         final_schemas[[i]] <- input_val
       }
-      # if (is.null(final_schemas)) {
-      #   return(NULL)
-      # }
 
       # Grab the 'real' time (the one the user will see) so it can accurately
       # inform the schema,

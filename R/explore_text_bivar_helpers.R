@@ -153,3 +153,58 @@ explore_text_bivar_adjective.default <- function(var, left, positive,
 
   return(sprintf(start, string))
 }
+
+#' Update Schema Placeholders in Right Variable Explanation Text
+#'
+#' This function updates placeholders within the explanation text for the
+#' "right" variable in bivariate analysis, based on the default schema values
+#' specified in the data's attributes. It handles special formatting for time
+#' values and ensures that schema placeholders like "__transportationtime__" are
+#' replaced with actual values from the data's attributes.
+#'
+#' @param right_exp <`character`> A single character string containing the
+#' explanation text for the right variable. This text may include placeholders
+#' for schema values, formatted as "__transportationtime__".
+#' @param data <`data.frame`> A data frame that contains the variables and
+#' attributes necessary for the analysis. This data frame must have a
+#' `schema_var_right` attribute that lists schema names and their corresponding
+#' default values, and a `breaks_var_var_right` attribute that specifies how to
+#' extract specific values from the schema.
+#'
+#' @details The function first checks if the explanation text contains any
+#' schema placeholders. If so, it iterates through each schema defined in the
+#' data's `schema_var_right` attribute, extracts the appropriate value based on
+#' the `breaks_var_var_right` attribute, and replaces the placeholder in the
+#' explanation text with the actual value. For time schemas, it also converts
+#' numeric time values to a character representation. The function performs
+#' these replacements for all occurrences of each schema placeholder found in
+#' the text.
+#'
+#' @return <`character`> The modified explanation text with all schema
+#' placeholders replaced by their corresponding values.
+explore_text_bivar_right_var_default_schema <- function(right_exp, data) {
+  if (grepl("__.*__", right_exp)) {
+    schemas_col <- attributes(data)$schema_var_right
+    for (sch in names(schemas_col)) {
+      value <- schemas_col[[sch]]
+      value <- s_extract(value, attributes(data)$breaks_var_var_right)
+      value <- gsub("_", "", value)
+
+      # Special case if time needs to be seen as character
+      if (sch == "time") {
+        value <- time_chr(var, value)
+      }
+
+      scm <- sprintf("__%s__", sch)
+
+      # Determine the number of occurrences to replace
+      num_replacements <- min(length(value), gregexpr(scm, right_exp)[[1]] |> length())
+
+      # Loop through each occurrence and replace with corresponding value
+      for (i in 1:num_replacements) {
+        right_exp <- sub(scm, value[i], right_exp, fixed = TRUE)
+      }
+    }
+  }
+  return(right_exp)
+}

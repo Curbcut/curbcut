@@ -168,6 +168,17 @@ data_get.bivar <- function(vars, scale, region,
   }
   vr <- data_get_qs(vars$var_right, scale = scale, data_path = data_path)
 
+  # If there is more to schemas than time, that means there are many possibilities
+  # for right-hand variable.
+  vr_schemas <- attributes(vr)$schema
+  vr_schemas <- vr_schemas[names(vr_schemas) != "time"]
+  vr_brks_v <- attributes(vr)$breaks_var
+  var_right <- vars$var_right
+  for (s in vr_schemas) {
+    col <- which(s_extract(s, vr_brks_v) == s_extract(s, names(vr)))
+    vr <- vr[c(1, col)]
+  }
+
   # Append breaks
   all_data <- mapply(
     \(var, data, rename_col) {
@@ -193,13 +204,13 @@ data_get.bivar <- function(vars, scale, region,
   other_vl_schemas <- all_data[[1]]$attr$schema_var_left
   other_vl_schemas <- other_vl_schemas[names(other_vl_schemas) != "time"]
   if (length(other_vl_schemas) > 0) {
-    # possible_other_schemas <- NULL
-    # for (i in names(other_vl_schemas)) {
-    sch_rege <- "_\\d{1,2}_" # other_vl_schemas[[i]]
-    possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
-    possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
-    possible_other_schemas <- gsub("_", "", possible_other_schemas)
-    # }
+    possible_other_schemas <- NULL
+    for (i in names(other_vl_schemas)) {
+      sch_rege <- other_vl_schemas[[i]]
+      possible_other_schemas <- grep(sch_rege, names(all_data[[1]]$data), value = TRUE)
+      possible_other_schemas <- s_extract(sch_rege, possible_other_schemas)
+      possible_other_schemas <- gsub("_", "", possible_other_schemas)
+    }
   }
 
   # Keep left and right breaks
@@ -229,7 +240,7 @@ data_get.bivar <- function(vars, scale, region,
   if (length(other_vl_schemas) > 0) {
     for (i in possible_vl_times) {
       for (s in possible_other_schemas) {
-        vr_year <- var_closest_year(vars$var_right, i)$closest_year
+        vr_year <- var_closest_year(var_right, i)$closest_year
         out <- paste(data[[sprintf("var_left_%s_%s_q3", s, i)]],
                      data[[sprintf("var_right_%s_q3", vr_year)]],
                      sep = " - "
@@ -239,11 +250,22 @@ data_get.bivar <- function(vars, scale, region,
     }
   } else {
     for (i in possible_vl_times) {
-      vr_year <- var_closest_year(vars$var_right, i)$closest_year
-      out <- paste(data[[sprintf("var_left_%s_q3", i)]],
-                   data[[sprintf("var_right_%s_q3", vr_year)]],
-                   sep = " - "
-      )
+      vr_year <- var_closest_year(var_right, i)$closest_year
+
+      # Give it a try. Does this year exist? If not, use the default
+      out <- if (!is.null(data[[sprintf("var_right_%s_q3", vr_year)]])) {
+        paste(data[[sprintf("var_left_%s_q3", i)]],
+              data[[sprintf("var_right_%s_q3", vr_year)]],
+              sep = " - "
+        )
+      } else {
+        removed_year <- gsub(attributes(vr)$schema$time, "", names(all_data[[2]]$data)[[2]])
+        paste(data[[sprintf("var_left_%s_q3", i)]],
+              data[[sprintf("%s_%s_q3", removed_year, vr_year)]],
+              sep = " - "
+        )
+      }
+
       data[[sprintf("group_%s", i)]] <- out
     }
   }

@@ -283,6 +283,10 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
         what = "explanation", translate = TRUE, lang = lang,
         schemas_col = schemas[[col]]
       )
+      if (col == "var_right") {
+        exp <- explore_text_bivar_right_var_default_schema(exp, data)
+      }
+
       # If there are bullet points, change the explanation to something more generic
       if (grepl("</ul>", exp)) {
         out <- if (col == "var_left") {
@@ -361,7 +365,8 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       what = "explanation",
       translate = TRUE, lang = lang, schemas_col = schemas$var_right
     ) |>
-      explore_text_color(meaning = "right")
+      explore_text_color(meaning = "right") |>
+      explore_text_bivar_right_var_default_schema(data)
 
     out <- sprintf(
       cc_t("%s, there is %s (%s) between %s and %s in %s.", lang = lang),
@@ -395,7 +400,8 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
     what = "explanation_nodet",
     translate = TRUE, lang = lang, schemas_col = schemas$var_right
   ) |>
-    explore_text_color(meaning = "right")
+    explore_text_color(meaning = "right") |>
+    explore_text_bivar_right_var_default_schema(data)
 
   # Paragraphs
   first_p <-
