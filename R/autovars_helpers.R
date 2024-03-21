@@ -100,7 +100,8 @@ autovars_common_widgets <- function(id) {
   }
 
   # Unique time, keep names if there are
-  time <- unlist(variables$dates[variables$var_code %in% var_list])
+  poss_dates <- variables$dates[variables$var_code %in% var_list]
+  time <- unlist(poss_dates)
   unique_time <- unique(time)
   names(unique_time) <- names(time)[match(unique_time, time)]
   time <- unique_time
@@ -110,6 +111,11 @@ autovars_common_widgets <- function(id) {
   if (is.null(names(time))) {
     time <- as.numeric(time)
   }
+
+  # Keep track of if every variable is only available at a single time. If it's
+  # the case, we will just hide the time widget.
+  single_time <- all(lengths(poss_dates) == 1)
+  attr(time, "single_time") <- single_time
 
   # What happens when there is no time?
 

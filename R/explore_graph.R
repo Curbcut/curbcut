@@ -91,6 +91,11 @@ explore_graph.q5 <- function(vars, select_id, scale, data, time, schemas,
   # # Get the graph range
   # range <- if (attr(data_inrange, sprintf("updated_range_%s", rcol))) NULL else range(vl_breaks)
 
+  # Check if data is empty or has only one unique value in the relevant column
+  if (nrow(data_inrange) == 0 || length(unique(data_inrange[[rcol]])) <= 1) {
+    return(NULL) # Exit function early if condition is met
+  }
+
   # Draw the plot
   plot <-
     data_inrange |>

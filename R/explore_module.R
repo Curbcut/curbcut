@@ -148,11 +148,13 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
     output$explore_graph <- shiny::renderPlot(graph_out())
 
     # Show/hide components
-    shiny::observe({
-      shinyjs::toggle("info_table", condition = !is.null(table_out()))
-      # shinyjs::toggle("explore_graph", condition = !is.null(graph_out()))
-      shinyjs::toggle("clear_selection", condition = !is.na(select_id()))
-    })
+    shiny::observeEvent(table_out(),
+                        shinyjs::toggle("info_table", condition = !is.null(table_out())),
+                        ignoreNULL = FALSE)
+    shiny::observeEvent(graph_out(),
+                        shinyjs::toggle("explore_graph", condition = !is.null(graph_out())),
+                        ignoreNULL = FALSE)
+    shiny::observeEvent(select_id(), shinyjs::toggle("clear_selection", condition = !is.na(select_id())))
 
     # Clear selection on button click
     shiny::observeEvent(input$clear_selection,

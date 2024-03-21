@@ -221,6 +221,7 @@ autovars_server <- function(id, r, main_dropdown_title, default_year,
     # Enable or disable first and second slider
     shiny::observeEvent(slider_switch(), {
       single_year <- length(common_widgets()$time) == 1
+      single_year <- single_year | attributes(common_widgets()$time)$single_time
       # Slider numeric
       shinyjs::toggle(shiny::NS(id, "ccslider_slu"), condition = !slider_switch() & !single_year)
       shinyjs::toggle(shiny::NS(id, "ccslider_slb"), condition = slider_switch() & !single_year)
