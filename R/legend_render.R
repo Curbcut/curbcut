@@ -400,7 +400,8 @@ legend_render_delta.scalar <- function(vars, font_family = "acidgrotesk-book",
   leg_info <- legend_get_info(vars,
     font_family = font_family,
     scales_as_DA = scales_as_DA,
-    scale = scale, data = data, time = time, ...
+    scale = scale, data = data, time = time,
+    lang = lang, ...
   )
 
   # Adapt breaks to add the `NA` bar
