@@ -178,17 +178,20 @@ explore_text_delta_exp.ind <- function(var, region, select_id, left_right = "lef
 }
 
 #' @rdname explore_text_delta_exp
+#' @param single_val <`logical`> Is it a comparison, or is it for a single delta?
 #' @export
 explore_text_delta_exp.default <- function(var, region, select_id, left_right = "left",
-                                           time, scale, data, schemas, lang, ...) {
+                                           time, scale, data, schemas, lang, single_val = FALSE, ...) {
   var_lr <- sprintf("var_%s", left_right)
   # Grab the explanation
   exp <- var_get_info(var,
-    what = "explanation", translate = TRUE, lang = lang,
-    schemas_col = schemas[[var_lr]]
+                      what = "explanation", translate = TRUE, lang = lang,
+                      schemas_col = schemas[[var_lr]]
   )
   if (grepl("</ul>", exp)) {
-    out <- if (left_right == "left") {
+    out <- if (single_val) {
+      "the value"
+    } else if (left_right == "left") {
       "the first value"
     } else {
       "the second value"

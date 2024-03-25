@@ -43,6 +43,7 @@ explore_text_delta_exp(
   data,
   schemas,
   lang,
+  single_val = FALSE,
   ...
 )
 }
@@ -80,6 +81,8 @@ values that have an impact on which data column to pick. Usually \code{r[[id]]$s
 data where we show region values for the highest resolution possible, but we still
 want to allow user to select grid cells of lower resolutions. Defaults to NULL
 for normal operations.}
+
+\item{single_val}{<\code{logical}> Is it a comparison, or is it for a single delta?}
 }
 \value{
 A list with the following elements:
