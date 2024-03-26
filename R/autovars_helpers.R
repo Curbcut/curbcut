@@ -313,6 +313,10 @@ autovars_final_value <- function(id, group_name, picker_vals, previous_var) {
   if (length(sum_fits) == 0) {
     return(previous_var)
   }
+  # Is the one that matches, matches EVERYTHING?
+  if (length(picker_vals) != max(sum_fits)) {
+    return(previous_var)
+  }
   out <- var_codes[which.max(sum_fits)]
 
   # Return()

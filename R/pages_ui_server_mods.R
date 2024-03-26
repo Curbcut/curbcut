@@ -217,7 +217,6 @@ create_ui_server_mods <- function(modules, pos = 1) {
           default_year = default_year
         )
 
-
       var_left <- shiny::reactive(autovars()$var)
       widget_time <- shiny::reactive(if (is.null(autovars()$time)) "" else autovars()$time)
 
