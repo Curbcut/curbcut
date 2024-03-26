@@ -241,7 +241,9 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
       # Recalculate every time the button is pressed
       input$panel_data
       datatable_styled()
-    }, server = TRUE)
+
+      # Test server FALSE for Ajax problem
+    }, server = FALSE)
 
     # If there is a selection in the table, update the selection
     shiny::observeEvent(input$data_table_rows_selected,
