@@ -12,7 +12,10 @@
 #' comparing multiple years and some variables are not present in all years.
 #'
 #' @param id <`character`> The ID of the page in which the widget will appear,
-#' e.g. `alp`.
+#' e.g. `alp`. Or other, like `compare` if it's for the compare widget.
+#' @param page_id <`character`> The ID of the page in which the widget will appear,
+#' e.g. `alp`. Useful for `compare` widget. Defaults to NULL if it's not a
+#' `compare` widget.
 #' @param r <`reactiveValues`> The reactive values shared between modules and
 #' pages. Created in the `server.R` file. The output of \code{\link{r_init}}.
 #' @param picker_id <`character`> A character string giving the identifier for
@@ -27,19 +30,28 @@
 #' @param selected <`reactive character`> The value for which to update the picker.
 #' @param subtext <`reactive character`> Additional text for every option. Will
 #' be added to choicesOpt in \code{\link[shinyWidgets]{updatePickerInput}}.
+#' @param classNames <`reactive character vector`> Same number of variables as
+#' there are variables in `var_list`. It's used to add a class to every option
+#' in the dropdown widget, like custom background color for a few options.
+#' @param disable_options <`reactive logical vector`> Vector of logical of
+#' the same length as the number of variables in `var_list`. Should x variable
+#' be disabled or not? Default to a reactive NULL, which means nothing is disabled.
 #' @param ... Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}
 #'
 #' @return A reactive expression that returns the selected variable with `time`
 #' appended. The length of the output is the same length as the `time` argument.
 #' @seealso \code{\link{picker_UI}}
 #' @export
-picker_server <- function(id, r, picker_id = "var", var_list,
+picker_server <- function(id, page_id = NULL, r, picker_id = "var", var_list,
                           time = shiny::reactive(NULL), selected = shiny::reactive(NULL),
-                          subtext = shiny::reactive(NULL),
-                          # identifier = NULL,
-                          ...) {
+                          subtext = shiny::reactive(NULL), classNames = shiny::reactive(NULL),
+                          disable_options = shiny::reactive(NULL), ...) {
   stopifnot(shiny::is.reactive(time))
   stopifnot(shiny::is.reactive(var_list))
+  stopifnot(shiny::is.reactive(subtext))
+  stopifnot(shiny::is.reactive(selected))
+  stopifnot(shiny::is.reactive(classNames))
+  stopifnot(shiny::is.reactive(disable_options))
 
   shiny::moduleServer(id, function(input, output, session) {
     # Fails if `var_list` isn't a list.
@@ -59,14 +71,24 @@ picker_server <- function(id, r, picker_id = "var", var_list,
 
     # If the picking is made while in a `delta` mode (comparing two years),
     # we disable the variables that are not present at all years.
-    multi_year <- shiny::reactiveVal(FALSE)
+    multi_year_compare <- shiny::reactiveVal(FALSE)
     # Make sure we don't create unwanted reactivity that triggers the reset
     # of the dropdown.
-    shiny::observeEvent(time(), multi_year(length(time()[[1]]) > 1))
-    disable <- shiny::reactive(picker_multi_year_disable(
+    shiny::observeEvent(time(), multi_year_compare({
+      multi_year <- length(time()[[1]]) > 1
+      multi_year & !is.null(page_id)
+    }))
+    disable_yr <- shiny::reactive(picker_multi_year_disable(
+      id = page_id,
       var_list = var_list(),
-      disable = multi_year()
+      disable = multi_year_compare()
     ))
+
+    # Combine argument with disable due to years
+    disable <- shiny::reactive({
+      if (is.null(disable_options())) return(disable_yr())
+      disable_yr() | disable_options()
+    })
 
     # Style the disable (dark gray for the unpickable)
     disable_style <- shiny::reactive({
@@ -99,9 +121,11 @@ picker_server <- function(id, r, picker_id = "var", var_list,
           list(
             disabled = disable(),
             style = disable_style(),
-            subtext = subtext()
+            subtext = subtext(),
+            classNames = classNames()
           )
         ),
+        options = shinyWidgets::pickerOptions(container = "body"),
         ...
       )
     })
@@ -112,7 +136,8 @@ picker_server <- function(id, r, picker_id = "var", var_list,
         shinyWidgets::updatePickerInput(
           session = session,
           inputId = picker_id,
-          selected = selected()
+          selected = selected(),
+          options = shinyWidgets::pickerOptions(container = "body")
         )
       },
       ignoreNULL = TRUE

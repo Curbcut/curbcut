@@ -241,6 +241,10 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       explore_text_color(value_string_left$text, meaning = "left")
     value_string_right$text <-
       explore_text_color(value_string_right$text, meaning = "right")
+    value_string_right$text <-
+      explore_text_bivar_right_var_default_schema(value_string_right$text,
+                                                  data = data,
+                                                  var = vars$var_right)
 
     # If one of the value is NA, return that there is a missing value
     if (value_string_left$na) {
@@ -284,7 +288,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
         schemas_col = schemas[[col]]
       )
       if (col == "var_right") {
-        exp <- explore_text_bivar_right_var_default_schema(exp, data)
+        exp <- explore_text_bivar_right_var_default_schema(exp, data, var = var)
       }
 
       # If there are bullet points, change the explanation to something more generic
@@ -366,7 +370,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       translate = TRUE, lang = lang, schemas_col = schemas$var_right
     ) |>
       explore_text_color(meaning = "right") |>
-      explore_text_bivar_right_var_default_schema(data)
+      explore_text_bivar_right_var_default_schema(data, var = vars$var_right)
 
     out <- sprintf(
       cc_t("%s, there is %s (%s) between %s and %s in %s.", lang = lang),
@@ -391,17 +395,17 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
   )
 
   # Explanations
-  left_exp <- var_get_info(vars$var_left,
+  left_exp <- var_get_info(var = vars$var_left,
     what = "explanation_nodet",
     translate = TRUE, lang = lang, schemas_col = schemas$var_left
   ) |>
     explore_text_color(meaning = "left")
-  right_exp <- var_get_info(vars$var_right,
+  right_exp <- var_get_info(var = vars$var_right,
     what = "explanation_nodet",
     translate = TRUE, lang = lang, schemas_col = schemas$var_right
   ) |>
     explore_text_color(meaning = "right") |>
-    explore_text_bivar_right_var_default_schema(data)
+    explore_text_bivar_right_var_default_schema(data, var = vars$var_right)
 
   # Paragraphs
   first_p <-

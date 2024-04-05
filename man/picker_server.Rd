@@ -6,18 +6,25 @@
 \usage{
 picker_server(
   id,
+  page_id = NULL,
   r,
   picker_id = "var",
   var_list,
   time = shiny::reactive(NULL),
   selected = shiny::reactive(NULL),
   subtext = shiny::reactive(NULL),
+  classNames = shiny::reactive(NULL),
+  disable_options = shiny::reactive(NULL),
   ...
 )
 }
 \arguments{
 \item{id}{<\code{character}> The ID of the page in which the widget will appear,
-e.g. \code{alp}.}
+e.g. \code{alp}. Or other, like \code{compare} if it's for the compare widget.}
+
+\item{page_id}{<\code{character}> The ID of the page in which the widget will appear,
+e.g. \code{alp}. Useful for \code{compare} widget. Defaults to NULL if it's not a
+\code{compare} widget.}
 
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
@@ -38,6 +45,14 @@ same length as this argument.}
 
 \item{subtext}{<\verb{reactive character}> Additional text for every option. Will
 be added to choicesOpt in \code{\link[shinyWidgets]{updatePickerInput}}.}
+
+\item{classNames}{<\verb{reactive character vector}> Same number of variables as
+there are variables in \code{var_list}. It's used to add a class to every option
+in the dropdown widget, like custom background color for a few options.}
+
+\item{disable_options}{<\verb{reactive logical vector}> Vector of logical of
+the same length as the number of variables in \code{var_list}. Should x variable
+be disabled or not? Default to a reactive NULL, which means nothing is disabled.}
 
 \item{...}{Additional arguments to pass to \code{\link[shinyWidgets]{updatePickerInput}}}
 }

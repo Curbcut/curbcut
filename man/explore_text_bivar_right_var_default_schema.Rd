@@ -4,7 +4,7 @@
 \alias{explore_text_bivar_right_var_default_schema}
 \title{Update Schema Placeholders in Right Variable Explanation Text}
 \usage{
-explore_text_bivar_right_var_default_schema(right_exp, data)
+explore_text_bivar_right_var_default_schema(right_exp, data, var)
 }
 \arguments{
 \item{right_exp}{<\code{character}> A single character string containing the

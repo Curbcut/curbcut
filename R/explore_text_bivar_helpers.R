@@ -182,7 +182,7 @@ explore_text_bivar_adjective.default <- function(var, left, positive,
 #'
 #' @return <`character`> The modified explanation text with all schema
 #' placeholders replaced by their corresponding values.
-explore_text_bivar_right_var_default_schema <- function(right_exp, data) {
+explore_text_bivar_right_var_default_schema <- function(right_exp, data, var) {
   if (grepl("__.*__", right_exp)) {
     schemas_col <- attributes(data)$schema_var_right
     for (sch in names(schemas_col)) {

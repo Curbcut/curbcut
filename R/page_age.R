@@ -310,10 +310,12 @@ age_server <- function(id, r) {
     var_right <- compare_server(
       id = id,
       r = r,
+      var_left = r[[id]]$var_left,
       var_list = shiny::reactive(dropdown_make(
         vars = vars_right,
         compare = TRUE
       )),
+      zoom_levels = r[[id]]$zoom_levels,
       # If there are no time in the page, use the latest census for date of
       # comparisons
       time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021)
@@ -391,12 +393,12 @@ age_server <- function(id, r) {
       last <- if (vvll[[2]] == "85+") "85plus" else as.numeric(vvll[[2]]) - 1
       sprintf("age_agg_%s_%s", vvll[[1]], last)
     })
-    var_left <- shiny::reactive(sprintf("%s_%s", var_left_1(), dr()))
+    update_rv(id, r, rv_name = "var_left", new_val = shiny::reactive(sprintf("%s_%s", var_left_1(), dr())))
     widget_time <- time_slider_server(id = id, r = r)
 
     # Update the `r[[id]]$vars` reactive
     update_vars(
-      id = id, r = r, var_left = var_left,
+      id = id, r = r, var_left = r[[id]]$var_left,
       var_right = var_right, scale = r[[id]]$scale, widget_time = widget_time
     )
 

@@ -15,6 +15,13 @@
 	--filter-button-active: brightness(0.95);
 }
 
+.dropdown_high_corr {
+	background-color: #6c83b54d !important;
+}
+.dropdown_high_corr:hover {
+	background-color: #6c83b533 !important;
+}
+
 .tab-content .dropdown .dropdown-menu.open {
 	overflow: visible;
 }

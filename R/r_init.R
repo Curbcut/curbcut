@@ -86,6 +86,7 @@ r_init <- function(server_session,
         schemas <- page$additional_schemas[[1]]
 
         r[[i]] <- shiny::reactiveValues(
+          var_left = shiny::reactiveVal(default_var),
           vars = shiny::reactiveVal(vars),
           var_left_force = shiny::reactiveVal(default_var),
           time = shiny::reactiveVal(time),

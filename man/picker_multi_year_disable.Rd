@@ -4,7 +4,7 @@
 \alias{picker_multi_year_disable}
 \title{Disables variables that are not available for the maximum number of years}
 \usage{
-picker_multi_year_disable(var_list, disable)
+picker_multi_year_disable(id, var_list, disable)
 }
 \arguments{
 \item{var_list}{<\verb{named list}> A named list of variable codes. The output

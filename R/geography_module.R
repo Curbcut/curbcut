@@ -23,6 +23,9 @@
 geography_server <- function(id, r, var_right, regions, avail_scale_combinations,
                              scales_as_DA = shiny::reactive(c("building", "street"))) {
   shiny::moduleServer(id, function(input, output, session) {
+    update_ger_val <- shiny::reactiveVal(NULL)
+    update_get_val <- shiny::reactiveVal(NULL)
+
     # Region default
     regions_dictionary <- get_from_globalenv("regions_dictionary")
     names(regions) <- sapply(regions,
@@ -105,7 +108,6 @@ geography_server <- function(id, r, var_right, regions, avail_scale_combinations
     previous_tp <- track_previous_reactive(reactive_expr = tp_out)
 
     # When the region changes, update the top scale (if necessary)
-    update_get_val <- shiny::reactiveVal(NULL)
     shiny::observeEvent(reg_out(), {
       # For this newly picked region, does the current top scale works?
       tp_works <- vapply(scales_dictionary$regions, \(x) reg_out() %in% x, logical(1))
@@ -156,7 +158,6 @@ geography_server <- function(id, r, var_right, regions, avail_scale_combinations
     })
 
     # When the top scale changes, update the region (if necessary)
-    update_ger_val <- shiny::reactiveVal(NULL)
     shiny::observeEvent(tp_out(), {
       # Grab the possible regions
       possible_regions <- scales_dictionary$regions[[tp_out()]]

@@ -78,6 +78,8 @@ picker_hover_divs <- function(var_list, lang = NULL) {
 #' maximum number of years. If the disable flag is not set, then the function
 #' returns a logical vector of FALSE values.
 #'
+#' @param id <`character`> The ID of the page in which the widget will appear,
+#' e.g. `alp`.
 #' @param var_list <`named list`> A named list of variable codes. The output
 #' of \code{\link{dropdown_make}}.
 #' @param disable <`logical`> A flag indicating whether to disable variables.
@@ -85,7 +87,7 @@ picker_hover_divs <- function(var_list, lang = NULL) {
 #' @return A logical vector of the same length as the input variable list. The
 #' elements of the output vector indicate whether each variable should be
 #' disabled or not.
-picker_multi_year_disable <- function(var_list, disable) {
+picker_multi_year_disable <- function(id, var_list, disable) {
   # If var_list is empty, return NULL
   if (length(var_list) == 0) {
     return(NULL)
@@ -108,13 +110,27 @@ picker_multi_year_disable <- function(var_list, disable) {
     return(rep(FALSE, length(vars)))
   }
 
+  # Get module dates
+  modules <- get_from_globalenv("modules")
+  module_dates <- modules$dates[modules$id == id][[1]]
+  module_dates <- as.numeric(module_dates)
+
   # Get all the years
   all_years <- lapply(vars, \(x) var_get_info(x, what = "dates")[[1]])
 
-  # We select the variables that are available the same amount as the variables
-  # present at the most years
-  max_years <- max(lengths(all_years))
-  vec <- sapply(lengths(all_years), `==`, max_years)
+  nb_dates <- length(module_dates)
+  vec <- sapply(all_years, \(years_list) {
+
+    # Convert list of years to numeric
+    years_numeric <- as.numeric(years_list)
+
+    # Compute the differences between each year in years_list and each module_date,
+    # then check if any absolute difference is less than 3 (i.e., within +/-2 years)
+    diff <- sapply(years_numeric, \(x) abs(x - module_dates) < 3, simplify = FALSE)
+
+    # If there are enough dates that are +/- 2 years from the module years
+    sum(sapply(diff, any)) >= nb_dates
+  })
 
   # Reattach the 'no' comparison value
   if (" " %in% var_unlist) vec <- c(TRUE, vec)

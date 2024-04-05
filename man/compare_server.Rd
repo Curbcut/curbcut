@@ -8,10 +8,11 @@
 compare_server(
   id,
   r,
+  var_left,
   var_list,
   time = shiny::reactive(NULL),
-  show_panel = shiny::reactive(TRUE),
-  scales_as_DA = shiny::reactive(c("building", "street"))
+  zoom_levels,
+  show_panel = shiny::reactive(TRUE)
 )
 
 compare_UI(id, var_list)
@@ -23,6 +24,9 @@ e.g. \code{alp}.}
 \item{r}{<\code{reactiveValues}> The reactive values shared between modules and
 pages. Created in the \code{server.R} file. The output of \code{\link{r_init}}.}
 
+\item{var_left}{<\verb{reactive character}> Character string of the selected
+left-hand variable, e.g. \code{alp}}
+
 \item{var_list}{<\verb{reactive list}> Choices to display in the picker input. Normally
 made using \code{\link{dropdown_make}}.}
 
@@ -30,12 +34,11 @@ made using \code{\link{dropdown_make}}.}
 appending a time to the variables picked. The returned vector will be the
 same length as this argument.}
 
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. One of \verb{mzl_*}. Usually \code{r[[id]]$zoom_levels}.}
+
 \item{show_panel}{<\verb{reactive logical}> Controls whether the comparison panel
 should be shown.}
-
-\item{scales_as_DA}{<\verb{character vector}> A character vector of \code{scales} that
-should be handled as a "DA" scale, e.g. \code{building} and \code{street}. By default,
-their colour will be the one of their DA.}
 }
 \value{
 A Shiny module server function that provides the logic for
