@@ -7,6 +7,9 @@
 picker_multi_year_disable(id, var_list, disable)
 }
 \arguments{
+\item{id}{<\code{character}> The ID of the page in which the widget will appear,
+e.g. \code{alp}.}
+
 \item{var_list}{<\verb{named list}> A named list of variable codes. The output
 of \code{\link{dropdown_make}}.}
 
