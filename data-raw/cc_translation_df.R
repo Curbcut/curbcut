@@ -93,6 +93,11 @@ cc_translation_df <-
     en = "Undo",
     fr = "R\u00e9tablir"
   ) |>
+  tibble::add_row(
+    en = "Processing...",
+    fr = "En traitement..."
+  ) |>
+
 
   # Geography widget --------------------------------------------------------
 

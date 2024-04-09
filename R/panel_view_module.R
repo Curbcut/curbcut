@@ -72,7 +72,6 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
       shinyjs::removeClass(id = "panel_map", class = "selection")
       shinyjs::addClass(id = "panel_data", class = "selection")
 
-
       # Hide the tutorial bubble
       shinyjs::hide(id = "tutorial")
     })
@@ -373,7 +372,7 @@ panel_view_UI <- function(id) {
           text = cc_t("Table")
         ),
         # Explore data link
-        shinyjs::hidden(action_button(
+        shinyjs::hidden(action_button_task(
           classes = c(
             "floating-bar",
             "floating-bar-btn",

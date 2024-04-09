@@ -81,7 +81,7 @@ dyk_link <- function(id, element_id, page = id, text, lang = NULL, ...) {
     shiny::tags$a(
       id = button_id,
       href = "#",
-      class = "action-button shiny-bound-input",
+      class = "action-button",
       curbcut::cc_t("[LEARN MORE]", lang = lang)
     )
   )
