@@ -205,7 +205,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
     "a, and the assumption that this rate remains unchanged from 2021-2029.",
     " Following the implementation of Bill 44, from 2024-2029, this scenari",
     "o projects an evenly distributed additional %s%% increase in housing",
-    " growth based on Auckland’s precedent."
+    " growth based on Auckland\u2019s precedent."
   ), out, rce, as.numeric(time$var_left), additional_inc)
 
   # Return the text

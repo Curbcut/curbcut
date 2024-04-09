@@ -170,6 +170,7 @@ explore_text_bivar_adjective.default <- function(var, left, positive,
 #' `schema_var_right` attribute that lists schema names and their corresponding
 #' default values, and a `breaks_var_var_right` attribute that specifies how to
 #' extract specific values from the schema.
+#' @param var <`character`> The variable code.
 #'
 #' @details The function first checks if the explanation text contains any
 #' schema placeholders. If so, it iterates through each schema defined in the

@@ -3,6 +3,8 @@
 map_scale_fill_ndvi <- function(vars, time) {
   var <- vars$var_left
 
+  colours_dfs <- get_from_globalenv("colours_dfs")
+
   clr <- if (length(time$var_left) == 1) colours_dfs$left_5 else colours_dfs$delta
 
   if (length(time$var_left) == 2) {
@@ -20,6 +22,7 @@ map_scale_fill_ndvi <- function(vars, time) {
 # UI ----------------------------------------------------------------------
 
 `ndvi_UI` <- function(id) {
+  modules <- get_from_globalenv("modules")
   page <- modules[modules$id == id, ]
   regions <- page$regions[[1]]
   if (is.null(regions)) {
@@ -41,10 +44,10 @@ map_scale_fill_ndvi <- function(vars, time) {
       # Sidebar
       curbcut::sidebar_UI(
         id = shiny::NS(id, id),
-        curbcut::autovars_UI(NS(id, id)),
+        curbcut::autovars_UI(shiny::NS(id, id)),
         curbcut::warnuser_UI(shiny::NS(id, id)),
         curbcut::compare_UI(
-          id = NS(id, id),
+          id = shiny::NS(id, id),
           var_list = curbcut::dropdown_make(vars = " ", compare = TRUE)
         ),
         geography_UI(shiny::NS(id, id), regions = regions,
@@ -63,13 +66,13 @@ map_scale_fill_ndvi <- function(vars, time) {
       curbcut::tutorial_UI(id = shiny::NS(id, id)),
 
       # Change view (Map/Data/Place explorer)
-      curbcut::panel_view_UI(id = NS(id, id)),
+      curbcut::panel_view_UI(id = shiny::NS(id, id)),
 
       # Right panel
       curbcut::right_panel(
         id = id,
-        curbcut::explore_UI(NS(id, id)),
-        curbcut::dyk_UI(NS(id, id))
+        curbcut::explore_UI(shiny::NS(id, id)),
+        curbcut::dyk_UI(shiny::NS(id, id))
       )
     )
   )
@@ -80,6 +83,7 @@ map_scale_fill_ndvi <- function(vars, time) {
 
 `ndvi_server` <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
+    modules <- get_from_globalenv("modules")
     page <- modules[modules$id == id, ]
     regions <- page$regions[[1]]
     if (is.null(regions)) {
@@ -207,7 +211,7 @@ map_scale_fill_ndvi <- function(vars, time) {
     })
 
     # Get df
-    observeEvent(
+    shiny::observeEvent(
       {
         tile()
         rv_zoom_string()

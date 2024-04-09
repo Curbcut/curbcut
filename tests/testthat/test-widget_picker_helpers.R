@@ -55,14 +55,14 @@ vars <- variables$var_code[variables$source == "Canadian census" & !is.na(variab
 test_that("picker_multi_year_disable disables variables when necessary", {
   var_list <- dropdown_make(vars = vars)
   disable <- TRUE
-  actual_output <- picker_multi_year_disable(var_list, disable)
+  actual_output <- picker_multi_year_disable(id = "housing", var_list, disable)
   expect_identical(is.logical(actual_output), TRUE)
 })
 
 test_that("picker_multi_year_disable disables nothing when variables aren't in `variables` table", {
   var_list <- c("unkown", "in", "variables")
   disable <- TRUE
-  actual_output <- picker_multi_year_disable(var_list, disable)
+  actual_output <- picker_multi_year_disable(id = "unknown", var_list, disable)
   expected_output <-
     c(
       FALSE, FALSE, FALSE
@@ -77,7 +77,7 @@ test_that("picker_multi_year_disable does not disable any variables when none ar
 
   var_list <- dropdown_make(vars = v)
   disable <- FALSE
-  actual_output <- picker_multi_year_disable(var_list, disable)
+  actual_output <- picker_multi_year_disable(id = "housing", var_list, disable)
   expect_identical(actual_output, rep(F, length(v)))
 })
 
@@ -85,7 +85,7 @@ test_that("picker_multi_year_disable returns NULL when the list is empty", {
   var_list <- list()
   disable <- TRUE
   expected_output <- NULL
-  actual_output <- picker_multi_year_disable(var_list, disable)
+  actual_output <- picker_multi_year_disable(id = "housing", var_list, disable)
   expect_identical(actual_output, expected_output)
 })
 
@@ -93,7 +93,7 @@ test_that("picker_multi_year_disable works when on compare", {
   var_list <- dropdown_make(vars = vars, compare = TRUE)
   disable <- TRUE
   expected_output <- TRUE
-  actual_output <- picker_multi_year_disable(var_list, disable)
+  actual_output <- picker_multi_year_disable(id = "age", var_list, disable)
   expect_identical(is.logical(actual_output), TRUE)
 })
 

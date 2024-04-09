@@ -16,6 +16,8 @@ attributes necessary for the analysis. This data frame must have a
 \code{schema_var_right} attribute that lists schema names and their corresponding
 default values, and a \code{breaks_var_var_right} attribute that specifies how to
 extract specific values from the schema.}
+
+\item{var}{<\code{character}> The variable code.}
 }
 \value{
 <\code{character}> The modified explanation text with all schema

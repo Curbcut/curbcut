@@ -91,8 +91,9 @@ test_that("q5 explore works without a selection", {
   time <- vars$time
   vars <- vars$vars
 
-  val <- val_get_sqlite_helper.q5(vars = vars, select_id = "grd100_10200",
-                                  time = time, conn = grd100_conn)
+  val <- val_get_db(vars = vars, select_id = "grd100_10200",
+                    time = time, grid = TRUE, grid_compare = FALSE, rv_zoom_string = "grd100",
+                    highest_grd = "grd250")
 
   test_explores_helper(
     var_left = "climate_drought",
@@ -113,8 +114,9 @@ test_that("q5 explore works without a selection", {
   time <- vars$time
   vars <- vars$vars
 
-  val <- val_get_sqlite_helper.q5(vars = vars, select_id = "grd300_10200",
-                                  time = time, conn = grd300_conn)
+  val <- val_get_db(vars = vars, select_id = "grd300_10200",
+                    time = time, grid = TRUE, grid_compare = FALSE, rv_zoom_string = "grd300",
+                    highest_grd = "grd600")
 
   test_explores_helper(
     var_left = "ndvi",
@@ -211,8 +213,9 @@ test_that("delta explore works with selections", {
   time <- vars$time
   vars <- vars$vars
 
-  val <- val_get_sqlite_helper.delta(vars = vars, select_id = "grd100_10200",
-                                     time = time, conn = grd100_conn)
+  val <- val_get_db(vars = vars, select_id = "grd100_10200",
+                    time = time, grid = TRUE, grid_compare = FALSE, rv_zoom_string = "grd100",
+                    highest_grd = "grd250")
 
   test_explores_helper(
     var_left = "climate_drought",
@@ -220,8 +223,9 @@ test_that("delta explore works with selections", {
     select_id = "grd100_10200", time = time, shown_scale = "grd100", val = val
   )
 
-  val <- val_get_sqlite_helper.delta(vars = vars, select_id = "grd100_10200",
-                                     time = time, conn = grd100_conn)
+  val <- val_get_db(vars = vars, select_id = "grd100_10200",
+                    time = time, grid = TRUE, grid_compare = FALSE, rv_zoom_string = "grd100",
+                    highest_grd = "grd250")
 
   test_explores_helper(
     var_left = "climate_drought",
