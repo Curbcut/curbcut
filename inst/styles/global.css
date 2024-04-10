@@ -150,6 +150,11 @@ div[data-theme='explorer'] {
 	);
 }
 
+/* Fix for bold text on MacOS Chrome ! */
+body {
+	-webkit-font-smoothing: antialiased;
+}
+
 p {
 	font-size: 1.5rem;
 }
@@ -232,7 +237,6 @@ body.user-tab-home .navbar-default {
 	right: 0px;
 }
 
-
 a.sus-small-link {
 	font-size: 1.25rem;
 }
@@ -269,7 +273,7 @@ i.fa {
 }
 
 .modal-content {
-  background-color: #e9ecef;
+	background-color: #e9ecef;
 }
 
 .modal {
