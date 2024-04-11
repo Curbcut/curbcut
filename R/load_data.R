@@ -28,10 +28,6 @@ load_data <- function(data_folder = "data", pos = 1,
                       inst_prefix, mapbox_username,
                       default_random_address, map_zoom, map_loc) {
 
-  # List all place explorer docs
-  pe_docs <- list.files("www/place_explorer/", full.names = TRUE)
-  assign("pe_docs", pe_docs, envir = as.environment(pos))
-
   # Load all .qs and .qsm files that are in the root of the data folder
   data_files <- list.files(data_folder, full.names = TRUE)
   invisible(lapply(data_files[grepl("qsm$", data_files)],
