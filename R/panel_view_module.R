@@ -97,7 +97,7 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
     shiny::observeEvent(input$panel_selection, {
       # Get the place explorer HTML document
       pe_src <- place_explorer_html_links(
-        temp_folder = temp_folder,
+        temp_folder = r$temp_folder,
         region = region(),
         scale = scale(),
         select_id = r[[id]]$select_id(),

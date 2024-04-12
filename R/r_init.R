@@ -33,6 +33,7 @@ r_init <- function(server_session,
                    map_loc = get_from_globalenv("map_loc"),
                    ...) {
   regions_dictionary <- get_from_globalenv("regions_dictionary")
+  temp_folder <- file.path(server_session$token)
 
   # Initate
   r <- shiny::reactiveValues(
@@ -43,8 +44,13 @@ r_init <- function(server_session,
     place_explorer = shiny::reactiveValues(
       select_id = shiny::reactiveVal(NA),
       df = shiny::reactiveVal("DA")
-    )
+    ),
+    temp_folder = temp_folder
   )
+
+  # Create the temporary folder
+  dir.create(temp_folder, recursive = TRUE)
+  shiny::addResourcePath(prefix = temp_folder, directoryPath = temp_folder)
 
   # Loop over all modules to add the rest of the needed reactives
   modules <- get_from_globalenv("modules")

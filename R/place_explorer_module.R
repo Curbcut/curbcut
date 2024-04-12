@@ -166,7 +166,7 @@ place_explorer_server <- function(id, r,
         }
 
         pe_links <- place_explorer_html_links(
-          temp_folder = temp_folder,
+          temp_folder = r$temp_folder,
           region = zl()$region,
           scale = tile(),
           select_id = r[[id]]$select_id(),
@@ -196,7 +196,6 @@ place_explorer_server <- function(id, r,
               frameborder = 0
             )
           ),
-          # temp_folder_shortcut is tempdir()
           file = pe_links$file
         ))
       } else {

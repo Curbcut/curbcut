@@ -69,9 +69,6 @@ place_explorer_html_links <- function(temp_folder, region, scale, select_id, lan
 
       shiny::incProgress(0.3)
 
-      # Extract only the file name rather than all the path
-      tmpfile <- s_extract("placeex_tmp.*$", tmpfile)
-
       shiny::incProgress(0.2)
     }
   )
@@ -79,7 +76,7 @@ place_explorer_html_links <- function(temp_folder, region, scale, select_id, lan
   # Return the `src` for when we want to grab the static file for the web
   # server. `file` is the absolute path to the temporary file
   return(list(
-    src = file.path("temp_folder_shortcut", tmpfile),
-    file = sprintf("%s/%s", temp_folder, tmpfile)
+    src = tmpfile,
+    file = tmpfile
   ))
 }

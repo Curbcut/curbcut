@@ -29,7 +29,7 @@ action_button <- function(classes = c(), id, icon = NULL, icon_style = NULL,
   all_classes <- c("action-button", classes)
   classes_collapsed <- paste0(all_classes, collapse = " ")
 
-  value <- shiny:::restoreInput(id = id, default = NULL)
+  value <- shiny::restoreInput(id = id, default = NULL)
   shiny::tags$button(
     id = id,
     class = classes_collapsed,

@@ -16,6 +16,7 @@
 #' @export
 server <- function(lang_init = "en", show_lang_button = FALSE) {
   shiny::shinyServer(function(input, output, session) {
+
     ## Reactive variables --------------------------------------------------------
     r <- r_init(
       server_session = session,
@@ -42,6 +43,11 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
 
     ## Heartbeat function to keep app alive --------------------------------------
     heartbeat(r = r, input = input)
+
+    ## Clean up 'tmp' folder on session end ------------------------------------
+    session$onSessionEnded(function() {
+      unlink(session$token, recursive = TRUE)
+    })
 
   })
 }
@@ -139,13 +145,14 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #' to FALSE (only english).
 #' @param show_cities <`logical`> Should we be showing the list of Curbcut Cities
 #' in the footer? Defaults to TRUE.
+#' @param ... Additional functions
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
 ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_title, placeholder_video_src,
                video_src, twitter_handler, google_analytics = NULL, website_url,
                share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE,
-               show_cities = TRUE) {
+               show_cities = TRUE, ...) {
   modules_panel_calculated <- get0("modules_panel_calculated")
 
   shiny::tagList(
