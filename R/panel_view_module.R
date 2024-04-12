@@ -80,7 +80,6 @@ panel_view_server <- function(id, r, region, scale, vars, data, zoom_levels, tim
     # selection is in `data`
     shiny::observe({
       pe_docs <- get_from_globalenv("pe_docs")
-      pe_main_card_data <- get_from_globalenv("pe_main_card_data")
       # When to show the place portrait button?
       show <- sprintf("www/place_explorer/%s_%s_%s_%s.html", region(), scale(),
                       r[[id]]$select_id(), r$lang()) %in% pe_docs
