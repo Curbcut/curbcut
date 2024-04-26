@@ -26,7 +26,8 @@ Imports:
     zip,
     data.table,
     RPostgres,
-    pool
+    pool,
+    bslib
 Remotes:
     Curbcut/cc.map,
     Curbcut/cc.landing

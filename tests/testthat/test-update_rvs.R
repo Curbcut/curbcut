@@ -3,7 +3,7 @@ test_that("update_zoom_string returns new zoom string when it is different from 
     update_zoom_string(
       rv_zoom_string = "CSD",
       zoom = 12,
-      zoom_levels = mzl_borough_CT_DA_building
+      zoom_levels = mzl_borough_CT_DA
     )
   expect_equal(new_zoom_string, "DA")
 })
@@ -13,7 +13,7 @@ test_that("update_zoom_string returns old zoom string when the new one is the sa
     update_zoom_string(
       rv_zoom_string = "CSD",
       zoom = 9.9,
-      zoom_levels = mzl_CSD_CT_DA_building
+      zoom_levels = mzl_CSD_CT_DA
     )
   expect_equal("CSD", new_zoom_string)
 })
@@ -23,9 +23,9 @@ test_that("update_zoom_string generates correct zoom string for the highest zoom
   new_zoom_string <- update_zoom_string(
     rv_zoom_string = "CSD",
     zoom = 16,
-    zoom_levels = mzl_CSD_CT_DA_building
+    zoom_levels = mzl_CSD_CT_DA
   )
-  expect_equal(new_zoom_string, "building")
+  expect_equal(new_zoom_string, "DA")
 })
 
 # Test that the zoom string is generated correctly for the lowest zoom level
@@ -33,7 +33,7 @@ test_that("update_zoom_string generates correct zoom string for the lowest zoom 
   new_zoom_string <- update_zoom_string(
     rv_zoom_string = "",
     zoom = 0,
-    zoom_levels = mzl_CSD_CT_DA_building
+    zoom_levels = mzl_CSD_CT_DA
   )
   expect_equal(new_zoom_string, "CSD")
 })

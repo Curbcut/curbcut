@@ -9,6 +9,7 @@ explore_text_selection_comparison(
   data,
   select_id,
   col = "var_left",
+  scale,
   ranks_override = NULL,
   lang = NULL,
   time_col,
@@ -31,6 +32,9 @@ retrieve the ranking.}
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right} or
 \code{var_left_1} in delta.}
+
+\item{scale}{<\code{character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{ranks_override}{<\verb{character vector}> A vector of length 5. Used if
 the ranks in the \code{variables$rankings_chr} table should be overriden for the

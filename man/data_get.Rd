@@ -16,6 +16,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   ...
 )
 
@@ -25,6 +26,7 @@ data_get(
   region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   ...
 )
 
@@ -34,6 +36,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   schemas,
   ...
 )
@@ -44,6 +47,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -54,6 +58,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -64,6 +69,7 @@ data_get(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -74,6 +80,7 @@ data_get(
   region = NULL,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   vr_vl,
   ...
 )
@@ -96,6 +103,9 @@ default, their colour will be the one of their DA.}
 
 \item{data_path}{<\code{character}> A string representing the path to the
 directory containing the QS files. Default is "data/".}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. One of \verb{mzl_*}. Usually \code{r[[id]]$zoom_levels}.}
 
 \item{...}{Additional arguments passed to methods.}
 

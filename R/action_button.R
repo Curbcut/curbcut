@@ -89,12 +89,12 @@ action_button_task <- function(classes = c(), id, icon = NULL, icon_style = NULL
     NULL
   }
 
-  tags$button(
+  shiny::tags$button(
     id = id, class = classes_collapsed,
     type = "button", `data-auto-reset` = ready_state,
-    bslib:::component_dependencies(), htmltools::tag(
+    bslib:::component_dependencies(), shiny::tag(
       "bslib-switch-inline",
-      rlang::list2(case = "ready", shiny::span(style = "display:flex;",
+      list(case = "ready", shiny::span(style = "display:flex;",
         slot = "ready", icon_material(icon), shiny::tags$div(class = text_class, text)
       ), shiny::span(style = "display:flex; opacity: 0.5",
         slot = "busy", icon_material("refresh"), shiny::tags$div(class = text_class, text_busy)

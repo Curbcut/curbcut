@@ -11,20 +11,126 @@
 #' @param time <`numeric`> The time period of interest.
 #' @param scale <`character`> The scale of interest.
 #' @param region  <`character`> The region of interest.
-#' @param select_id <`character`>  The ID of the selected feature.
 #' @param col <`character`> Which column of `data` should be selected to grab the
 #' value information. Defaults to `var_left`, but could also be `var_right`.
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
-#' @param data_path <`character`> A string representing the path to the
-#' directory containing the QS files. Default is "data/".
 #' @param ... Additional arguments to pass to specific method functions.
 #'
 #' @return Varies based on the method specified in \code{var}. Commonly
 #' returns a list with elements like \code{val} and \code{count}.
 #' @export
-region_value <- function(var, data, time, scale, region, select_id, col, schemas = NULL,
-                         data_path, ...) {
+region_value <- function(var, data, time, scale, region, col, schemas, ...) {
+  UseMethod("region_value", var)
+}
+
+#' @describeIn region_value Method for when data is in the postgresql database
+#' @export
+region_value.postgresql <- function(var, data, time, scale, region, col, schemas, ...) {
+
+  # Get the parent variable
+  parent_string <- var_get_info(var, what = "parent_vec")
+  if (parent_string == "population") parent_string <- "c_population"
+  if (parent_string == "households") parent_string <- "private_households"
+
+  # Which column breaks do we want to use
+  col_schema <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
+  var_schema <- gsub(col, var, col_schema)
+  parent_string_schema <- gsub(col, parent_string, col_schema)
+
+  # Get the region value for postgresql
+  region_value_method_postgresql(var = var, data = data, scale = scale,
+                                 parent_string = parent_string,
+                                 parent_string_schema = parent_string_schema,
+                                 var_schema = var_schema, col = col, ...)
+}
+
+#' Methods to compute regional values (postgresql)
+#'
+#' A set of methods to compute regional values based on the type of
+#' variable provided. Supports weighted mean, sums, and specific
+#' indicators.
+#'
+#' @param var <`character`> The code of the variable of interest, with its class
+#' to dispatch to the right method.
+#' @param data <`data.frame`> The data frame containing the data.
+#' @param scale <`character`> The scale of interest.
+#' @param parent_string <`character`> The parent string as character ex. c_population
+#' @param parent_string_schema <`character`> With the schema on ex. c_population_2021
+#' @param var_schema <`character`> With the schema on ex. alp_2021
+#' @param ... Additional arguments (e.g., data, time) used in specific methods.
+#'
+#' @return Returns a list with calculated values for the specific method.
+#' Commonly returns elements such as \code{val} and \code{count}.
+#'
+#' @export
+region_value_method_postgresql <- function(var, data, scale, parent_string,
+                                           parent_string_schema, var_schema, ...) {
+  UseMethod("region_value_method_postgresql", var)
+}
+
+#' @describeIn region_value_method_postgresql The method for percentage variables.
+#' @export
+region_value_method_postgresql.pct <- function(var, data, scale, parent_string,
+                                               parent_string_schema, var_schema, ...) {
+
+  explore_text_postgres_val(var = var, scale = scale, parent_string = parent_string,
+                            var_schema = var_schema,
+                            parent_string_schema = parent_string_schema)
+}
+
+#' @describeIn region_value_method_postgresql The method for count variables.
+#' @export
+region_value_method_postgresql.count <- function(var, data, scale, parent_string,
+                                                 parent_string_schema, var_schema, ...) {
+  explore_text_postgres_val(var = var, scale = scale, parent_string = parent_string,
+                            var_schema = var_schema,
+                            parent_string_schema = parent_string_schema)
+}
+
+#' @describeIn region_value_method_postgresql The method for ind variables.
+#' @param col <`character`> Which column of `data` should be selected to grab the
+#' value information. Defaults to `var_left`, but could also be `var_right`.
+#' @export
+region_value_method_postgresql.ind <- function(var, data, scale, parent_string,
+                                               parent_string_schema, var_schema,
+                                               col, ...) {
+
+  inst_prefix <- get_from_globalenv("inst_prefix")
+
+  # Get the break for which all values above are the two last brackets
+  top_brackets_threshold <- attr(data, sprintf("breaks_%s", col))[4]
+
+  # Build the SQL query to extract
+  sql_query <- construct_sql_query(sql_script = "value_ind_region",
+                        parent_string_schema, inst_prefix, scale, parent_string, var,
+                        var_schema, top_brackets_threshold)
+
+  db_get_helper(sql_query)
+
+}
+
+#' @describeIn region_value_method_postgresql The default method
+#' @export
+region_value_method_postgresql.default <- function(var, data, scale, parent_string,
+                                                   parent_string_schema, var_schema,
+                                                   ...) {
+  inst_prefix <- get_from_globalenv("inst_prefix")
+
+  sql_query <- construct_sql_query(sql_script = "value_default_region",
+                        var_schema, inst_prefix, scale, var, parent_string_schema,
+                        parent_string)
+
+  db_get_helper(sql_query)
+
+}
+
+#' @describeIn region_value Method for when data is ondisk (`.qs`)
+#' @param data_path <`character`> A string representing the path to the
+#' directory containing the QS files. Default is "data/".
+#' @export
+region_value.ondisk <- function(var, data, time, scale, region, col, schemas = NULL,
+                                data_path, ...) {
   # Get the parent variable data
   rv <- region_value_data_grab(
     var = var, data = data, time = time, col = col,
@@ -33,14 +139,14 @@ region_value <- function(var, data, time, scale, region, select_id, col, schemas
   )
 
   # Return the output of every method
-  region_value_method(
+  region_value_method_qs(
     var = var, data_vals = rv$data_vals,
     parent_vals = rv$parent_vals, data = data,
     time = time, col = col, schemas = schemas, ...
   )
 }
 
-#' Methods to compute regional values
+#' Methods to compute regional values (ondisk, .qs files)
 #'
 #' A set of methods to compute regional values based on the type of
 #' variable provided. Supports weighted mean, sums, and specific
@@ -58,13 +164,13 @@ region_value <- function(var, data, time, scale, region, select_id, col, schemas
 #' Commonly returns elements such as \code{val} and \code{count}.
 #'
 #' @export
-region_value_method <- function(var, data_vals, parent_vals, ...) {
-  UseMethod("region_value_method", var)
+region_value_method_qs <- function(var, data_vals, parent_vals, ...) {
+  UseMethod("region_value_method_qs", var)
 }
 
-#' @describeIn region_value_method The method for percentage variables.
+#' @describeIn region_value_method_qs The method for percentage variables.
 #' @export
-region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
+region_value_method_qs.pct <- function(var, data_vals, parent_vals, ...) {
   out <- list()
 
   # Make the region values
@@ -76,9 +182,9 @@ region_value_method.pct <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @describeIn region_value_method The method for count variables.
+#' @describeIn region_value_method_qs The method for count variables.
 #' @export
-region_value_method.count <- function(var, data_vals, parent_vals, ...) {
+region_value_method_qs.count <- function(var, data_vals, parent_vals, ...) {
   out <- list()
 
   # Make the region values
@@ -88,7 +194,7 @@ region_value_method.count <- function(var, data_vals, parent_vals, ...) {
   return(out)
 }
 
-#' @describeIn region_value_method The method for `ind` variables.
+#' @describeIn region_value_method_qs The method for `ind` variables.
 #' @param data <`data.frame`> The data frame containing the data.
 #' @param time <`numeric`> The time period of interest.
 #' @param col <`character`> Which column of `data` should be selected to grab the
@@ -96,7 +202,7 @@ region_value_method.count <- function(var, data_vals, parent_vals, ...) {
 #' @param schemas <`named list`> Current schema information. The additional widget
 #' values that have an impact on which data column to pick. Usually `r[[id]]$schema()`.
 #' @export
-region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col, schemas = schemas, ...) {
+region_value_method_qs.ind <- function(var, data_vals, parent_vals, data, time, col, schemas = schemas, ...) {
   # Which column breaks do we want to use
   col <- match_schema_to_col(data, time = time, col = col, schemas = schemas)
   brk_col <- sprintf("%s_q5", col)
@@ -117,9 +223,9 @@ region_value_method.ind <- function(var, data_vals, parent_vals, data, time, col
   return(out)
 }
 
-#' @describeIn region_value_method The people per object (ppo) method.
+#' @describeIn region_value_method_qs The people per object (ppo) method.
 #' @export
-region_value_method.default <- function(var, data_vals, parent_vals, ...) {
+region_value_method_qs.ppo <- function(var, data_vals, parent_vals, ...) {
   out <- list()
 
   # Calculating total number of trees
@@ -132,10 +238,10 @@ region_value_method.default <- function(var, data_vals, parent_vals, ...) {
   total_population / total_trees
 }
 
-#' @describeIn region_value_method The default method (works for dollar, sqkm, per1k, ...).
+#' @describeIn region_value_method_qs The default method (works for dollar, sqkm, per1k, ...).
 #' Simple weighted mean.
 #' @export
-region_value_method.default <- function(var, data_vals, parent_vals, ...) {
+region_value_method_qs.default <- function(var, data_vals, parent_vals, ...) {
   out <- list()
 
   # Make the region values

@@ -537,7 +537,13 @@ grab_row_from_bslike <- function(scale, select_id, cols = "*") {
   # If it's a 'scales_as_DA', and the `df` is not in the global environment,
   # search for a connection.
   out <- if (is.null(dat)) {
-    db_get(select = cols, from = scale, where = list(ID = select_id))
+    existing_cols <- db_get_helper(
+      sprintf(paste0("SELECT column_name FROM information_schema.columns ",
+                     "WHERE table_schema = '%s' AND table_name = '%s'"),
+              get_from_globalenv("inst_prefix"), scale)
+    )$column_name
+    db_get(select = cols[cols %in% existing_cols], from = scale,
+           where = list(ID = select_id))
   } else {
     dat[dat$ID == select_id, ]
   }
@@ -854,6 +860,17 @@ fill_name_2 <- function(ID_scale, scale, top_scale) {
 
   # Get the scale table and subset necessary scale
   ts_id <- sprintf("%s_ID", top_scale)
+
+  # If the scale is in the database
+  db_scales <- get_from_globalenv("db_scales")
+  if (scale %in% db_scales) {
+    id <- tryCatch(db_get(select = ts_id, from = scale, where = list(ID = ID_scale)),
+                   error = \(x) return(NA))
+    id <- as.character(id)[1]
+    name <- ts$name[ts$ID == id]
+    return(name)
+  }
+
   sc <- get0(scale)
   if (is.null(sc)) return(rep(NA, length(ID_scale)))
   sc <- sc[c("ID", ts_id)]
@@ -1036,4 +1053,54 @@ safeEvaluate <- function(argList) {
     }
   })
 
+}
+
+#' Find the scale closer to current scale that is available ondisk
+#'
+#' This function searches through the names of the'zoom_levels' vector to find the first
+#' element immediately preceding a specified 'scale' that is not present in
+#' the 'db_scales' vector (scales in the database).
+#'
+#' @param zoom_levels <`character vector`> A vector containing different zoom
+#' levels. It should include the 'scale' value.
+#' @param scale <`character`> The scale at which the search for the previous
+#' element starts. It must exist within 'zoom_levels'.
+#' @param db_scales <`character vector`> A vector specifying which scales
+#' are in the postgresql database
+#'
+#' @return <`character`> The element preceding 'scale' that is not in 'db_scales'.
+find_closest_scale_not_in_db <- function(scale, zoom_levels,
+                                         db_scales = get_from_globalenv("db_scales")) {
+  lvls <- names(zoom_levels)
+
+  # Ensure 'scale' exists in 'zoom_levels'
+  if (!scale %in% lvls) {
+    stop("The scale value is not in the zoom_levels.")
+  }
+
+  # Get the index for the 'scale' in 'zoom_levels'
+  scale_index <- which(lvls == scale)
+
+  # Check if the scale is the first element, if so, return NA as no previous element exists
+  if (scale_index == 1) {
+    return(NA)
+  }
+
+  # Create a logical vector indicating if each position in 'zoom_levels' is before 'scale'
+  before_scale <- seq_along(lvls) < scale_index
+
+  # Create a logical vector indicating if elements are not in 'db_scale'
+  not_in_db_scale <- !lvls %in% db_scales
+
+  # Combine conditions to find the indices that are before 'scale' and not in 'db_scale'
+  valid_indices <- which(before_scale & not_in_db_scale)
+
+  # Select the last of these indices (the closest to 'scale')
+  if (length(valid_indices) == 0) {
+    return(stop("No scales in `zoom_levels` are available on disk."))
+  } else {
+    result_index <- utils::tail(valid_indices, 1)
+    # Extract the corresponding element from 'zoom_levels'
+    return(lvls[result_index])
+  }
 }

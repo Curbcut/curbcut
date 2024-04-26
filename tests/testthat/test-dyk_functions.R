@@ -9,7 +9,7 @@ test_dyk_helper <- function(var_left, var_right, region, scale, time, select_id)
 
   actual <- dyk_text(
     vars = vars, scale = scale, select_id = select_id,
-    region = region, zoom_levels = mzl_CSD_CT_DA_building, time = time,
+    region = region, zoom_levels = mzl_CSD_CT_DA, time = time,
     scales_as_DA = c("building", "street"), lang = "en"
   )
 

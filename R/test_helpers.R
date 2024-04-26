@@ -12,6 +12,8 @@
 #' @param scale <`character`> The scale. Defaults to CSD.
 #' @param time <`numeric named list`> Time the user would be interested in. (represents
 #' the widget time).
+#' @param zoom_levels <`named numeric vector`> One of `mzl_*` with zoom levels (or
+#' scales) under study.
 #' @param select_id <`character`> The select_id to assign in the global environment.
 #' Defaults to NA.
 #' @param pos <`numeric`> An integer value indicating the position in the search list where
@@ -31,6 +33,7 @@
 #' environment by assigning values to certain variables.
 test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
                             region = "CMA", scale = "CSD", time = 2021,
+                            zoom_levels = get_from_globalenv("mzl_CSD_CT_DA"),
                             select_id = NA, pos = 1, data_path = get_data_path()) {
   if (is.null(data_path)) {
     stop("Set a path from which to grab the data (data folder of a Curbcut repo).")
@@ -43,7 +46,7 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
   vars <- vars$vars
   data <- data_get(
     vars = vars, scale = scale, region = region, time = time,
-    data_path = data_path
+    data_path = data_path, zoom_levels = zoom_levels
   )
   schemas <- list(var_left = list(time = time$var_left))
   if (var_right != " ") {
@@ -59,6 +62,7 @@ test_assign_any <- function(var_left = "housing_tenant", var_right = " ",
   assign("select_id", select_id, envir = as.environment(pos))
   assign("scales_as_DA", c("building", "street"), envir = as.environment(pos))
   assign("lang", NULL, envir = as.environment(pos))
+  assign("zoom_levels", zoom_levels, envir = as.environment(pos))
   assign("data_path", data_path, envir = as.environment(pos))
   assign("font_family", "acidgrotesk-book", envir = as.environment(pos))
 
@@ -90,4 +94,5 @@ test_setup <- function(pos = 1, folder = get_data_path()) {
     map_zoom = 9.9,
     map_loc = c(lat = -73.70, lon = 45.53)
   )
+  return(cat("Successfully loaded test data."))
 }

@@ -31,6 +31,7 @@ db_operation <- function(what, args) {
   return(out)
 }
 
+
 #' Execute a SQL Query Helper Function
 #'
 #' A helper function that executes a SQL query using a generalized database
@@ -50,7 +51,8 @@ db_get_helper <- function(call) {
 #' Constructs and executes a SELECT SQL query to retrieve data from a specified
 #' database table. Supports filtering through a WHERE clause.
 #'
-#' @param select <`character vector`> The names of columns to select.
+#' @param select <`character vector`> The names of columns to select. Defaults
+#' to everything.
 #' @param from <`character`> The name of the table to select from.
 #' @param where <`list`> Optional. A named list where names are column names
 #' and values are the values those columns should match. Supports multiple values
@@ -60,7 +62,7 @@ db_get_helper <- function(call) {
 #'
 #' @return Returns a data frame containing the requested data.
 #' @export
-db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst_prefix")) {
+db_get <- function(select = "*", from, where = NULL, schema = get_from_globalenv("inst_prefix")) {
 
   # Convert select vector into a comma-separated string of quoted column names
   cols <- if (length(select) == 1 && select[1] == "*") {
@@ -70,7 +72,7 @@ db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst
   }
 
   # Start building the SQL query
-  call <- sprintf("SELECT %s FROM %s.%s", cols, schema, from)
+  call <- sprintf('SELECT %s FROM %s."%s"', cols, schema, from)
 
   # Process the where list to construct the WHERE clause
   if (!is.null(where) && length(where) > 0) {
@@ -90,7 +92,14 @@ db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst
   }
 
   # Execute the query with the constructed SQL
-  db_get_helper(call)
+  out <- db_get_helper(call)
 
+  # Parse out quotations
+  for (i in names(out)) {
+    if (is.numeric(out[[i]])) next
+    out[[i]] <- gsub('"', "", out[[i]])
+  }
+
+  out
 }
 

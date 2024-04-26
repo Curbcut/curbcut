@@ -477,7 +477,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s %s is %s than in %s of other %s %s",
-    fr = "%s %s est %s que dans %s des autres %s %s"
+    fr = "%s %s est \u00e0 %s que dans %s des autres %s %s"
   ) |>
   tibble::add_row(
     en = "%s <i>(Data from %s.)</i>",
@@ -587,11 +587,11 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "higher",
-    fr = "un niveau plus \u00e9lev\u00e9 de"
+    fr = "un niveau plus \u00e9lev\u00e9"
   ) |>
   tibble::add_row(
     en = "lower",
-    fr = "un niveau plus bas de"
+    fr = "un niveau plus bas"
   ) |>
   tibble::add_row(
     en = "a higher",
@@ -623,7 +623,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s is %s than in %s of other %s",
-    fr = "%s est %s que dans %s des autres %s"
+    fr = "%s est à %s que dans %s des autres %s"
   ) |>
   tibble::add_row(
     en = "which is %s for %s",

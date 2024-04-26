@@ -2,15 +2,20 @@
 % Please edit documentation in R/explore_text_region_value.R
 \name{region_value}
 \alias{region_value}
+\alias{region_value.postgresql}
+\alias{region_value.ondisk}
 \title{Compute region values based on different methods}
 \usage{
-region_value(
+region_value(var, data, time, scale, region, col, schemas, ...)
+
+\method{region_value}{postgresql}(var, data, time, scale, region, col, schemas, ...)
+
+\method{region_value}{ondisk}(
   var,
   data,
   time,
   scale,
   region,
-  select_id,
   col,
   schemas = NULL,
   data_path,
@@ -29,18 +34,16 @@ to dispatch to the right method.}
 
 \item{region}{<\code{character}> The region of interest.}
 
-\item{select_id}{<\code{character}>  The ID of the selected feature.}
-
 \item{col}{<\code{character}> Which column of \code{data} should be selected to grab the
 value information. Defaults to \code{var_left}, but could also be \code{var_right}.}
 
 \item{schemas}{<\verb{named list}> Current schema information. The additional widget
 values that have an impact on which data column to pick. Usually \code{r[[id]]$schema()}.}
 
+\item{...}{Additional arguments to pass to specific method functions.}
+
 \item{data_path}{<\code{character}> A string representing the path to the
 directory containing the QS files. Default is "data/".}
-
-\item{...}{Additional arguments to pass to specific method functions.}
 }
 \value{
 Varies based on the method specified in \code{var}. Commonly
@@ -52,3 +55,10 @@ class. It uses weighted means, sums, or other calculations.
 It fetches the relevant data and parent data, and then calls the
 appropriate method for calculation.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{region_value(postgresql)}: Method for when data is in the postgresql database
+
+\item \code{region_value(ondisk)}: Method for when data is ondisk (\code{.qs})
+
+}}

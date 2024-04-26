@@ -60,9 +60,12 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
   switch_DA <- is_scale_in(scales_as_DA, scale)
 
   # Adjust the selected ID in the case where the selection is not in `data`,
-  # except if there is a value supplied, meaning
+  # except if there is a value supplied or if the scale is in the database
   if (is.null(shown_scale) & is.null(val)) {
-    if (!switch_DA && !select_id %in% data$ID) select_id <- NA
+    db_scales <- get_from_globalenv("db_scales")
+    if (!switch_DA && !select_id %in% data$ID && !scale %in% db_scales) {
+      select_id <- NA
+    }
   }
 
   # Grab the shared info
@@ -79,7 +82,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    time = time, lang = lang, schemas = schemas,
+    time = time, scale = scale, lang = lang, schemas = schemas,
     val = val
   )
   if (!is.null(na_check)) {
@@ -107,7 +110,7 @@ explore_text.q5 <- function(vars, region, select_id, scale, time, data,
 
     # Get the information on how the selection compares
     relat <- explore_text_selection_comparison(
-      var = vars$var_left, data = data,
+      var = vars$var_left, data = data, scale = scale,
       select_id = select_id, lang = lang,
       time_col = time$var_left, schemas = schemas,
       val = val
@@ -212,7 +215,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
   na_check <- explore_text_check_na(
     context = context, data = data,
     select_id = select_id, vars = vars,
-    time = time, lang = lang, schemas = schemas
+    time = time, scale = scale, lang = lang, schemas = schemas
   )
   if (!is.null(na_check)) {
     return(na_check)
@@ -276,7 +279,7 @@ explore_text.bivar <- function(vars, region, select_id, scale, time, data,
       relat <- explore_text_selection_comparison(
         var = var, data = data,
         select_id = select_id,
-        col = col,
+        col = col, scale = scale,
         lang = lang,
         time_col = time[[col]],
         schemas = schemas
@@ -477,7 +480,7 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
   # Check for NAs in the selected value. Return NA message if it is the case
   na_check <- explore_text_check_na(
     context = context, data = data,
-    select_id = select_id, vars = vars,
+    select_id = select_id, vars = vars, scale = scale,
     lang = lang, time = time, schemas = schemas,
     val = val
   )
@@ -538,7 +541,7 @@ explore_text.delta <- function(vars, region, select_id, scale, time, data,
     var = vars$var_left,
     data = data,
     select_id = select_id,
-    col = "var_left",
+    col = "var_left", scale = scale,
     ranks_override = c(
       "exceptionally small", "unusually small",
       "just about average", "unusually large",
@@ -614,7 +617,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
   # Check for NAs in the selected value. Return NA message if it is the case
   na_check <- explore_text_check_na(
     context = context, data = data,
-    select_id = select_id, vars = vars,
+    select_id = select_id, vars = vars, scale = scale,
     lang = lang, time = time, schemas = schemas
   )
   if (!is.null(na_check)) {
@@ -664,7 +667,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
     relat_left <- explore_text_selection_comparison(
       data = data,
       select_id = select_id,
-      col = "var_left",
+      col = "var_left", scale = scale,
       ranks_override = c(
         "an exceptionally small change", "an unusually small change",
         "a just about average change", "an unusually large change",
@@ -679,7 +682,7 @@ explore_text.delta_bivar <- function(vars, region, select_id, scale, time, data,
     relat_right <- explore_text_selection_comparison(
       data = data,
       select_id = select_id,
-      col = "var_right",
+      col = "var_right", scale = scale,
       ranks_override = c(
         "an exceptionally small change", "an unusually small change",
         "a just about average change", "an unusually large change",

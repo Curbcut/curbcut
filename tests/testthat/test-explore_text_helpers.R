@@ -15,7 +15,7 @@ test_that("explore_context works", {
   actual_names <-
     explore_context(
       select_id = "4620003.00", region = "city", scale = "CT",
-      zoom_levels = mzl_CSD_CT_DA_building,
+      zoom_levels = mzl_CSD_CT_DA,
       switch_DA = FALSE
     )
   expect_equal(all(names(actual_names) == expected_names), TRUE)
@@ -120,6 +120,7 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
+    scale = scale,
     time = time,
     schemas = NULL
   )
@@ -135,6 +136,7 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
+    scale = scale,
     time = time,
     schemas = NULL
   )
@@ -149,6 +151,7 @@ test_that("explore_text_selection_comparison works", {
     var = vars$var_left,
     select_id = "4620003.00",
     data = data,
+    scale = scale,
     time = time,
     schemas = NULL
   )

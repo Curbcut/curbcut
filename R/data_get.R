@@ -28,68 +28,6 @@ data_get_qs <- function(var, scale, data_path = get_data_path()) {
   })
 }
 
-#' Calculate the percentage change between two variables over two years
-#'
-#' This function takes two variables representing the same quantity measured two
-#' years apart and calculates the percentage change between the two values.
-#'
-#' @param vars <`character vector`> A var_code. The variable to get data for.
-#' @param time <`character vector`> A character vector of length 2. The
-#' two years for which the delta should be calculated.
-#' @param scale <`character`> A string specifying the scale at which to retrieve
-#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
-#' @param vl_vr <`character`> Which of var_left or var_right is this delta supposed
-#' to be for. Defaults to var_left.
-#' @param data_path <`character`> A string representing the path to the directory
-#' containing the QS files. Default is "data/".
-#'
-#' @return A data frame with the following columns: ID, var_1, var_2, and var.
-#' `ID` is the ID column from the original data, `var_1` and `var_2` are the
-#' values of the two variables being compared, and `var` is the percentage
-#' change between the two variables.
-data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
-                           data_path = get_data_path()) {
-  # Grab the correct var/time
-  var <- vars[[vl_vr]]
-  time_col <- time[[vl_vr]]
-
-  # Retrieve
-  data <- data_get_qs(var, scale, data_path = data_path)
-
-  # Calculate breaks for the right columns
-  cols <- match_schema_to_col(data = data, time = time_col, col = var, schemas = NULL)
-  keep_cols <- c("ID", cols, attr(data, "breaks_var")) # keep the breaks_var and use it to calculate breaks
-  data <- data[unique(keep_cols)]
-
-  # Append breaks
-  data <- data_append_breaks(
-    var = var,
-    data = data,
-    q3_q5 = "q5",
-    rename_col = vl_vr
-  )
-  data <- data$data
-
-  # Keep columns of the two years
-  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr, schemas = NULL)
-  data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
-
-  # Calculate the relative difference
-  result <- (data[[3]] - data[[2]]) / data[[2]]
-  # Identify positions where data[[3]] is equal to data[[2]] and neither are NAs
-  equal_non_na <- !is.na(data[[3]]) & !is.na(data[[2]]) & data[[3]] == data[[2]]
-  # Set result to 0 where conditions are met
-  result[equal_non_na] <- 0
-
-  # Replace NaNs and infinite values with NA
-  data[[vl_vr]] <- result
-  data[[vl_vr]] <- replace(data[[vl_vr]], is.na(data[[vl_vr]]), NA)
-  data[[vl_vr]] <- replace(data[[vl_vr]], is.infinite(data[[vl_vr]]), NA)
-
-  # Return
-  return(data)
-}
-
 #' Get data
 #'
 #' This function retrieves data from QS files on disk or an SQLite database
@@ -111,6 +49,8 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
 #' default, their colour will be the one of their DA.
 #' @param data_path <`character`> A string representing the path to the
 #' directory containing the QS files. Default is "data/".
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. One of `mzl_*`. Usually `r[[id]]$zoom_levels`.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @return A dataframe containing the data according to the class of `vars`,
@@ -119,7 +59,7 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
 #' @export
 data_get <- function(vars, scale, region,
                      scales_as_DA = c("building", "street"),
-                     data_path = get_data_path(), ...) {
+                     data_path = get_data_path(), zoom_levels, ...) {
   UseMethod("data_get", vars)
 }
 
@@ -127,9 +67,23 @@ data_get <- function(vars, scale, region,
 #' @export
 data_get.q5 <- function(vars, scale, region = NULL,
                         scales_as_DA = c("building", "street"),
-                        data_path = get_data_path(), ...) {
+                        data_path = get_data_path(), zoom_levels, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
+
+  # What is the data source? it comes from postgresql or ondisk? The operations
+  # on `data` will be distinct based on one or the other
+  possibilities <- c("postgresql", "ondisk")
+  data_source <- possibilities[possibilities %in% class(vars$var_left)]
+
+  # TEMPORARY FIX. SCALE UPDATES BEFORE VARS, SO IT TRIGGERS THE DATA RETRIEVAL
+  # STILL USING `VARS` ON PREVIOUS SCALES (BEFORE IT GETS UPDATED TO THE RIGHT CLASS)!!!!!!
+  data_source <-
+    if (scale %in% get_from_globalenv("db_scales")) "postgresql" else "ondisk"
+
+  if (data_source == "postgresql") {
+    scale <- find_closest_scale_not_in_db(scale = scale, zoom_levels = zoom_levels)
+  }
 
   # Get data
   data <- data_get_qs(vars$var_left, scale = scale, data_path = data_path)
@@ -144,9 +98,13 @@ data_get.q5 <- function(vars, scale, region = NULL,
     q3_q5 = "q5",
     rename_col = "var_left"
   )
+  data <- data$data
+
+  # Add the data source as a class
+  class(data) <- c(data_source, class(data))
 
   # Return output
-  return(data$data)
+  return(data)
 }
 
 #' @describeIn data_get The method for bivar.
@@ -155,7 +113,7 @@ data_get.q5 <- function(vars, scale, region = NULL,
 #' @export
 data_get.bivar <- function(vars, scale, region,
                            scales_as_DA = c("building", "street"),
-                           data_path = get_data_path(), schemas, ...) {
+                           data_path = get_data_path(), zoom_levels, schemas, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -279,7 +237,7 @@ data_get.bivar <- function(vars, scale, region,
 #' function. It contains the time for both var_left and var_right variables.
 #' @export
 data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                           data_path = get_data_path(), time, ...) {
+                           data_path = get_data_path(), zoom_levels, time, ...) {
   data_get_delta_fun(
     vars = vars, scale = scale, region = region,
     scales_as_DA = scales_as_DA, data_path = data_path,
@@ -305,17 +263,19 @@ data_get.delta <- function(vars, scale, region, scales_as_DA = c("building", "st
 #' function. It contains the time for both var_left and var_right variables.
 #' @param data_path <`character`> A string representing the path to the directory
 #' containing the QS files. Default is "data/".
+#' @param zoom_levels <`named numeric vector`> A named numeric vector of zoom
+#' levels. One of `mzl_*`. Usually `r[[id]]$zoom_levels`.
 #' @param ... Additional arguments passed to methods.
 #'
 #' @seealso \code{\link{data_get.delta}}
 data_get_delta_fun <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                               data_path = get_data_path(), time, ...) {
+                               data_path = get_data_path(), zoom_levels, time, ...) {
   UseMethod("data_get_delta_fun", vars)
 }
 
 #' @describeIn data_get_delta_fun The method for scalar variables.
 data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                                      data_path = get_data_path(), time, ...) {
+                                      data_path = get_data_path(), zoom_levels, time, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -356,7 +316,7 @@ data_get_delta_fun.scalar <- function(vars, scale, region, scales_as_DA = c("bui
 
 #' @describeIn data_get_delta_fun The method for ordinal variables.
 data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                                       data_path = get_data_path(), time, ...) {
+                                       data_path = get_data_path(), zoom_levels, time, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -402,7 +362,7 @@ data_get_delta_fun.ordinal <- function(vars, scale, region, scales_as_DA = c("bu
 #' @describeIn data_get The method for bivar.
 #' @export
 data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                                 data_path = get_data_path(), time, ...) {
+                                 data_path = get_data_path(), zoom_levels, time, ...) {
   # Treat certain scales as DA
   scale <- treat_to_DA(scales_as_DA = scales_as_DA, scale = scale)
 
@@ -448,7 +408,7 @@ data_get.delta_bivar <- function(vars, scale, region, scales_as_DA = c("building
 #' @describeIn data_get The method for bivar_ldelta_rq3.
 #' @export
 data_get.bivar_ldelta_rq3 <- function(vars, scale, region, scales_as_DA = c("building", "street"),
-                                      data_path = get_data_path(), time, ...) {
+                                      data_path = get_data_path(), zoom_levels, time, ...) {
   # Reconstruct vars for delta
   vl_vars <- vars_build(var_left = vars$var_left, scale = scale, time = time$var_left)
   vl_time <- vl_vars$time
@@ -542,7 +502,7 @@ filter_region <- function(data, scale, region) {
 #' @export
 data_get.default <- function(vars, scale, region = NULL,
                              scales_as_DA = c("building", "street"),
-                             data_path = get_data_path(), vr_vl, ...) {
+                             data_path = get_data_path(), zoom_levels, vr_vl, ...) {
   # Check if `vars` has been entered without being subset from `vars_build()`
   if (all(c("vars", "time") %in% names(vars))) {
     stop("`vars` is invalid. Subset `$vars` from the output of `vars_build()`.")

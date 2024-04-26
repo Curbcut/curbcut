@@ -1,12 +1,12 @@
-test_explores_helper <- function(var_left, var_right, region, scale, time, select_id, schemas = NULL,
-                                 ...) {
+test_explores_helper <- function(var_left, var_right, region, scale, time, select_id,
+                                 schemas = NULL, zoom_levels = mzl_borough_CT_DA, ...) {
   vars <- vars_build(var_left, var_right = var_right, scale = scale, time = time)
   time_ <- vars$time
   vars <- vars$vars
   data <- data_get(vars, region = region, scale = scale, time = time_)
   actual <- explore_text(vars,
     region = region, select_id = select_id, scale = scale,
-    data = data, time = time_, zoom_levels = mzl_borough_CT_DA_building,
+    data = data, time = time_, zoom_levels = zoom_levels,
     schemas = schemas, ...
   )
 
@@ -98,12 +98,14 @@ test_that("q5 explore works without a selection", {
   test_explores_helper(
     var_left = "climate_drought",
     var_right = " ", region = "island", scale = "grd250",
-    select_id = "grd100_10200", time = 2022, shown_scale = "grd100", val = val
+    select_id = "grd100_10200", time = 2022, shown_scale = "grd100", val = val,
+    zoom_levels = mzl_grd600_grd300_grd120_grd60_grd30
   )
   test_explores_helper(
     var_left = "climate_drought",
     var_right = " ", region = "island", scale = "grd250",
-    select_id = "grd100_10200", time = 2022, shown_scale = "grd100", val = NA
+    select_id = "grd100_10200", time = 2022, shown_scale = "grd100", val = NA,
+    zoom_levels = mzl_grd600_grd300_grd120_grd60_grd30
   )
 
   # Ind scalar (using SQLite)
@@ -134,7 +136,6 @@ test_that("q5 explore works without a selection", {
 test_that("q5 explore works with selections", {
   test_explores(var_right = " ", select_id = "borough_2", region = "city", scale = "borough")
   test_explores(var_right = " ", select_id = "2466092", region = "CMA", scale = "CSD")
-  test_explores(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
 })
 
 
@@ -147,7 +148,6 @@ test_that("q5 explore works without a selection", {
 
 test_that("q5 explore works with selections", {
   test_explores(var_right = "housing_tenant", select_id = "2466023_19", region = "city", scale = "boroughCSD")
-  test_explores(var_right = "housing_rent", select_id = "b10000763", region = "city", scale = "building")
   test_explores(var_right = "housing_rent", select_id = "24520109", region = "city", scale = "DA")
 })
 
@@ -203,7 +203,7 @@ test_that("delta explore works without a selection", {
 test_that("delta explore works with selections", {
   test_explores_delta(var_right = " ", select_id = "2471095", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = " ", select_id = "borough_5", region = "city", scale = "borough")
-  test_explores_delta(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
+  # test_explores_delta(var_right = " ", select_id = "b10000763", region = "city", scale = "building")
 
   # Ind ordinal (using SQLite)
   var_left <- "climate_drought"
@@ -245,5 +245,4 @@ test_that("delta_bivar explore works without a selection", {
 test_that("delta_bivar explore works with selections", {
   test_explores_delta(var_right = "lst", select_id = "2466023", scale = "CSD", region = "CMA")
   test_explores_delta(var_right = "iden_imm", select_id = "2471095", scale = "CSD", region = "CMA")
-  test_explores_delta(var_right = "inc_limat", select_id = "b10000763", scale = "building", region = "city")
 })

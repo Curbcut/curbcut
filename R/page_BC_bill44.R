@@ -154,7 +154,7 @@ explore_text_bill44.q5 <- function(vars, region, select_id, scale, time, data,
     # Get the information on how the selection compares
     relat <- explore_text_selection_comparison(
       var = vars$var_left, data = data,
-      select_id = select_id, lang = lang,
+      select_id = select_id, scale = scale, lang = lang,
       time_col = time$var_left, schemas = schemas
     )
 
@@ -309,7 +309,7 @@ explore_text_bill44.delta <- function(vars, region, select_id, scale, time, data
       var = vars$var_left,
       data = data,
       select_id = select_id,
-      col = "var_left",
+      col = "var_left", scale = scale,
       ranks_override = c(
         "exceptionally small", "unusually small",
         "just about average", "unusually large",

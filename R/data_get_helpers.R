@@ -1,3 +1,66 @@
+#' Calculate the percentage change between two variables over two years
+#'
+#' This function takes two variables representing the same quantity measured two
+#' years apart and calculates the percentage change between the two values.
+#'
+#' @param vars <`character vector`> A var_code. The variable to get data for.
+#' @param time <`character vector`> A character vector of length 2. The
+#' two years for which the delta should be calculated.
+#' @param scale <`character`> A string specifying the scale at which to retrieve
+#' data, corresponding to a path on disk, e.g. `DA` or `CSD`.
+#' @param vl_vr <`character`> Which of var_left or var_right is this delta supposed
+#' to be for. Defaults to var_left.
+#' @param data_path <`character`> A string representing the path to the directory
+#' containing the QS files. Default is "data/".
+#'
+#' @return A data frame with the following columns: ID, var_1, var_2, and var.
+#' `ID` is the ID column from the original data, `var_1` and `var_2` are the
+#' values of the two variables being compared, and `var` is the percentage
+#' change between the two variables.
+data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
+                           data_path = get_data_path()) {
+  # Grab the correct var/time
+  var <- vars[[vl_vr]]
+  time_col <- time[[vl_vr]]
+
+  # Retrieve
+  data <- data_get_qs(var, scale, data_path = data_path)
+
+  # Calculate breaks for the right columns
+  cols <- match_schema_to_col(data = data, time = time_col, col = var, schemas = NULL)
+  keep_cols <- c("ID", cols, attr(data, "breaks_var")) # keep the breaks_var and use it to calculate breaks
+  data <- data[unique(keep_cols)]
+
+  # Append breaks
+  data <- data_append_breaks(
+    var = var,
+    data = data,
+    q3_q5 = "q5",
+    rename_col = vl_vr
+  )
+  data <- data$data
+
+  # Keep columns of the two years
+  cols <- match_schema_to_col(data = data, time = time_col, col = vl_vr, schemas = NULL)
+  data <- data[c("ID", grep(paste0(cols, collapse = "|"), names(data), value = TRUE))]
+
+  # Calculate the relative difference
+  result <- (data[[3]] - data[[2]]) / data[[2]]
+  # Identify positions where data[[3]] is equal to data[[2]] and neither are NAs
+  equal_non_na <- !is.na(data[[3]]) & !is.na(data[[2]]) & data[[3]] == data[[2]]
+  # Set result to 0 where conditions are met
+  result[equal_non_na] <- 0
+
+  # Replace NaNs and infinite values with NA
+  data[[vl_vr]] <- result
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.na(data[[vl_vr]]), NA)
+  data[[vl_vr]] <- replace(data[[vl_vr]], is.infinite(data[[vl_vr]]), NA)
+
+  # Return
+  return(data)
+}
+
+
 #' Calculate Breaks for Delta Legends
 #'
 #' This function calculates the break points for delta legends based on the data.
@@ -342,8 +405,6 @@ data_append_breaks <- function(var, data, q3_q5 = "q5", rename_col = "var_left")
       find_breaks_q5(min_val = min(data_vec), max_val = max(data_vec))
     }
   }
-
-
 
   # Rework breaks just for assembling (we want to include ALL observations)
   assemble_breaks <- breaks

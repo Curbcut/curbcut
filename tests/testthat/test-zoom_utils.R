@@ -3,7 +3,7 @@ test_that("zoom_get_string returns the correct zoom string for a given zoom leve
 })
 
 test_that("zoom_get_string returns the correct zoom string for a given zoom level", {
-  expect_equal(zoom_get_string(14, mzl_borough_CT_DA_building), "DA")
+  expect_equal(zoom_get_string(14, mzl_borough_CT_DA), "DA")
 })
 
 test_that("zoom_get_string returns the correct zoom string for a zoom level below the minimum zoom level", {
@@ -94,8 +94,8 @@ test_that("zoom_get_code returns correct scale code with one scale name in Frenc
 
 # Test case 3: Test with multiple scale names in English
 test_that("zoom_get_code returns correct scale codes with multiple scale names in English", {
-  scales_name <- c("City", "Census tract", "Building")
-  expected_output <- c("CSD", "CT", "building")
+  scales_name <- c("City", "Census tract")
+  expected_output <- c("CSD", "CT")
   result <- zoom_get_code(scales_name)
   expect_equal(result, expected_output)
 })

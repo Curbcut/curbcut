@@ -80,6 +80,18 @@ vars_build <- function(var_left, var_right = " ", scale, time,
     )
   }
 
+  # Add var left and right data location
+  class(vl$var) <- c(
+    class(vl$var),
+    if (scale %in% get_from_globalenv("db_scales")) "postgresql" else "ondisk"
+  )
+  if (var_right != " ") {
+    class(vr$var) <- c(
+      class(vr$var),
+      if (scale %in% get_from_globalenv("db_scales")) "postgresql" else "ondisk"
+    )
+  }
+
   # Grab the class
   z <- (\(x) {
     # General cases

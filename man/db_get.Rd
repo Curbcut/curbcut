@@ -4,10 +4,16 @@
 \alias{db_get}
 \title{Retrieve Data from Database}
 \usage{
-db_get(select, from, where = NULL, schema = get_from_globalenv("inst_prefix"))
+db_get(
+  select = "*",
+  from,
+  where = NULL,
+  schema = get_from_globalenv("inst_prefix")
+)
 }
 \arguments{
-\item{select}{<\verb{character vector}> The names of columns to select.}
+\item{select}{<\verb{character vector}> The names of columns to select. Defaults
+to everything.}
 
 \item{from}{<\code{character}> The name of the table to select from.}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/update_rvs.R
 \name{update_rv}
 \alias{update_rv}
-\title{Update a reactive value object}
+\title{Update a reactive value object within little \code{r}}
 \usage{
 update_rv(id, r, rv_name, new_val, default_val = NULL)
 }

@@ -9,7 +9,7 @@ test_that("data_get_colours.q5  works", {
 
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
-    zoom_levels = mzl_CSD_CT_DA_building,
+    zoom_levels = mzl_CSD_CT_DA,
     time = time, schemas = NULL
   )
   expect_true(nrow(data_colours) > 1000)
@@ -28,7 +28,7 @@ test_that("data_get_colours.q5  works", {
 
   data_colours <- data_get_colours(
     vars = vars, region = "CMA",
-    zoom_levels = mzl_CSD_CT_DA_building,
+    zoom_levels = mzl_CSD_CT_DA,
     time = time, schemas = schemas
   )
   expect_true(nrow(data_colours) > 1000)

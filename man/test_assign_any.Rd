@@ -10,6 +10,7 @@ test_assign_any(
   region = "CMA",
   scale = "CSD",
   time = 2021,
+  zoom_levels = get_from_globalenv("mzl_CSD_CT_DA"),
   select_id = NA,
   pos = 1,
   data_path = get_data_path()
@@ -29,6 +30,9 @@ variable is represented by (" ").}
 
 \item{time}{<\verb{numeric named list}> Time the user would be interested in. (represents
 the widget time).}
+
+\item{zoom_levels}{<\verb{named numeric vector}> One of \verb{mzl_*} with zoom levels (or
+scales) under study.}
 
 \item{select_id}{<\code{character}> The select_id to assign in the global environment.
 Defaults to NA.}

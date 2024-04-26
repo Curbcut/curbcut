@@ -10,6 +10,7 @@ explore_text_check_na(
   select_id,
   vars,
   time,
+  scale,
   lang = NULL,
   schemas = NULL,
   val = NULL
@@ -31,6 +32,9 @@ text needs to be generated. Usually the output of \code{\link{vars_build}}.}
 
 \item{time}{<\verb{list of numeric vector}> The \code{time} at which data is displayed.
 A list for var_left and var_right. The output of \code{\link{vars_build}}(...)$time.}
+
+\item{scale}{<\code{character}> Current scale. The output of
+\code{\link{update_scale}}.}
 
 \item{lang}{<\code{character}> A string indicating the language in which to
 translates the variable. Defaults to NULL.}

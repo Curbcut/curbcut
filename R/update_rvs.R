@@ -355,7 +355,7 @@ update_vars <- function(id, r, var_left, var_right, scale, widget_time) {
   update_rv(id, r, rv_name = "time", new_val = shiny::reactive(vr()$time))
 }
 
-#' Update a reactive value object
+#' Update a reactive value object within little `r`
 #'
 #' This function updates a reactive value object and does not trigger a change
 #' in the reactive value if the new value is the same as the previous value. It
@@ -390,6 +390,28 @@ update_rv <- function(id, r, rv_name, new_val, default_val = NULL) {
       return(NULL)
     }
     r[[id]][[rv_name]](new_val())
+  }, ignoreNULL = TRUE)
+}
+
+#' Update a reactive value object
+#'
+#' This function updates a reactive value object and does not trigger a change
+#' in the reactive value if the new value is the same as the previous value. It
+#' observes a new value, and if this new value is different from the current one,
+#' the function updates the rv. It uses the reactive programming features of Shiny.
+#'
+#' @param rv <`reactiveVal`> The reactive value to update.
+#' @param new_val <`reactive`> A reactive expression returning the new value to
+#' assign to the rv. If the new value is the same as the current one, the function
+#' does nothing.
+#'
+#' @export
+update_rv_general <- function(rv, new_val) {
+  shiny::observeEvent(new_val(), {
+    if (identical(new_val(), rv())) {
+      return(NULL)
+    }
+    rv(new_val())
   }, ignoreNULL = TRUE)
 }
 

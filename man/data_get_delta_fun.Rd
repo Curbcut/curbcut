@@ -12,6 +12,7 @@ data_get_delta_fun(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -22,6 +23,7 @@ data_get_delta_fun(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -32,6 +34,7 @@ data_get_delta_fun(
   region,
   scales_as_DA = c("building", "street"),
   data_path = get_data_path(),
+  zoom_levels,
   time,
   ...
 )
@@ -52,6 +55,9 @@ their colour will be the one of their DA.}
 
 \item{data_path}{<\code{character}> A string representing the path to the directory
 containing the QS files. Default is "data/".}
+
+\item{zoom_levels}{<\verb{named numeric vector}> A named numeric vector of zoom
+levels. One of \verb{mzl_*}. Usually \code{r[[id]]$zoom_levels}.}
 
 \item{time}{<\verb{named list}> Object built using the \code{\link{vars_build}}
 function. It contains the time for both var_left and var_right variables.}
