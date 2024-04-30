@@ -27,7 +27,8 @@ Imports:
     data.table,
     RPostgres,
     pool,
-    bslib
+    bslib,
+    jsonlite
 Remotes:
     Curbcut/cc.map,
     Curbcut/cc.landing

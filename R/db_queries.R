@@ -94,10 +94,11 @@ db_get <- function(select = "*", from, where = NULL, schema = get_from_globalenv
   # Execute the query with the constructed SQL
   out <- db_get_helper(call)
 
-  # Parse out quotations
-  for (i in names(out)) {
-    if (is.numeric(out[[i]])) next
-    out[[i]] <- gsub('"', "", out[[i]])
+  # Switch JSON columns back to list
+  data_types <- sapply(out, class)
+  cols_json <- which(data_types == "pq_jsonb")
+  for (col in cols_json) {
+    out[[col]] <- sapply(out[[col]], \(x) list(jsonlite::fromJSON(x)))
   }
 
   out

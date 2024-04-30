@@ -122,7 +122,6 @@ region_value_method_postgresql.default <- function(var, data, scale, parent_stri
                         parent_string)
 
   db_get_helper(sql_query)
-
 }
 
 #' @describeIn region_value Method for when data is ondisk (`.qs`)
