@@ -5,10 +5,10 @@ library(tibble)
 cc_translation_df <-
   # General UI --------------------------------------------------------------
 
-  tibble::tibble(
-    en = character(),
-    fr = character()
-  ) |>
+tibble::tibble(
+  en = character(),
+  fr = character()
+) |>
   tibble::add_row(
     en = "----",
     fr = "----"
@@ -101,10 +101,10 @@ cc_translation_df <-
 
   # Geography widget --------------------------------------------------------
 
-  tibble::add_row(
-    en = "Geography",
-    fr = "G\u00e9ographie"
-  ) |>
+tibble::add_row(
+  en = "Geography",
+  fr = "G\u00e9ographie"
+) |>
   tibble::add_row(
     en = "Region",
     fr = "R\u00e9gion"
@@ -143,10 +143,10 @@ cc_translation_df <-
   ) |>
   # Legend ------------------------------------------------------------------
 
-  tibble::add_row(
-    en = "Low",
-    fr = "Bas"
-  ) |>
+tibble::add_row(
+  en = "Low",
+  fr = "Bas"
+) |>
   tibble::add_row(
     en = "High",
     fr = "Haut"
@@ -169,16 +169,16 @@ cc_translation_df <-
   ) |>
   # Tutorial ----------------------------------------------------------------
 
-  tibble::add_row(
-    en = paste0(
-      "A Curbcut page explores a specific theme. Here you'll find information",
-      " about the theme and the data used on the page."
-    ),
-    fr = paste0(
-      "Chaque page Curbcut explore un th\u00e8me sp\u00e9cifique. Vous trouverez ici des ",
-      "informations sur le th\u00e8me et les donn\u00e9es qui y figurent."
-    )
-  ) |>
+tibble::add_row(
+  en = paste0(
+    "A Curbcut page explores a specific theme. Here you'll find information",
+    " about the theme and the data used on the page."
+  ),
+  fr = paste0(
+    "Chaque page Curbcut explore un th\u00e8me sp\u00e9cifique. Vous trouverez ici des ",
+    "informations sur le th\u00e8me et les donn\u00e9es qui y figurent."
+  )
+) |>
   tibble::add_row(
     en = paste0(
       "Curbcut maps are interactive: you can scroll, zoom in and out, and ",
@@ -302,10 +302,10 @@ cc_translation_df <-
   ) |>
   # Misc --------------------------------------------------------------------
 
-  tibble::add_row(
-    en = "Population",
-    fr = "Population"
-  ) |>
+tibble::add_row(
+  en = "Population",
+  fr = "Population"
+) |>
   tibble::add_row(
     en = "Households",
     fr = "M\u00e9nages"
@@ -462,11 +462,11 @@ cc_translation_df <-
   ) |>
   # Explore panel -----------------------------------------------------------
 
-  # Context and q5
-  tibble::add_row(
-    en = "individuals",
-    fr = "individus"
-  ) |>
+# Context and q5
+tibble::add_row(
+  en = "individuals",
+  fr = "individus"
+) |>
   tibble::add_row(
     en = "This value",
     fr = "Cette valeur"
@@ -477,7 +477,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s %s is %s than in %s of other %s %s",
-    fr = "%s %s est %s que dans %s des autres %s %s"
+    fr = "%s %s est \u00e0 %s que dans %s des autres %s %s"
   ) |>
   tibble::add_row(
     en = "%s <i>(Data from %s.)</i>",
@@ -521,10 +521,10 @@ cc_translation_df <-
   ) |>
   # bivar -------------------------------------------------------------------
 
-  tibble::add_row(
-    en = "Pearson's r: %s",
-    fr = "r de Pearson : %s"
-  ) |>
+tibble::add_row(
+  en = "Pearson's r: %s",
+  fr = "r de Pearson : %s"
+) |>
   tibble::add_row(
     en = "The first value",
     fr = "La premi\u00e8re valeur"
@@ -587,11 +587,11 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "higher",
-    fr = "un niveau plus \u00e9lev\u00e9 de"
+    fr = "un niveau plus \u00e9lev\u00e9"
   ) |>
   tibble::add_row(
     en = "lower",
-    fr = "un niveau plus bas de"
+    fr = "un niveau plus bas"
   ) |>
   tibble::add_row(
     en = "a higher",
@@ -623,7 +623,7 @@ cc_translation_df <-
   ) |>
   tibble::add_row(
     en = "%s is %s than in %s of other %s",
-    fr = "%s est %s que dans %s des autres %s"
+    fr = "%s est à %s que dans %s des autres %s"
   ) |>
   tibble::add_row(
     en = "which is %s for %s",
@@ -644,10 +644,10 @@ cc_translation_df <-
   # Delta -------------------------------------------------------------------
 
 
-  tibble::add_row(
-    en = "the value",
-    fr = "la valeur"
-  ) |>
+tibble::add_row(
+  en = "the value",
+  fr = "la valeur"
+) |>
   tibble::add_row(
     en = "%s percentage points (%sx)",
     fr = "%s points de pourcentage (%sx)"
@@ -742,10 +742,10 @@ cc_translation_df <-
   ) |>
   # Delta bivar -------------------------------------------------------------
 
-  tibble::add_row(
-    en = "the first value",
-    fr = "la premi\u00e8re valeur"
-  ) |>
+tibble::add_row(
+  en = "the first value",
+  fr = "la premi\u00e8re valeur"
+) |>
   tibble::add_row(
     en = "the second value",
     fr = "la deuxi\u00e8me valeur"
@@ -836,10 +836,10 @@ cc_translation_df <-
   ) |>
   # Panel view --------------------------------------------------------------
 
-  tibble::add_row(
-    en = "Name",
-    fr = "Nom"
-  ) |>
+tibble::add_row(
+  en = "Name",
+  fr = "Nom"
+) |>
   tibble::add_row(
     en = "the change in %s between %s and %s",
     fr = "le changement dans %s entre %s et %s"
@@ -910,10 +910,10 @@ cc_translation_df <-
   ) |>
   # Place explorer ----------------------------------------------------------
 
-  tibble::add_row(
-    en = "Generating report",
-    fr = "Cr\u00e9ation du rapport"
-  ) |>
+tibble::add_row(
+  en = "Generating report",
+  fr = "Cr\u00e9ation du rapport"
+) |>
   tibble::add_row(
     en = "Its value is higher than the WHO's guideline value of 53. ",
     fr = "Sa valeur est sup\u00e9rieure \u00e0 la valeur recommand\u00e9e par l'OMS, qui est de 53. "
@@ -983,10 +983,10 @@ cc_translation_df <-
     fr = "{data_rank} en termes de potentiel vie active. (Donn\u00e9es de {data_date})"
   ) |>
   # Possible themes ---------------------------------------------------------
-  tibble::add_row(
-    en = "Climate",
-    fr = "Climat"
-  ) |>
+tibble::add_row(
+  en = "Climate",
+  fr = "Climat"
+) |>
   tibble::add_row(
     en = "Ecology",
     fr = "\u00c9cologie"
@@ -1028,10 +1028,10 @@ cc_translation_df <-
     fr = "Utilisation des sols"
   ) |>
   # Stories -----------------------------------------------------------------
-  tibble::add_row(
-    en = "Image gallery",
-    fr = "Galerie d'images"
-  ) |>
+tibble::add_row(
+  en = "Image gallery",
+  fr = "Galerie d'images"
+) |>
   tibble::add_row(
     en = "Choose themes:",
     fr = "Choisissez des th\u00e8mes :"
