@@ -70,7 +70,7 @@ db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst
   }
 
   # Start building the SQL query
-  call <- sprintf("SELECT %s FROM %s.%s", cols, schema, from)
+  call <- sprintf('SELECT %s FROM %s."%s"', cols, schema, from)
 
   # Process the where list to construct the WHERE clause
   if (!is.null(where) && length(where) > 0) {
@@ -90,7 +90,16 @@ db_get <- function(select, from, where = NULL, schema = get_from_globalenv("inst
   }
 
   # Execute the query with the constructed SQL
-  db_get_helper(call)
+  out <- db_get_helper(call)
+
+  # Switch JSON columns back to list
+  data_types <- sapply(out, class)
+  cols_json <- which(data_types == "pq_jsonb")
+  for (col in cols_json) {
+    out[[col]] <- sapply(out[[col]], \(x) list(jsonlite::fromJSON(x)), USE.NAMES = FALSE)
+  }
+
+  out
 
 }
 
