@@ -88,18 +88,18 @@ explore_server <- function(id, r, data, vars, region, scale, select_id, time,
                              zoom_levels = zoom_levels(), scales_as_DA = scales_as_DA(),
                              lang = r$lang(), schemas = schemas()
                            )), ...) {
-  stopifnot(shiny::is.reactive(data))
-  stopifnot(shiny::is.reactive(vars))
-  stopifnot(shiny::is.reactive(region))
-  stopifnot(shiny::is.reactive(scale))
-  stopifnot(shiny::is.reactive(time))
-  stopifnot(shiny::is.reactive(zoom_levels))
-  stopifnot(shiny::is.reactive(select_id))
-  stopifnot(shiny::is.reactive(scales_as_DA))
-  stopifnot(shiny::is.reactive(graph_fun))
-  stopifnot(shiny::is.reactive(graph_args))
-  stopifnot(shiny::is.reactive(table_fun))
-  stopifnot(shiny::is.reactive(table_args))
+  # stopifnot(shiny::is.reactive(data))
+  # stopifnot(shiny::is.reactive(vars))
+  # stopifnot(shiny::is.reactive(region))
+  # stopifnot(shiny::is.reactive(scale))
+  # stopifnot(shiny::is.reactive(time))
+  # stopifnot(shiny::is.reactive(zoom_levels))
+  # stopifnot(shiny::is.reactive(select_id))
+  # stopifnot(shiny::is.reactive(scales_as_DA))
+  # stopifnot(shiny::is.reactive(graph_fun))
+  # stopifnot(shiny::is.reactive(graph_args))
+  # stopifnot(shiny::is.reactive(table_fun))
+  # stopifnot(shiny::is.reactive(table_args))
 
   shiny::moduleServer(id, function(input, output, session) {
 
