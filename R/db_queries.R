@@ -18,11 +18,14 @@ db_operation <- function(what, args) {
   conn <- pool::poolCheckout(db_pool)
 
   # Apply the query
+  start <- Sys.time()
   out <- tryCatch(do.call(what, c(conn, args)),
                   error = function(e) {
                     pool::poolReturn(conn)
                     stop(e$message)
                   })
+  end <- Sys.time()
+  print(paste0("DB query call time: ", as.numeric(end-start)))
 
   # Return the connection to the pool of connections
   pool::poolReturn(conn)
