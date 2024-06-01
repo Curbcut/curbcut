@@ -79,7 +79,7 @@ icon_custom <- function(icon) {
 #' @return The modified "tag" object with a button and a Material Design icon.
 #' @export
 icon_material_button <- function(tag, icon) {
-  shiny::tagSetChildren(tag,
+  shiny::tagSetChildren(shiny::tag,
     .cssSelector = "button",
     icon_material(icon)
   )

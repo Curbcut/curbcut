@@ -446,6 +446,7 @@ bill44_UI <- function(id) {
 }
 
 #' @export
+#' @export
 bill44_server <- function(id, r) {
   shiny::moduleServer(id, function(input, output, session) {
 
@@ -515,14 +516,15 @@ bill44_server <- function(id, r) {
     var_right <- compare_server(
       id = id,
       r = r,
+      var_left = r[[id]]$var_left,
       var_list = shiny::reactive(dropdown_make(
         vars = vars_right,
         compare = TRUE
       )),
+      zoom_levels = r[[id]]$zoom_levels,
       # If there are no time in the page, use the latest census for date of
       # comparisons
-      time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021),
-      show_panel = shiny::reactive(FALSE)
+      time = if (r[[id]]$time() != "") r[[id]]$time else shiny::reactive(2021)
     )
 
     # Region and zoom levels change depending on the geography widget
@@ -598,7 +600,7 @@ bill44_server <- function(id, r) {
     # Update the `r[[id]]$vars` reactive
     update_vars(
       id = id, r = r, var_left = var_left,
-      var_right = var_right, widget_time = widget_time
+      var_right = var_right, widget_time = widget_time, scale = r[[id]]$scale
     )
 
     # Sidebar
