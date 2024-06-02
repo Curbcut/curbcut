@@ -682,7 +682,7 @@ bill44_server <- function(id, r) {
       time = r[[id]]$time,
       zoom_levels = r[[id]]$zoom_levels,
       schemas = r[[id]]$schemas,
-      table_fun = shiny::reactive(explore_text_bill44)
+      table_fun = shiny::reactive(if (var_right() == " ") explore_text_bill44 else explore_text)
     )
 
     # Bookmarking
