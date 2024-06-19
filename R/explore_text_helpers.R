@@ -560,6 +560,8 @@ explore_text_selection_comparison <- function(var = NULL, data, select_id,
   quants <- 1:100 %% 20
   quants <- which(quants == 0) / 100
   rank <- findInterval(higher_than, quants) + 1
+  if (rank == 6) rank <- 5 # This happens when val is supplied and it's higher than
+  # all of the `data` values (grd30 selection higher than every grd600)
   ranks_chr <-
     if (is.null(ranks_override)) {
       var_get_info(var = var, what = "rankings_chr")[[1]]
