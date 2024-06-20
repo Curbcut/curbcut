@@ -28,6 +28,9 @@ load_data <- function(data_folder = "data", pos = 1,
                       inst_prefix, mapbox_username,
                       default_random_address, map_zoom, map_loc) {
 
+  # FIX TO PROMSXP detected, replacing with NULL (see https://github.com/traversc/qs/issues/93)
+  qs::set_trust_promises(TRUE)
+
   # Load all .qs and .qsm files that are in the root of the data folder
   data_files <- list.files(data_folder, full.names = TRUE)
   invisible(lapply(data_files[grepl("qsm$", data_files)],
