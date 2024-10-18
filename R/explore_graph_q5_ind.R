@@ -153,7 +153,8 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time, sch
   )
 
   # Construct the data to make sure all breaks are represented
-  dat <- data[!is.na(data[[rcol]]), ]
+  dat <- data
+  dat <- dat[!is.na(dat[[rcol]]), ]
   dat[[rcol]] <- factor(dat[[rcol]], levels = 0:5)
   dat <- table(dat[[rcol]])
   dat <- data.frame(
@@ -176,7 +177,7 @@ explore_graph_q5_ind.ordinal <- function(vars, select_id, scale, data, time, sch
   # Add selection
   if (!is.na(shared_info$select_id) | !is.null(val)) {
     if (is.null(val)) {
-      data[[rcol]][data$ID == shared_info$select_id]
+      val <- data[[rcol]][data$ID == shared_info$select_id]
     }
     if (!any(is.na(val))) {
       plot <-

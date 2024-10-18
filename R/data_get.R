@@ -66,7 +66,8 @@ data_get_delta <- function(vars, time, scale, vl_vr = "var_left",
     var = var,
     data = data,
     q3_q5 = "q5",
-    rename_col = vl_vr
+    rename_col = vl_vr,
+    scale = scale
   )
   data <- data$data
 
@@ -142,7 +143,8 @@ data_get.q5 <- function(vars, scale, region = NULL,
     var = vars$var_left,
     data = data,
     q3_q5 = "q5",
-    rename_col = "var_left"
+    rename_col = "var_left",
+    scale = scale
   )
 
   # Return output
@@ -184,7 +186,7 @@ data_get.bivar <- function(vars, scale, region,
     \(var, data, rename_col) {
       data_append_breaks(
         var = var, data = data, q3_q5 = "q3",
-        rename_col = rename_col
+        rename_col = rename_col, scale = scale
       )
     }, c(vars$var_left, vars$var_right),
     list(vl, vr),

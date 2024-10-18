@@ -372,7 +372,7 @@ autovars_time_ui <- function(id, times, widget_ns,
   if (slider_type == "slider") {
     min_ <- times |> min()
     max_ <- times |> max()
-    step_ <- unique(diff(times))[1]
+    step_ <- abs(unique(diff(times))[1])
     double_value_ <- times[ceiling(length(times) / 2)]
     double_value_ <- c(double_value_, max_)
     length_ <- times |> length()
