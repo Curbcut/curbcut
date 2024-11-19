@@ -145,11 +145,11 @@ tibble::add_row(
 
 tibble::add_row(
   en = "Low",
-  fr = "Bas"
+  fr = "Bas/se"
 ) |>
   tibble::add_row(
     en = "High",
-    fr = "Haut"
+    fr = "Haut/e"
   ) |>
   tibble::add_row(
     en = "Legend",

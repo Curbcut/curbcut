@@ -33,7 +33,7 @@ Remotes:
 License: AGPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 URL: https://github.com/MSSI-urban/curbcut
 BugReports: https://github.com/MSSI-urban/curbcut/issues
 Suggests: 

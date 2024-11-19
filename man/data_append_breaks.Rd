@@ -4,7 +4,13 @@
 \alias{data_append_breaks}
 \title{Append new columns based on quantile breaks}
 \usage{
-data_append_breaks(var, data, q3_q5 = "q5", rename_col = "var_left")
+data_append_breaks(
+  var,
+  data,
+  q3_q5 = "q5",
+  rename_col = "var_left",
+  scale = scale
+)
 }
 \arguments{
 \item{var}{<\code{character}> var_code field, which will be renamed using \code{rename_col}.}
@@ -16,6 +22,9 @@ Default is "q5".}
 
 \item{rename_col}{<\code{character}> The column name to rename. Default is
 "var_left". Can also be "var_right".}
+
+\item{scale}{<\code{character}> The scale of the data to be retrieved, e.g. \code{CSD}.
+The output of \code{\link{update_scale}}.}
 }
 \value{
 <\code{data.frame}> Modified data frame with additional columns.
