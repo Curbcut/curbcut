@@ -5,62 +5,62 @@ zoning_UI <- function(id) {
   theme_lowercased <- gsub(" .*", "", tolower(page$theme))
 
   shiny::tagList(
-    #   shiny::tags$head(
-    #     shiny::tags$style(shiny::HTML("
-    #   .greyed-out {
-    #     color: grey !important;
-    #     background-color: rgba(211, 211, 211, 0.3);
-    #     pointer-events: none;
-    #   }
-    # "))
-    #   ),
+      shiny::tags$head(
+        shiny::tags$style(shiny::HTML("
+      .greyed-out {
+        color: grey !important;
+        background-color: rgba(211, 211, 211, 0.3);
+        pointer-events: none;
+      }
+    "))
+      ),
     shiny::div(
       `data-theme` = theme_lowercased,
       # Sidebar
       sidebar_UI(
         id = shiny::NS(id, id),
-        checkbox_UI(shiny::NS(id, id), label = "Explore residential areas",# and upcoming zoning changes under SSMUH legislation (Bill 44)",
+        checkbox_UI(shiny::NS(id, id), label = "Explore residential areas and upcoming zoning changes under SSMUH legislation (Bill 44)",
                     value = FALSE),
-        # shiny::br(),
-        # shiny::hr(),
-        # shiny::div(
-        #   class = "historical-comp-panel greyed-out",
-        #   id = shiny::NS(id, "histor_comp_panel"),
-        #   shiny::div(
-        #     class = "shiny-split-layout sidebar-section-title",
-        #     shiny::div(
-        #       style = "width: 9%",
-        #       icon_material_title("date_range")
-        #     ),
-        #     shiny::div(
-        #       style = "width: 65%",
-        #       cc_t_span("Historical comparison")
-        #     ),
-        #     shiny::div(
-        #       style = "width: 35%; margin:0px !important; text-align: right;",
-        #       shiny::div(
-        #         checkbox_UI(
-        #           id = shiny::NS(id, id),
-        #           checkbox_id = "bcm",
-        #           label = cc_t("Compare"),
-        #           value = FALSE
-        #         )
-        #       )
-        #     )
-        #   ),
-        #   shiny::div(
-        #     id = shiny::NS(id, "zoom_slider_div"),
-        #     class = "sus-sidebar-control",
-        #     slider_text_UI(shiny::NS(id, id), slider_text_id = "abb",
-        #                    choices = c("Before Bill 44", "After Bill 44"),
-        #                    label = NULL,
-        #                    selected = "Before Bill 44"),
-        #     shinyjs::hidden(slider_text_UI(shiny::NS(id, id), slider_text_id = "abc",
-        #                                    choices = c("Before Bill 44", "After Bill 44"),
-        #                                    label = NULL,
-        #                                    selected = c("Before Bill 44", "After Bill 44"))
-        #     ))
-        # ),
+        shiny::br(),
+        shiny::hr(),
+        shiny::div(
+          class = "historical-comp-panel greyed-out",
+          id = shiny::NS(id, "histor_comp_panel"),
+          shiny::div(
+            class = "shiny-split-layout sidebar-section-title",
+            shiny::div(
+              style = "width: 9%",
+              icon_material_title("date_range")
+            ),
+            shiny::div(
+              style = "width: 65%",
+              cc_t_span("Historical comparison")
+            ),
+            shiny::div(
+              style = "width: 35%; margin:0px !important; text-align: right;",
+              shiny::div(
+                checkbox_UI(
+                  id = shiny::NS(id, id),
+                  checkbox_id = "bcm",
+                  label = cc_t("Compare"),
+                  value = FALSE
+                )
+              )
+            )
+          ),
+          shiny::div(
+            id = shiny::NS(id, "zoom_slider_div"),
+            class = "sus-sidebar-control",
+            slider_text_UI(shiny::NS(id, id), slider_text_id = "abb",
+                           choices = c("Before Bill 44", "After Bill 44"),
+                           label = NULL,
+                           selected = "Before Bill 44"),
+            shinyjs::hidden(slider_text_UI(shiny::NS(id, id), slider_text_id = "abc",
+                                           choices = c("Before Bill 44", "After Bill 44"),
+                                           label = NULL,
+                                           selected = c("Before Bill 44", "After Bill 44"))
+            ))
+        ),
         bottom = shiny::tagList(
           legend_UI(shiny::NS(id, id)),
         )
@@ -110,13 +110,13 @@ zoning_server <- function(id, r) {
     zoning_colour_pal <- zoning_colour_pal[order(zoning_colour_pal$group_short), ]
     zoning_colour_pal_res <- tibble::tibble(
       group = c("Single", "Single + Secondary suite/ADU", "Duplex",
-                #"Multiresidential (3 units)", "Multiresidential (4 units)",
-                #"Multiresidential (6 units)",
+                "Multiresidential (3 units)", "Multiresidential (4 units)",
+                "Multiresidential (6 units)",
                 "Multiresidential"),
-      group_short = c("Single", "Single + Suite", "Duplex",# "Multi (3)", "Multi (4)",
-                      #"Multi (6)",
+      group_short = c("Single", "Single + Suite", "Duplex", "Multi (3)", "Multi (4)",
+                      "Multi (6)",
                       "Multi"),
-      fill = c("#ADB033", "#F5D574", "#A3B0D1",# "#CD718C", "#E08565", "#C9C3FA",
+      fill = c("#ADB033", "#F5D574", "#A3B0D1", "#CD718C", "#E08565", "#C9C3FA",
                "#73AD80"))
     colours_dfs <- get_from_globalenv("colours_dfs")
     zoning_colour_pal_compare <- tibble::tibble(group = c("None",
@@ -141,9 +141,9 @@ zoning_server <- function(id, r) {
         z <- zones_residential[zones_residential$before, ]
         group <- "res_category_before"
         pre_text <- #"Before Bill 44,
-          "The permitted use on this parcel is" #was"
+          "The permitted use on this parcel was"
         intro <- #"<p>Before Bill 44,
-          "<p>The residential zoning distribution across different areas is as follows`:"#was as follows:"
+          "<p>The residential zoning distribution across different areas was as follows:"
       }
       if (case == "after_bill") {
         df <- zoning_lots_residential
@@ -308,7 +308,7 @@ zoning_server <- function(id, r) {
       cc.map::map_choropleth_fill_fun(
         df = unique(zoning_col[c("group", "fill")]),
         get_col = group,
-        fallback = "#DEDEDE")#"#B3B3BB")
+        fallback = "#B3B3BB")
     }
 
     zoning_legend <- function(case, ...) {
@@ -451,7 +451,7 @@ zoning_server <- function(id, r) {
     # Residential only checkbox
     res <- checkbox_server(id = id, r = r,
                            label = shiny::reactive("Explore residential areas"))# and upcoming zoning changes under SSMUH legislation (Bill 44)"))
-    b_a_bill <- shiny::reactive("Before Bill 44")#slider_text_server(id = id, r = r, slider_text_id = "abb")
+    b_a_bill <- slider_text_server(id = id, r = r, slider_text_id = "abb")
     # When not on res, hide the slider_text!
     shiny::observeEvent(res(), {
       if (!res()) shinyjs::addClass(id = "histor_comp_panel", class = "greyed-out")
@@ -459,8 +459,8 @@ zoning_server <- function(id, r) {
       shinyjs::toggleState("histor_comp_panel", condition = res())
     })
     # Compare before and after bill
-    compare_bill <- shiny::reactive(FALSE)#checkbox_server(id = id, r = r, checkbox_id = "bcm",
-                    #                label = shiny::reactive("Compare"))
+    compare_bill <- checkbox_server(id = id, r = r, checkbox_id = "bcm",
+                                    label = shiny::reactive("Compare"))
     shiny::observeEvent(compare_bill(), {
       shinyjs::toggle(shiny::NS(id, "ccslidertext_abb"), condition = !compare_bill())
       shinyjs::toggle(shiny::NS(id, "ccslidertext_abc"), condition = compare_bill())
