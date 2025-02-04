@@ -7,7 +7,7 @@
 db_get_helper(call)
 }
 \arguments{
-\item{call}{\if{html}{\out{<\code{character}>}} The SQL query string to be executed.}
+\item{call}{<\code{character}> The SQL query string to be executed.}
 }
 \value{
 Returns the result set as a data frame.

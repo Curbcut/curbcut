@@ -1035,7 +1035,25 @@ tibble::add_row(
   tibble::add_row(
     en = "Choose themes:",
     fr = "Choisissez des th\u00e8mes :"
-  )
+  ) |>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+tibble::add_row(
+  en = "Are you an active user of Curbcut? Your insights will drive our next big steps!",
+  fr = "Êtes-vous un utilisateur actif de Curbcut ? Vos commentaires nous aideront à développer les prochaines étapes !"
+)
 
 
 

@@ -17,6 +17,65 @@
 server <- function(lang_init = "en", show_lang_button = FALSE) {
   shiny::shinyServer(function(input, output, session) {
 
+
+    # Create a reactive value to track whether the modal has already been shown
+    modalShown <- shiny::reactiveVal(FALSE)
+    # Set up a reactive timer that fires after 15 seconds (15000 ms)
+    autoInvalidate <- shiny::reactiveTimer(15000, session)
+    # Observer that triggers when the timer fires
+    shiny::observeEvent(autoInvalidate(), {
+      # Depend on the reactive timer; this code runs after 15 seconds
+
+      # If the modal hasn’t been shown yet, show it now
+      if (!modalShown()) {
+        modalShown(TRUE)  # Mark the modal as shown so it doesn't repeat
+        shiny::showModal(
+          shiny::modalDialog(
+            # Modal header with the main message
+            shiny::h2(cc_t(
+              lang = r$lang(),
+              "Are you an active user of Curbcut? Your insights will drive our next big steps!",
+              force_span = TRUE
+            )),
+            # Insert additional HTML content inside the modal
+            HTML('<div id="mc_embed_shell">
+      <div id="mc_embed_signup">
+      <form action="https://curbcut.us11.list-manage.com/subscribe/post?u=b9df261ebcf34acc88a4aab38&amp;id=5187f08559&amp;f_id=0085d7e3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_self" novalidate="">
+      <div id="mc_embed_signup_scroll">
+      <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+      <div class="mc-field-group"><label for="mce-EMAIL">Email Address <span class="asterisk">*</span></label><input type="email" name="EMAIL" class="required email" id="mce-EMAIL" required="" value=""></div><div class="mc-field-group"><label for="mce-FNAME">First Name </label><input type="text" name="FNAME" class=" text" id="mce-FNAME" value=""></div><div class="mc-field-group"><label for="mce-LNAME">Last Name </label><input type="text" name="LNAME" class=" text" id="mce-LNAME" value=""></div>
+      <div hidden=""><input type="hidden" name="tags" value="10285982"></div>
+      <div id="mce-responses" class="clear foot">
+      <div class="response" id="mce-error-response" style="display: none;"></div>
+      <div class="response" id="mce-success-response" style="display: none;"></div>
+      </div>
+      <div aria-hidden="true" style="position: absolute; left: -5000px;">
+      /* real people should not fill this in and expect good things - do not remove this or risk form bot signups */
+      <input type="text" name="b_b9df261ebcf34acc88a4aab38_5187f08559" tabindex="-1" value="">
+      </div>
+      <div class="optionalParent">
+      <div class="clear foot">
+      <input type="submit" name="subscribe" id="mc-embedded-subscribe" class="button" value="Help us shape the product!">
+      </div>
+      </div>
+      </div>
+      </form>
+      </div>
+      </div>'),
+            # Allow closing by clicking outside or pressing Esc
+            easyClose = TRUE,
+            # Modal footer with an explicit Close button
+            footer = shiny::modalButton(cc_t(
+              lang = r$lang(),
+              "Close",
+              force_span = TRUE
+            ))
+          )
+        )
+      }
+    }, ignoreInit = TRUE)
+
+
     ## Reactive variables --------------------------------------------------------
     r <- r_init(
       server_session = session,
@@ -48,6 +107,7 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
     session$onSessionEnded(function() {
       unlink(session$token, recursive = TRUE)
     })
+
 
   })
 }
@@ -156,6 +216,34 @@ ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_ti
   modules_panel_calculated <- get0("modules_panel_calculated")
 
   shiny::tagList(
+
+    # # TEMPORARY ACTIVE USERS BANNER
+    # shiny::tags$head(
+    #   '<script id="mcjs">!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/b9df261ebcf34acc88a4aab38/eef05139913a74c7cc0ceb795.js");</script>'
+    # ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
 
