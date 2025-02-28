@@ -30,10 +30,17 @@
 #'
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
-data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_table,
-                                    schemas = NULL,
-                                    scales_as_DA = c("building", "street"),
-                                    data_path = get_data_path(), ...) {
+data_get_colours_helper <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  colours_table,
+  schemas = NULL,
+  scales_as_DA = c("building", "street"),
+  data_path = get_data_path(),
+  ...
+) {
   # Grab colours
   colours <- colours_get()
   if (!colours_table %in% names(colours)) {
@@ -46,52 +53,86 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
   # Region and all possible `df`
   dfs <- names(zoom_levels)[!names(zoom_levels) %in% scales_as_DA]
   # Get all the data
-  data_r <- sapply(dfs, \(x) tryCatch(
-    data_get(vars,
-             scale = x, time = time, region = region,
-             data_path = data_path
-    ), error = function(e) tibble::tibble()),
+  data_r <- sapply(
+    dfs,
+    \(x)
+      tryCatch(
+        data_get(
+          vars,
+          scale = x,
+          time = time,
+          region = region,
+          data_path = data_path
+        ),
+        error = function(e) tibble::tibble()
+      ),
     simplify = FALSE,
     USE.NAMES = TRUE
   )
-  data <- Reduce(rbind, data_r)
 
-  # If it's delta, maybe change the colour table to use only negatives/positives!
-  colour_table <- if (colours_table == "delta") {
-    delta_which_colors(data)
-  } else {
-    colours[[colours_table]]
-  }
+  # !! I'M GETTING THE CLASS OF THE FIRST DATA WHEN I REDUCE RBIND, WHICH MEANS IF THE TOP
+  # DATA HAS A CLASS NORMAL IN  DELTA, OTHERS CAN HAVE POSITIVE OR NEGATIVE. IT'S IMPORTANT
+  # TO FOLLOW THE RIGHT CLASS FOR EVERY SCALE!
 
-  # Is group already calculated?
-  group <- match_schema_to_z_col(
-    data = data, time = time, col = "group", vl_vr = "var_left",
-    schemas = schemas
+  data_r2 <- sapply(
+    data_r,
+    \(data) {
+      tryCatch(
+        {
+          # If it's delta, maybe change the colour table to use only negatives/positives!
+          colour_table <- if (colours_table == "delta") {
+            delta_which_colors(data)
+          } else {
+            colours[[colours_table]]
+          }
+
+          # Is group already calculated?
+          group <- match_schema_to_z_col(
+            data = data,
+            time = time,
+            col = "group",
+            vl_vr = "var_left",
+            schemas = schemas
+          )
+
+          if ("group" %in% names(data)) {
+            group <- "group"
+          } else if (length(group) == 0 || !group %in% names(data)) {
+            group <- sprintf("group_%s", time$var_left)
+
+            if (!group %in% names(data)) {
+              # Grab the correct column from which to use colors on
+              var <- match_schema_to_col(
+                data = data,
+                time = time,
+                col = "var_left",
+                schemas = schemas
+              )
+              group <- sprintf("%s_q5", var)
+            }
+          }
+
+          # Deal with colours
+          mapping <- match(data[[group]], colour_table$group)
+          data$fill <- colour_table$fill[mapping]
+          data <- data[c("ID", "fill")]
+          names(data)[1] <- c("ID_color")
+
+          # Switch NA to the right "NA" colour
+          data$fill[is.na(data$fill)] <- colour_table$fill[grepl(
+            "^NA",
+            colour_table$group
+          )][[1]]
+          data
+        },
+        error = function(e) tibble::tibble()
+      )
+    },
+    simplify = FALSE,
+    USE.NAMES = TRUE
   )
 
-  if ("group" %in% names(data)) {
-    group <- "group"
-  } else if (length(group) == 0 || !group %in% names(data)) {
-    group <- sprintf("group_%s", time$var_left)
-
-    if (!group %in% names(data)) {
-      # Grab the correct column from which to use colors on
-      var <- match_schema_to_col(
-        data = data, time = time, col = "var_left",
-        schemas = schemas
-      )
-      group <- sprintf("%s_q5", var)
-    }
-  }
-
-  # Deal with colours
-  mapping <- match(data[[group]], colour_table$group)
-  data$fill <- colour_table$fill[mapping]
-  data <- data[c("ID", "fill")]
-  names(data)[1] <- c("ID_color")
-
-  # Switch NA to the right "NA" colour
-  data$fill[is.na(data$fill)] <- colour_table$fill[grepl("^NA", colour_table$group)][[1]]
+  data <- Reduce(rbind, data_r2)
 
   # Return
   return(data)
@@ -128,83 +169,157 @@ data_get_colours_helper <- function(vars, region, time, zoom_levels, colours_tab
 #' @return A data frame with the columns \code{ID} and \code{fill} to use in
 #' an `cc.map::map_choropleth_fill_fun`-like scale function.
 #' @export
-data_get_colours <- function(vars, region, time, zoom_levels,
-                             scales_as_DA = c("building", "street"),
-                             schemas, data_path = get_data_path(), ...) {
+data_get_colours <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   UseMethod("data_get_colours", vars)
 }
 
 #' @describeIn data_get_colours The method for q5.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.q5 <- function(vars, region, time, zoom_levels,
-                                scales_as_DA = c("building", "street"),
-                                schemas, data_path = get_data_path(), ...) {
+data_get_colours.q5 <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time, schemas = schemas,
-    zoom_levels = zoom_levels, colours_table = "left_5",
-    scales_as_DA = scales_as_DA, data_path = data_path
+    vars = vars,
+    region = region,
+    time = time,
+    schemas = schemas,
+    zoom_levels = zoom_levels,
+    colours_table = "left_5",
+    scales_as_DA = scales_as_DA,
+    data_path = data_path
   )
 }
 
 #' @describeIn data_get_colours The method for bivar.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.bivar <- function(vars, region, time, zoom_levels,
-                                   scales_as_DA = c("building", "street"),
-                                   schemas, data_path = get_data_path(), ...) {
+data_get_colours.bivar <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time, schemas = schemas,
-    zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA, data_path = data_path
+    vars = vars,
+    region = region,
+    time = time,
+    schemas = schemas,
+    zoom_levels = zoom_levels,
+    colours_table = "bivar",
+    scales_as_DA = scales_as_DA,
+    data_path = data_path
   )
 }
 
 #' @describeIn data_get_colours The method for delta.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.delta <- function(vars, region, time, zoom_levels,
-                                   scales_as_DA = c("building", "street"),
-                                   schemas, data_path = get_data_path(), ...) {
+data_get_colours.delta <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time, schemas = schemas,
-    zoom_levels = zoom_levels, colours_table = "delta",
-    scales_as_DA = scales_as_DA, data_path = data_path
+    vars = vars,
+    region = region,
+    time = time,
+    schemas = schemas,
+    zoom_levels = zoom_levels,
+    colours_table = "delta",
+    scales_as_DA = scales_as_DA,
+    data_path = data_path
   )
 }
 
 #' @describeIn data_get_colours The method for delta_bivar.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.delta_bivar <- function(vars, region, time, zoom_levels,
-                                         scales_as_DA = c("building", "street"),
-                                         schemas, data_path = get_data_path(), ...) {
+data_get_colours.delta_bivar <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time, schemas = schemas,
-    zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA, data_path = data_path
+    vars = vars,
+    region = region,
+    time = time,
+    schemas = schemas,
+    zoom_levels = zoom_levels,
+    colours_table = "bivar",
+    scales_as_DA = scales_as_DA,
+    data_path = data_path
   )
 }
 
 #' @describeIn data_get_colours The method for bivar_ldelta_rq3.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.bivar_ldelta_rq3 <- function(vars, region, time, zoom_levels,
-                                              scales_as_DA = c("building", "street"),
-                                              schemas, data_path = get_data_path(), ...) {
+data_get_colours.bivar_ldelta_rq3 <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data_get_colours_helper(
-    vars = vars, region = region, time = time, schemas = schemas,
-    zoom_levels = zoom_levels, colours_table = "bivar",
-    scales_as_DA = scales_as_DA, data_path = data_path
+    vars = vars,
+    region = region,
+    time = time,
+    schemas = schemas,
+    zoom_levels = zoom_levels,
+    colours_table = "bivar",
+    scales_as_DA = scales_as_DA,
+    data_path = data_path
   )
 }
 
 #' @describeIn data_get_colours The default method.
 #' @export
 #' @seealso \code{\link{data_get_colours}}
-data_get_colours.default <- function(vars, region, time, zoom_levels,
-                                     scales_as_DA = c("building", "street"),
-                                     schemas, data_path = get_data_path(), ...) {
+data_get_colours.default <- function(
+  vars,
+  region,
+  time,
+  zoom_levels,
+  scales_as_DA = c("building", "street"),
+  schemas,
+  data_path = get_data_path(),
+  ...
+) {
   data <- data.frame(ID = "NA")
   data$fill <- "#B3B3BB"
   return(data)

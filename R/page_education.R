@@ -1,13 +1,21 @@
 # Data representation list
-dat_rep <- list("Data representation" = list("Percentage" = "pct", "Number" = "count"))
-education_poss <- c("No degree", "High school diploma", "College degree",
-                    "University below bachelor",
-                    "Bachelor level or above")
-education_poss_dict <- c("No degree" = "no_degree",
-                         "High school diploma" = "secondary",
-                         "College degree" = "nonuni",
-                         "University below bachelor" = "uni_below",
-                         "Bachelor level or above" = "bachelor_above")
+dat_rep <- list(
+  "Data representation" = list("Percentage" = "pct", "Number" = "count")
+)
+education_poss <- c(
+  "No degree",
+  "High school diploma",
+  "College degree",
+  "University below bachelor",
+  "Bachelor level or above"
+)
+education_poss_dict <- c(
+  "No degree" = "no_degree",
+  "High school diploma" = "secondary",
+  "College degree" = "nonuni",
+  "University below bachelor" = "uni_below",
+  "Bachelor level or above" = "bachelor_above"
+)
 
 #' @export
 education_UI <- function(id) {
@@ -15,11 +23,14 @@ education_UI <- function(id) {
   page <- modules[modules$id == id, ]
   regions <- page$regions[[1]]
   if (is.null(regions)) {
-    stop(sprintf(paste0(
-      "Page `%s` does not have available regions. Please ",
-      "check the `regions` column in the `modules` ",
-      "dataframe."
-    ), id))
+    stop(sprintf(
+      paste0(
+        "Page `%s` does not have available regions. Please ",
+        "check the `regions` column in the `modules` ",
+        "dataframe."
+      ),
+      id
+    ))
   }
   avail_scale_combinations <- page$avail_scale_combinations[[1]]
   mzp <- get_from_globalenv(sprintf("mzl_%s", avail_scale_combinations[1]))
@@ -38,24 +49,37 @@ education_UI <- function(id) {
         label_indicators_UI(
           shiny::NS(id, id),
           main_UIs = list(
-            slider_text_UI(shiny::NS(id, id), label = NULL,
-                           choices = education_poss, selected = education_poss[c(2, 4)])
+            slider_text_UI(
+              shiny::NS(id, id),
+              label = NULL,
+              choices = education_poss,
+              selected = education_poss[c(2, 4)]
+            )
           ),
           adv_UIs = list(
-            picker_UI(shiny::NS(id, id), label = cc_t("Data representation"),
-                      var_list = dat_rep))
+            picker_UI(
+              shiny::NS(id, id),
+              label = cc_t("Data representation"),
+              var_list = dat_rep
+            )
+          )
         ),
-        time_slider_UI(shiny::NS(id, id),
-                       min = 1996, max = 2021, step = 5,
-                       double_value = c(2016, 2021)),
+        time_slider_UI(
+          shiny::NS(id, id),
+          min = 1996,
+          max = 2021,
+          step = 5,
+          double_value = c(2016, 2021)
+        ),
         warnuser_UI(shiny::NS(id, id)),
         compare_UI(
           id = shiny::NS(id, id),
           var_list = dropdown_make(vars = " ", compare = TRUE)
         ),
-        geography_UI(shiny::NS(id, id),
-                     regions = regions,
-                     avail_scale_combinations = avail_scale_combinations
+        geography_UI(
+          shiny::NS(id, id),
+          regions = regions,
+          avail_scale_combinations = avail_scale_combinations
         ),
         shiny::hr(),
         zoom_UI(shiny::NS(id, id), zoom_levels = mzp),
@@ -93,7 +117,8 @@ education_server <- function(id, r) {
       stop(sprintf(paste0(
         "Page `%s` does not have available regions. Please ",
         "check the `regions` column in the `modules` ",
-        "dataframe.", id
+        "dataframe.",
+        id
       )))
     }
     avail_scale_combinations <- page$avail_scale_combinations[[1]]
@@ -139,15 +164,17 @@ education_server <- function(id, r) {
     )
 
     # Zoom and POI reactives when the view state of the map changes.
-    shiny::observeEvent(map_viewstate(),
-                        {
-                          r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
-                          r[[id]]$poi(update_poi(
-                            id = id, poi = r[[id]]$poi(),
-                            map_viewstate = map_viewstate()
-                          ))
-                        },
-                        ignoreInit = TRUE
+    shiny::observeEvent(
+      map_viewstate(),
+      {
+        r[[id]]$zoom(zoom_get(zoom = map_viewstate()$zoom))
+        r[[id]]$poi(update_poi(
+          id = id,
+          poi = r[[id]]$poi(),
+          map_viewstate = map_viewstate()
+        ))
+      },
+      ignoreInit = TRUE
     )
 
     # Right variable / compare panel
@@ -175,7 +202,11 @@ education_server <- function(id, r) {
     )
 
     update_region(id = id, r = r, new_region = shiny::reactive(zl()$region))
-    update_zoom_levels(id = id, r = r, new_zl = shiny::reactive(zl()$zoom_levels))
+    update_zoom_levels(
+      id = id,
+      r = r,
+      new_zl = shiny::reactive(zl()$zoom_levels)
+    )
 
     # Zoom string reactive
     shiny::observe({
@@ -221,10 +252,12 @@ education_server <- function(id, r) {
     )
 
     # Hide the main dropdown, use a slider text instead
-    vl <- slider_text_server(id, r = r, choices = shiny::reactive(education_poss))
-    dr <- picker_server(id = id,
-                        r = r,
-                        var_list = shiny::reactive(dat_rep))
+    vl <- slider_text_server(
+      id,
+      r = r,
+      choices = shiny::reactive(education_poss)
+    )
+    dr <- picker_server(id = id, r = r, var_list = shiny::reactive(dat_rep))
     var_left_1 <- shiny::reactive({
       vvll <- unique(vl())
       vvll <- education_poss_dict[vvll]
@@ -232,14 +265,22 @@ education_server <- function(id, r) {
 
       sprintf("edu_%s_to_%s", vvll[[1]], vvll[[2]])
     })
-    update_rv(id, r, rv_name = "var_left",
-              new_val = shiny::reactive(sprintf("%s_%s", var_left_1(), dr())))
+    update_rv(
+      id,
+      r,
+      rv_name = "var_left",
+      new_val = shiny::reactive(sprintf("%s_%s", var_left_1(), dr()))
+    )
     widget_time <- time_slider_server(id = id, r = r)
 
     # Update the `r[[id]]$vars` reactive
     update_vars(
-      id = id, r = r, var_left = r[[id]]$var_left,
-      var_right = var_right, scale = r[[id]]$scale, widget_time = widget_time
+      id = id,
+      r = r,
+      var_left = r[[id]]$var_left,
+      var_right = var_right,
+      scale = r[[id]]$scale,
+      widget_time = widget_time
     )
 
     # Sidebar
@@ -349,6 +390,5 @@ education_server <- function(id, r) {
       time = r[[id]]$time,
       schemas = r[[id]]$schemas
     )
-
   })
 }
