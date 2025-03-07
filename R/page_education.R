@@ -14,7 +14,12 @@ education_poss_dict <- c(
   "High school diploma" = "secondary",
   "College degree" = "nonuni",
   "University below bachelor" = "uni_below",
-  "Bachelor level or above" = "bachelor_above"
+  "Bachelor level or above" = "bachelor_above",
+  "Sans diplôme" = "no_degree",
+  "Diplôme d'études secondaires" = "secondary",
+  "Diplôme d'un collège, d'un cégep" = "nonuni",
+  "Université inférieure au baccalauréat" = "uni_below",
+  "Niveau baccalauréat ou plus" = "bachelor_above"
 )
 
 #' @export
@@ -255,7 +260,9 @@ education_server <- function(id, r) {
     vl <- slider_text_server(
       id,
       r = r,
-      choices = shiny::reactive(education_poss)
+      choices = shiny::reactive(
+        sapply(education_poss, cc_t, lang = r$lang(), USE.NAMES = FALSE)
+      )
     )
     dr <- picker_server(id = id, r = r, var_list = shiny::reactive(dat_rep))
     var_left_1 <- shiny::reactive({

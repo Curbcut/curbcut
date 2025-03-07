@@ -19,6 +19,10 @@ picker_hover_divs <- function(var_list, lang = NULL) {
     return(NULL)
   }
 
+  if (2 %in% unlist(sapply(var_list, lengths))) {
+    stop("var_list (the output of dropdown_make) has an element of length 2.")
+  }
+
   # Grab the variables table
   variables <- get_from_globalenv("variables")
 
@@ -31,18 +35,22 @@ picker_hover_divs <- function(var_list, lang = NULL) {
   }
 
   # Grab the explanation
-  text_hover <- sapply(vars, \(x) {
-    # Get the explanation
-    exp <- variables$explanation[variables$var_code == x]
+  text_hover <- sapply(
+    vars,
+    \(x) {
+      # Get the explanation
+      exp <- variables$explanation[variables$var_code == x]
 
-    # If no explanation (unexistant variable), return an empty string
-    if (length(exp) == 0) {
-      return(" ")
-    }
+      # If no explanation (unexistant variable), return an empty string
+      if (length(exp) == 0) {
+        return(" ")
+      }
 
-    # Return the explanation
-    return(exp)
-  }, USE.NAMES = FALSE)
+      # Return the explanation
+      return(exp)
+    },
+    USE.NAMES = FALSE
+  )
 
   # In the case there is a language, translate
   if (!is.null(lang)) {
@@ -66,7 +74,9 @@ picker_hover_divs <- function(var_list, lang = NULL) {
   return(list(
     content = sprintf(
       '<div title="%s" value="%s" style="width: 100%%;">%s</div>',
-      text_hover, value, var_list_label
+      text_hover,
+      value,
+      var_list_label
     )
   ))
 }
@@ -120,13 +130,16 @@ picker_multi_year_disable <- function(id, var_list, disable) {
 
   nb_dates <- length(module_dates)
   vec <- sapply(all_years, \(years_list) {
-
     # Convert list of years to numeric
     years_numeric <- as.numeric(years_list)
 
     # Compute the differences between each year in years_list and each module_date,
     # then check if any absolute difference is less than 3 (i.e., within +/-2 years)
-    diff <- sapply(years_numeric, \(x) abs(x - module_dates) < 3, simplify = FALSE)
+    diff <- sapply(
+      years_numeric,
+      \(x) abs(x - module_dates) < 3,
+      simplify = FALSE
+    )
 
     # If there are enough dates that are +/- 2 years from the module years
     sum(sapply(diff, any)) >= nb_dates
