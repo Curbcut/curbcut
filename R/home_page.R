@@ -18,7 +18,8 @@ home_server <- function(id = "home", r) {
 
     # Detect page clicks on other pages and update the active page accordingly
     page_click <- shiny::reactive(cc.landing::get_landing_click("landing"))
-    shiny::observeEvent(page_click(),
+    shiny::observeEvent(
+      page_click(),
       {
         update_tab(session = r$server_session(), selected = page_click())
       },
@@ -26,8 +27,11 @@ home_server <- function(id = "home", r) {
     )
 
     # Detect discover card click and update the active page accordingly
-    discover_click <- shiny::reactive(cc.landing::get_landing_discover("landing"))
-    shiny::observeEvent(discover_click(),
+    discover_click <- shiny::reactive(cc.landing::get_landing_discover(
+      "landing"
+    ))
+    shiny::observeEvent(
+      discover_click(),
       {
         # Selected row
         disc_card <- discover_cards[discover_cards$id == discover_click(), ]
@@ -51,7 +55,9 @@ home_server <- function(id = "home", r) {
           scale <- if (is.na(scale)) NULL else scale
 
           modules <- get_from_globalenv("modules")
-          default_comb <- modules$avail_scale_combinations[modules$id == disc_card$page][[1]]
+          default_comb <- modules$avail_scale_combinations[
+            modules$id == disc_card$page
+          ][[1]]
           if (!is.null(scale)) {
             default_comb <- grep(scale, default_comb, value = TRUE)
           }
@@ -59,9 +65,14 @@ home_server <- function(id = "home", r) {
           zoom_levels <- get_from_globalenv(default_comb)
 
           link(
-            r = r, page = disc_card$page, select_id = disc_card$select_id,
-            date = disc_card$date[[1]], var_right = disc_card$var_right,
-            var_left = disc_card$var_left, scale = scale, zoom_levels = zoom_levels
+            r = r,
+            page = disc_card$page,
+            select_id = disc_card$select_id,
+            date = disc_card$date[[1]],
+            var_right = disc_card$var_right,
+            var_left = disc_card$var_left,
+            scale = scale,
+            zoom_levels = zoom_levels
           )
         }
       },
@@ -70,7 +81,8 @@ home_server <- function(id = "home", r) {
 
     # Detect discover card click and update the active page accordingly
     news_click <- shiny::reactive(cc.landing::get_landing_news("landing"))
-    shiny::observeEvent(news_click(),
+    shiny::observeEvent(
+      news_click(),
       {
         # Selected row
         news_card <- news_cards[news_cards$id == news_click(), ]
@@ -102,14 +114,14 @@ home_server <- function(id = "home", r) {
       )
     })
 
-
     ## DEAL WITH LANGUAGE
     # Switch the language on a new session if it's in a cookie
     lang_cookie <- shiny::reactive(cookie_retrieve(
       input = r$server_session()$input,
       name = "lang"
     ))
-    shiny::observeEvent(lang_cookie(),
+    shiny::observeEvent(
+      lang_cookie(),
       {
         # Update the website language (span + r$lang)
         update_lang(r = r, lang = lang_cookie())
@@ -129,13 +141,15 @@ home_server <- function(id = "home", r) {
 
     # Detect lang button click
     lang_click <- shiny::reactive(cc.landing::get_lang_click("landing"))
-    shiny::observeEvent(lang_click(),
+    shiny::observeEvent(
+      lang_click(),
       {
         # Update the website language (span + r$lang)
         update_lang(r = r, lang_click())
         # Set the cookie
         cookie_set(
-          session = r$server_session(), name = "lang",
+          session = r$server_session(),
+          name = "lang",
           value = lang_click()
         )
       },
@@ -171,12 +185,16 @@ home_server <- function(id = "home", r) {
 #'
 #' @return A Shiny UI object for the home page.
 #' @export
-home_UI <- function(id = "home", h1_first_line, h1_second_line, placeholder_video_src,
-                    video_src, lang_init = "en", show_cities = TRUE) {
-  # Get modules from the global environment
-  modules <- get_from_globalenv("modules")
-  pages <- modules[c("id", "theme", "nav_title")]
-
+home_UI <- function(
+  id = "home",
+  h1_first_line,
+  h1_second_line,
+  placeholder_video_src,
+  video_src,
+  lang_init = "en",
+  show_cities = TRUE,
+  pages = get_from_globalenv("modules")[c("id", "theme", "nav_title")]
+) {
   # Get translations from the global environment and filter it
   translation_df <- get0("translation_df")
   translation_df <- if (is.null(translation_df)) {
@@ -210,7 +228,10 @@ home_UI <- function(id = "home", h1_first_line, h1_second_line, placeholder_vide
   final_sample <- rbind(final_sample, page_sample)
 
   # Filter 1 item of type 'dyk' with different 'theme' from 'page'
-  dyk_df <- discover_cards[discover_cards$type == "dyk" & !(discover_cards$theme %in% page_sample$theme), ]
+  dyk_df <- discover_cards[
+    discover_cards$type == "dyk" &
+      !(discover_cards$theme %in% page_sample$theme),
+  ]
   dyk_sample <- dyk_df[sample(nrow(dyk_df), 1), ]
   final_sample <- rbind(final_sample, dyk_sample)
 

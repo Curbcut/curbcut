@@ -16,8 +16,6 @@
 #' @export
 server <- function(lang_init = "en", show_lang_button = FALSE) {
   shiny::shinyServer(function(input, output, session) {
-
-
     # # Create a reactive value to track whether the modal has already been shown
     # modalShown <- shiny::reactiveVal(FALSE)
     # # Set up a reactive timer that fires after 15 seconds (15000 ms)
@@ -75,7 +73,6 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
     #   }
     # }, ignoreInit = TRUE)
 
-
     ## Reactive variables --------------------------------------------------------
     r <- r_init(
       server_session = session,
@@ -107,8 +104,6 @@ server <- function(lang_init = "en", show_lang_button = FALSE) {
     session$onSessionEnded(function() {
       unlink(session$token, recursive = TRUE)
     })
-
-
   })
 }
 
@@ -127,12 +122,17 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
   # Get unique themes and arrange them for each theme
   unique_themes <- unique(modules$theme)[!is.na(unique(modules$theme))]
   mods_rdy <-
-    sapply(unique_themes, \(x) {
-      thm <- modules[modules$theme == x, ]
-      ids <- thm$id
-      names(ids) <- thm$nav_title
-      ids
-    }, simplify = FALSE, USE.NAMES = TRUE)
+    sapply(
+      unique_themes,
+      \(x) {
+        thm <- modules[modules$theme == x, ]
+        ids <- thm$id
+        names(ids) <- thm$nav_title
+        ids
+      },
+      simplify = FALSE,
+      USE.NAMES = TRUE
+    )
 
   # Alphabetical order
   mods_rdy <- mods_rdy[names(mods_rdy)[order(names(mods_rdy))]]
@@ -209,21 +209,39 @@ modules_panel <- function(modules = get_from_globalenv("modules")) {
 #'
 #' @return A Shiny UI object that includes all elements of the Curbcut application interface.
 #' @export
-ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_title, placeholder_video_src,
-               video_src, twitter_handler, google_analytics = NULL, website_url,
-               share_jpg, apple_touch_icon, lang_init = "en", show_lang_button = FALSE,
-               show_cities = TRUE, ...) {
+ui <- function(
+  site_name,
+  h1_first_line,
+  h1_second_line,
+  web_description,
+  web_title,
+  placeholder_video_src,
+  video_src,
+  twitter_handler,
+  google_analytics = NULL,
+  website_url,
+  share_jpg,
+  apple_touch_icon,
+  lang_init = "en",
+  show_lang_button = FALSE,
+  show_cities = TRUE,
+  pages = get_from_globalenv("modules")[c("id", "theme", "nav_title")],
+  ...
+) {
   modules_panel_calculated <- get0("modules_panel_calculated")
 
   shiny::tagList(
-
     # Import packages dependencies -----------------------------------------------
     shinyjs::useShinyjs(),
 
     # Remove the navbar -------------------------------------------------------
     shiny::tags$style(type = "text/css", ".navbar-shadow{display:none;}"),
     shiny::tags$style(type = "text/css", ".navbar{display:none;}"),
-    if (!show_lang_button) shiny::tags$style(type = "text/css", ".language-switcher{display:none !important;}"),
+    if (!show_lang_button)
+      shiny::tags$style(
+        type = "text/css",
+        ".language-switcher{display:none !important;}"
+      ),
 
     # Styling objects ------------------------------------------------------------
     use_curbcut_js(),
@@ -233,7 +251,8 @@ ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_ti
     shiny::tags$head(shiny::tags$link(rel = "icon", href = "favicon.ico")),
 
     # Google analytics --------------------------------------------------------
-    if (!is.null(google_analytics)) shiny::tags$head(shiny::includeHTML(google_analytics)),
+    if (!is.null(google_analytics))
+      shiny::tags$head(shiny::includeHTML(google_analytics)),
 
     # Sharing card ---------------------------------------------------------------
     shiny::tags$head(
@@ -263,19 +282,23 @@ ui <- function(site_name, h1_first_line, h1_second_line, web_description, web_ti
           id = "cc_page",
           windowTitle = site_name,
           title = shiny::actionLink("title", "Curbcut"),
-          shiny::tabPanel(cc_t("Home"),
-                          home_UI("home",
-                                  placeholder_video_src = placeholder_video_src,
-                                  video_src = video_src,
-                                  lang_init = lang_init,
-                                  show_cities = show_cities,
-                                  h1_first_line = h1_first_line,
-                                  h1_second_line = h1_second_line
-                          ),
+          shiny::tabPanel(
+            cc_t("Home"),
+            home_UI(
+              "home",
+              placeholder_video_src = placeholder_video_src,
+              video_src = video_src,
+              lang_init = lang_init,
+              show_cities = show_cities,
+              h1_first_line = h1_first_line,
+              h1_second_line = h1_second_line,
+              pages = pages
+            ),
             value = "home"
           )
         ),
-        if (!is.null(modules_panel_calculated)) modules_panel_calculated else modules_panel(),
+        if (!is.null(modules_panel_calculated)) modules_panel_calculated else
+          modules_panel(),
         list(collapsible = TRUE)
       )
     )

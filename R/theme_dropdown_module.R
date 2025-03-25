@@ -19,7 +19,8 @@ theme_dropdown_server <- function(id, r) {
       session = session
     ))
 
-    shiny::observeEvent(page_click(),
+    shiny::observeEvent(
+      page_click(),
       {
         update_tab(session = r$server_session(), selected = page_click())
       },
@@ -54,13 +55,19 @@ theme_dropdown_UI <- function(id) {
   pages <- modules[c("id", "theme", "nav_title")]
 
   translation_df <- if (is.null(translation_df)) {
-    tibble::tibble(en = c(pages$theme, pages$nav_title), fr = c(pages$theme, pages$nav_title))
+    tibble::tibble(
+      en = c(pages$theme, pages$nav_title),
+      fr = c(pages$theme, pages$nav_title)
+    )
   } else {
     translation_df[translation_df$en %in% c(pages$theme, pages$nav_title), ]
   }
 
   solo_id <- gsub("-.*$", "", id)
   theme <- pages$theme[pages$id == solo_id]
+
+  # Laval special casing
+  if (!is.null(get0('laval'))) pages <- get_from_globalenv('themes_list')
 
   shiny::div(
     class = "theme-dropdown",
