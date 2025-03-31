@@ -5,10 +5,10 @@ library(tibble)
 cc_translation_df <-
   # General UI --------------------------------------------------------------
 
-tibble::tibble(
-  en = character(),
-  fr = character()
-) |>
+  tibble::tibble(
+    en = character(),
+    fr = character()
+  ) |>
   tibble::add_row(
     en = "----",
     fr = "----"
@@ -98,13 +98,12 @@ tibble::tibble(
     fr = "En traitement..."
   ) |>
 
-
   # Geography widget --------------------------------------------------------
 
-tibble::add_row(
-  en = "Geography",
-  fr = "G\u00e9ographie"
-) |>
+  tibble::add_row(
+    en = "Geography",
+    fr = "G\u00e9ographie"
+  ) |>
   tibble::add_row(
     en = "Region",
     fr = "R\u00e9gion"
@@ -143,10 +142,10 @@ tibble::add_row(
   ) |>
   # Legend ------------------------------------------------------------------
 
-tibble::add_row(
-  en = "Low",
-  fr = "Bas/se"
-) |>
+  tibble::add_row(
+    en = "Low",
+    fr = "Bas/se"
+  ) |>
   tibble::add_row(
     en = "High",
     fr = "Haut/e"
@@ -169,16 +168,16 @@ tibble::add_row(
   ) |>
   # Tutorial ----------------------------------------------------------------
 
-tibble::add_row(
-  en = paste0(
-    "A Curbcut page explores a specific theme. Here you'll find information",
-    " about the theme and the data used on the page."
-  ),
-  fr = paste0(
-    "Chaque page Curbcut explore un th\u00e8me sp\u00e9cifique. Vous trouverez ici des ",
-    "informations sur le th\u00e8me et les donn\u00e9es qui y figurent."
-  )
-) |>
+  tibble::add_row(
+    en = paste0(
+      "A Curbcut page explores a specific theme. Here you'll find information",
+      " about the theme and the data used on the page."
+    ),
+    fr = paste0(
+      "Chaque page Curbcut explore un th\u00e8me sp\u00e9cifique. Vous trouverez ici des ",
+      "informations sur le th\u00e8me et les donn\u00e9es qui y figurent."
+    )
+  ) |>
   tibble::add_row(
     en = paste0(
       "Curbcut maps are interactive: you can scroll, zoom in and out, and ",
@@ -302,10 +301,10 @@ tibble::add_row(
   ) |>
   # Misc --------------------------------------------------------------------
 
-tibble::add_row(
-  en = "Population",
-  fr = "Population"
-) |>
+  tibble::add_row(
+    en = "Population",
+    fr = "Population"
+  ) |>
   tibble::add_row(
     en = "Households",
     fr = "M\u00e9nages"
@@ -371,10 +370,7 @@ tibble::add_row(
     fr = "Modifier la r\u00e9gion par d\u00e9faut"
   ) |>
   tibble::add_row(
-    en = paste0(
-      "Enter and save a default location (postal ",
-      "code or address)"
-    ),
+    en = "Enter and save a default location (postal code or address)",
     fr = "Saisir et enregistrer un emplacement par d\u00e9faut (code postal ou adresse)"
   ) |>
   tibble::add_row(
@@ -462,11 +458,11 @@ tibble::add_row(
   ) |>
   # Explore panel -----------------------------------------------------------
 
-# Context and q5
-tibble::add_row(
-  en = "individuals",
-  fr = "individus"
-) |>
+  # Context and q5
+  tibble::add_row(
+    en = "individuals",
+    fr = "individus"
+  ) |>
   tibble::add_row(
     en = "This value",
     fr = "Cette valeur"
@@ -521,10 +517,10 @@ tibble::add_row(
   ) |>
   # bivar -------------------------------------------------------------------
 
-tibble::add_row(
-  en = "Pearson's r: %s",
-  fr = "r de Pearson : %s"
-) |>
+  tibble::add_row(
+    en = "Pearson's r: %s",
+    fr = "r de Pearson : %s"
+  ) |>
   tibble::add_row(
     en = "The first value",
     fr = "La premi\u00e8re valeur"
@@ -643,11 +639,10 @@ tibble::add_row(
   ) |>
   # Delta -------------------------------------------------------------------
 
-
-tibble::add_row(
-  en = "the value",
-  fr = "la valeur"
-) |>
+  tibble::add_row(
+    en = "the value",
+    fr = "la valeur"
+  ) |>
   tibble::add_row(
     en = "%s percentage points (%sx)",
     fr = "%s points de pourcentage (%sx)"
@@ -742,10 +737,10 @@ tibble::add_row(
   ) |>
   # Delta bivar -------------------------------------------------------------
 
-tibble::add_row(
-  en = "the first value",
-  fr = "la premi\u00e8re valeur"
-) |>
+  tibble::add_row(
+    en = "the first value",
+    fr = "la premi\u00e8re valeur"
+  ) |>
   tibble::add_row(
     en = "the second value",
     fr = "la deuxi\u00e8me valeur"
@@ -836,10 +831,10 @@ tibble::add_row(
   ) |>
   # Panel view --------------------------------------------------------------
 
-tibble::add_row(
-  en = "Name",
-  fr = "Nom"
-) |>
+  tibble::add_row(
+    en = "Name",
+    fr = "Nom"
+  ) |>
   tibble::add_row(
     en = "the change in %s between %s and %s",
     fr = "le changement dans %s entre %s et %s"
@@ -910,10 +905,10 @@ tibble::add_row(
   ) |>
   # Place explorer ----------------------------------------------------------
 
-tibble::add_row(
-  en = "Generating report",
-  fr = "Cr\u00e9ation du rapport"
-) |>
+  tibble::add_row(
+    en = "Generating report",
+    fr = "Cr\u00e9ation du rapport"
+  ) |>
   tibble::add_row(
     en = "Its value is higher than the WHO's guideline value of 53. ",
     fr = "Sa valeur est sup\u00e9rieure \u00e0 la valeur recommand\u00e9e par l'OMS, qui est de 53. "
@@ -983,10 +978,10 @@ tibble::add_row(
     fr = "{data_rank} en termes de potentiel vie active. (Donn\u00e9es de {data_date})"
   ) |>
   # Possible themes ---------------------------------------------------------
-tibble::add_row(
-  en = "Climate",
-  fr = "Climat"
-) |>
+  tibble::add_row(
+    en = "Climate",
+    fr = "Climat"
+  ) |>
   tibble::add_row(
     en = "Ecology",
     fr = "\u00c9cologie"
@@ -1028,34 +1023,19 @@ tibble::add_row(
     fr = "Utilisation des sols"
   ) |>
   # Stories -----------------------------------------------------------------
-tibble::add_row(
-  en = "Image gallery",
-  fr = "Galerie d'images"
-) |>
+  tibble::add_row(
+    en = "Image gallery",
+    fr = "Galerie d'images"
+  ) |>
   tibble::add_row(
     en = "Choose themes:",
     fr = "Choisissez des th\u00e8mes :"
   ) |>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-tibble::add_row(
-  en = "Are you an active user of Curbcut? Your insights will drive our next big steps!",
-  fr = "Êtes-vous un utilisateur actif de Curbcut ? Vos commentaires nous aideront à développer les prochaines étapes !"
-)
-
-
+  tibble::add_row(
+    en = "Are you an active user of Curbcut? Your insights will drive our next big steps!",
+    fr = "Êtes-vous un utilisateur actif de Curbcut ? Vos commentaires nous aideront à développer les prochaines étapes !"
+  )
 
 
 # lapply(string_to_translate, \(x) {

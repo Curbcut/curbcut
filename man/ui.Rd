@@ -20,6 +20,7 @@ ui(
   lang_init = "en",
   show_lang_button = FALSE,
   show_cities = TRUE,
+  pages = get_from_globalenv("modules")[c("id", "theme", "nav_title")],
   ...
 )
 }

@@ -59,14 +59,16 @@ adv_opt_lock_selection_UI <- function(id, lang = NULL) {
   shiny::tagList(
     # Lock in address of zone for select_ids
     shiny::strong(cc_t(
-      lang = lang, "Enter and save a default location (postal ",
-      "code or address)", force_span = TRUE
+      lang = lang,
+      "Enter and save a default location (postal code or address)",
+      force_span = TRUE
     )),
     shiny::HTML("<br>"),
     cc_t(
       lang = lang,
       "Default location will be saved until ",
-      "manually cleared from advanced options", force_span = TRUE
+      "manually cleared from advanced options",
+      force_span = TRUE
     ),
     shiny::HTML(paste0(
       '<div class="shiny-split-layout">',
@@ -147,14 +149,19 @@ adv_opt_lock_selection <- function(address, lang = NULL) {
       DA_ID <- postal_codes$DA_ID[subset_vec]
       # Postal code found
       # Check all IDs that fit with the DA around the postal code
-      all_ids <- sapply(regions_dictionary$region, \(x) {
-        dat <- get0("DA", envir = .GlobalEnv)
-        if (is.null(dat)) {
-          return("")
-        }
-        dat <- dat[dat$ID == DA_ID, ]
-        unlist(dat[grepl("_ID$", names(dat))])
-      }, simplify = FALSE, USE.NAMES = TRUE)
+      all_ids <- sapply(
+        regions_dictionary$region,
+        \(x) {
+          dat <- get0("DA", envir = .GlobalEnv)
+          if (is.null(dat)) {
+            return("")
+          }
+          dat <- dat[dat$ID == DA_ID, ]
+          unlist(dat[grepl("_ID$", names(dat))])
+        },
+        simplify = FALSE,
+        USE.NAMES = TRUE
+      )
 
       # Return all the IDs
       if (!is.null(shiny::getDefaultReactiveDomain())) {
